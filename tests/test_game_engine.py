@@ -4,7 +4,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from hexa_octarina_conquer import Card, GameState, Player
+from hexa_octarina_conquer import Card, GameState, Player, Province, Unit
 
 
 class GameEngineTests(unittest.TestCase):
@@ -43,6 +43,19 @@ class GameEngineTests(unittest.TestCase):
         self.assertEqual(game.provinces[0].unit.level, 2)
         self.assertEqual(game.provinces[0].unit.hp, 5)
         self.assertEqual(game.get_player("A").mana, 1)
+
+    def test_surrounded_province_is_captured_by_the_surrounding_player(self):
+        game = GameState(size=3, players=[Player("A"), Player("B")])
+        game.provinces = [
+            Province(owner="A", cells=[(0, 0)], unit=Unit(kind="recruit", level=1, hp=3)),
+            Province(owner="B", cells=[(1, 0)], unit=Unit(kind="recruit", level=1, hp=3)),
+            Province(owner="B", cells=[(0, 1)], unit=Unit(kind="recruit", level=1, hp=3)),
+            Province(owner="B", cells=[(1, 1)], unit=Unit(kind="recruit", level=1, hp=3)),
+        ]
+
+        game.capture_surrounded_provinces()
+
+        self.assertEqual(game.provinces[0].owner, "B")
 
 
 if __name__ == "__main__":

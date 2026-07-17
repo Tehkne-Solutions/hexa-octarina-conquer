@@ -54,6 +54,23 @@ class GameState:
 
         raise ValueError(f"unsupported card effect: {card.effect}")
 
+    def capture_surrounded_provinces(self) -> None:
+        if not self.provinces:
+            return
+
+        for province in list(self.provinces):
+            neighbors = [
+                other
+                for other in self.provinces
+                if other is not province and self._are_adjacent(province, other)
+            ]
+            if not neighbors:
+                continue
+
+            enemy_owners = {neighbor.owner for neighbor in neighbors if neighbor.owner != province.owner}
+            if len(enemy_owners) == 1 and not any(neighbor.owner == province.owner for neighbor in neighbors):
+                province.owner = next(iter(enemy_owners))
+
     def _resolve_provinces(self) -> None:
         self.provinces = []
         for y in range(self.size):
@@ -100,3 +117,10 @@ class GameState:
         if len(owners) == 1:
             return next(iter(owners))
         return None
+
+    def _are_adjacent(self, first: Province, second: Province) -> bool:
+        for first_cell in first.cells:
+            for second_cell in second.cells:
+                if abs(first_cell[0] - second_cell[0]) + abs(first_cell[1] - second_cell[1]) == 1:
+                    return True
+        return False
