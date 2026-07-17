@@ -22,6 +22,12 @@ python -m unittest discover -s tests -v
 
 ## Próximos passos
 
-- expandir a regra de captura para unidades conectadas;
-- adicionar cartas de ataque, evolução e armadilha;
-- preparar a base para UI 3D e combate de células.
+- expandir o conjunto de cartas com efeitos mais distintos e equilibrados;
+- preparar uma camada de interface simples para demonstração em terminal ou web;
+- documentar e refinar a API do motor para uso em cliente ou servidor.
+
+## Status atual
+
+- Fase 1 concluída: base do motor de regras, províncias, recursos e suporte básico de cartas implementadas.
+- Fase 2 concluída: captura de províncias cercadas, evolução de era, recursos de conhecimento e fluxo de turnos adicionados, com testes automatizados garantindo o fluxo.
+- Fase 3 concluída: combate de cartas, proteção de províncias, bônus de tempo, fortalecimento por era e helpers de estado/tabuleiro integrados ao motor.
