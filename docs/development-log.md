@@ -7,6 +7,11 @@
 - adicionado suporte para cartas simples com custo de mana e efeito de evolução;
 - validado o fluxo de conquista de uma célula e evolução de uma província.
 
+## Fase 2 - Progressão estratégica
+
+- o módulo de estado do jogo passou a suportar a evolução de uma província após o uso de uma carta;
+- os testes cobrem a criação de províncias e o consumo de mana durante a evolução.
+
 ## Próximo checkpoint
 
 - incluir captura por cerco de unidades conectadas;
