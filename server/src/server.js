@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 
 import { WebSocket, WebSocketServer } from "ws";
 
-import { errorMessage, parseClientMessage, serverMessage } from "./protocol.js";
+import { ProtocolError, errorMessage, parseClientMessage, serverMessage } from "./protocol.js";
 import { RoomManager } from "./room-manager.js";
 
 function send(socket, message) {
@@ -101,9 +101,11 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
         }
 
         const context = sessionBySocket.get(socket);
-        if (!context) throw new Error("socket has no established room session");
+        if (!context) {
+          throw new ProtocolError("SESSION_REQUIRED", "establish or reconnect a room session before sending actions");
+        }
         if (context.roomId !== command.payload.roomId || context.playerId !== command.payload.playerId) {
-          throw new Error("command credentials do not match the socket session");
+          throw new ProtocolError("SESSION_MISMATCH", "command credentials do not match the socket session");
         }
 
         const { room, patch } = manager.applyCommand(command);
