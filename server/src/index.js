@@ -6,6 +6,7 @@ import { createLogger } from "./logger.js";
 import { MetricsRegistry } from "./metrics.js";
 import { createPresenceStore } from "./presence-store.js";
 import { createRecoveryProvider } from "./recovery-provider.js";
+import { createResilienceStore } from "./resilience-store.js";
 import { createRoomManager } from "./room-manager-factory.js";
 import { createRoomStore } from "./room-store.js";
 import { startServer } from "./server.js";
@@ -19,6 +20,7 @@ const competition = await createCompetitionStore();
 const eventBus = await createClusterBus();
 const presence = await createPresenceStore({ instanceId: eventBus.instanceId });
 const governance = await createGovernanceStore({ competition });
+const resilience = await createResilienceStore();
 const recoveryProvider = createRecoveryProvider({ logger });
 const manager = createRoomManager({ store });
 const server = startServer({
@@ -29,6 +31,7 @@ const server = startServer({
   eventBus,
   presence,
   governance,
+  resilience,
   recoveryProvider,
   metrics,
   logger,
@@ -37,6 +40,8 @@ const server = startServer({
 logger.info("server started", {
   port,
   websocket: `ws://0.0.0.0:${port}/ws`,
+  spectatorWebsocket: `ws://0.0.0.0:${port}/spectator?roomId=ROOM_ID`,
+  adminPanel: `http://0.0.0.0:${port}/admin`,
   instanceId: eventBus.instanceId,
   cachedRooms: manager.rooms.size,
   roomStore: store.kind,
@@ -45,6 +50,7 @@ logger.info("server started", {
   governanceStore: governance.kind,
   clusterBus: eventBus.kind,
   presenceStore: presence.kind,
+  resilienceStore: resilience.kind,
   recoveryProvider: recoveryProvider.kind,
 });
 

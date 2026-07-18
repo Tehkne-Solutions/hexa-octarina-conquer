@@ -59,6 +59,19 @@ export class RoomManager {
     return patch ? { room, patch } : null;
   }
 
+  expireDisconnect(roomId, playerId) {
+    const room = this.rooms.get(roomId);
+    if (!room || room.status === "finished") return null;
+    let patch;
+    if (room.status === "active" && room.players.length === 2) {
+      patch = room.forfeitPlayer(playerId, "abandonment", { disconnect: true });
+    } else {
+      patch = room.disconnect(playerId);
+    }
+    if (patch) this.persist(room);
+    return patch ? { room, patch } : null;
+  }
+
   listRooms({ status } = {}) {
     return [...this.rooms.values()]
       .filter((room) => !status || room.status === status)

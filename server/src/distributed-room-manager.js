@@ -67,6 +67,24 @@ export class DistributedRoomManager {
     return { room, patch };
   }
 
+  async expireDisconnect(roomId, playerId) {
+    const raw = await this.store.loadRoom(roomId);
+    if (!raw) return null;
+    const room = this.restore(raw);
+    if (room.status === "finished") return null;
+    const expectedRevision = room.revision;
+    let patch;
+    if (room.status === "active" && room.players.length === 2) {
+      patch = room.forfeitPlayer(playerId, "abandonment", { disconnect: true });
+    } else {
+      patch = room.disconnect(playerId);
+    }
+    if (!patch) return null;
+    await this.store.saveRoom(room, { expectedRevision });
+    this.rooms.set(room.id, room);
+    return { room, patch };
+  }
+
   async listRooms({ status } = {}) {
     const records = await this.store.loadRooms();
     const rooms = [];

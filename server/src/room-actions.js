@@ -141,10 +141,20 @@ export class RoomActions {
   }
 
   forfeitMatch(player) {
+    return this.forfeitPlayer(player.id, "forfeit");
+  }
+
+  forfeitPlayer(playerId, reason = "abandonment", { disconnect = reason === "abandonment" } = {}) {
     if (this.status !== "active" || this.players.length !== 2) {
       throw new ProtocolError("MATCH_NOT_ACTIVE", "a two-player active match is required");
     }
+    const player = this.players.find((candidate) => candidate.id === playerId);
+    if (!player) throw new ProtocolError("PLAYER_NOT_FOUND", "player does not exist in this room");
     const winner = this.players.find((candidate) => candidate.id !== player.id);
+    if (disconnect) {
+      player.connected = false;
+      player.lastSeenAt = this.clock();
+    }
     this.status = "finished";
     this.matchResult = {
       roomId: this.id,
@@ -152,7 +162,7 @@ export class RoomActions {
       loserPlayerId: player.id,
       winnerAccountId: winner.accountId ?? null,
       loserAccountId: player.accountId ?? null,
-      reason: "forfeit",
+      reason,
       finishedAt: this.clock(),
     };
     return this.commit("match.finished", {
