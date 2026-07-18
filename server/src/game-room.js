@@ -59,10 +59,14 @@ export class GameRoom extends RoomActions {
   }
 
   reconnect({ playerId, sessionToken, lastRevision = 0 }) {
+    const existing = this.players.find((item) => item.id === playerId);
+    const wasConnected = existing?.connected ?? false;
     const player = this.authenticate(playerId, sessionToken);
+    const connectionPatch = wasConnected ? null : this.commit("player.reconnected", { playerId });
     const patches = this.patchesSince(lastRevision);
     return {
       player,
+      connectionPatch,
       mode: patches === null ? "snapshot" : "patches",
       snapshot: patches === null ? this.snapshot() : undefined,
       patches: patches ?? undefined,
@@ -183,7 +187,11 @@ export class GameRoom extends RoomActions {
     });
     room.status = raw.status;
     room.revision = raw.revision;
-    room.players = (raw.players ?? []).map((player) => ({ ...player, hand: [...player.hand] }));
+    room.players = (raw.players ?? []).map((player) => ({
+      ...player,
+      connected: false,
+      hand: [...player.hand],
+    }));
     room.board = BoardState.fromJSON(raw.board);
     room.duels = new Map((raw.duels ?? []).map((duel) => [duel.id, duel]));
     room.nextDuelId = raw.nextDuelId ?? 1;
