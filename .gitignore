@@ -14,16 +14,18 @@ htmlcov/
 node_modules/
 npm-debug.log*
 
-# Authoritative room persistence
+# Authoritative persistence
 .data/
 server/.data/
+
+# Generated packages
+build/
 
 # Godot 4
 .godot/
 client/godot/.godot/
 .export/
 export.cfg
-export_presets.cfg
 
 # Local environment
 .env
