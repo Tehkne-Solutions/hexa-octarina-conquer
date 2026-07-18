@@ -48,7 +48,10 @@ async function connect(instance) {
   const address = instance.httpServer.address();
   const socket = new WebSocket(`ws://127.0.0.1:${address.port}/ws`);
   const inbox = createInbox(socket);
-  await once(socket, "open");
+  await Promise.race([
+    once(socket, "open"),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("socket open timed out")), 2_000)),
+  ]);
   await inbox.next("server.hello");
   return { socket, inbox };
 }
@@ -56,11 +59,25 @@ async function connect(instance) {
 async function closeSocket(socket) {
   if (!socket || socket.readyState === WebSocket.CLOSED) return;
   const closed = once(socket, "close");
-  socket.close();
-  await closed;
+  socket.close(1000, "test complete");
+  await Promise.race([
+    closed,
+    new Promise((resolve) => setTimeout(() => {
+      socket.terminate();
+      resolve();
+    }, 300)),
+  ]);
 }
 
-test("two replicas synchronize room patches, private state and presence", async () => {
+async function closeInstance(instance) {
+  for (const client of instance.websocketServer.clients) client.terminate();
+  await Promise.race([
+    instance.close(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("server shutdown timed out")), 2_000)),
+  ]);
+}
+
+test("two replicas synchronize room patches, private state and presence", { timeout: 12_000 }, async () => {
   const emitter = new EventEmitter();
   const manager = new RoomManager({ store: new MemoryRoomStore() });
   const presence = new MemoryPresenceStore({ instanceId: "shared-memory-presence" });
@@ -121,7 +138,6 @@ test("two replicas synchronize room patches, private state and presence", async 
     assert.equal((await secondClient.inbox.next("player.private_state")).payload.playerId, secondSession.payload.playerId);
   } finally {
     await Promise.allSettled([closeSocket(firstClient?.socket), closeSocket(secondClient?.socket)]);
-    await first.close();
-    await second.close();
+    await Promise.allSettled([closeInstance(first), closeInstance(second)]);
   }
 });
