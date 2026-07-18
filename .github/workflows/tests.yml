@@ -43,10 +43,14 @@ jobs:
         run: npm run syntax
       - name: Test protocol and room lifecycle
         run: node --test test/protocol.test.js test/room-manager.test.js
-      - name: Test duels and connected provinces
-        run: node --test test/duel-flow.test.js test/provinces.test.js
-      - name: Test persistence and WebSocket transport
-        run: node --test test/persistence.test.js test/websocket.test.js
+      - name: Test duel flow
+        run: node --test test/duel-flow.test.js
+      - name: Test connected provinces and siege
+        run: node --test test/provinces.test.js
+      - name: Test persistence
+        run: node --test test/persistence.test.js
+      - name: Test WebSocket and lobby transport
+        run: node --test test/websocket.test.js
       - name: Compare Node and Python engines
         env:
           PYTHON: python
