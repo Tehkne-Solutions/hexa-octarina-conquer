@@ -1,33 +1,49 @@
 # Hexa Octarina Conquer
 
-Este repositório inicia a implementação de um protótipo de jogo híbrido baseado no conceito do GDD em [docs/Hexa Octarina Conquer - GDD - Jogo.md](docs/Hexa%20Octarina%20Conquer%20-%20GDD%20-%20Jogo.md).
+Motor de referência do jogo tático híbrido definido no GDD: conquista geométrica por **Dots and Boxes**, conexão e cerco inspirados em **Go**, progressão de eras, economia territorial e duelos de cartas em células.
 
-## Objetivo do protótipo
+## Estado atual — v0.2.0
 
-- apoiar a lógica de tabuleiro inspirada em Go e Dots and Boxes;
-- permitir a criação de províncias e unidades progressivas;
-- servir de base para uma futura camada de cartas, combate e UI 3D.
+Esta sprint estabiliza o núcleo antes da integração com Godot 4 e backend autoritativo:
 
-## Estrutura inicial
+- arestas validadas por limite, ortogonalidade e duplicidade;
+- posse da célula atribuída a quem fecha o quarto lado;
+- províncias persistentes, sem perder HP, nível ou proteção quando o tabuleiro muda;
+- turnos corrigidos, com ações por era e turno extra ao fechar células;
+- recursos de madeira, pedra, comida e conhecimento;
+- cercos agora abrem um **Duelo de Célula**, em vez de capturar silenciosamente;
+- combate TCG com energia, escudo, cura, status, elementos e combo `wet + electric`;
+- eventos e snapshot serializável para futura API/WebSocket;
+- assinatura técnica: **Tehkné Solutions**.
 
-- `src/hexa_octarina_conquer/`: núcleo do jogo e regras de simulação;
-- `tests/`: testes automatizados para garantir evolução controlada;
-- `docs/`: documentação de arquitetura, roadmap e decisões de produto.
-
-## Como executar os testes
+## Executar
 
 ```bash
 python -m unittest discover -s tests -v
+PYTHONPATH=src python -m hexa_octarina_conquer.cli
 ```
 
-## Próximos passos
+Após instalação editável, o comando também fica disponível:
 
-- expandir o conjunto de cartas com efeitos mais distintos e equilibrados;
-- preparar uma camada de interface simples para demonstração em terminal ou web;
-- documentar e refinar a API do motor para uso em cliente ou servidor.
+```bash
+pip install -e .
+hexa-octarina
+```
 
-## Status atual
+## Estrutura
 
-- Fase 1 concluída: base do motor de regras, províncias, recursos e suporte básico de cartas implementadas.
-- Fase 2 concluída: captura de províncias cercadas, evolução de era, recursos de conhecimento e fluxo de turnos adicionados, com testes automatizados garantindo o fluxo.
-- Fase 3 concluída: combate de cartas, proteção de províncias, bônus de tempo, fortalecimento por era e helpers de estado/tabuleiro integrados ao motor.
+- `src/hexa_octarina_conquer/game_state.py`: estado autoritativo, Dots, províncias, turnos, eras e gatilhos de cerco;
+- `src/hexa_octarina_conquer/combat.py`: resolução determinística dos duelos TCG;
+- `src/hexa_octarina_conquer/catalog.py`: deck inicial de demonstração;
+- `src/hexa_octarina_conquer/cli.py`: cliente local mínimo;
+- `tests/`: regressões do motor e do combate;
+- `docs/adr/`: decisões arquiteturais;
+- `docs/sprint-04-core-tatico.md`: escopo e critérios desta entrega.
+
+## Próximo marco
+
+Implementar a camada de transporte autoritativa em Node.js/WebSocket e um cliente Godot 4 que consuma snapshots e eventos deste motor como especificação executável.
+
+---
+
+Desenvolvido por **Tehkné Solutions**.
