@@ -33,6 +33,8 @@ test("PostgreSQL persists matchmaking, season, telemetry and recovery", { skip: 
     const leaderboard = await competition.seasonLeaderboard();
     assert.equal(leaderboard[0].accountId, first.account.id);
     assert.equal(leaderboard[0].wins, 1);
+    assert.equal(leaderboard[0].rating, 1000 + progression.match.winnerRatingDelta);
+    assert.equal(leaderboard[1].rating, 1000 + progression.match.loserRatingDelta);
 
     const telemetry = await competition.recordTelemetry({
       accountId: first.account.id,
@@ -43,6 +45,16 @@ test("PostgreSQL persists matchmaking, season, telemetry and recovery", { skip: 
     assert.equal(telemetry.accepted, true);
 
     const challenge = await competition.createRecovery(first.account.id);
+    await assert.rejects(
+      competition.consumeRecovery(first.account.id, "WRONG-CODE"),
+      (error) => error.code === "RECOVERY_INVALID",
+    );
+    const attempts = await competition.pool.query(
+      "SELECT attempts FROM recovery_challenges WHERE account_id = $1",
+      [first.account.id],
+    );
+    assert.equal(Number(attempts.rows[0].attempts), 1);
+
     await competition.consumeRecovery(first.account.id, challenge.recoveryCode);
     const recovered = await identity.resetPassword(first.account.id, "password-recovered");
     assert.equal(recovered.account.id, first.account.id);
