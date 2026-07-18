@@ -7,6 +7,7 @@ export class RoomActions {
     const { payload } = command;
     const player = this.authenticate(payload.playerId, payload.sessionToken);
     this.assertRevision(payload.expectedRevision);
+    if (this.status === "finished") throw new ProtocolError("MATCH_FINISHED", "this match has already finished");
 
     switch (command.type) {
       case "action.play_edge":
@@ -15,6 +16,8 @@ export class RoomActions {
         return this.playCard(player, payload);
       case "action.resolve_duel_round":
         return this.submitDuelRound(player, payload.duelId, payload.cardIds);
+      case "match.forfeit":
+        return this.forfeitMatch(player);
       default:
         throw new ProtocolError("UNKNOWN_COMMAND", `unsupported room command: ${command.type}`);
     }
@@ -50,9 +53,7 @@ export class RoomActions {
 
     let actionResult;
     if (card.effect === "conquest") {
-      if (!payload.start || !payload.end) {
-        throw new ProtocolError("MISSING_TARGET", "expansion requires start and end coordinates");
-      }
+      if (!payload.start || !payload.end) throw new ProtocolError("MISSING_TARGET", "expansion requires start and end coordinates");
       this.board.validateEdge(payload.start, payload.end);
       actionResult = this.board.playEdge(player.id, payload.start, payload.end, { consumeAction: false });
       actionResult.automaticDuelIds = this.openAutomaticSieges();
@@ -69,19 +70,12 @@ export class RoomActions {
     player.hand = removeCards(player.hand, [card.id]);
     player.mana -= card.cost;
     this.usedMacroTurns.add(turnKey);
-
-    return this.commit("card.played", {
-      playerId: player.id,
-      cardId: card.id,
-      actionResult,
-    });
+    return this.commit("card.played", { playerId: player.id, cardId: card.id, actionResult });
   }
 
   openProvinceDuel(attackerId, provinceId, reason = "contact") {
     const province = this.board.getProvince(provinceId);
-    if (province.ownerId === attackerId) {
-      throw new ProtocolError("INVALID_TARGET", "cannot duel an allied province");
-    }
+    if (province.ownerId === attackerId) throw new ProtocolError("INVALID_TARGET", "cannot duel an allied province");
     const existing = [...this.duels.values()].find((item) => item.provinceId === province.id && item.status !== "resolved");
     if (existing) {
       if (reason === "surround") return existing;
@@ -107,8 +101,7 @@ export class RoomActions {
       const province = this.board.getProvince(candidate.provinceId);
       const existing = [...this.duels.values()].find((item) => item.provinceId === province.id && item.status !== "resolved");
       if (existing) continue;
-      const duel = this.openProvinceDuel(candidate.attackerId, candidate.provinceId, "surround");
-      opened.push(duel.id);
+      opened.push(this.openProvinceDuel(candidate.attackerId, candidate.provinceId, "surround").id);
     }
     return opened;
   }
@@ -129,7 +122,6 @@ export class RoomActions {
   submitDuelRound(player, duelId, cardIds) {
     const duel = this.duels.get(duelId);
     if (!duel) throw new ProtocolError("DUEL_NOT_FOUND", "duel does not exist");
-
     const ready = submitDuelCards({ duel, player, cardIds });
     let resolution = { resolved: false, winnerId: null };
     let mergedProvinceId = null;
@@ -143,14 +135,30 @@ export class RoomActions {
         automaticDuelIds = this.openAutomaticSieges();
       }
     }
-
     return this.commit(ready ? "duel.round_resolved" : "duel.cards_submitted", {
-      duelId,
-      playerId: player.id,
-      ready,
-      resolution,
-      mergedProvinceId,
-      automaticDuelIds,
+      duelId, playerId: player.id, ready, resolution, mergedProvinceId, automaticDuelIds,
+    });
+  }
+
+  forfeitMatch(player) {
+    if (this.status !== "active" || this.players.length !== 2) {
+      throw new ProtocolError("MATCH_NOT_ACTIVE", "a two-player active match is required");
+    }
+    const winner = this.players.find((candidate) => candidate.id !== player.id);
+    this.status = "finished";
+    this.matchResult = {
+      roomId: this.id,
+      winnerPlayerId: winner.id,
+      loserPlayerId: player.id,
+      winnerAccountId: winner.accountId ?? null,
+      loserAccountId: player.accountId ?? null,
+      reason: "forfeit",
+      finishedAt: this.clock(),
+    };
+    return this.commit("match.finished", {
+      winnerPlayerId: winner.id,
+      loserPlayerId: player.id,
+      reason: this.matchResult.reason,
     });
   }
 

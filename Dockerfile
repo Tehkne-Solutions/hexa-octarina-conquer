@@ -10,7 +10,9 @@ COPY server/src ./src
 ENV NODE_ENV=production \
     PORT=8080 \
     HEXA_STORE=sqlite \
-    HEXA_DB_PATH=/data/hexa-octarina.sqlite
+    HEXA_DB_PATH=/data/hexa-octarina.sqlite \
+    HEXA_IDENTITY_STORE=sqlite \
+    HEXA_IDENTITY_DB_PATH=/data/hexa-identity.sqlite
 
 RUN mkdir -p /data && chown -R node:node /app /data
 

@@ -51,6 +51,24 @@ function requireStringArray(value, label, max = 8) {
   return value.map((item, index) => requireString(item, `${label}[${index}]`));
 }
 
+function accountCredentials(payload) {
+  const accountId = optionalString(payload.accountId, "payload.accountId");
+  const accessToken = optionalString(payload.accessToken, "payload.accessToken");
+  if ((accountId && !accessToken) || (!accountId && accessToken)) {
+    throw new ProtocolError("INVALID_MESSAGE", "accountId and accessToken must be supplied together");
+  }
+  return { accountId, accessToken };
+}
+
+function roomSession(payload) {
+  return {
+    roomId: requireString(payload.roomId, "payload.roomId"),
+    playerId: requireString(payload.playerId, "payload.playerId"),
+    sessionToken: requireString(payload.sessionToken, "payload.sessionToken"),
+    expectedRevision: requireInteger(payload.expectedRevision, "payload.expectedRevision", 0),
+  };
+}
+
 export function parseClientMessage(raw) {
   let message;
   try {
@@ -64,91 +82,114 @@ export function parseClientMessage(raw) {
   const requestId = optionalString(message.requestId, "requestId") ?? crypto.randomUUID();
   const protocolVersion = requireString(message.protocolVersion, "protocolVersion");
   if (protocolVersion !== PROTOCOL_VERSION) {
-    throw new ProtocolError("UNSUPPORTED_PROTOCOL", `expected protocol ${PROTOCOL_VERSION}`, {
-      received: protocolVersion,
-    });
+    throw new ProtocolError("UNSUPPORTED_PROTOCOL", `expected protocol ${PROTOCOL_VERSION}`, { received: protocolVersion });
   }
-
   if (type === "ping") return { type, requestId, protocolVersion };
 
+  const optionalPayload = message.payload ?? {};
+  assertObject(optionalPayload, "payload");
+
   if (type === "lobby.list") {
-    const payload = message.payload ?? {};
-    assertObject(payload, "payload");
-    const status = optionalString(payload.status, "payload.status");
+    const status = optionalString(optionalPayload.status, "payload.status");
     if (status && !["waiting", "active", "finished"].includes(status)) {
       throw new ProtocolError("INVALID_MESSAGE", "payload.status must be waiting, active or finished");
     }
     return { type, requestId, protocolVersion, payload: { status } };
   }
 
-  assertObject(message.payload, "payload");
-  const payload = message.payload;
+  if (type === "leaderboard.list") {
+    return {
+      type, requestId, protocolVersion,
+      payload: { limit: optionalPayload.limit === undefined ? 25 : requireInteger(optionalPayload.limit, "payload.limit", 1, 100) },
+    };
+  }
 
+  if (type === "account.register") {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        handle: requireString(optionalPayload.handle, "payload.handle"),
+        displayName: requireString(optionalPayload.displayName, "payload.displayName"),
+        password: requireString(optionalPayload.password, "payload.password"),
+      },
+    };
+  }
+
+  if (type === "account.login") {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        handle: requireString(optionalPayload.handle, "payload.handle"),
+        password: requireString(optionalPayload.password, "payload.password"),
+      },
+    };
+  }
+
+  if (["account.profile", "account.history"].includes(type)) {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        accountId: requireString(optionalPayload.accountId, "payload.accountId"),
+        accessToken: requireString(optionalPayload.accessToken, "payload.accessToken"),
+        ...(type === "account.history" ? {
+          limit: optionalPayload.limit === undefined ? 25 : requireInteger(optionalPayload.limit, "payload.limit", 1, 100),
+        } : {}),
+      },
+    };
+  }
+
+  const payload = optionalPayload;
   switch (type) {
-    case "room.create":
+    case "room.create": {
+      const credentials = accountCredentials(payload);
+      const playerName = optionalString(payload.playerName, "payload.playerName");
+      if (!playerName && !credentials.accountId) throw new ProtocolError("INVALID_MESSAGE", "playerName or account credentials are required");
       return {
-        type,
-        requestId,
-        protocolVersion,
+        type, requestId, protocolVersion,
         payload: {
-          playerName: requireString(payload.playerName, "payload.playerName"),
-          boardSize: payload.boardSize === undefined
-            ? 5
-            : requireInteger(payload.boardSize, "payload.boardSize", 3, 19),
+          playerName,
+          ...credentials,
+          boardSize: payload.boardSize === undefined ? 5 : requireInteger(payload.boardSize, "payload.boardSize", 3, 19),
         },
       };
+    }
 
-    case "room.join":
+    case "room.join": {
+      const credentials = accountCredentials(payload);
+      const playerName = optionalString(payload.playerName, "payload.playerName");
+      if (!playerName && !credentials.accountId) throw new ProtocolError("INVALID_MESSAGE", "playerName or account credentials are required");
       return {
-        type,
-        requestId,
-        protocolVersion,
+        type, requestId, protocolVersion,
         payload: {
           roomId: requireString(payload.roomId, "payload.roomId"),
-          playerName: requireString(payload.playerName, "payload.playerName"),
+          playerName,
+          ...credentials,
         },
       };
+    }
 
     case "room.reconnect":
       return {
-        type,
-        requestId,
-        protocolVersion,
+        type, requestId, protocolVersion,
         payload: {
           roomId: requireString(payload.roomId, "payload.roomId"),
           playerId: requireString(payload.playerId, "payload.playerId"),
           sessionToken: requireString(payload.sessionToken, "payload.sessionToken"),
-          lastRevision: payload.lastRevision === undefined
-            ? 0
-            : requireInteger(payload.lastRevision, "payload.lastRevision", 0),
+          lastRevision: payload.lastRevision === undefined ? 0 : requireInteger(payload.lastRevision, "payload.lastRevision", 0),
         },
       };
 
     case "action.play_edge":
       return {
-        type,
-        requestId,
-        protocolVersion,
-        payload: {
-          roomId: requireString(payload.roomId, "payload.roomId"),
-          playerId: requireString(payload.playerId, "payload.playerId"),
-          sessionToken: requireString(payload.sessionToken, "payload.sessionToken"),
-          expectedRevision: requireInteger(payload.expectedRevision, "payload.expectedRevision", 0),
-          start: requireCoordinate(payload.start, "payload.start"),
-          end: requireCoordinate(payload.end, "payload.end"),
-        },
+        type, requestId, protocolVersion,
+        payload: { ...roomSession(payload), start: requireCoordinate(payload.start, "payload.start"), end: requireCoordinate(payload.end, "payload.end") },
       };
 
     case "action.play_card":
       return {
-        type,
-        requestId,
-        protocolVersion,
+        type, requestId, protocolVersion,
         payload: {
-          roomId: requireString(payload.roomId, "payload.roomId"),
-          playerId: requireString(payload.playerId, "payload.playerId"),
-          sessionToken: requireString(payload.sessionToken, "payload.sessionToken"),
-          expectedRevision: requireInteger(payload.expectedRevision, "payload.expectedRevision", 0),
+          ...roomSession(payload),
           cardId: requireString(payload.cardId, "payload.cardId"),
           provinceId: optionalString(payload.provinceId, "payload.provinceId"),
           targetPlayerId: optionalString(payload.targetPlayerId, "payload.targetPlayerId"),
@@ -159,18 +200,12 @@ export function parseClientMessage(raw) {
 
     case "action.resolve_duel_round":
       return {
-        type,
-        requestId,
-        protocolVersion,
-        payload: {
-          roomId: requireString(payload.roomId, "payload.roomId"),
-          playerId: requireString(payload.playerId, "payload.playerId"),
-          sessionToken: requireString(payload.sessionToken, "payload.sessionToken"),
-          expectedRevision: requireInteger(payload.expectedRevision, "payload.expectedRevision", 0),
-          duelId: requireString(payload.duelId, "payload.duelId"),
-          cardIds: requireStringArray(payload.cardIds, "payload.cardIds", 6),
-        },
+        type, requestId, protocolVersion,
+        payload: { ...roomSession(payload), duelId: requireString(payload.duelId, "payload.duelId"), cardIds: requireStringArray(payload.cardIds, "payload.cardIds", 6) },
       };
+
+    case "match.forfeit":
+      return { type, requestId, protocolVersion, payload: roomSession(payload) };
 
     default:
       throw new ProtocolError("UNKNOWN_COMMAND", `unsupported command type: ${type}`);
@@ -178,21 +213,12 @@ export function parseClientMessage(raw) {
 }
 
 export function serverMessage(type, payload = {}, requestId = undefined) {
-  return {
-    protocolVersion: PROTOCOL_VERSION,
-    type,
-    ...(requestId ? { requestId } : {}),
-    payload,
-  };
+  return { protocolVersion: PROTOCOL_VERSION, type, ...(requestId ? { requestId } : {}), payload };
 }
 
 export function errorMessage(error, requestId = undefined) {
   const normalized = error instanceof ProtocolError
     ? error
     : new ProtocolError("INTERNAL_ERROR", error instanceof Error ? error.message : "internal error");
-  return serverMessage("error", {
-    code: normalized.code,
-    message: normalized.message,
-    details: normalized.details,
-  }, requestId);
+  return serverMessage("error", { code: normalized.code, message: normalized.message, details: normalized.details }, requestId);
 }

@@ -20,19 +20,24 @@ export class GameRoom extends RoomActions {
     this.nextDuelId = 1;
     this.usedMacroTurns = new Set();
     this.patchLog = [];
+    this.matchResult = null;
     this.createdAt = this.clock();
     this.updatedAt = this.createdAt;
   }
 
-  addPlayer(playerName) {
+  addPlayer(playerName, { accountId = null } = {}) {
     if (this.players.length >= 2) throw new ProtocolError("ROOM_FULL", "room already has two players");
     const normalizedName = playerName.trim();
     if (this.players.some((player) => player.name.toLowerCase() === normalizedName.toLowerCase())) {
       throw new ProtocolError("DUPLICATE_PLAYER_NAME", "player name is already used in this room");
     }
+    if (accountId && this.players.some((player) => player.accountId === accountId)) {
+      throw new ProtocolError("ACCOUNT_ALREADY_IN_ROOM", "this account already participates in the room");
+    }
 
     const player = {
       id: this.idFactory(),
+      accountId,
       sessionToken: this.idFactory(),
       name: normalizedName,
       connected: true,
@@ -44,7 +49,12 @@ export class GameRoom extends RoomActions {
     this.players.push(player);
     this.board.setPlayerOrder(this.players.map((item) => item.id));
     if (this.players.length === 2) this.status = "active";
-    const patch = this.commit("player.joined", { playerId: player.id, playerName: player.name, status: this.status });
+    const patch = this.commit("player.joined", {
+      playerId: player.id,
+      playerName: player.name,
+      accountLinked: Boolean(player.accountId),
+      status: this.status,
+    });
     return { player, patch };
   }
 
@@ -108,6 +118,7 @@ export class GameRoom extends RoomActions {
         board: this.board.snapshot(),
         players: this.publicPlayers(),
         duels: [...this.duels.values()].map(duelSnapshot),
+        matchResult: this.publicMatchResult(),
       },
     };
     this.patchLog.push(patch);
@@ -127,10 +138,21 @@ export class GameRoom extends RoomActions {
       id: player.id,
       name: player.name,
       connected: player.connected,
+      accountLinked: Boolean(player.accountId),
       mana: player.mana,
       hp: player.hp,
       handSize: player.hand.length,
     }));
+  }
+
+  publicMatchResult() {
+    if (!this.matchResult) return null;
+    return {
+      winnerPlayerId: this.matchResult.winnerPlayerId,
+      loserPlayerId: this.matchResult.loserPlayerId,
+      reason: this.matchResult.reason,
+      finishedAt: this.matchResult.finishedAt,
+    };
   }
 
   privateStateFor(playerId) {
@@ -144,6 +166,7 @@ export class GameRoom extends RoomActions {
       roomId: this.id,
       revision: this.revision,
       playerId: player.id,
+      accountId: player.accountId,
       name: player.name,
       mana: player.mana,
       hp: player.hp,
@@ -158,7 +181,11 @@ export class GameRoom extends RoomActions {
       status: this.status,
       boardSize: this.board.size,
       playerCount: this.players.length,
-      players: this.players.map((player) => ({ name: player.name, connected: player.connected })),
+      players: this.players.map((player) => ({
+        name: player.name,
+        connected: player.connected,
+        accountLinked: Boolean(player.accountId),
+      })),
       revision: this.revision,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
@@ -175,12 +202,13 @@ export class GameRoom extends RoomActions {
       board: this.board.snapshot(),
       players: this.publicPlayers(),
       duels: [...this.duels.values()].map(duelSnapshot),
+      matchResult: this.publicMatchResult(),
     };
   }
 
   serialize() {
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: this.id,
       status: this.status,
       revision: this.revision,
@@ -190,13 +218,14 @@ export class GameRoom extends RoomActions {
       nextDuelId: this.nextDuelId,
       usedMacroTurns: [...this.usedMacroTurns],
       patchLog: this.patchLog,
+      matchResult: this.matchResult,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
   }
 
   static restore(raw, { idFactory = randomUUID, clock = () => Date.now() } = {}) {
-    if (!raw || raw.schemaVersion !== 1) {
+    if (!raw || ![1, 2].includes(raw.schemaVersion)) {
       throw new ProtocolError("INVALID_ROOM_DATA", "unsupported persisted room schema");
     }
     const room = new GameRoom({
@@ -209,6 +238,7 @@ export class GameRoom extends RoomActions {
     room.revision = raw.revision;
     room.players = (raw.players ?? []).map((player) => ({
       ...player,
+      accountId: player.accountId ?? null,
       connected: false,
       hand: [...player.hand],
     }));
@@ -217,6 +247,7 @@ export class GameRoom extends RoomActions {
     room.nextDuelId = raw.nextDuelId ?? 1;
     room.usedMacroTurns = new Set(raw.usedMacroTurns ?? []);
     room.patchLog = raw.patchLog ?? [];
+    room.matchResult = raw.matchResult ?? null;
     room.createdAt = raw.createdAt ?? room.createdAt;
     room.updatedAt = raw.updatedAt ?? room.updatedAt;
     return room;
