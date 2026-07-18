@@ -25,4 +25,15 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run isolated cross-replica transport test
-        run: node --test --test-force-exit test/cluster-websocket.test.js
+        run: |
+          set +e
+          node --test --test-force-exit test/cluster-websocket.test.js 2>&1 | tee /tmp/cluster-test.log
+          status=${PIPESTATUS[0]}
+          set -e
+          exit "$status"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cluster-transport-log
+          path: /tmp/cluster-test.log
+          if-no-files-found: error
