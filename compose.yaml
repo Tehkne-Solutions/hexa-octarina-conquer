@@ -1,13 +1,35 @@
 services:
+  postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hexa_octarina
+      POSTGRES_USER: hexa
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hexa-development}
+    volumes:
+      - hexa_octarina_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hexa -d hexa_octarina"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   hexa-octarina-server:
     build:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
+      NODE_ENV: production
       PORT: 8080
       HEXA_STORE: sqlite
       HEXA_DB_PATH: /data/hexa-octarina.sqlite
+      HEXA_IDENTITY_STORE: postgres
+      DATABASE_URL: postgresql://hexa:${POSTGRES_PASSWORD:-hexa-development}@postgres:5432/hexa_octarina
+      HEXA_PG_POOL_SIZE: 10
     ports:
       - "8080:8080"
     volumes:
@@ -21,3 +43,4 @@ services:
 
 volumes:
   hexa_octarina_data:
+  hexa_octarina_postgres:
