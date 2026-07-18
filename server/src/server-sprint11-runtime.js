@@ -21,8 +21,10 @@ export function startServer(options = {}) {
   const logger = options.logger ?? createLogger();
   const metrics = options.metrics ?? new MetricsRegistry();
   const recoveryProvider = options.recoveryProvider ?? createRecoveryProvider({ logger });
+  const closeResilience = resilience.close?.bind(resilience) ?? (async () => {});
+  resilience.close = async () => {};
 
-  return startSprint11Server({
+  const instance = startSprint11Server({
     ...options,
     manager,
     identity,
@@ -35,4 +37,11 @@ export function startServer(options = {}) {
     metrics,
     recoveryProvider,
   });
+  const closeRuntime = instance.close.bind(instance);
+  instance.close = async () => {
+    manager.disconnect = async () => null;
+    await closeRuntime();
+    await closeResilience();
+  };
+  return instance;
 }
