@@ -2,16 +2,18 @@
 set -euo pipefail
 
 PROJECT_DIR="${1:-client/godot}"
-TEMPLATE_DIR="${GODOT_TEMPLATE_DIR:-$HOME/.local/share/godot/export_templates/4.6.3.stable}"
+GODOT_TEMPLATE_VERSION="${GODOT_TEMPLATE_VERSION:-4.6.3.stable}"
+TEMPLATE_DIR="${GODOT_TEMPLATE_DIR:-$HOME/.local/share/godot/export_templates/$GODOT_TEMPLATE_VERSION}"
 SOURCE_ZIP="$TEMPLATE_DIR/android_source.zip"
-DEST="$PROJECT_DIR/android/build"
+ANDROID_DIR="$PROJECT_DIR/android"
+DEST="$ANDROID_DIR/build"
 
 if [[ ! -f "$SOURCE_ZIP" ]]; then
   echo "Android Gradle template not found: $SOURCE_ZIP" >&2
   exit 1
 fi
 
-rm -rf "$PROJECT_DIR/android"
+rm -rf "$ANDROID_DIR"
 mkdir -p "$DEST"
 unzip -q "$SOURCE_ZIP" -d "$DEST"
 
@@ -30,4 +32,8 @@ test -f "$DEST/gradlew"
 test -f "$DEST/src/main/AndroidManifest.xml"
 chmod +x "$DEST/gradlew"
 
-echo "Godot Android Gradle template installed at $DEST"
+# Godot validates this file before starting any Gradle export.
+printf '%s\n' "$GODOT_TEMPLATE_VERSION" > "$ANDROID_DIR/.build_version"
+
+test "$(tr -d '\r\n' < "$ANDROID_DIR/.build_version")" = "$GODOT_TEMPLATE_VERSION"
+echo "Godot Android Gradle template $GODOT_TEMPLATE_VERSION installed at $DEST"
