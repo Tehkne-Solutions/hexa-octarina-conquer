@@ -55,7 +55,7 @@ async function closeSocket(socket) {
   await closed;
 }
 
-test("creates, joins and synchronizes a room over WebSocket", async () => {
+test("creates, joins and synchronizes public and private state over WebSocket", async () => {
   const instance = startServer({ port: 0 });
   let firstSocket;
   let secondSocket;
@@ -72,7 +72,11 @@ test("creates, joins and synchronizes a room over WebSocket", async () => {
 
     send(firstSocket, "room.create", { playerName: "A", boardSize: 3 }, "create-1");
     const firstSession = await firstInbox.next("session.established");
-    await firstInbox.next("room.patch");
+    assert.equal(firstSession.payload.privateState.hand.length, 8);
+    assert.equal(firstSession.payload.privateState.hand[0].name, "Expansão Rúnica");
+    const firstCreatedPatch = await firstInbox.next("room.patch");
+    assert.equal(JSON.stringify(firstCreatedPatch).includes("Raio Encadeado"), false);
+    await firstInbox.next("player.private_state");
 
     secondSocket = new WebSocket(url);
     const secondInbox = createInbox(secondSocket);
@@ -84,8 +88,11 @@ test("creates, joins and synchronizes a room over WebSocket", async () => {
     }, "join-1");
 
     const secondSession = await secondInbox.next("session.established");
+    assert.equal(secondSession.payload.privateState.playerId, secondSession.payload.playerId);
     const firstJoinPatch = await firstInbox.next("room.patch");
     await secondInbox.next("room.patch");
+    await firstInbox.next("player.private_state");
+    await secondInbox.next("player.private_state");
     assert.equal(firstJoinPatch.payload.state.status, "active");
 
     send(firstSocket, "action.play_edge", {
@@ -100,9 +107,13 @@ test("creates, joins and synchronizes a room over WebSocket", async () => {
     const accepted = await firstInbox.next("command.accepted");
     const firstEdgePatch = await firstInbox.next("room.patch");
     const secondEdgePatch = await secondInbox.next("room.patch");
+    const firstPrivate = await firstInbox.next("player.private_state");
+    const secondPrivate = await secondInbox.next("player.private_state");
     assert.equal(accepted.payload.revision, firstEdgePatch.payload.revision);
     assert.equal(secondEdgePatch.payload.state.board.edges.length, 1);
     assert.equal(secondEdgePatch.payload.state.board.currentPlayerId, secondSession.payload.playerId);
+    assert.equal(firstPrivate.payload.playerId, firstSession.payload.playerId);
+    assert.equal(secondPrivate.payload.playerId, secondSession.payload.playerId);
   } finally {
     await Promise.allSettled([closeSocket(firstSocket), closeSocket(secondSocket)]);
     await instance.close();
@@ -131,6 +142,7 @@ test("publishes a safe lobby over WebSocket and HTTP", async () => {
     send(socket, "room.create", { playerName: "A", boardSize: 5 }, "create-lobby");
     await inbox.next("session.established");
     await inbox.next("room.patch");
+    await inbox.next("player.private_state");
     const lobbyUpdate = await inbox.next("lobby.updated");
     assert.equal(lobbyUpdate.payload.rooms.length, 1);
     assert.equal(JSON.stringify(lobbyUpdate).includes("sessionToken"), false);
