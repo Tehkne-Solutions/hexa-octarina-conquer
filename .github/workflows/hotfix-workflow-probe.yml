@@ -1,0 +1,16 @@
+name: Hotfix Workflow Probe
+
+on:
+  push:
+    branches: ["agent/hotfix-0.11.1-android-install"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          echo "workflow syntax loaded"
+          test -f scripts/validate-android-apk.py
