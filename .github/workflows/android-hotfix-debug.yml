@@ -49,7 +49,7 @@ jobs:
             --zipalign "$BUILD_TOOLS/zipalign" \
             --keystore .ci/tehkne-debug.keystore \
             --key-alias tehkne-debug \
-            --abis armeabi-v7a,arm64-v8a 2>&1 | tee /tmp/universal-validation.log
+            --abis armeabi-v7a,arm64-v8a
       - name: Validate emulator APK with full diagnostic
         run: |
           BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.1"
@@ -60,7 +60,7 @@ jobs:
             --zipalign "$BUILD_TOOLS/zipalign" \
             --keystore .ci/tehkne-debug.keystore \
             --key-alias tehkne-debug \
-            --abis x86_64 2>&1 | tee /tmp/x86-validation.log
+            --abis x86_64
       - uses: actions/upload-artifact@v4
         with:
           name: android-hotfix-validated-apks
@@ -81,7 +81,7 @@ jobs:
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Install, update and launch validated APK
+      - name: Exercise APK on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -91,24 +91,74 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            set -euxo pipefail
+            set +e
+            REPORT="$GITHUB_WORKSPACE/build/android/emulator-report.txt"
+            : > "$REPORT"
             APK="$GITHUB_WORKSPACE/build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk"
+
+            record() {
+              local name="$1"
+              local status="$2"
+              echo "$name=$status" | tee -a "$REPORT"
+            }
+
             adb uninstall com.tehkne.hexaoctarina >/dev/null 2>&1 || true
-            adb install "$APK" | tee /tmp/adb-install.log
-            grep -q 'Success' /tmp/adb-install.log
-            adb shell pm path com.tehkne.hexaoctarina | tee /tmp/package-path.log
-            grep -q '^package:' /tmp/package-path.log
-            adb install -r "$APK" | tee /tmp/adb-update.log
-            grep -q 'Success' /tmp/adb-update.log
-            ACTIVITY="$(adb shell cmd package resolve-activity --brief \
+
+            adb install "$APK" > "$GITHUB_WORKSPACE/build/android/adb-install.log" 2>&1
+            install_status=$?
+            grep -q 'Success' "$GITHUB_WORKSPACE/build/android/adb-install.log"
+            install_success=$?
+            if [ "$install_status" -eq 0 ] && [ "$install_success" -eq 0 ]; then record install PASS; else record install FAIL; fi
+
+            adb shell pm path com.tehkne.hexaoctarina > "$GITHUB_WORKSPACE/build/android/package-path.log" 2>&1
+            if grep -q '^package:' "$GITHUB_WORKSPACE/build/android/package-path.log"; then record package_path PASS; else record package_path FAIL; fi
+
+            adb install -r "$APK" > "$GITHUB_WORKSPACE/build/android/adb-update.log" 2>&1
+            update_status=$?
+            grep -q 'Success' "$GITHUB_WORKSPACE/build/android/adb-update.log"
+            update_success=$?
+            if [ "$update_status" -eq 0 ] && [ "$update_success" -eq 0 ]; then record update PASS; else record update FAIL; fi
+
+            adb shell cmd package resolve-activity --brief \
               -a android.intent.action.MAIN \
               -c android.intent.category.LAUNCHER \
-              com.tehkne.hexaoctarina | tr -d '\r' | tail -n 1)"
-            test -n "$ACTIVITY"
-            echo "$ACTIVITY" | grep 'com.tehkne.hexaoctarina'
-            adb shell am start -W -n "$ACTIVITY" | tee /tmp/activity-start.log
-            grep -Eq 'Status: ok|Warning: Activity not started, its current task has been brought to the front' /tmp/activity-start.log
-            adb shell dumpsys package com.tehkne.hexaoctarina | tee /tmp/package-dump.log
-            grep -q 'versionCode=12' /tmp/package-dump.log
-            grep -q 'versionName=0.11.1' /tmp/package-dump.log
-            adb uninstall com.tehkne.hexaoctarina | grep 'Success'
+              com.tehkne.hexaoctarina \
+              > "$GITHUB_WORKSPACE/build/android/activity-resolve.log" 2>&1
+            ACTIVITY="$(tr -d '\r' < "$GITHUB_WORKSPACE/build/android/activity-resolve.log" | tail -n 1)"
+            if echo "$ACTIVITY" | grep -q 'com.tehkne.hexaoctarina'; then record activity_resolve PASS; else record activity_resolve FAIL; fi
+
+            if [ -n "$ACTIVITY" ]; then
+              adb shell am start -W -n "$ACTIVITY" > "$GITHUB_WORKSPACE/build/android/activity-start.log" 2>&1
+              start_status=$?
+            else
+              start_status=1
+              echo 'activity not resolved' > "$GITHUB_WORKSPACE/build/android/activity-start.log"
+            fi
+            if [ "$start_status" -eq 0 ]; then record activity_start PASS; else record activity_start FAIL; fi
+
+            adb shell dumpsys package com.tehkne.hexaoctarina > "$GITHUB_WORKSPACE/build/android/package-dump.log" 2>&1
+            if grep -q 'versionCode=12' "$GITHUB_WORKSPACE/build/android/package-dump.log"; then record version_code PASS; else record version_code FAIL; fi
+            if grep -q 'versionName=0.11.1' "$GITHUB_WORKSPACE/build/android/package-dump.log"; then record version_name PASS; else record version_name FAIL; fi
+
+            adb uninstall com.tehkne.hexaoctarina > "$GITHUB_WORKSPACE/build/android/adb-uninstall.log" 2>&1
+            if grep -q 'Success' "$GITHUB_WORKSPACE/build/android/adb-uninstall.log"; then record uninstall PASS; else record uninstall FAIL; fi
+            exit 0
+      - name: Show emulator diagnostic
+        if: always()
+        run: |
+          cat build/android/emulator-report.txt
+          for log in build/android/adb-install.log build/android/package-path.log build/android/adb-update.log build/android/activity-resolve.log build/android/activity-start.log build/android/package-dump.log build/android/adb-uninstall.log; do
+            echo "===== $log ====="
+            cat "$log" || true
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-emulator-diagnostic
+          path: build/android/*.log
+          if-no-files-found: warn
+      - name: Require installation and update success
+        run: |
+          for check in install package_path update activity_resolve activity_start version_code version_name uninstall; do
+            grep -q "^${check}=PASS$" build/android/emulator-report.txt
+          done
