@@ -104,8 +104,11 @@ export class RoomActions {
   openAutomaticSieges() {
     const opened = [];
     for (const candidate of this.board.detectSurroundedProvinces()) {
+      const province = this.board.getProvince(candidate.provinceId);
+      const existing = [...this.duels.values()].find((item) => item.provinceId === province.id && item.status !== "resolved");
+      if (existing) continue;
       const duel = this.openProvinceDuel(candidate.attackerId, candidate.provinceId, "surround");
-      if (!opened.includes(duel.id) && duel.status === "pending") opened.push(duel.id);
+      opened.push(duel.id);
     }
     return opened;
   }
