@@ -38,11 +38,13 @@ test("replay archive stores public patches in revision order", async () => {
   await store.appendReplay(joined.room, joined.patch);
 
   const replay = await store.getReplay("REPLAY01");
+  const serialized = JSON.stringify(replay);
   assert.equal(replay.status, "active");
   assert.equal(replay.events.length, 2);
   assert.deepEqual(replay.events.map((entry) => entry.revision), [1, 2]);
-  assert.equal(JSON.stringify(replay).includes("sessionToken"), false);
-  assert.equal(JSON.stringify(replay).includes("hand"), false);
+  assert.equal(serialized.includes("sessionToken"), false);
+  assert.equal(serialized.includes('"hand":'), false);
+  assert.equal(serialized.includes('"handSize":'), true);
 });
 
 test("expired active disconnect becomes an authoritative abandonment", () => {
