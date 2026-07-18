@@ -20,7 +20,7 @@ jobs:
       - name: Install package
         run: python -m pip install -e .
       - name: Compile sources
-        run: python -m compileall -q src tests
+        run: python -m compileall -q src tests conformance
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
 
@@ -34,7 +34,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
       - name: Install dependencies
         run: npm install
-      - name: Validate server
+      - name: Validate server and cross-engine conformance
+        env:
+          PYTHON: python
         run: npm run check
