@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/arena_3d.gd" id="1_arena"]
 [ext_resource type="Script" path="res://scripts/network_session.gd" id="2_network"]
 [ext_resource type="Script" path="res://scripts/battle_ui.gd" id="3_battle_ui"]
 [ext_resource type="Script" path="res://scripts/combat_fx.gd" id="4_combat_fx"]
+[ext_resource type="Script" path="res://scripts/account_ui.gd" id="5_account_ui"]
 
 [sub_resource type="Environment" id="Environment_arena"]
 background_mode = 1
@@ -87,6 +88,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_battle_ui")
+
+[node name="AccountUI" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("5_account_ui")
 
 [node name="Signature" type="Label" parent="HUD"]
 anchors_preset = 3
