@@ -7,9 +7,9 @@ export function renderAdminPanel() {
   <title>Hexa Octarina — Operações</title>
   <style>
     :root{color-scheme:dark;--bg:#070b14;--panel:#101827;--line:#24324a;--text:#eef4ff;--muted:#93a4bd;--accent:#6ee7d8;--danger:#fb7185}
-    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at top,#13213a 0,#070b14 48%);color:var(--text);font:14px/1.45 system-ui,sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#13213a 0,#070b14 48%);color:var(--text);font:14px/1.45 system-ui,sans-serif}
     header{padding:28px clamp(18px,4vw,56px);border-bottom:1px solid var(--line);display:flex;gap:18px;align-items:end;justify-content:space-between;flex-wrap:wrap}
-    h1{margin:0;font-size:clamp(24px,4vw,42px)} h2{font-size:16px;margin:0 0 12px}.sig{color:var(--accent);font-weight:700}.muted{color:var(--muted)}
+    h1{margin:0;font-size:clamp(24px,4vw,42px)}h2{font-size:16px;margin:0 0 12px}.sig{color:var(--accent);font-weight:700}.muted{color:var(--muted)}
     main{padding:24px clamp(18px,4vw,56px) 56px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar input{min-width:280px}
     input,button,select{border:1px solid var(--line);background:#0b1220;color:var(--text);padding:10px 12px;border-radius:10px}button{cursor:pointer}button:hover{border-color:var(--accent)}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:20px 0}.card,.section{background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 18px 50px #0005}.value{font-size:28px;font-weight:800;margin-top:6px}
@@ -37,16 +37,16 @@ export function renderAdminPanel() {
 </main>
 <footer>Operação e tecnologia por <strong>Tehkné Solutions</strong>.</footer>
 <script>
-const $=id=>document.getElementById(id);const fmt=v=>v?new Date(Number(v)).toLocaleString('pt-BR'):'—';
+const $=id=>document.getElementById(id);const fmt=v=>v?new Date(Number(v)).toLocaleString('pt-BR'):'—';const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 $('token').value=sessionStorage.getItem('hexaAdminToken')||'';
 $('save').onclick=()=>{sessionStorage.setItem('hexaAdminToken',$('token').value);load()};$('refresh').onclick=load;
 async function api(path){const token=$('token').value||sessionStorage.getItem('hexaAdminToken')||'';const r=await fetch(path,{headers:{Authorization:'Bearer '+token}});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||('HTTP '+r.status));return r.json()}
 function rows(id,items,render){$(id).innerHTML=items.length?items.map(render).join(''):'<tr><td colspan="8" class="muted">Nenhum registro.</td></tr>'}
 async function load(){try{$('status').textContent='Atualizando…';const data=await api('/admin/overview');$('instances').textContent=data.health.activeInstances??0;$('players').textContent=data.health.activePlayers??0;$('leases').textContent=data.disconnects.length;$('replays').textContent=data.replays.length;
-rows('leaseRows',data.disconnects,x=>`<tr><td><code>${x.roomId}</code></td><td><code>${x.playerId}</code></td><td>${x.accountId||'visitante'}</td><td>${fmt(x.deadlineAt)}</td><td>${x.sourceInstanceId||'—'}</td></tr>`);
-rows('replayRows',data.replays,x=>`<tr><td><code>${x.roomId}</code></td><td>${x.status}</td><td>${x.latestRevision}</td><td>${(x.players||[]).map(p=>p.name).join(', ')}</td><td>${x.result?x.result.reason:'—'}</td><td>${fmt(x.updatedAt)}</td></tr>`);
-rows('penaltyRows',data.penalties,x=>`<tr><td><code>${x.accountId}</code></td><td>${x.kind}</td><td>${x.points}</td><td>${x.reason}</td><td>${fmt(x.expiresAt)}</td></tr>`);
-rows('seasonRows',data.seasons,x=>`<tr><td><code>${x.id}</code></td><td>${x.name}</td><td class="${x.status==='active'?'ok':''}">${x.status}</td><td>${fmt(x.startsAt)}</td><td>${fmt(x.endsAt)}</td></tr>`);$('status').innerHTML='<span class="ok">Conectado</span> • '+new Date().toLocaleTimeString('pt-BR')}catch(e){$('status').innerHTML='<span class="bad">Falha:</span> '+e.message}}
+rows('leaseRows',data.disconnects,x=>'<tr><td><code>'+esc(x.roomId)+'</code></td><td><code>'+esc(x.playerId)+'</code></td><td>'+esc(x.accountId||'visitante')+'</td><td>'+fmt(x.deadlineAt)+'</td><td>'+esc(x.sourceInstanceId||'—')+'</td></tr>');
+rows('replayRows',data.replays,x=>'<tr><td><code>'+esc(x.roomId)+'</code></td><td>'+esc(x.status)+'</td><td>'+esc(x.latestRevision)+'</td><td>'+esc((x.players||[]).map(p=>p.name).join(', '))+'</td><td>'+esc(x.result?x.result.reason:'—')+'</td><td>'+fmt(x.updatedAt)+'</td></tr>');
+rows('penaltyRows',data.penalties,x=>'<tr><td><code>'+esc(x.accountId)+'</code></td><td>'+esc(x.kind)+'</td><td>'+esc(x.points)+'</td><td>'+esc(x.reason)+'</td><td>'+fmt(x.expiresAt)+'</td></tr>');
+rows('seasonRows',data.seasons,x=>'<tr><td><code>'+esc(x.id)+'</code></td><td>'+esc(x.name)+'</td><td class="'+(x.status==='active'?'ok':'')+'">'+esc(x.status)+'</td><td>'+fmt(x.startsAt)+'</td><td>'+fmt(x.endsAt)+'</td></tr>');$('status').innerHTML='<span class="ok">Conectado</span> • '+new Date().toLocaleTimeString('pt-BR')}catch(e){$('status').innerHTML='<span class="bad">Falha:</span> '+esc(e.message)}}
 if($('token').value)load();
 </script>
 </body></html>`;
