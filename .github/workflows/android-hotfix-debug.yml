@@ -69,6 +69,9 @@ jobs:
   install-existing-apk:
     needs: validate-existing-apks
     runs-on: ubuntu-latest
+    env:
+      ANDROID_AVD_HOME: ${{ runner.temp }}/android-avd
+      ANDROID_SDK_HOME: ${{ runner.temp }}/android-sdk-home
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -83,6 +86,7 @@ jobs:
           ls -l /dev/kvm
       - name: Install Android emulator image
         run: |
+          mkdir -p "$ANDROID_AVD_HOME" "$ANDROID_SDK_HOME"
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
           yes | "$SDKMANAGER" --licenses >/dev/null || true
@@ -95,9 +99,13 @@ jobs:
             --name hexa-ci \
             --package "system-images;android-29;default;x86_64" \
             --device "pixel_2"
+          find "$ANDROID_AVD_HOME" -maxdepth 2 -type f -print
+          test -f "$ANDROID_AVD_HOME/hexa-ci.ini"
       - name: Boot Android emulator
         run: |
           mkdir -p build/android
+          "$ANDROID_HOME/emulator/emulator" -list-avds | tee build/android/avd-list.log
+          "$ANDROID_HOME/emulator/emulator" -list-avds | grep '^hexa-ci$'
           nohup "$ANDROID_HOME/emulator/emulator" \
             -avd hexa-ci \
             -no-window \
