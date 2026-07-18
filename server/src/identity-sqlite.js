@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import {
   assertValidSession,
   createAccountRecord,
+  createPasswordRecord,
   hashToken,
   levelForXp,
   normalizeHandle,
@@ -119,6 +120,28 @@ export class SqliteIdentityStore {
     const account = accountFromRow(this.findById.get(accountId));
     if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
     return account;
+  }
+
+  async findAccountIdByHandle(handle) {
+    return this.findByHandle.get(normalizeHandle(handle))?.id ?? null;
+  }
+
+  async resetPassword(accountId, newPassword) {
+    const existing = accountFromRow(this.findById.get(accountId));
+    if (!existing) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+    const password = createPasswordRecord(newPassword);
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      this.database.prepare(`
+        UPDATE accounts SET password_hash = ?, password_salt = ?, updated_at = ? WHERE id = ?
+      `).run(password.hash, password.salt, this.clock(), accountId);
+      this.database.prepare("DELETE FROM account_sessions WHERE account_id = ?").run(accountId);
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+    return this.#issueSession(accountFromRow(this.findById.get(accountId)));
   }
 
   async getProfile(accountId) {
