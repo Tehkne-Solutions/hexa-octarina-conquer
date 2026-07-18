@@ -153,11 +153,14 @@ jobs:
           node --test --test-concurrency=1
           test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js
           test/postgres-room-store.test.js test/postgres-competition.test.js test/postgres-cluster.test.js
-      - name: Test WebSocket accounts, ranking, matchmaking and replicas
-        run: >-
-          node --test
-          test/websocket.test.js test/account-websocket.test.js
-          test/competitive-websocket.test.js test/cluster-websocket.test.js
+      - name: Test base WebSocket transport
+        run: node --test test/websocket.test.js
+      - name: Test authenticated WebSocket transport
+        run: node --test test/account-websocket.test.js
+      - name: Test competitive WebSocket transport
+        run: node --test test/competitive-websocket.test.js
+      - name: Test cross-replica WebSocket transport
+        run: node --test test/cluster-websocket.test.js
       - name: Boot two fully distributed replicas
         env:
           HEXA_STORE: postgres
@@ -176,7 +179,18 @@ jobs:
           trap 'kill $first_pid $second_pid || true' EXIT
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:8090/health > /tmp/health-a.json && \
-               curl -fsS http://127.0.0.1:8091/health > /tmp/health-b.json; then break; fi
+               curl -fsS http://127.0.0.1:8091/health > /tmp/health-b.json; then
+              if node - <<'NODE'
+          const fs = require('fs');
+          const health = [
+            JSON.parse(fs.readFileSync('/tmp/health-a.json')),
+            JSON.parse(fs.readFileSync('/tmp/health-b.json')),
+          ];
+          if (health.every((item) => item.activeInstances >= 2)) process.exit(0);
+          process.exit(1);
+          NODE
+              then break; fi
+            fi
             sleep 1
           done
           node - <<'NODE'
