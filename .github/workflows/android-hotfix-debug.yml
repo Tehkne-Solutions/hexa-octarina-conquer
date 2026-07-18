@@ -1,0 +1,62 @@
+name: Android Hotfix Debug
+
+on:
+  push:
+    branches: ["agent/hotfix-0.11.1-android-install"]
+
+concurrency:
+  group: android-hotfix-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-existing-apks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/download-artifact@v4
+        with:
+          name: hexa-octarina-android-0.11.1
+          path: build/android
+          repository: Tehkne-Solutions/hexa-octarina-conquer
+          run-id: 29656381732
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Android build tools
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" "build-tools;35.0.1"
+      - name: Recreate stable development key
+        run: |
+          mkdir -p .ci
+          curl -fsSL 'https://android.googlesource.com/platform/build/+/refs/heads/main/target/product/security/testkey.pk8?format=TEXT' | base64 --decode > .ci/aosp-testkey.pk8
+          curl -fsSL 'https://android.googlesource.com/platform/build/+/refs/heads/main/target/product/security/testkey.x509.pem?format=TEXT' | base64 --decode > .ci/aosp-testkey.x509.pem
+          openssl pkcs8 -inform DER -nocrypt -in .ci/aosp-testkey.pk8 -out .ci/aosp-testkey.pem
+          openssl pkcs12 -export -in .ci/aosp-testkey.x509.pem -inkey .ci/aosp-testkey.pem -name tehkne-debug -out .ci/tehkne-debug.p12 -passout pass:android
+          keytool -importkeystore -noprompt -srckeystore .ci/tehkne-debug.p12 -srcstoretype PKCS12 -srcstorepass android -srcalias tehkne-debug -destkeystore .ci/tehkne-debug.keystore -deststoretype PKCS12 -deststorepass android -destkeypass android -destalias tehkne-debug
+      - name: Validate universal APK with full diagnostic
+        run: |
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.1"
+          python scripts/validate-android-apk.py \
+            build/android/HexaOctarinaConquer-v0.11.1-universal.apk \
+            --aapt2 "$BUILD_TOOLS/aapt2" \
+            --apksigner "$BUILD_TOOLS/apksigner" \
+            --zipalign "$BUILD_TOOLS/zipalign" \
+            --keystore .ci/tehkne-debug.keystore \
+            --key-alias tehkne-debug \
+            --abis armeabi-v7a,arm64-v8a 2>&1 | tee /tmp/universal-validation.log
+      - name: Validate emulator APK with full diagnostic
+        if: always()
+        run: |
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.1"
+          python scripts/validate-android-apk.py \
+            build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk \
+            --aapt2 "$BUILD_TOOLS/aapt2" \
+            --apksigner "$BUILD_TOOLS/apksigner" \
+            --zipalign "$BUILD_TOOLS/zipalign" \
+            --keystore .ci/tehkne-debug.keystore \
+            --key-alias tehkne-debug \
+            --abis x86_64 2>&1 | tee /tmp/x86-validation.log
