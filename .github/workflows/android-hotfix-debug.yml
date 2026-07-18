@@ -70,8 +70,8 @@ jobs:
     needs: validate-existing-apks
     runs-on: ubuntu-latest
     env:
-      ANDROID_AVD_HOME: ${{ runner.temp }}/android-avd
-      ANDROID_SDK_HOME: ${{ runner.temp }}/android-sdk-home
+      ANDROID_AVD_HOME: /tmp/hexa-android-avd
+      ANDROID_SDK_HOME: /tmp/hexa-android-sdk-home
     steps:
       - uses: actions/download-artifact@v4
         with:
