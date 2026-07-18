@@ -291,7 +291,7 @@ export class BoardState {
           if (!ownCells.has(neighborId)) frontier.add(cellKey(neighbor));
         }
       }
-      if (frontier.size === 0) continue;
+      if (frontier.size === 0 || frontier.size <= province.cellIds.length) continue;
       const owners = new Set();
       let hasLiberty = false;
       for (const frontierKey of frontier) {
