@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import {
   assertValidSession,
   createAccountRecord,
+  createPasswordRecord,
   hashToken,
   levelForXp,
   normalizeHandle,
@@ -48,6 +49,23 @@ export class MemoryIdentityStore {
     const account = this.accounts.get(accountId);
     if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
     return account;
+  }
+
+  async findAccountIdByHandle(handle) {
+    return this.accountIdByHandle.get(normalizeHandle(handle)) ?? null;
+  }
+
+  async resetPassword(accountId, newPassword) {
+    const account = this.accounts.get(accountId);
+    if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+    const password = createPasswordRecord(newPassword);
+    account.passwordHash = password.hash;
+    account.passwordSalt = password.salt;
+    account.updatedAt = this.clock();
+    for (const [tokenHash, session] of this.sessions.entries()) {
+      if (session.accountId === accountId) this.sessions.delete(tokenHash);
+    }
+    return this.#issueSession(account);
   }
 
   async getProfile(accountId) {

@@ -51,6 +51,15 @@ function requireStringArray(value, label, max = 8) {
   return value.map((item, index) => requireString(item, `${label}[${index}]`));
 }
 
+function optionalObject(value, label, maxBytes = 8_192) {
+  if (value === undefined || value === null) return {};
+  assertObject(value, label);
+  if (Buffer.byteLength(JSON.stringify(value), "utf8") > maxBytes) {
+    throw new ProtocolError("INVALID_MESSAGE", `${label} is too large`);
+  }
+  return value;
+}
+
 function accountCredentials(payload) {
   const accountId = optionalString(payload.accountId, "payload.accountId");
   const accessToken = optionalString(payload.accessToken, "payload.accessToken");
@@ -58,6 +67,13 @@ function accountCredentials(payload) {
     throw new ProtocolError("INVALID_MESSAGE", "accountId and accessToken must be supplied together");
   }
   return { accountId, accessToken };
+}
+
+function requiredAccountCredentials(payload) {
+  return {
+    accountId: requireString(payload.accountId, "payload.accountId"),
+    accessToken: requireString(payload.accessToken, "payload.accessToken"),
+  };
 }
 
 function roomSession(payload) {
@@ -97,12 +113,17 @@ export function parseClientMessage(raw) {
     return { type, requestId, protocolVersion, payload: { status } };
   }
 
-  if (type === "leaderboard.list") {
+  if (["leaderboard.list", "season.leaderboard"].includes(type)) {
     return {
       type, requestId, protocolVersion,
-      payload: { limit: optionalPayload.limit === undefined ? 25 : requireInteger(optionalPayload.limit, "payload.limit", 1, 100) },
+      payload: {
+        limit: optionalPayload.limit === undefined ? 25 : requireInteger(optionalPayload.limit, "payload.limit", 1, 100),
+        ...(type === "season.leaderboard" ? { seasonId: optionalString(optionalPayload.seasonId, "payload.seasonId") } : {}),
+      },
     };
   }
+
+  if (type === "season.list") return { type, requestId, protocolVersion, payload: {} };
 
   if (type === "account.register") {
     return {
@@ -125,15 +146,60 @@ export function parseClientMessage(raw) {
     };
   }
 
+  if (type === "account.recovery.request") {
+    return {
+      type, requestId, protocolVersion,
+      payload: { handle: requireString(optionalPayload.handle, "payload.handle") },
+    };
+  }
+
+  if (type === "account.recovery.confirm") {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        handle: requireString(optionalPayload.handle, "payload.handle"),
+        recoveryCode: requireString(optionalPayload.recoveryCode, "payload.recoveryCode"),
+        newPassword: requireString(optionalPayload.newPassword, "payload.newPassword"),
+      },
+    };
+  }
+
   if (["account.profile", "account.history"].includes(type)) {
     return {
       type, requestId, protocolVersion,
       payload: {
-        accountId: requireString(optionalPayload.accountId, "payload.accountId"),
-        accessToken: requireString(optionalPayload.accessToken, "payload.accessToken"),
+        ...requiredAccountCredentials(optionalPayload),
         ...(type === "account.history" ? {
           limit: optionalPayload.limit === undefined ? 25 : requireInteger(optionalPayload.limit, "payload.limit", 1, 100),
         } : {}),
+      },
+    };
+  }
+
+  if (["matchmaking.enqueue", "matchmaking.status", "matchmaking.cancel", "matchmaking.accept"].includes(type)) {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        ...requiredAccountCredentials(optionalPayload),
+        ...(type === "matchmaking.enqueue" ? {
+          region: optionalString(optionalPayload.region, "payload.region") ?? "global",
+          boardSize: optionalPayload.boardSize === undefined ? 5 : requireInteger(optionalPayload.boardSize, "payload.boardSize", 3, 19),
+        } : {}),
+        ...(type === "matchmaking.accept" ? {
+          matchId: requireString(optionalPayload.matchId, "payload.matchId"),
+        } : {}),
+      },
+    };
+  }
+
+  if (type === "telemetry.track") {
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        ...accountCredentials(optionalPayload),
+        sessionId: requireString(optionalPayload.sessionId, "payload.sessionId"),
+        eventName: requireString(optionalPayload.eventName, "payload.eventName"),
+        data: optionalObject(optionalPayload.data, "payload.data"),
       },
     };
   }
@@ -149,6 +215,7 @@ export function parseClientMessage(raw) {
         payload: {
           playerName,
           ...credentials,
+          roomId: optionalString(payload.roomId, "payload.roomId"),
           boardSize: payload.boardSize === undefined ? 5 : requireInteger(payload.boardSize, "payload.boardSize", 3, 19),
         },
       };

@@ -12,7 +12,9 @@ ENV NODE_ENV=production \
     HEXA_STORE=sqlite \
     HEXA_DB_PATH=/data/hexa-octarina.sqlite \
     HEXA_IDENTITY_STORE=sqlite \
-    HEXA_IDENTITY_DB_PATH=/data/hexa-identity.sqlite
+    HEXA_IDENTITY_DB_PATH=/data/hexa-identity.sqlite \
+    HEXA_COMPETITION_STORE=memory \
+    HEXA_RECOVERY_EXPOSE_CODE=false
 
 RUN mkdir -p /data && chown -R node:node /app /data
 
