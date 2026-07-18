@@ -24,6 +24,18 @@ jobs:
       - name: Run unit and Godot package tests
         run: python -m unittest discover -s tests -v
 
+  godot-client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download official Godot 4.6.3
+        run: |
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          chmod +x Godot_v4.6.3-stable_linux.x86_64
+      - name: Import and parse Godot project
+        run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
+
   node-authoritative-server:
     runs-on: ubuntu-latest
     defaults:
