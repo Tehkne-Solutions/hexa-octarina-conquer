@@ -127,7 +127,7 @@ def main() -> int:
         "APK was not signed by the stable Tehkné development key",
     )
 
-    xmltree = run(args.aapt2, "dump", "xmltree", str(args.apk), "AndroidManifest.xml")
+    xmltree = run(args.aapt2, "dump", "xmltree", str(args.apk), "--file", "AndroidManifest.xml")
     providers = parse_provider_authorities(xmltree)
     authorities = [authority for _, authority in providers if authority]
     duplicates = sorted(authority for authority, count in Counter(authorities).items() if count > 1)
