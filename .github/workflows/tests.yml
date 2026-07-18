@@ -101,8 +101,11 @@ jobs:
           rm -rf client/godot/android
           mkdir -p client/godot/android/build
           unzip -q "$ANDROID_SOURCE" -d client/godot/android/build
+          printf '4.6.3.stable\n' > client/godot/android/.build_version
+          : > client/godot/android/build/.gdignore
           test -f client/godot/android/build/build.gradle
           test -f client/godot/android/build/gradlew
+          test "$(cat client/godot/android/.build_version)" = "4.6.3.stable"
           chmod +x client/godot/android/build/gradlew
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
