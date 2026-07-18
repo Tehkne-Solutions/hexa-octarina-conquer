@@ -158,9 +158,6 @@ jobs:
             --key-alias tehkne-debug \
             --abis x86_64 \
             | tee build/android/apk-validation-x86_64.log
-          "$BUILD_TOOLS/aapt2" dump xmltree \
-            build/android/HexaOctarinaConquer-v0.11.1-universal.apk \
-            AndroidManifest.xml > build/android/manifest-xmltree.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -172,7 +169,6 @@ jobs:
             build/android/godot-export-x86_64.log
             build/android/apk-validation-universal.log
             build/android/apk-validation-x86_64.log
-            build/android/manifest-xmltree.txt
           if-no-files-found: error
 
   android-install-smoke:
@@ -200,17 +196,26 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
+            set -euxo pipefail
             APK="$GITHUB_WORKSPACE/build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk"
-            test -s "$APK"
             adb uninstall com.tehkne.hexaoctarina >/dev/null 2>&1 || true
-            adb install "$APK"
+            adb install "$APK" | tee /tmp/adb-install.log
+            grep -q 'Success' /tmp/adb-install.log
             adb shell pm path com.tehkne.hexaoctarina | grep '^package:'
-            adb install -r "$APK"
-            adb shell monkey -p com.tehkne.hexaoctarina -c android.intent.category.LAUNCHER 1
-            sleep 8
-            adb shell pidof com.tehkne.hexaoctarina
-            adb shell dumpsys package com.tehkne.hexaoctarina | grep -E 'versionCode=12|versionName=0.11.1'
-            adb uninstall com.tehkne.hexaoctarina
+            adb install -r "$APK" | tee /tmp/adb-update.log
+            grep -q 'Success' /tmp/adb-update.log
+            ACTIVITY="$(adb shell cmd package resolve-activity --brief \
+              -a android.intent.action.MAIN \
+              -c android.intent.category.LAUNCHER \
+              com.tehkne.hexaoctarina | tr -d '\r' | tail -n 1)"
+            test -n "$ACTIVITY"
+            echo "$ACTIVITY" | grep 'com.tehkne.hexaoctarina'
+            adb shell am start -W -n "$ACTIVITY" | tee /tmp/activity-start.log
+            grep -Eq 'Status: ok|Warning: Activity not started, its current task has been brought to the front' /tmp/activity-start.log
+            adb shell dumpsys package com.tehkne.hexaoctarina | tee /tmp/package-dump.log
+            grep -q 'versionCode=12' /tmp/package-dump.log
+            grep -q 'versionName=0.11.1' /tmp/package-dump.log
+            adb uninstall com.tehkne.hexaoctarina | grep 'Success'
 
   node-authoritative-server:
     runs-on: ubuntu-latest
