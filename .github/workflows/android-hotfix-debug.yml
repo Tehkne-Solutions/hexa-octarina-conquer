@@ -51,7 +51,6 @@ jobs:
             --key-alias tehkne-debug \
             --abis armeabi-v7a,arm64-v8a 2>&1 | tee /tmp/universal-validation.log
       - name: Validate emulator APK with full diagnostic
-        if: always()
         run: |
           BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.1"
           python scripts/validate-android-apk.py \
@@ -62,3 +61,45 @@ jobs:
             --keystore .ci/tehkne-debug.keystore \
             --key-alias tehkne-debug \
             --abis x86_64 2>&1 | tee /tmp/x86-validation.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-hotfix-validated-apks
+          path: build/android/*.apk
+          if-no-files-found: error
+
+  install-existing-apk:
+    needs: validate-existing-apks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-hotfix-validated-apks
+          path: build/android
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install, update and launch validated APK
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            APK="$GITHUB_WORKSPACE/build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk"
+            adb uninstall com.tehkne.hexaoctarina >/dev/null 2>&1 || true
+            adb install "$APK"
+            adb shell pm path com.tehkne.hexaoctarina | grep '^package:'
+            adb install -r "$APK"
+            adb shell cmd package resolve-activity --brief com.tehkne.hexaoctarina | grep 'com.tehkne.hexaoctarina'
+            adb shell monkey -p com.tehkne.hexaoctarina -c android.intent.category.LAUNCHER 1
+            sleep 8
+            adb shell dumpsys package com.tehkne.hexaoctarina | grep 'versionCode=12'
+            adb shell dumpsys package com.tehkne.hexaoctarina | grep 'versionName=0.11.1'
+            adb shell pidof com.tehkne.hexaoctarina
+            adb uninstall com.tehkne.hexaoctarina
