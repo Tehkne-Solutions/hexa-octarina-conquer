@@ -160,7 +160,7 @@ jobs:
       - name: Test competitive WebSocket transport
         run: node --test test/competitive-websocket.test.js
       - name: Test cross-replica WebSocket transport
-        run: node --test test/cluster-websocket.test.js
+        run: node --test --test-force-exit test/cluster-websocket.test.js
       - name: Boot two fully distributed replicas
         env:
           HEXA_STORE: postgres
