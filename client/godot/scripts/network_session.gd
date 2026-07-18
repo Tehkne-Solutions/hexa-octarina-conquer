@@ -1,6 +1,8 @@
 extends Node
 
 signal state_changed(state: Dictionary)
+signal private_state_changed(state: Dictionary)
+signal event_received(event: Dictionary)
 signal status_changed(text: String)
 signal lobby_changed(rooms: Array)
 
@@ -21,6 +23,7 @@ var player_id := ""
 var session_token := ""
 var revision := 0
 var room_state: Dictionary = {}
+var private_state: Dictionary = {}
 var room_to_join := ""
 var player_name := ""
 var force_create := false
@@ -98,20 +101,50 @@ func _create_room() -> void:
 	})
 
 func play_edge(start: Vector2i, end: Vector2i) -> void:
-	if room_id.is_empty() or player_id.is_empty():
-		_set_status("Sessão ainda não estabelecida.")
+	if not _has_session():
 		return
-	_send("action.play_edge", {
-		"roomId": room_id,
-		"playerId": player_id,
-		"sessionToken": session_token,
-		"expectedRevision": revision,
+	_send("action.play_edge", _action_payload({
 		"start": [start.x, start.y],
 		"end": [end.x, end.y]
-	})
+	}))
+
+func play_card(card_id: String, province_id := "", start: Variant = null, end: Variant = null) -> void:
+	if not _has_session():
+		return
+	var extra := {"cardId": card_id}
+	if not province_id.is_empty():
+		extra["provinceId"] = province_id
+	if start is Vector2i and end is Vector2i:
+		extra["start"] = [start.x, start.y]
+		extra["end"] = [end.x, end.y]
+	_send("action.play_card", _action_payload(extra))
+
+func submit_duel_round(duel_id: String, card_ids: Array) -> void:
+	if not _has_session():
+		return
+	_send("action.resolve_duel_round", _action_payload({
+		"duelId": duel_id,
+		"cardIds": card_ids
+	}))
 
 func list_lobby() -> void:
 	_send("lobby.list", {})
+
+func _has_session() -> bool:
+	if room_id.is_empty() or player_id.is_empty() or session_token.is_empty():
+		_set_status("Sessão ainda não estabelecida.")
+		return false
+	return true
+
+func _action_payload(extra: Dictionary) -> Dictionary:
+	var payload := {
+		"roomId": room_id,
+		"playerId": player_id,
+		"sessionToken": session_token,
+		"expectedRevision": revision
+	}
+	payload.merge(extra, true)
+	return payload
 
 func _send(message_type: String, payload: Dictionary) -> void:
 	if socket.get_ready_state() != WebSocketPeer.STATE_OPEN:
@@ -154,6 +187,7 @@ func _handle_packet(raw: String) -> void:
 			player_id = payload.get("playerId", "")
 			session_token = payload.get("sessionToken", "")
 			_apply_snapshot(payload.get("snapshot", {}))
+			_apply_private_state(payload.get("privateState", {}))
 			_save_session()
 			_set_status("Sala %s conectada." % room_id)
 		"session.reconnected":
@@ -165,10 +199,13 @@ func _handle_packet(raw: String) -> void:
 					_apply_patch(patch)
 			else:
 				_apply_snapshot(payload.get("snapshot", {}))
+			_apply_private_state(payload.get("privateState", {}))
 			_save_session()
 			_set_status("Sessão restaurada na sala %s." % room_id)
 		"room.patch":
 			_apply_patch(payload)
+		"player.private_state":
+			_apply_private_state(payload)
 		"command.accepted":
 			_set_status("Comando confirmado na revisão %d." % payload.get("revision", revision))
 		"error":
@@ -187,6 +224,12 @@ func _apply_snapshot(snapshot: Dictionary) -> void:
 	room_state = snapshot
 	state_changed.emit(room_state)
 
+func _apply_private_state(state: Dictionary) -> void:
+	if state.is_empty():
+		return
+	private_state = state
+	private_state_changed.emit(private_state)
+
 func _apply_patch(patch: Dictionary) -> void:
 	if patch.is_empty():
 		return
@@ -204,8 +247,17 @@ func _apply_patch(patch: Dictionary) -> void:
 	var event: Dictionary = patch.get("event", {})
 	if not event.is_empty():
 		_set_status("Evento: %s" % event.get("type", "atualização"))
+		event_received.emit(event)
 	_save_session()
 	state_changed.emit(room_state)
+
+func active_local_duel() -> Dictionary:
+	for duel in room_state.get("duels", []):
+		if duel.get("status", "") == "resolved":
+			continue
+		if player_id in [duel.get("attackerId", ""), duel.get("defenderId", "")]:
+			return duel
+	return {}
 
 func is_local_turn() -> bool:
 	var board: Dictionary = room_state.get("board", {})
@@ -237,5 +289,6 @@ func _clear_session() -> void:
 	session_token = ""
 	revision = 0
 	room_state = {}
+	private_state = {}
 	var config := ConfigFile.new()
 	config.save(SESSION_PATH)
