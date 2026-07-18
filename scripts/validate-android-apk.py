@@ -32,6 +32,29 @@ def normalized_digest(value: str) -> str:
     return re.sub(r"[^0-9a-f]", "", value.lower())
 
 
+def parse_android_integer(line: str) -> int | None:
+    """Parse aapt2 integer output, which may expose decimal or hexadecimal values."""
+
+    hex_match = re.search(r"\(type 0x10\)0x([0-9a-fA-F]+)", line)
+    if hex_match:
+        return int(hex_match.group(1), 16)
+    decimal_match = re.search(r"=\"?(\d+)\"?", line)
+    if decimal_match:
+        return int(decimal_match.group(1))
+    return None
+
+
+def parse_min_sdk(badging: str, xmltree: str) -> int | None:
+    for pattern in (r"sdkVersion:'(\d+)'", r"minSdkVersion:'(\d+)'"):
+        match = re.search(pattern, badging)
+        if match:
+            return int(match.group(1))
+    for line in xmltree.splitlines():
+        if "android:minSdkVersion" in line:
+            return parse_android_integer(line)
+    return None
+
+
 def parse_provider_authorities(xmltree: str) -> list[tuple[str, str]]:
     providers: list[tuple[str, str]] = []
     current: dict[str, object] | None = None
@@ -85,6 +108,8 @@ def main() -> int:
     required_abis = [item.strip() for item in args.abis.split(",") if item.strip()]
 
     badging = run(args.aapt2, "dump", "badging", str(args.apk))
+    xmltree = run(args.aapt2, "dump", "xmltree", str(args.apk), "--file", "AndroidManifest.xml")
+
     package_match = re.search(r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging)
     require(package_match is not None, "aapt2 did not return package metadata")
     package_name, version_code, version_name = package_match.groups()
@@ -92,9 +117,8 @@ def main() -> int:
     require(version_code == args.version_code, f"unexpected versionCode: {version_code}")
     require(version_name == args.version_name, f"unexpected versionName: {version_name}")
 
-    sdk_match = re.search(r"sdkVersion:'(\d+)'", badging)
-    require(sdk_match is not None, "minimum Android SDK was not declared")
-    min_sdk = int(sdk_match.group(1))
+    min_sdk = parse_min_sdk(badging, xmltree)
+    require(min_sdk is not None, "minimum Android SDK was not declared")
     require(min_sdk <= 24, f"minimum Android SDK unexpectedly increased to {min_sdk}")
 
     with zipfile.ZipFile(args.apk) as archive:
@@ -127,7 +151,6 @@ def main() -> int:
         "APK was not signed by the stable Tehkné development key",
     )
 
-    xmltree = run(args.aapt2, "dump", "xmltree", str(args.apk), "--file", "AndroidManifest.xml")
     providers = parse_provider_authorities(xmltree)
     authorities = [authority for _, authority in providers if authority]
     duplicates = sorted(authority for authority, count in Counter(authorities).items() if count > 1)
