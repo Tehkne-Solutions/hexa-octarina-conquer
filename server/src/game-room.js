@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { BoardState } from "./board-state.js";
-import { STARTER_HAND } from "./cards.js";
+import { STARTER_HAND, cardSnapshot } from "./cards.js";
 import { duelSnapshot } from "./duel-engine.js";
 import { ProtocolError } from "./protocol.js";
 import { RoomActions } from "./room-actions.js";
@@ -67,6 +67,7 @@ export class GameRoom extends RoomActions {
     return {
       player,
       connectionPatch,
+      privateState: this.privateStateFor(player.id),
       mode: patches === null ? "snapshot" : "patches",
       snapshot: patches === null ? this.snapshot() : undefined,
       patches: patches ?? undefined,
@@ -130,6 +131,25 @@ export class GameRoom extends RoomActions {
       hp: player.hp,
       handSize: player.hand.length,
     }));
+  }
+
+  privateStateFor(playerId) {
+    const player = this.players.find((item) => item.id === playerId);
+    if (!player) throw new ProtocolError("PLAYER_NOT_FOUND", "player does not exist in this room");
+    const duelSubmissions = {};
+    for (const duel of this.duels.values()) {
+      if (duel.submissions?.[playerId]) duelSubmissions[duel.id] = [...duel.submissions[playerId]];
+    }
+    return {
+      roomId: this.id,
+      revision: this.revision,
+      playerId: player.id,
+      name: player.name,
+      mana: player.mana,
+      hp: player.hp,
+      hand: player.hand.map(cardSnapshot),
+      duelSubmissions,
+    };
   }
 
   lobbySummary() {
