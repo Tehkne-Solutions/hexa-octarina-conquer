@@ -10,9 +10,13 @@ import argparse
 import re
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 import zipfile
 from collections import Counter
 from pathlib import Path
+
+ANDROID_NS = "http://schemas.android.com/apk/res/android"
+ANDROID = f"{{{ANDROID_NS}}}"
 
 
 def run(*args: str) -> str:
@@ -32,67 +36,30 @@ def normalized_digest(value: str) -> str:
     return re.sub(r"[^0-9a-f]", "", value.lower())
 
 
-def parse_android_integer(line: str) -> int | None:
-    """Parse aapt2 integer output, which may expose decimal or hexadecimal values."""
+def parse_manifest(manifest_xml: str) -> tuple[int | None, list[tuple[str, str]]]:
+    root = ET.fromstring(manifest_xml)
+    uses_sdk = root.find("uses-sdk")
+    min_sdk_raw = uses_sdk.get(f"{ANDROID}minSdkVersion") if uses_sdk is not None else None
+    min_sdk = int(min_sdk_raw) if min_sdk_raw and min_sdk_raw.isdigit() else None
 
-    hex_match = re.search(r"\(type 0x10\)0x([0-9a-fA-F]+)", line)
-    if hex_match:
-        return int(hex_match.group(1), 16)
-    decimal_match = re.search(r"=\"?(\d+)\"?", line)
-    if decimal_match:
-        return int(decimal_match.group(1))
-    return None
-
-
-def parse_min_sdk(badging: str, xmltree: str) -> int | None:
-    for pattern in (r"sdkVersion:'(\d+)'", r"minSdkVersion:'(\d+)'"):
-        match = re.search(pattern, badging)
-        if match:
-            return int(match.group(1))
-    for line in xmltree.splitlines():
-        if "android:minSdkVersion" in line:
-            return parse_android_integer(line)
-    return None
-
-
-def parse_provider_authorities(xmltree: str) -> list[tuple[str, str]]:
+    application = root.find("application")
     providers: list[tuple[str, str]] = []
-    current: dict[str, object] | None = None
-
-    def finish() -> None:
-        nonlocal current
-        if current is not None:
-            providers.append((str(current.get("name", "<unknown>")), str(current.get("authority", ""))))
-        current = None
-
-    for raw_line in xmltree.splitlines():
-        stripped = raw_line.lstrip()
-        indent = len(raw_line) - len(stripped)
-        if stripped.startswith("E: provider"):
-            finish()
-            current = {"indent": indent, "name": "<unknown>", "authority": ""}
-            continue
-        if current is None:
-            continue
-        if stripped.startswith("E: ") and indent <= int(current["indent"]):
-            finish()
-            continue
-        if "android:name" in stripped:
-            match = re.search(r'=\"([^\"]+)\"', stripped)
-            if match:
-                current["name"] = match.group(1)
-        if "android:authorities" in stripped:
-            match = re.search(r'=\"([^\"]+)\"', stripped)
-            if match:
-                current["authority"] = match.group(1)
-    finish()
-    return providers
+    if application is not None:
+        for provider in application.findall("provider"):
+            providers.append(
+                (
+                    provider.get(f"{ANDROID}name", "<unknown>"),
+                    provider.get(f"{ANDROID}authorities", ""),
+                )
+            )
+    return min_sdk, providers
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("apk", type=Path)
     parser.add_argument("--aapt2", required=True)
+    parser.add_argument("--apkanalyzer", required=True)
     parser.add_argument("--apksigner", required=True)
     parser.add_argument("--zipalign", required=True)
     parser.add_argument("--keystore", type=Path, required=True)
@@ -108,7 +75,8 @@ def main() -> int:
     required_abis = [item.strip() for item in args.abis.split(",") if item.strip()]
 
     badging = run(args.aapt2, "dump", "badging", str(args.apk))
-    xmltree = run(args.aapt2, "dump", "xmltree", str(args.apk), "--file", "AndroidManifest.xml")
+    manifest_xml = run(args.apkanalyzer, "manifest", "print", str(args.apk))
+    min_sdk, providers = parse_manifest(manifest_xml)
 
     package_match = re.search(r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging)
     require(package_match is not None, "aapt2 did not return package metadata")
@@ -117,7 +85,6 @@ def main() -> int:
     require(version_code == args.version_code, f"unexpected versionCode: {version_code}")
     require(version_name == args.version_name, f"unexpected versionName: {version_name}")
 
-    min_sdk = parse_min_sdk(badging, xmltree)
     require(min_sdk is not None, "minimum Android SDK was not declared")
     require(min_sdk <= 24, f"minimum Android SDK unexpectedly increased to {min_sdk}")
 
@@ -151,12 +118,11 @@ def main() -> int:
         "APK was not signed by the stable Tehkné development key",
     )
 
-    providers = parse_provider_authorities(xmltree)
     authorities = [authority for _, authority in providers if authority]
     duplicates = sorted(authority for authority, count in Counter(authorities).items() if count > 1)
     require(not duplicates, f"duplicate Android provider authorities: {duplicates}; providers={providers}")
     file_providers = [(name, authority) for name, authority in providers if name.endswith("FileProvider")]
-    require(len(file_providers) == 1, f"expected exactly one FileProvider, found: {file_providers}")
+    require(len(file_providers) == 1, f"expected exactly one FileProvider, found: {file_providers}; providers={providers}")
 
     print(
         "APK_VALIDATED",
