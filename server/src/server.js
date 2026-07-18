@@ -46,6 +46,12 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
     for (const socket of socketsByRoom.get(roomId) ?? []) send(socket, message);
   }
 
+  function broadcastExcept(roomId, message, excludedSocket) {
+    for (const socket of socketsByRoom.get(roomId) ?? []) {
+      if (socket !== excludedSocket) send(socket, message);
+    }
+  }
+
   function broadcastLobby() {
     const message = serverMessage("lobby.updated", { rooms: manager.listRooms() });
     for (const socket of connectedSockets) send(socket, message);
@@ -123,6 +129,9 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             snapshot: result.snapshot,
             patches: result.patches,
           }, requestId));
+          if (result.connectionPatch) {
+            broadcastExcept(result.room.id, serverMessage("room.patch", result.connectionPatch), socket);
+          }
           broadcastLobby();
           return;
         }
