@@ -33,7 +33,7 @@ test("private state tracks only the local duel submission", () => {
   const room = second.room;
   room.board.claimCell([0, 0], second.player.id);
   const province = [...room.board.provinces.values()][0];
-  const duel = room.createDuelForProvince(first.player.id, province.id, "card");
+  const duel = room.openProvinceDuel(first.player.id, province.id, "card");
 
   room.submitDuelRound(first.player, duel.id, ["strike"]);
 
