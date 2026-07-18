@@ -32,6 +32,15 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Install Android SDK 35 packages
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
+            "platform-tools" \
+            "build-tools;35.0.1" \
+            "platforms;android-35"
       - name: Download official Godot 4.6.3 and export templates
         run: |
           curl -fsSL -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
@@ -45,26 +54,56 @@ jobs:
       - name: Configure Android export tools
         run: |
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
-          cat > "$HOME/.config/godot/editor_settings-4.tres" <<EOF
-          [gd_resource type="EditorSettings" format=3]
-          [resource]
-          export/android/android_sdk_path = "$ANDROID_HOME"
-          export/android/java_sdk_path = "$JAVA_HOME"
-          EOF
+          printf '%s\n' \
+            '[gd_resource type="EditorSettings" format=3]' \
+            '[resource]' \
+            "export/android/android_sdk_path = \"$ANDROID_HOME\"" \
+            "export/android/java_sdk_path = \"$JAVA_HOME\"" \
+            "export/android/debug_keystore = \"$HOME/.android/debug.keystore\"" \
+            'export/android/debug_keystore_user = "androiddebugkey"' \
+            'export/android/debug_keystore_pass = "android"' \
+            > "$HOME/.config/godot/editor_settings-4.tres"
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Tehkné Solutions,C=BR"
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/debug.keystore" \
+              -storepass android \
+              -alias androiddebugkey \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Tehkné Solutions,C=BR"
           fi
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
       - name: Export Android debug APK
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/.ci/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
-          mkdir -p build/android
-          ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --export-debug Android "$PWD/build/android/HexaOctarinaConquer-debug.apk"
+          mkdir -p build/android .ci
+          cp "$HOME/.android/debug.keystore" .ci/debug.keystore
+          set +e
+          ./Godot_v4.6.3-stable_linux.x86_64 --verbose --headless \
+            --path client/godot \
+            --export-debug Android \
+            "$PWD/build/android/HexaOctarinaConquer-debug.apk" \
+            2>&1 | tee build/android/godot-export.log
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "::error title=Godot Android export failed::$(tail -n 20 build/android/godot-export.log | tr '\n' ' ')"
+            exit "$status"
+          fi
           test -s build/android/HexaOctarinaConquer-debug.apk
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: hexa-octarina-android-debug
-          path: build/android/HexaOctarinaConquer-debug.apk
+          path: |
+            build/android/HexaOctarinaConquer-debug.apk
+            build/android/godot-export.log
           if-no-files-found: error
 
   node-authoritative-server:
