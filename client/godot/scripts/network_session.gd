@@ -8,12 +8,18 @@ signal lobby_changed(rooms: Array)
 signal account_changed(profile: Dictionary)
 signal leaderboard_changed(entries: Array)
 signal history_changed(matches: Array)
+signal season_changed(data: Dictionary)
+signal season_leaderboard_changed(entries: Array)
+signal matchmaking_changed(state: Dictionary)
+signal recovery_changed(data: Dictionary)
+signal telemetry_accepted(data: Dictionary)
 
 const PROTOCOL_VERSION := "1.0"
 const SESSION_PATH := "user://hexa_session.cfg"
 
 @export var server_url := "ws://127.0.0.1:8080/ws"
 @export var default_board_size := 5
+@export var matchmaking_region := "global"
 
 var socket := WebSocketPeer.new()
 var socket_open := false
@@ -35,8 +41,13 @@ var account_id := ""
 var account_token := ""
 var account_profile: Dictionary = {}
 var matchmaking_started := false
+var matchmaking_state: Dictionary = {"state": "idle"}
+var pending_match_id := ""
+var matchmaking_poll_delay := 0.0
+var telemetry_session_id := ""
 
 func _ready() -> void:
+	telemetry_session_id = "%s-%d-%d" % [OS.get_name(), Time.get_unix_time_from_system(), randi()]
 	set_process(false)
 
 func start() -> void:
@@ -55,6 +66,8 @@ func _parse_arguments() -> void:
 			player_name = argument.trim_prefix("--name=")
 		elif argument.begins_with("--server="):
 			server_url = argument.trim_prefix("--server=")
+		elif argument.begins_with("--region="):
+			matchmaking_region = argument.trim_prefix("--region=")
 		elif argument == "--create":
 			force_create = true
 
@@ -77,6 +90,7 @@ func _process(delta: float) -> void:
 			_set_status("Conectado. Negociando protocolo...")
 		while socket.get_available_packet_count() > 0:
 			_handle_packet(socket.get_packet().get_string_from_utf8())
+		_process_matchmaking(delta)
 	elif ready_state == WebSocketPeer.STATE_CLOSED:
 		if socket_open:
 			socket_open = false
@@ -86,6 +100,18 @@ func _process(delta: float) -> void:
 			reconnect_delay -= delta
 			if reconnect_delay <= 0.0:
 				_connect_socket()
+
+func _process_matchmaking(delta: float) -> void:
+	if not matchmaking_started or not has_account() or not room_id.is_empty():
+		return
+	matchmaking_poll_delay -= delta
+	if matchmaking_poll_delay > 0.0:
+		return
+	matchmaking_poll_delay = 2.0
+	if not pending_match_id.is_empty():
+		accept_matchmaking(pending_match_id)
+	elif matchmaking_state.get("state", "idle") == "queued":
+		request_matchmaking_status()
 
 func _establish_session() -> void:
 	if not room_id.is_empty() and not player_id.is_empty() and not session_token.is_empty():
@@ -104,7 +130,9 @@ func begin_matchmaking() -> void:
 	if matchmaking_started or not room_id.is_empty():
 		return
 	matchmaking_started = true
-	if not room_to_join.is_empty():
+	if has_account() and room_to_join.is_empty() and not force_create:
+		enqueue_matchmaking()
+	elif not room_to_join.is_empty():
 		_join_room(room_to_join)
 	elif force_create:
 		_create_room()
@@ -126,36 +154,99 @@ func register_account(handle: String, display_name: String, password: String) ->
 func login_account(handle: String, password: String) -> void:
 	_send("account.login", {"handle": handle, "password": password})
 
+func request_recovery(handle: String) -> void:
+	_send("account.recovery.request", {"handle": handle})
+
+func confirm_recovery(handle: String, code: String, new_password: String) -> void:
+	_send("account.recovery.confirm", {
+		"handle": handle,
+		"recoveryCode": code,
+		"newPassword": new_password
+	})
+
 func logout_account() -> void:
+	if has_account():
+		cancel_matchmaking()
 	account_id = ""
 	account_token = ""
 	account_profile = {}
+	matchmaking_started = false
+	matchmaking_state = {"state": "idle"}
+	pending_match_id = ""
 	account_changed.emit(account_profile)
+	matchmaking_changed.emit(matchmaking_state)
 	_save_session()
 
 func has_account() -> bool:
 	return not account_id.is_empty() and not account_token.is_empty()
 
+func _account_payload(extra: Dictionary = {}) -> Dictionary:
+	var payload := {"accountId": account_id, "accessToken": account_token}
+	payload.merge(extra, true)
+	return payload
+
 func request_profile() -> void:
-	if not has_account():
-		return
-	_send("account.profile", {"accountId": account_id, "accessToken": account_token})
+	if has_account():
+		_send("account.profile", _account_payload())
 
 func request_history(limit := 25) -> void:
-	if not has_account():
-		return
-	_send("account.history", {
-		"accountId": account_id,
-		"accessToken": account_token,
-		"limit": limit
-	})
+	if has_account():
+		_send("account.history", _account_payload({"limit": limit}))
 
 func request_leaderboard(limit := 25) -> void:
 	_send("leaderboard.list", {"limit": limit})
 
+func request_seasons() -> void:
+	_send("season.list", {})
+
+func request_season_leaderboard(limit := 25, season_id := "") -> void:
+	var payload := {"limit": limit}
+	if not season_id.is_empty():
+		payload["seasonId"] = season_id
+	_send("season.leaderboard", payload)
+
+func enqueue_matchmaking() -> void:
+	if not has_account():
+		return
+	pending_match_id = ""
+	matchmaking_poll_delay = 2.0
+	_send("matchmaking.enqueue", _account_payload({
+		"region": matchmaking_region,
+		"boardSize": default_board_size
+	}))
+	track_event("mobile.matchmaking.enqueued", {
+		"region": matchmaking_region,
+		"boardSize": default_board_size
+	})
+
+func request_matchmaking_status() -> void:
+	if has_account():
+		_send("matchmaking.status", _account_payload())
+
+func cancel_matchmaking() -> void:
+	if has_account():
+		_send("matchmaking.cancel", _account_payload())
+	pending_match_id = ""
+	matchmaking_state = {"state": "idle"}
+	matchmaking_changed.emit(matchmaking_state)
+
+func accept_matchmaking(match_id: String) -> void:
+	if has_account() and not match_id.is_empty():
+		_send("matchmaking.accept", _account_payload({"matchId": match_id}))
+
+func track_event(event_name: String, data: Dictionary = {}) -> void:
+	var payload := {
+		"sessionId": telemetry_session_id,
+		"eventName": event_name,
+		"data": data
+	}
+	if has_account():
+		payload.merge(_account_payload(), true)
+	_send("telemetry.track", payload)
+
 func _room_identity_payload() -> Dictionary:
 	if has_account():
-		return {"accountId": account_id, "accessToken": account_token}
+		return _account_payload()
 	return {"playerName": player_name}
 
 func _create_room() -> void:
@@ -169,12 +260,8 @@ func _join_room(target_room_id: String) -> void:
 	_send("room.join", payload)
 
 func play_edge(start: Vector2i, end: Vector2i) -> void:
-	if not _has_session():
-		return
-	_send("action.play_edge", _action_payload({
-		"start": [start.x, start.y],
-		"end": [end.x, end.y]
-	}))
+	if _has_session():
+		_send("action.play_edge", _action_payload({"start": [start.x, start.y], "end": [end.x, end.y]}))
 
 func play_card(card_id: String, province_id := "", start: Variant = null, end: Variant = null) -> void:
 	if not _has_session():
@@ -188,14 +275,12 @@ func play_card(card_id: String, province_id := "", start: Variant = null, end: V
 	_send("action.play_card", _action_payload(extra))
 
 func submit_duel_round(duel_id: String, card_ids: Array) -> void:
-	if not _has_session():
-		return
-	_send("action.resolve_duel_round", _action_payload({"duelId": duel_id, "cardIds": card_ids}))
+	if _has_session():
+		_send("action.resolve_duel_round", _action_payload({"duelId": duel_id, "cardIds": card_ids}))
 
 func forfeit_match() -> void:
-	if not _has_session():
-		return
-	_send("match.forfeit", _action_payload({}))
+	if _has_session():
+		_send("match.forfeit", _action_payload({}))
 
 func list_lobby() -> void:
 	_send("lobby.list", {})
@@ -241,21 +326,47 @@ func _handle_packet(raw: String) -> void:
 		"server.hello":
 			hello_received = true
 			_set_status("Servidor compatível com protocolo %s" % PROTOCOL_VERSION)
+			track_event("client.connected", {"platform": OS.get_name(), "version": "0.9.0"})
 			_establish_session()
 		"account.session":
 			account_id = payload.get("account", {}).get("id", "")
 			account_token = payload.get("accessToken", "")
 			_apply_account(payload.get("account", {}))
 			_save_session()
+			request_seasons()
+			matchmaking_started = false
 			begin_matchmaking()
 		"account.profile":
 			_apply_account(payload)
 			_save_session()
+			request_seasons()
+			matchmaking_started = false
 			begin_matchmaking()
 		"account.history":
 			history_changed.emit(payload.get("matches", []))
+		"account.recovery.requested":
+			recovery_changed.emit(payload)
 		"leaderboard.data":
 			leaderboard_changed.emit(payload.get("leaderboard", []))
+		"season.data":
+			season_changed.emit(payload)
+		"season.leaderboard":
+			season_leaderboard_changed.emit(payload.get("leaderboard", []))
+		"matchmaking.state":
+			matchmaking_state = payload
+			matchmaking_changed.emit(matchmaking_state)
+			var queue_state: String = payload.get("state", "idle")
+			if queue_state == "matched":
+				pending_match_id = payload.get("match", {}).get("id", "")
+				matchmaking_poll_delay = 0.1
+				_set_status("Adversário encontrado. Confirmando arena...")
+			elif queue_state == "queued":
+				pending_match_id = ""
+				_set_status("Buscando adversário • faixa ±%d" % payload.get("searchWindow", 100))
+			else:
+				pending_match_id = ""
+		"telemetry.accepted":
+			telemetry_accepted.emit(payload)
 		"match.progression":
 			var local_profile: Dictionary = payload.get("winner", {})
 			if local_profile.get("id", "") != account_id:
@@ -263,10 +374,11 @@ func _handle_packet(raw: String) -> void:
 			if local_profile.get("id", "") == account_id:
 				_apply_account(local_profile)
 			request_history()
+			request_season_leaderboard()
 		"lobby.rooms":
 			var rooms: Array = payload.get("rooms", [])
 			lobby_changed.emit(rooms)
-			if room_id.is_empty() and room_to_join.is_empty():
+			if room_id.is_empty() and room_to_join.is_empty() and not has_account():
 				if rooms.is_empty():
 					_create_room()
 				else:
@@ -280,7 +392,11 @@ func _handle_packet(raw: String) -> void:
 			session_token = payload.get("sessionToken", "")
 			_apply_snapshot(payload.get("snapshot", {}))
 			_apply_private_state(payload.get("privateState", {}))
+			pending_match_id = ""
+			matchmaking_state = {"state": "claimed", "matchmaking": payload.get("matchmaking", {})}
+			matchmaking_changed.emit(matchmaking_state)
 			_save_session()
+			track_event("mobile.matchmaking.claimed", {"roomId": room_id})
 			_set_status("Sala %s conectada." % room_id)
 		"session.reconnected":
 			room_id = payload.get("roomId", room_id)
@@ -309,6 +425,15 @@ func _handle_packet(raw: String) -> void:
 				begin_matchmaking()
 			elif code == "INVALID_ACCOUNT_SESSION":
 				logout_account()
+			elif code == "MATCH_HOST_PENDING":
+				matchmaking_poll_delay = 1.0
+			elif code in ["ROOM_WRITE_CONFLICT", "REVISION_CONFLICT"] and _has_session():
+				_send("room.reconnect", {
+					"roomId": room_id,
+					"playerId": player_id,
+					"sessionToken": session_token,
+					"lastRevision": revision
+				})
 		"pong":
 			pass
 
