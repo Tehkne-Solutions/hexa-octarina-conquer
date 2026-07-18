@@ -7,7 +7,9 @@ Tehkné Solutions — development APK validation only.
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -36,6 +38,17 @@ def normalized_digest(value: str) -> str:
     return re.sub(r"[^0-9a-f]", "", value.lower())
 
 
+def default_apkanalyzer() -> str:
+    explicit = os.environ.get("APK_ANALYZER")
+    if explicit:
+        return explicit
+    discovered = shutil.which("apkanalyzer")
+    if discovered:
+        return discovered
+    android_home = os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT") or ""
+    return str(Path(android_home) / "cmdline-tools" / "latest" / "bin" / "apkanalyzer")
+
+
 def parse_manifest(manifest_xml: str) -> tuple[int | None, list[tuple[str, str]]]:
     root = ET.fromstring(manifest_xml)
     uses_sdk = root.find("uses-sdk")
@@ -59,7 +72,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("apk", type=Path)
     parser.add_argument("--aapt2", required=True)
-    parser.add_argument("--apkanalyzer", required=True)
+    parser.add_argument("--apkanalyzer", default=default_apkanalyzer())
     parser.add_argument("--apksigner", required=True)
     parser.add_argument("--zipalign", required=True)
     parser.add_argument("--keystore", type=Path, required=True)
@@ -72,6 +85,7 @@ def main() -> int:
     args = parser.parse_args()
 
     require(args.apk.is_file() and args.apk.stat().st_size > 0, f"APK not found: {args.apk}")
+    require(Path(args.apkanalyzer).is_file(), f"apkanalyzer not found: {args.apkanalyzer}")
     required_abis = [item.strip() for item in args.abis.split(",") if item.strip()]
 
     badging = run(args.aapt2, "dump", "badging", str(args.apk))
