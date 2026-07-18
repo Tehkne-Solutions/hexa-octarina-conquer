@@ -108,3 +108,40 @@ test("creates, joins and synchronizes a room over WebSocket", async () => {
     await instance.close();
   }
 });
+
+test("publishes a safe lobby over WebSocket and HTTP", async () => {
+  const instance = startServer({ port: 0 });
+  let socket;
+
+  try {
+    await once(instance.httpServer, "listening");
+    const address = instance.httpServer.address();
+    const wsUrl = `ws://127.0.0.1:${address.port}/ws`;
+    const httpUrl = `http://127.0.0.1:${address.port}/rooms`;
+
+    socket = new WebSocket(wsUrl);
+    const inbox = createInbox(socket);
+    await once(socket, "open");
+    await inbox.next("server.hello");
+
+    send(socket, "lobby.list", {}, "lobby-empty");
+    const emptyLobby = await inbox.next("lobby.rooms");
+    assert.deepEqual(emptyLobby.payload.rooms, []);
+
+    send(socket, "room.create", { playerName: "A", boardSize: 5 }, "create-lobby");
+    await inbox.next("session.established");
+    await inbox.next("room.patch");
+    const lobbyUpdate = await inbox.next("lobby.updated");
+    assert.equal(lobbyUpdate.payload.rooms.length, 1);
+    assert.equal(JSON.stringify(lobbyUpdate).includes("sessionToken"), false);
+
+    const response = await fetch(httpUrl);
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.rooms.length, 1);
+    assert.equal(JSON.stringify(body).includes("sessionToken"), false);
+  } finally {
+    await closeSocket(socket);
+    await instance.close();
+  }
+});
