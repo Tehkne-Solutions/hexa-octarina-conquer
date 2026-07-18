@@ -62,7 +62,7 @@ jobs:
             "export/android/debug_keystore = \"$HOME/.android/debug.keystore\"" \
             'export/android/debug_keystore_user = "androiddebugkey"' \
             'export/android/debug_keystore_pass = "android"' \
-            > "$HOME/.config/godot/editor_settings-4.tres"
+            > "$HOME/.config/godot/editor_settings-4.6.tres"
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
             keytool -genkeypair -v \
               -keystore "$HOME/.android/debug.keystore" \
