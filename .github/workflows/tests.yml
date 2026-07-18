@@ -2,7 +2,7 @@ name: Core Tests
 
 on:
   push:
-    branches: [main, "agent/**"]
+    branches: [main, "agent/**", "hotfix/**"]
   pull_request:
     branches: [main]
 
@@ -36,6 +36,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
       - name: Install Android SDK 35 packages
         run: |
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
@@ -43,6 +46,7 @@ jobs:
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
             "platform-tools" \
+            "emulator" \
             "build-tools;35.0.1" \
             "platforms;android-35"
       - name: Download official Godot 4.6.3 and export templates
@@ -55,6 +59,8 @@ jobs:
           mkdir -p template-unpack "$HOME/.local/share/godot/export_templates/4.6.3.stable"
           unzip -q templates.tpz -d template-unpack
           cp -R template-unpack/templates/. "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+      - name: Install Godot Android Gradle template
+        run: bash scripts/install-godot-android-template.sh client/godot
       - name: Configure Android export tools
         run: |
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
@@ -78,9 +84,10 @@ jobs:
               -validity 10000 \
               -dname "CN=Android Debug,O=Tehkné Solutions,C=BR"
           fi
+          python -m pip install --disable-pip-version-check androguard
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
-      - name: Export Android debug APK
+      - name: Export Android universal debug APK
         env:
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/.ci/debug.keystore
           GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
@@ -92,22 +99,39 @@ jobs:
           ./Godot_v4.6.3-stable_linux.x86_64 --verbose --headless \
             --path client/godot \
             --export-debug Android \
-            "$PWD/build/android/HexaOctarinaConquer-debug.apk" \
+            "$PWD/build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk" \
             2>&1 | tee build/android/godot-export.log
           status=${PIPESTATUS[0]}
           set -e
           if [ "$status" -ne 0 ]; then
-            echo "::error title=Godot Android export failed::$(tail -n 20 build/android/godot-export.log | tr '\n' ' ')"
+            echo "::error title=Godot Android export failed::$(tail -n 30 build/android/godot-export.log | tr '\n' ' ')"
             exit "$status"
           fi
-          test -s build/android/HexaOctarinaConquer-debug.apk
+          test -s build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
+      - name: Validate APK manifest, ABIs and signature
+        run: |
+          APK=build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose --print-certs "$APK"
+          python scripts/validate-android-apk.py "$APK" | tee build/android/apk-validation.json
+      - name: Install APK on Android 7 emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 24
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            adb install -r build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
+            adb shell pm path com.tehkne.hexaoctarina
+            adb shell dumpsys package com.tehkne.hexaoctarina | grep -E 'versionCode=12|versionName=0.11.1'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: hexa-octarina-android-debug
+          name: hexa-octarina-android-universal-0.11.1
           path: |
-            build/android/HexaOctarinaConquer-debug.apk
+            build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
             build/android/godot-export.log
+            build/android/apk-validation.json
           if-no-files-found: error
 
   node-authoritative-server:
