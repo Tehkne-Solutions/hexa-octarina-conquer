@@ -25,22 +25,22 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
-      HEXA_STORE: sqlite
-      HEXA_DB_PATH: /data/hexa-octarina.sqlite
+      HEXA_STORE: postgres
       HEXA_IDENTITY_STORE: postgres
+      HEXA_COMPETITION_STORE: postgres
       DATABASE_URL: postgresql://hexa:${POSTGRES_PASSWORD:-hexa-development}@postgres:5432/hexa_octarina
       HEXA_PG_POOL_SIZE: 10
+      HEXA_ROOM_PG_POOL_SIZE: 10
+      HEXA_COMPETITION_PG_POOL_SIZE: 8
+      HEXA_RECOVERY_EXPOSE_CODE: "false"
     ports:
       - "8080:8080"
-    volumes:
-      - hexa_octarina_data:/data
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>r.json()).then(h=>{if(!h.ok||h.roomStore!=='postgres'||h.identityStore!=='postgres'||h.competitionStore!=='postgres')process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 4s
       retries: 3
       start_period: 10s
 
 volumes:
-  hexa_octarina_data:
   hexa_octarina_postgres:
