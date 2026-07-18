@@ -44,7 +44,7 @@ function send(socket, type, payload, requestId) {
 }
 
 async function connect(instance) {
-  await once(instance.httpServer, "listening");
+  if (!instance.httpServer.listening) await once(instance.httpServer, "listening");
   const address = instance.httpServer.address();
   const socket = new WebSocket(`ws://127.0.0.1:${address.port}/ws`);
   const inbox = createInbox(socket);
