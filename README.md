@@ -1,48 +1,93 @@
 # Hexa Octarina Conquer
 
-Motor de referência do jogo tático híbrido definido no GDD: conquista geométrica por **Dots and Boxes**, conexão e cerco inspirados em **Go**, progressão de eras, economia territorial e duelos de cartas em células.
+Jogo tático híbrido definido no GDD: conquista geométrica por **Dots and Boxes**, conexão e cerco inspirados em **Go**, progressão de eras, economia territorial e Duelo de Célula com cartas.
 
-## Estado atual — v0.2.0
+## Estado atual — Sprint 05
 
-Esta sprint estabiliza o núcleo antes da integração com Godot 4 e backend autoritativo:
+O projeto possui três camadas complementares:
+
+- **motor Python de referência**: especificação executável das regras, balanceamento e regressões;
+- **servidor Node.js autoritativo**: salas, WebSocket, revisões, patches, turnos e duelos;
+- **cliente Godot 4 mínimo**: conexão, reconexão, desenho do tabuleiro e envio de arestas por clique.
+
+### Implementado
 
 - arestas validadas por limite, ortogonalidade e duplicidade;
 - posse da célula atribuída a quem fecha o quarto lado;
-- províncias persistentes, sem perder HP, nível ou proteção quando o tabuleiro muda;
-- turnos corrigidos, com ações por era e turno extra ao fechar células;
-- recursos de madeira, pedra, comida e conhecimento;
-- cercos agora abrem um **Duelo de Célula**, em vez de capturar silenciosamente;
-- combate TCG com energia, escudo, cura, status, elementos e combo `wet + electric`;
-- eventos e snapshot serializável para futura API/WebSocket;
-- assinatura técnica: **Tehkné Solutions**.
+- turnos alternados e ação extra ao fechar células;
+- cartas macro de expansão, fortificação e convocação de duelo;
+- duelo simultâneo com energia, escudo, cura, status e combo `wet + lightning`;
+- captura territorial após a resolução do duelo;
+- criação e entrada em salas de dois jogadores;
+- tokens privados de sessão;
+- reconexão incremental por revisão;
+- snapshots e patches JSON versionados;
+- cliente Godot com persistência local da sessão;
+- CI para Python e Node.js.
 
-## Executar
+## Motor Python
 
 ```bash
+python -m pip install -e .
 python -m unittest discover -s tests -v
-PYTHONPATH=src python -m hexa_octarina_conquer.cli
-```
-
-Após instalação editável, o comando também fica disponível:
-
-```bash
-pip install -e .
 hexa-octarina
 ```
 
+## Servidor WebSocket
+
+```bash
+cd server
+npm install
+npm start
+```
+
+Endpoints:
+
+```text
+HTTP health: http://localhost:8080/health
+WebSocket:    ws://localhost:8080/ws
+```
+
+Para executar os testes:
+
+```bash
+cd server
+npm test
+```
+
+## Cliente Godot 4
+
+Abra `client/godot/project.godot` no Godot 4.
+
+Por padrão, o cliente conecta em:
+
+```text
+ws://127.0.0.1:8080/ws
+```
+
+Também é possível iniciar com parâmetros:
+
+```bash
+godot --path client/godot -- --name=Arquiteto --room=A1B2C3D4
+```
+
+Sem `--room`, o cliente cria uma sala. Com o código, ele entra em uma sala existente.
+
 ## Estrutura
 
-- `src/hexa_octarina_conquer/game_state.py`: estado autoritativo, Dots, províncias, turnos, eras e gatilhos de cerco;
-- `src/hexa_octarina_conquer/combat.py`: resolução determinística dos duelos TCG;
-- `src/hexa_octarina_conquer/catalog.py`: deck inicial de demonstração;
-- `src/hexa_octarina_conquer/cli.py`: cliente local mínimo;
-- `tests/`: regressões do motor e do combate;
-- `docs/adr/`: decisões arquiteturais;
-- `docs/sprint-04-core-tatico.md`: escopo e critérios desta entrega.
+- `src/hexa_octarina_conquer/`: motor de referência Python;
+- `tests/`: testes do motor de referência;
+- `server/src/`: servidor Node.js e regras autoritativas do recorte online;
+- `server/test/`: testes de protocolo, salas, reconexão e duelo;
+- `client/godot/`: cliente técnico Godot 4;
+- `docs/protocol-v1.md`: contrato WebSocket;
+- `docs/sprint-04-core-tatico.md`: estabilização do domínio;
+- `docs/sprint-05-protocolo-autoritativo.md`: entrega online atual;
+- `docs/adr/`: decisões arquiteturais.
 
 ## Próximo marco
 
-Implementar a camada de transporte autoritativa em Node.js/WebSocket e um cliente Godot 4 que consuma snapshots e eventos deste motor como especificação executável.
+Sprint 06: paridade automatizada Python ↔ Node, províncias conectadas, persistência de partidas e primeira arena 3D no Godot.
 
 ---
 
