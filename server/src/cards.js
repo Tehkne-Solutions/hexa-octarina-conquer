@@ -1,3 +1,5 @@
+import { ProtocolError } from "./protocol.js";
+
 export const CARD_CATALOG = Object.freeze({
   expansion: Object.freeze({ id: "expansion", name: "Expansão Rúnica", kind: "macro", cost: 1, effect: "conquest" }),
   fortify: Object.freeze({ id: "fortify", name: "Fortaleza Octarina", kind: "macro", cost: 1, effect: "fortify", value: 3 }),
@@ -22,7 +24,7 @@ export const STARTER_HAND = Object.freeze([
 
 export function getCard(cardId) {
   const card = CARD_CATALOG[cardId];
-  if (!card) throw new Error(`unknown card: ${cardId}`);
+  if (!card) throw new ProtocolError("UNKNOWN_CARD", `unknown card: ${cardId}`);
   return card;
 }
 
@@ -48,7 +50,7 @@ export function removeCards(hand, cardIds) {
   const next = [...hand];
   for (const cardId of cardIds) {
     const index = next.indexOf(cardId);
-    if (index < 0) throw new Error(`card is not in hand: ${cardId}`);
+    if (index < 0) throw new ProtocolError("CARD_NOT_IN_HAND", `card is not in hand: ${cardId}`);
     next.splice(index, 1);
   }
   return next;
