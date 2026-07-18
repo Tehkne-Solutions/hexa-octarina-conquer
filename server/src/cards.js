@@ -1,14 +1,38 @@
 import { ProtocolError } from "./protocol.js";
 
 export const CARD_CATALOG = Object.freeze({
-  expansion: Object.freeze({ id: "expansion", name: "Expansão Rúnica", kind: "macro", cost: 1, effect: "conquest" }),
-  fortify: Object.freeze({ id: "fortify", name: "Fortaleza Octarina", kind: "macro", cost: 1, effect: "fortify", value: 3 }),
-  duel: Object.freeze({ id: "duel", name: "Convocar Duelo", kind: "macro", cost: 1, effect: "duel" }),
-  strike: Object.freeze({ id: "strike", name: "Golpe Rúnico", kind: "duel", cost: 1, effect: "attack", value: 2, element: "physical" }),
-  shield: Object.freeze({ id: "shield", name: "Égide de Pedra", kind: "duel", cost: 1, effect: "shield", value: 2 }),
-  wet: Object.freeze({ id: "wet", name: "Maré Rúnica", kind: "duel", cost: 1, effect: "status", status: "wet", duration: 2, element: "water" }),
-  lightning: Object.freeze({ id: "lightning", name: "Raio Encadeado", kind: "duel", cost: 2, effect: "attack", value: 3, element: "electric" }),
-  heal: Object.freeze({ id: "heal", name: "Cura Alquímica", kind: "duel", cost: 1, effect: "heal", value: 2 }),
+  expansion: Object.freeze({
+    id: "expansion", name: "Expansão Rúnica", kind: "macro", cost: 1, effect: "conquest",
+    description: "Ergue uma aresta sem consumir a ação normal do turno.", icon: "⌁",
+  }),
+  fortify: Object.freeze({
+    id: "fortify", name: "Fortaleza Octarina", kind: "macro", cost: 1, effect: "fortify", value: 3,
+    description: "Concede 3 HP a uma província aliada e pode transformá-la em fortaleza.", icon: "⬢",
+  }),
+  duel: Object.freeze({
+    id: "duel", name: "Convocar Duelo", kind: "macro", cost: 1, effect: "duel",
+    description: "Desafia uma província inimiga para um Duelo de Célula.", icon: "⚔",
+  }),
+  strike: Object.freeze({
+    id: "strike", name: "Golpe Rúnico", kind: "duel", cost: 1, effect: "attack", value: 2, element: "physical",
+    description: "Causa 2 de dano físico.", icon: "✦",
+  }),
+  shield: Object.freeze({
+    id: "shield", name: "Égide de Pedra", kind: "duel", cost: 1, effect: "shield", value: 2,
+    description: "Absorve os próximos 2 pontos de dano.", icon: "◆",
+  }),
+  wet: Object.freeze({
+    id: "wet", name: "Maré Rúnica", kind: "duel", cost: 1, effect: "status", status: "wet", duration: 2, element: "water",
+    description: "Aplica Molhado por 2 rodadas e prepara o combo elétrico.", icon: "≈",
+  }),
+  lightning: Object.freeze({
+    id: "lightning", name: "Raio Encadeado", kind: "duel", cost: 2, effect: "attack", value: 3, element: "electric",
+    description: "Causa 3 de dano; causa o dobro contra um alvo Molhado.", icon: "ϟ",
+  }),
+  heal: Object.freeze({
+    id: "heal", name: "Cura Alquímica", kind: "duel", cost: 1, effect: "heal", value: 2,
+    description: "Recupera até 2 HP do combatente.", icon: "+",
+  }),
 });
 
 export const STARTER_HAND = Object.freeze([
@@ -26,6 +50,10 @@ export function getCard(cardId) {
   const card = CARD_CATALOG[cardId];
   if (!card) throw new ProtocolError("UNKNOWN_CARD", `unknown card: ${cardId}`);
   return card;
+}
+
+export function cardSnapshot(cardId) {
+  return { ...getCard(cardId) };
 }
 
 export function totalCardCost(cardIds) {

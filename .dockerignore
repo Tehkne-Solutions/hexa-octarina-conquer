@@ -1,0 +1,13 @@
+.git
+.github
+.data
+**/.data
+**/node_modules
+**/__pycache__
+**/.godot
+client
+docs
+tests
+conformance
+src
+*.md

@@ -9,7 +9,9 @@ const PLAYER_COLORS := [
 
 @onready var network = $NetworkSession
 @onready var board_root: Node3D = $BoardRoot
+@onready var combat_fx: Node3D = $CombatFX
 @onready var camera: Camera3D = $Camera3D
+@onready var battle_ui: Control = $HUD/BattleUI
 @onready var room_label: Label = $HUD/Panel/Margin/VBox/RoomLabel
 @onready var turn_label: Label = $HUD/Panel/Margin/VBox/TurnLabel
 @onready var lobby_label: Label = $HUD/Panel/Margin/VBox/LobbyLabel
@@ -19,19 +21,30 @@ var room_state: Dictionary = {}
 var selected_point: Variant = null
 var board_size := 5
 var grid_gap := 1.8
+var camera_home := Vector3.ZERO
 
 func _ready() -> void:
 	network.state_changed.connect(_on_state_changed)
+	network.private_state_changed.connect(_on_private_state_changed)
+	network.event_received.connect(_on_event_received)
 	network.status_changed.connect(_on_status_changed)
 	network.lobby_changed.connect(_on_lobby_changed)
+	battle_ui.macro_requested.connect(_on_macro_requested)
+	battle_ui.expansion_armed.connect(_on_expansion_armed)
+	battle_ui.duel_submitted.connect(_on_duel_submitted)
 	camera.look_at(Vector3.ZERO, Vector3.UP)
+	camera_home = camera.position
 	network.start()
 	_rebuild_arena()
 
 func _on_state_changed(state: Dictionary) -> void:
 	room_state = state
 	selected_point = null
+	battle_ui.update_public_state(room_state, network.player_id)
 	_rebuild_arena()
+
+func _on_private_state_changed(state: Dictionary) -> void:
+	battle_ui.update_private_state(state)
 
 func _on_status_changed(text: String) -> void:
 	status_label.text = text
@@ -45,6 +58,93 @@ func _on_lobby_changed(rooms: Array) -> void:
 		elif room.get("status", "") == "active":
 			active += 1
 	lobby_label.text = "Lobby: %d aguardando | %d em batalha" % [waiting, active]
+
+func _on_macro_requested(card_id: String, province_id: String) -> void:
+	if not network.is_local_turn():
+		_on_status_changed("Cartas macro só podem ser usadas no seu turno.")
+		return
+	network.play_card(card_id, province_id)
+
+func _on_expansion_armed(_card_id: String) -> void:
+	_on_status_changed("Expansão Rúnica armada: escolha dois pilares adjacentes.")
+
+func _on_duel_submitted(duel_id: String, card_ids: Array) -> void:
+	network.submit_duel_round(duel_id, card_ids)
+	_on_status_changed("Sequência enviada. Aguardando o oponente...")
+
+func _on_event_received(event: Dictionary) -> void:
+	var event_type: String = event.get("type", "")
+	var payload: Dictionary = event.get("payload", {})
+	var position := _event_world_position(event_type, payload)
+	match event_type:
+		"edge.played":
+			combat_fx.play_burst(position, _player_color(payload.get("playerId", "")), 280.0, 0.65)
+			if not payload.get("claimedProvinceIds", []).is_empty():
+				combat_fx.play_burst(position + Vector3(0, 0.25, 0), Color("fef08a"), 520.0, 1.1)
+		"card.played":
+			combat_fx.play_burst(position, Color("c084fc"), 460.0, 1.0)
+		"duel.cards_submitted":
+			combat_fx.play_burst(position, Color("60a5fa"), 340.0, 0.75)
+		"duel.round_resolved":
+			var resolution: Dictionary = payload.get("resolution", {})
+			var winner_id: String = resolution.get("winnerId", "")
+			combat_fx.play_duel_impact(position, _player_color(winner_id))
+			_shake_camera(0.42)
+		"player.joined", "player.reconnected":
+			combat_fx.play_burst(Vector3.ZERO, Color("a7f3d0"), 610.0, 0.65)
+
+func _event_world_position(event_type: String, payload: Dictionary) -> Vector3:
+	if event_type == "edge.played":
+		var edge: Dictionary = payload.get("edge", {})
+		var start: Array = edge.get("start", [0, 0])
+		var end: Array = edge.get("end", [0, 0])
+		return _grid_world((start[0] + end[0]) * 0.5, (start[1] + end[1]) * 0.5, 0.6)
+	if event_type.begins_with("duel."):
+		var duel_id: String = payload.get("duelId", "")
+		for duel in network.room_state.get("duels", []):
+			if duel.get("id", "") == duel_id:
+				return _province_world(duel.get("provinceId", ""))
+	if event_type == "card.played":
+		var action_result: Dictionary = payload.get("actionResult", {})
+		if action_result.has("province"):
+			return _province_world(action_result.get("province", {}).get("id", ""))
+		if action_result.has("duelId"):
+			for duel in network.room_state.get("duels", []):
+				if duel.get("id", "") == action_result.get("duelId", ""):
+					return _province_world(duel.get("provinceId", ""))
+	return Vector3.ZERO
+
+func _province_world(province_id: String) -> Vector3:
+	var board: Dictionary = network.room_state.get("board", {})
+	var cells_by_id := {}
+	for cell in board.get("cells", []):
+		cells_by_id[cell.get("id", "")] = cell
+	for province in board.get("provinces", []):
+		if province.get("id", "") != province_id:
+			continue
+		var center := Vector2.ZERO
+		var count := 0
+		for cell_id in province.get("cellIds", []):
+			var cell: Dictionary = cells_by_id.get(cell_id, {})
+			if not cell.is_empty():
+				center += Vector2(cell.get("x", 0) + 0.5, cell.get("y", 0) + 0.5)
+				count += 1
+		if count > 0:
+			center /= float(count)
+			return _grid_world(center.x, center.y, 1.0)
+	return Vector3.ZERO
+
+func _shake_camera(strength: float) -> void:
+	camera_home = camera.position
+	var tween := create_tween()
+	for index in range(5):
+		var offset := Vector3(
+			randf_range(-strength, strength),
+			randf_range(-strength * 0.45, strength * 0.45),
+			randf_range(-strength, strength)
+		)
+		tween.tween_property(camera, "position", camera_home + offset, 0.045)
+	tween.tween_property(camera, "position", camera_home, 0.08)
 
 func _rebuild_arena() -> void:
 	for child in board_root.get_children():
@@ -156,6 +256,7 @@ func _add_mesh(mesh: PrimitiveMesh, color: Color, position: Vector3, node_name: 
 func _update_camera() -> void:
 	var radius := maxf(7.0, float(board_size) * grid_gap * 0.9)
 	camera.position = Vector3(radius * 0.78, radius * 1.05, radius)
+	camera_home = camera.position
 	camera.look_at(Vector3.ZERO, Vector3.UP)
 
 func _update_hud(board: Dictionary) -> void:
@@ -171,6 +272,9 @@ func _update_hud(board: Dictionary) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed):
 		return
+	if not network.active_local_duel().is_empty():
+		_on_status_changed("Resolva o Duelo de Célula pelo painel de cartas.")
+		return
 	if not network.is_local_turn():
 		_on_status_changed("Aguarde o turno do oponente.")
 		return
@@ -183,7 +287,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		selected_point = point
 		_on_status_changed("Selecione um pilar ortogonalmente adjacente.")
 	elif abs(selected_point.x - point.x) + abs(selected_point.y - point.y) == 1:
-		network.play_edge(selected_point, point)
+		if battle_ui.consume_expansion():
+			network.play_card("expansion", "", selected_point, point)
+		else:
+			network.play_edge(selected_point, point)
 		selected_point = null
 	else:
 		selected_point = point

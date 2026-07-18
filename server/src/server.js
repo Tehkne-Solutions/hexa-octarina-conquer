@@ -13,7 +13,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
   const httpServer = createServer((request, response) => {
     if (request.url === "/health") {
       response.writeHead(200, { "content-type": "application/json" });
-      response.end(JSON.stringify({ ok: true, rooms: manager.rooms.size }));
+      response.end(JSON.stringify({ ok: true, rooms: manager.rooms.size, store: manager.store?.kind ?? "memory" }));
       return;
     }
     if (request.url === "/rooms") {
@@ -52,6 +52,17 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
     }
   }
 
+  function sendPrivateState(socket, room, playerId) {
+    send(socket, serverMessage("player.private_state", room.privateStateFor(playerId)));
+  }
+
+  function broadcastPrivateStates(room) {
+    for (const socket of socketsByRoom.get(room.id) ?? []) {
+      const session = sessionBySocket.get(socket);
+      if (session?.playerId) sendPrivateState(socket, room, session.playerId);
+    }
+  }
+
   function broadcastLobby() {
     const message = serverMessage("lobby.updated", { rooms: manager.listRooms() });
     for (const socket of connectedSockets) send(socket, message);
@@ -70,6 +81,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
         "action.play_card",
         "action.resolve_duel_round",
       ],
+      privateEvents: ["player.private_state"],
     }));
 
     socket.on("message", (raw) => {
@@ -98,8 +110,10 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             playerId: player.id,
             sessionToken: player.sessionToken,
             snapshot: room.snapshot(),
+            privateState: room.privateStateFor(player.id),
           }, requestId));
           broadcast(room.id, serverMessage("room.patch", patch));
+          broadcastPrivateStates(room);
           broadcastLobby();
           return;
         }
@@ -112,8 +126,10 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             playerId: player.id,
             sessionToken: player.sessionToken,
             snapshot: room.snapshot(),
+            privateState: room.privateStateFor(player.id),
           }, requestId));
           broadcast(room.id, serverMessage("room.patch", patch));
+          broadcastPrivateStates(room);
           broadcastLobby();
           return;
         }
@@ -128,10 +144,12 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             mode: result.mode,
             snapshot: result.snapshot,
             patches: result.patches,
+            privateState: result.privateState,
           }, requestId));
           if (result.connectionPatch) {
             broadcastExcept(result.room.id, serverMessage("room.patch", result.connectionPatch), socket);
           }
+          broadcastPrivateStates(result.room);
           broadcastLobby();
           return;
         }
@@ -150,6 +168,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
           revision: patch.revision,
         }, requestId));
         broadcast(room.id, serverMessage("room.patch", patch));
+        broadcastPrivateStates(room);
       } catch (error) {
         send(socket, errorMessage(error, requestId));
       }
@@ -176,7 +195,13 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
     manager,
     close: () => new Promise((resolve, reject) => {
       websocketServer.close(() => {
-        httpServer.close((error) => error ? reject(error) : resolve());
+        httpServer.close((error) => {
+          if (error) reject(error);
+          else {
+            manager.store?.close?.();
+            resolve();
+          }
+        });
       });
     }),
   };

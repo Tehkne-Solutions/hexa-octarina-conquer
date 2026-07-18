@@ -1,0 +1,23 @@
+services:
+  hexa-octarina-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      HEXA_STORE: sqlite
+      HEXA_DB_PATH: /data/hexa-octarina.sqlite
+    ports:
+      - "8080:8080"
+    volumes:
+      - hexa_octarina_data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 20s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  hexa_octarina_data:
