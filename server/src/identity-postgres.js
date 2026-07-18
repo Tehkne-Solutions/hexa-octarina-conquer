@@ -5,6 +5,7 @@ import pg from "pg";
 import {
   assertValidSession,
   createAccountRecord,
+  createPasswordRecord,
   hashToken,
   levelForXp,
   normalizeHandle,
@@ -129,6 +130,32 @@ export class PostgresIdentityStore {
     const account = accountFromRow(accountResult.rows[0]);
     if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
     return account;
+  }
+
+  async findAccountIdByHandle(handle) {
+    const result = await this.pool.query("SELECT id FROM accounts WHERE handle = $1", [normalizeHandle(handle)]);
+    return result.rows[0]?.id ?? null;
+  }
+
+  async resetPassword(accountId, newPassword) {
+    const password = createPasswordRecord(newPassword);
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      const updated = await client.query(`
+        UPDATE accounts SET password_hash = $2, password_salt = $3, updated_at = $4
+        WHERE id = $1 RETURNING *
+      `, [accountId, password.hash, password.salt, this.clock()]);
+      if (!updated.rows[0]) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+      await client.query("DELETE FROM account_sessions WHERE account_id = $1", [accountId]);
+      await client.query("COMMIT");
+      return this.#issueSession(accountFromRow(updated.rows[0]));
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async getProfile(accountId) {
