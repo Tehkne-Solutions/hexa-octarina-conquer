@@ -144,7 +144,7 @@ jobs:
       - name: Test duel flow and connected provinces
         run: node --test test/duel-flow.test.js test/provinces.test.js
       - name: Test SQLite and PostgreSQL persistence
-        run: node --test test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js test/postgres-room-store.test.js test/postgres-competition.test.js
+        run: node --test --test-concurrency=1 test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js test/postgres-room-store.test.js test/postgres-competition.test.js
       - name: Test WebSocket accounts, ranking and matchmaking
         run: node --test test/websocket.test.js test/account-websocket.test.js test/competitive-websocket.test.js
       - name: Boot fully distributed server
