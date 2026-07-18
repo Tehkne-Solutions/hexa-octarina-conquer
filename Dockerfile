@@ -14,6 +14,10 @@ ENV NODE_ENV=production \
     HEXA_IDENTITY_STORE=sqlite \
     HEXA_IDENTITY_DB_PATH=/data/hexa-identity.sqlite \
     HEXA_COMPETITION_STORE=memory \
+    HEXA_CLUSTER_BUS=memory \
+    HEXA_PRESENCE_STORE=memory \
+    HEXA_GOVERNANCE_STORE=memory \
+    HEXA_RECOVERY_PROVIDER=none \
     HEXA_RECOVERY_EXPOSE_CODE=false
 
 RUN mkdir -p /data && chown -R node:node /app /data
