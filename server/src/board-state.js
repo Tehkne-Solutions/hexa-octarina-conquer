@@ -96,11 +96,13 @@ export class BoardState {
     const key = this.validateEdge(start, end);
     this.edges.set(key, playerId);
     const claimedProvinceIds = [];
+    const claimedCellIds = [];
 
     for (const cell of this.cellsTouchingEdge(start, end)) {
       const keyCell = cellKey(cell);
       if (!this.cells.has(keyCell) && this.isClosedCell(cell)) {
         const province = this.claimCell(cell, playerId);
+        claimedCellIds.push(`cell:${keyCell}`);
         if (!claimedProvinceIds.includes(province.id)) claimedProvinceIds.push(province.id);
       }
     }
@@ -108,13 +110,14 @@ export class BoardState {
     let turnChanged = false;
     if (consumeAction) {
       this.actionsRemaining -= 1;
-      this.actionsRemaining += claimedProvinceIds.length;
+      this.actionsRemaining += claimedCellIds.length;
       if (this.actionsRemaining <= 0) turnChanged = this.advanceTurn();
     }
 
     return {
       edge: { start, end, ownerId: playerId },
       claimed: claimedProvinceIds,
+      claimedCellIds,
       turnChanged,
       currentPlayerId: this.currentPlayerId,
       turnNumber: this.turnNumber,
@@ -343,15 +346,32 @@ export class BoardState {
     board.turnNumber = raw.turnNumber ?? 1;
     board.actionsRemaining = raw.actionsRemaining ?? 1;
     board.playerOrder = [...(raw.playerOrder ?? [])];
-    board.nextProvinceId = raw.nextProvinceId ?? 1;
     for (const edge of raw.edges ?? []) board.edges.set(edgeKey(edge.start, edge.end), edge.ownerId);
-    for (const cell of raw.cells ?? []) board.cells.set(cellKey([cell.x, cell.y]), { ...cell });
-    for (const province of raw.provinces ?? []) {
-      board.provinces.set(province.id, {
-        ...province,
-        cellIds: [...province.cellIds],
-        unit: cloneUnit(province.unit),
-      });
+
+    if (Array.isArray(raw.provinces) && raw.provinces.length > 0) {
+      for (const cell of raw.cells ?? []) board.cells.set(cellKey([cell.x, cell.y]), { ...cell });
+      for (const province of raw.provinces) {
+        board.provinces.set(province.id, {
+          ...province,
+          cellIds: [...province.cellIds],
+          unit: cloneUnit(province.unit),
+        });
+      }
+      const highestProvince = [...board.provinces.keys()].reduce((highest, id) => {
+        const value = Number.parseInt(id.replace("province-", ""), 10);
+        return Number.isFinite(value) ? Math.max(highest, value) : highest;
+      }, 0);
+      board.nextProvinceId = Math.max(raw.nextProvinceId ?? 1, highestProvince + 1);
+    } else {
+      const legacyCells = [...(raw.cells ?? [])].sort((left, right) => left.x - right.x || left.y - right.y);
+      for (const legacyCell of legacyCells) {
+        const province = board.claimCell([legacyCell.x, legacyCell.y], legacyCell.ownerId);
+        const legacyUnit = cloneUnit(legacyCell.unit);
+        if (legacyUnit.level * 2 + legacyUnit.hp > provinceStrength(province)) {
+          province.unit = legacyUnit;
+        }
+      }
+      board.nextProvinceId = Math.max(raw.nextProvinceId ?? 1, board.nextProvinceId);
     }
     return board;
   }
