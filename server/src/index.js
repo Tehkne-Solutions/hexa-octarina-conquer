@@ -1,20 +1,28 @@
+import { createIdentityStore } from "./identity-store.js";
+import { createLogger } from "./logger.js";
+import { MetricsRegistry } from "./metrics.js";
 import { RoomManager } from "./room-manager.js";
 import { createRoomStore } from "./room-store.js";
 import { startServer } from "./server.js";
 
 const port = Number.parseInt(process.env.PORT ?? "8080", 10);
+const logger = createLogger();
+const metrics = new MetricsRegistry();
 const store = createRoomStore();
+const identity = await createIdentityStore();
 const manager = new RoomManager({ store });
-const server = startServer({ port, manager });
+const server = startServer({ port, manager, identity, metrics, logger });
 
-console.log(`Hexa Octarina Conquer server listening on http://0.0.0.0:${port}`);
-console.log(`WebSocket endpoint: ws://0.0.0.0:${port}/ws`);
-console.log(`Restored rooms: ${manager.rooms.size}`);
-console.log(`Room store: ${store.kind}${store.filename ? ` (${store.filename})` : ""}`);
-console.log("Tehkné Solutions");
+logger.info("server started", {
+  port,
+  websocket: `ws://0.0.0.0:${port}/ws`,
+  restoredRooms: manager.rooms.size,
+  roomStore: store.kind,
+  identityStore: identity.kind,
+});
 
 function shutdown(signal) {
-  console.log(`Received ${signal}; shutting down.`);
+  logger.info("server shutting down", { signal });
   server.close().finally(() => process.exit(0));
 }
 
