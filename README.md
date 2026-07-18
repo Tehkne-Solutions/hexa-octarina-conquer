@@ -2,38 +2,34 @@
 
 Jogo tático híbrido definido no GDD: conquista geométrica por **Dots and Boxes**, conexão e cerco inspirados em **Go**, progressão territorial, cartas, recursos e Duelos de Célula em uma arena de fantasia.
 
-## Estado atual — Sprint 07
+## Estado atual — Sprint 08
 
-O projeto possui cinco camadas complementares:
+O projeto possui seis camadas complementares:
 
 - **motor Python de referência**: especificação executável das regras e regressões;
-- **servidor Node.js autoritativo**: salas, lobby, SQLite, WebSocket, turnos, províncias e duelos;
-- **suíte de conformidade Python ↔ Node**: executa cenários canônicos nos dois motores e compara os resultados;
-- **cliente Godot 4 em 3D**: matchmaking, reconexão, arena procedural, mão de cartas e combate;
-- **empacotamento de produção**: Docker, health check e volume persistente.
+- **servidor Node.js autoritativo**: salas, WebSocket, turnos, províncias, duelos e encerramento de partidas;
+- **identidade e progressão**: contas, sessões, XP, níveis, rating, ranking e histórico;
+- **persistência**: SQLite para instância única e PostgreSQL para identidade compartilhada;
+- **cliente Godot 4 em 3D**: contas, matchmaking, arena, cartas, combate e interface mobile;
+- **operação e distribuição**: métricas Prometheus, logs JSON, Docker e APK Android.
 
 ### Implementado
 
-- arestas validadas por limite, ortogonalidade e duplicidade;
-- posse da célula atribuída a quem fecha o quarto lado;
-- bônus por cada célula fechada, inclusive duas em uma única aresta;
-- células aliadas conectadas agrupadas em províncias persistentes;
-- preservação de unidade, nível, HP e fortificação durante fusões;
-- captura e união automática com territórios aliados adjacentes;
-- cerco territorial abrindo automaticamente um Duelo de Célula;
-- suporte territorial alterando HP e energia no combate;
-- cartas macro de expansão, fortificação e convocação de duelo;
-- duelo simultâneo com energia, escudo, cura, status e combo `wet + lightning`;
-- estado privado autenticado com a mão completa apenas para seu proprietário;
-- HUD Godot com cartas, alvo de província, HP, mana, energia e confirmação de rodada;
-- efeitos procedurais, pulsos, impacto, tremor de câmera e áudio sintetizado;
-- lobby público por HTTP e WebSocket, sem exposição de credenciais;
-- tokens privados e reconexão incremental por revisão;
-- persistência transacional SQLite com journal de eventos;
-- modos alternativos em memória ou arquivos JSON;
-- migração de snapshots legados da Sprint 05;
-- arena 3D procedural com plataformas, pilares, muralhas e unidades;
-- CI para Python, Node.js, SQLite, conformidade e imagem Docker.
+- regras Dots + Go com províncias persistentes e cerco;
+- cartas macro e combate simultâneo TCG;
+- estado público e privado separados por sessão;
+- contas com senha protegida por `scrypt` e tokens armazenados por hash;
+- modo visitante preservado;
+- conta opcionalmente vinculada ao jogador da sala;
+- encerramento autoritativo por desistência;
+- XP, nível, vitórias, derrotas e rating calculado de forma idempotente;
+- ranking e histórico de partidas;
+- adaptadores de identidade em memória, SQLite e PostgreSQL;
+- métricas Prometheus em `/metrics`;
+- health check enriquecido e logs estruturados em JSON;
+- interface Godot para cadastro, login, perfil, ranking e histórico;
+- preset Android ARM64, controles touch e geração automatizada do APK debug;
+- CI para Python, Node.js, SQLite, PostgreSQL, Godot, Android, Docker e conformidade cruzada.
 
 ## Motor Python
 
@@ -56,24 +52,48 @@ npm start
 Endpoints:
 
 ```text
-HTTP health: http://localhost:8080/health
-HTTP lobby:  http://localhost:8080/rooms
-WebSocket:    ws://localhost:8080/ws
+HTTP health:      http://localhost:8080/health
+HTTP lobby:       http://localhost:8080/rooms
+HTTP ranking:     http://localhost:8080/leaderboard
+Prometheus:       http://localhost:8080/metrics
+WebSocket:        ws://localhost:8080/ws
 ```
 
-### Persistência
-
-SQLite é o modo padrão:
+### Estado das salas
 
 ```bash
 HEXA_STORE=sqlite HEXA_DB_PATH=.data/hexa-octarina.sqlite npm start
-```
-
-Modos alternativos:
-
-```bash
 HEXA_STORE=memory npm start
 HEXA_STORE=files HEXA_DATA_DIR=.data/rooms npm start
+```
+
+### Contas e progressão
+
+SQLite local:
+
+```bash
+HEXA_IDENTITY_STORE=sqlite \
+HEXA_IDENTITY_DB_PATH=.data/hexa-identity.sqlite \
+npm start
+```
+
+PostgreSQL:
+
+```bash
+HEXA_IDENTITY_STORE=postgres \
+DATABASE_URL=postgresql://hexa:senha@localhost:5432/hexa_octarina \
+npm start
+```
+
+Comandos WebSocket de identidade:
+
+```text
+account.register
+account.login
+account.profile
+account.history
+leaderboard.list
+match.forfeit
 ```
 
 Validação completa:
@@ -83,60 +103,83 @@ cd server
 npm run check
 ```
 
-## Executar com Docker
+## Executar com Docker e PostgreSQL
 
 ```bash
-docker compose up --build
+POSTGRES_PASSWORD=uma-senha-segura docker compose up --build
 ```
 
-O serviço expõe a porta `8080`, grava o banco no volume `hexa_octarina_data` e possui health check interno.
+A composição inicia:
+
+- PostgreSQL para contas, progressão e histórico;
+- servidor autoritativo com SQLite para snapshots das salas;
+- volume persistente para cada armazenamento;
+- health checks dos dois serviços.
 
 ## Cliente Godot 4
 
-Abra `client/godot/project.godot` no Godot 4. A cena inicial é a arena procedural 3D.
+Abra `client/godot/project.godot` no Godot 4.6.3.
 
-Sem argumentos, o cliente procura uma sala em espera e entra automaticamente; quando nenhuma existe, cria uma nova.
+Na abertura, o jogador pode:
+
+- criar uma conta;
+- entrar em uma conta existente;
+- continuar como visitante;
+- consultar perfil, ranking e histórico;
+- entrar automaticamente em uma sala disponível;
+- jogar por mouse ou toque.
+
+Argumentos opcionais:
 
 ```bash
 godot --path client/godot -- --name=Arquiteto
-godot --path client/godot -- --name=Conjurador --room=A1B2C3D4
-godot --path client/godot -- --name=Arquiteto --create
+godot --path client/godot -- --room=A1B2C3D4
+godot --path client/godot -- --create
 godot --path client/godot -- --server=ws://192.168.0.10:8080/ws
 ```
 
-Na arena:
+## Exportar Android
 
-- cartas macro são usadas pelo painel inferior;
-- Expansão Rúnica arma a próxima seleção de dois pilares;
-- Fortificação e Duelo usam a província selecionada no painel;
-- durante um duelo, cartas táticas podem ser combinadas dentro do limite de energia;
-- a resolução permanece oculta até ambos enviarem suas sequências.
+O preset gera APK debug ARM64 com Internet habilitada:
 
-A cena 2D anterior permanece como ferramenta de diagnóstico.
+```bash
+GODOT_BIN=/caminho/Godot_4.6.3 \
+ANDROID_HOME=/caminho/android-sdk \
+./scripts/export-android.sh
+```
+
+Saída padrão:
+
+```text
+build/android/HexaOctarinaConquer-debug.apk
+```
+
+O GitHub Actions também publica o APK como artefato `hexa-octarina-android-debug`.
 
 ## Estrutura
 
-- `src/hexa_octarina_conquer/`: motor de referência Python;
-- `tests/`: regressões do motor e pacote Godot;
-- `conformance/`: cenários executados igualmente nos dois motores;
-- `server/src/`: servidor autoritativo, lobby e persistência;
-- `server/test/`: protocolo, salas, estado privado, SQLite, WebSocket e conformidade;
-- `client/godot/`: cliente e arena procedural 3D;
-- `Dockerfile` e `compose.yaml`: execução multiplayer persistente;
-- `docs/protocol-v1.md`: contrato de transporte;
-- `docs/sprint-07-cartas-combate-sqlite-deploy.md`: relatório desta entrega;
+- `src/hexa_octarina_conquer/`: motor Python de referência;
+- `conformance/`: cenários equivalentes Python ↔ Node;
+- `server/src/identity-*.js`: contas, sessões e progressão;
+- `server/src/metrics.js`: métricas Prometheus;
+- `server/src/logger.js`: logs estruturados;
+- `server/test/`: regras, identidade, PostgreSQL, WebSocket e observabilidade;
+- `client/godot/`: cliente 3D, interface de conta e preset Android;
+- `Dockerfile` e `compose.yaml`: execução persistente;
+- `docs/sprint-08-identidade-ranking-postgres-android.md`: relatório da entrega;
 - `docs/adr/`: decisões arquiteturais.
 
 ## Limites atuais
 
-- SQLite atende uma instância única; cluster horizontal exigirá PostgreSQL ou coordenação distribuída;
-- a arena ainda usa geometria procedural, sem personagens e cenários finais;
-- o cliente não possui contas, ranking ou progressão permanente;
-- o duelo utiliza o HUD da arena, sem uma cena cinematográfica separada.
+- o estado autoritativo das salas ainda usa SQLite e exige afinidade de instância;
+- contas PostgreSQL estão prontas, mas o estado da partida ainda não foi migrado para banco compartilhado;
+- a arena continua com personagens e cenários procedurais;
+- o duelo ainda acontece sobre a arena, sem cena cinematográfica dedicada;
+- recuperação de senha, e-mail verificado e moderação ainda não fazem parte do recorte.
 
 ## Próximo marco
 
-Sprint 08: contas e progressão, PostgreSQL, observabilidade, export mobile e assets visuais finais.
+Sprint 09: estado distribuído de partidas, matchmaking por rating, temporadas, recuperação de conta, telemetria de cliente e assets visuais finais.
 
 ---
 
