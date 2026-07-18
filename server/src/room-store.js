@@ -12,6 +12,11 @@ export class MemoryRoomStore {
     return [...this.records.values()].map((record) => structuredClone(record));
   }
 
+  loadRoom(roomId) {
+    const record = this.records.get(roomId);
+    return record ? structuredClone(record) : null;
+  }
+
   saveRoom(room) {
     this.records.set(room.id, structuredClone(room.serialize()));
   }
@@ -49,6 +54,19 @@ export class FileRoomStore {
       }
     }
     return rooms;
+  }
+
+  loadRoom(roomId) {
+    const target = this.pathFor(roomId);
+    if (!existsSync(target)) return null;
+    try {
+      return JSON.parse(readFileSync(target, "utf8"));
+    } catch (error) {
+      const brokenPath = `${target}.broken-${Date.now()}`;
+      renameSync(target, brokenPath);
+      console.error(`Quarantined invalid room snapshot ${roomId}:`, error);
+      return null;
+    }
   }
 
   saveRoom(room) {
@@ -96,6 +114,7 @@ export class SqliteRoomStore {
         ON room_events(room_id, revision);
     `);
     this.selectRooms = this.database.prepare("SELECT payload FROM rooms ORDER BY updated_at ASC");
+    this.selectRoom = this.database.prepare("SELECT payload FROM rooms WHERE id = ?");
     this.upsertRoom = this.database.prepare(`
       INSERT INTO rooms (id, revision, status, updated_at, payload)
       VALUES (?, ?, ?, ?, ?)
@@ -122,6 +141,17 @@ export class SqliteRoomStore {
       }
     }
     return rooms;
+  }
+
+  loadRoom(roomId) {
+    const row = this.selectRoom.get(roomId);
+    if (!row) return null;
+    try {
+      return JSON.parse(row.payload);
+    } catch (error) {
+      console.error(`Ignoring invalid SQLite room snapshot ${roomId}:`, error);
+      return null;
+    }
   }
 
   saveRoom(room) {
@@ -166,9 +196,13 @@ export class SqliteRoomStore {
   }
 }
 
-export function createRoomStore({ mode = process.env.HEXA_STORE ?? "sqlite" } = {}) {
+export async function createRoomStore({ mode = process.env.HEXA_STORE ?? "sqlite" } = {}) {
   if (mode === "memory") return new MemoryRoomStore();
   if (mode === "files") return new FileRoomStore();
   if (mode === "sqlite") return new SqliteRoomStore();
+  if (mode === "postgres") {
+    const { PostgresRoomStore } = await import("./postgres-room-store.js");
+    return PostgresRoomStore.connect();
+  }
   throw new Error(`Unsupported HEXA_STORE mode: ${mode}`);
 }
