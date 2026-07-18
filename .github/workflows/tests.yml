@@ -143,26 +143,29 @@ jobs:
         run: npm install
       - name: Validate JavaScript syntax
         run: npm run syntax
-      - name: Test protocol, identity, governance and observability
+      - name: Test protocol, identity, governance, resilience and observability
         run: >-
           node --test
           test/protocol.test.js test/room-manager.test.js test/private-state.test.js
           test/identity.test.js test/competition.test.js test/cluster-bus.test.js
           test/presence.test.js test/governance.test.js test/recovery-provider.test.js
-          test/admin.test.js test/observability.test.js
+          test/resilience.test.js test/admin.test.js test/observability.test.js
       - name: Test duel flow and connected provinces
         run: node --test test/duel-flow.test.js test/provinces.test.js
       - name: Test SQLite and PostgreSQL persistence
         run: >-
           node --test --test-concurrency=1
           test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js
-          test/postgres-room-store.test.js test/postgres-competition.test.js test/postgres-cluster.test.js
+          test/postgres-room-store.test.js test/postgres-competition.test.js
+          test/postgres-cluster.test.js test/postgres-resilience.test.js
       - name: Test base WebSocket transport
         run: node --test test/websocket.test.js
       - name: Test authenticated WebSocket transport
         run: node --test test/account-websocket.test.js
       - name: Test competitive WebSocket transport
         run: node --test test/competitive-websocket.test.js
+      - name: Test spectator replay and reconnect grace
+        run: node --test --test-force-exit test/spectator-replay.test.js
       - name: Test cross-replica WebSocket transport
         run: node --test --test-force-exit test/cluster-websocket.test.js
       - name: Boot two fully distributed replicas
@@ -173,8 +176,11 @@ jobs:
           HEXA_CLUSTER_BUS: postgres
           HEXA_PRESENCE_STORE: postgres
           HEXA_GOVERNANCE_STORE: postgres
+          HEXA_RESILIENCE_STORE: postgres
           HEXA_RECOVERY_PROVIDER: none
           HEXA_ADMIN_TOKEN: ci-admin-token
+          HEXA_RECONNECT_GRACE_MS: 2000
+          HEXA_RESILIENCE_MAINTENANCE_MS: 1000
         run: |
           PORT=8090 HEXA_INSTANCE_ID=ci-replica-a node src/index.js > /tmp/hexa-a.log 2>&1 &
           first_pid=$!
@@ -204,12 +210,14 @@ jobs:
             JSON.parse(fs.readFileSync('/tmp/health-b.json')),
           ];
           for (const item of health) {
-            for (const field of ['roomStore', 'identityStore', 'competitionStore', 'clusterBus', 'presenceStore', 'governanceStore']) {
+            for (const field of ['roomStore', 'identityStore', 'competitionStore', 'clusterBus', 'presenceStore', 'governanceStore', 'resilienceStore']) {
               if (item[field] !== 'postgres') throw new Error(`${field} is not postgres`);
             }
             if (item.activeInstances < 2) throw new Error('distributed presence did not detect both replicas');
           }
           NODE
+          curl -fsS -H 'Authorization: Bearer ci-admin-token' http://127.0.0.1:8090/admin/overview > /tmp/admin-overview.json
+          node -e "const x=require('/tmp/admin-overview.json'); if(!Array.isArray(x.replays)||!Array.isArray(x.disconnects)) process.exit(1)"
       - name: Compare Node and Python engines
         env:
           PYTHON: python
