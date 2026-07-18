@@ -11,6 +11,45 @@ Assinatura: **Tehkné Solutions**
 - Toda mensagem possui `protocolVersion: "1.0"` e `type`.
 - Comandos mutáveis carregam `expectedRevision` para impedir ações sobre estado desatualizado.
 
+## Fronteira pública e privada
+
+`room.patch`, snapshots e lobby são públicos para os participantes da sala e nunca contêm:
+
+- `sessionToken`;
+- IDs das cartas na mão;
+- sequência de cartas enviada em segredo pelo oponente.
+
+O evento autenticado `player.private_state` é enviado individualmente para cada socket e contém somente os dados de seu proprietário:
+
+```json
+{
+  "roomId": "A1B2C3D4",
+  "revision": 12,
+  "playerId": "player-a",
+  "name": "Arquiteto",
+  "mana": 4,
+  "hp": 20,
+  "hand": [
+    {
+      "id": "lightning",
+      "name": "Raio Encadeado",
+      "kind": "duel",
+      "cost": 2,
+      "effect": "attack",
+      "value": 3,
+      "element": "electric",
+      "description": "Causa 3 de dano; causa o dobro contra um alvo Molhado.",
+      "icon": "ϟ"
+    }
+  ],
+  "duelSubmissions": {
+    "duel-1": ["wet", "lightning"]
+  }
+}
+```
+
+`session.established` e `session.reconnected` também incluem `privateState` para inicialização imediata do cliente.
+
 ## Lobby público
 
 ### Listar salas pelo WebSocket
@@ -26,16 +65,7 @@ Assinatura: **Tehkné Solutions**
 }
 ```
 
-O filtro `status` é opcional e aceita `waiting`, `active` ou `finished`. A resposta `lobby.rooms` contém somente informações públicas:
-
-- código da sala;
-- status;
-- tamanho do tabuleiro;
-- quantidade e nomes dos jogadores;
-- presença online;
-- revisão e datas de criação/atualização.
-
-`sessionToken`, mão de cartas e demais dados privados nunca aparecem no lobby. O servidor também envia `lobby.updated` quando a disponibilidade das salas muda.
+O filtro `status` é opcional e aceita `waiting`, `active` ou `finished`. A resposta `lobby.rooms` contém somente código, status, tabuleiro, jogadores, presença, revisão e datas. O servidor também envia `lobby.updated` quando a disponibilidade muda.
 
 O endpoint HTTP `GET /rooms` retorna a mesma lista pública sem cache.
 
@@ -69,16 +99,16 @@ O endpoint HTTP `GET /rooms` retorna a mesma lista pública sem cache.
 }
 ```
 
-O servidor responde com `session.established`, incluindo `roomId`, `playerId`, `sessionToken` e um snapshot integral. O token nunca aparece em broadcasts.
+O servidor responde com `session.established`, incluindo `roomId`, `playerId`, `sessionToken`, snapshot público e estado privado.
 
 ### Reconectar
 
-`room.reconnect` envia as credenciais e `lastRevision`. O servidor responde:
+`room.reconnect` envia credenciais e `lastRevision`. O servidor responde:
 
-- `mode: "patches"` quando o histórico incremental ainda está disponível;
+- `mode: "patches"` quando o histórico incremental está disponível;
 - `mode: "snapshot"` quando o cliente ficou mais de 100 revisões para trás.
 
-Após reinício do servidor, jogadores persistidos aparecem desconectados até autenticarem novamente. Uma reconexão válida gera o evento `player.reconnected` para os demais participantes.
+Após reinício, jogadores aparecem desconectados até autenticarem novamente. Uma reconexão válida gera `player.reconnected` para os demais participantes.
 
 ## Ações
 
@@ -86,16 +116,9 @@ Após reinício do servidor, jogadores persistidos aparecem desconectados até a
 
 Tipo: `action.play_edge`
 
-Payload obrigatório:
+Campos: `roomId`, `playerId`, `sessionToken`, `expectedRevision`, `start` e `end`.
 
-- `roomId`
-- `playerId`
-- `sessionToken`
-- `expectedRevision`
-- `start: [x, y]`
-- `end: [x, y]`
-
-O servidor valida limites, adjacência ortogonal, duplicidade, jogador ativo e quantidade de ações. Cada célula fechada concede uma ação adicional; uma aresta capaz de fechar duas células concede dois bônus.
+O servidor valida limites, adjacência, duplicidade, turno e ações. Cada célula fechada concede uma ação adicional.
 
 ### Jogar carta macro
 
@@ -103,9 +126,9 @@ Tipo: `action.play_card`
 
 Campos adicionais:
 
-- `cardId`
-- `provinceId`, quando aplicável;
-- `start` e `end`, para `expansion`.
+- `cardId`;
+- `provinceId`, para fortificação ou duelo;
+- `start` e `end`, para expansão.
 
 A versão atual suporta `expansion`, `fortify` e `duel`.
 
@@ -115,108 +138,70 @@ Tipo: `action.resolve_duel_round`
 
 Campos adicionais:
 
-- `duelId`
-- `cardIds`
+- `duelId`;
+- `cardIds`.
 
-Cada participante envia sua sequência. A resolução ocorre somente após as duas submissões. Energia e disponibilidade de cartas são validadas antes de alterar o estado.
+Cada participante envia sua sequência em segredo. A resolução ocorre apenas após as duas submissões. Energia, tipo e disponibilidade das cartas são validados antes de alterar o estado.
 
 ## Modelo territorial
 
-O snapshot de `board` contém:
+O snapshot de `board` contém `edges`, `cells` e `provinces`. Células ortogonalmente adjacentes do mesmo proprietário formam uma província persistente. Capturas podem unir a área conquistada a uma província aliada vizinha.
 
-```json
-{
-  "boardSize": 5,
-  "currentPlayerId": "player-a",
-  "turnNumber": 8,
-  "actionsRemaining": 1,
-  "edges": [],
-  "cells": [
-    {
-      "id": "cell:0,0",
-      "x": 0,
-      "y": 0,
-      "ownerId": "player-a",
-      "provinceId": "province-1"
-    }
-  ],
-  "provinces": [
-    {
-      "id": "province-1",
-      "ownerId": "player-a",
-      "cellIds": ["cell:0,0", "cell:1,0"],
-      "unit": {
-        "kind": "fortress",
-        "level": 2,
-        "hp": 8,
-        "element": "physical"
-      },
-      "protectedTurns": 0
-    }
-  ]
-}
-```
+Por compatibilidade, cartas ainda podem apontar para `cell:x,y`; o servidor resolve o ID para a província atual.
 
-Células ortogonalmente adjacentes do mesmo proprietário são agrupadas em uma província. Capturas podem unir a área conquistada a uma província aliada vizinha. Por compatibilidade, cartas ainda podem apontar para IDs antigos no formato `cell:x,y`; o servidor resolve esse ID para a província atual.
-
-Quando uma província perde todas as liberdades para um único oponente, o servidor abre automaticamente um duelo com `reason: "surround"`. O posicionamento territorial concede suporte ao atacante e ao defensor.
+Quando uma província perde todas as liberdades para um único oponente e o anel hostil é maior que o território cercado, o servidor abre automaticamente um duelo com `reason: "surround"`.
 
 ## Persistência
 
-A implementação padrão salva cada sala em um arquivo JSON separado:
+O modo padrão é SQLite transacional:
 
-- diretório padrão: `.data/rooms`;
-- variável de ambiente: `HEXA_DATA_DIR`;
-- gravação por arquivo temporário e renomeação atômica;
-- snapshots corrompidos são movidos para quarentena;
-- snapshots legados da Sprint 05 são migrados para o modelo de províncias.
+```text
+HEXA_STORE=sqlite
+HEXA_DB_PATH=.data/hexa-octarina.sqlite
+```
 
-Essa persistência é indicada para uma única instância do servidor. Um ambiente com múltiplas réplicas exigirá banco compartilhado e coordenação distribuída.
+O banco utiliza:
+
+- WAL;
+- `BEGIN IMMEDIATE` para cada gravação de sala;
+- upsert do snapshot da sala;
+- journal imutável de eventos com chave única;
+- rollback integral quando uma etapa falha.
+
+Modos alternativos:
+
+```text
+HEXA_STORE=memory
+HEXA_STORE=files
+HEXA_DATA_DIR=.data/rooms
+```
+
+O modo SQLite é adequado a uma instância. Cluster horizontal exige banco compartilhado e coordenação distribuída.
 
 ## Eventos do servidor
 
-- `server.hello`
-- `lobby.rooms`
-- `lobby.updated`
-- `session.established`
-- `session.reconnected`
-- `command.accepted`
-- `room.patch`
-- `error`
-- `pong`
+Eventos de transporte:
 
-Eventos de domínio relevantes incluem:
+- `server.hello`;
+- `lobby.rooms`;
+- `lobby.updated`;
+- `session.established`;
+- `session.reconnected`;
+- `player.private_state`;
+- `command.accepted`;
+- `room.patch`;
+- `error`;
+- `pong`.
 
-- `player.joined`
-- `player.disconnected`
-- `player.reconnected`
-- `edge.played`
-- `card.played`
-- `duel.cards_submitted`
-- `duel.round_resolved`
+Eventos de domínio:
 
-## Patches
-
-Cada `room.patch` contém:
-
-```json
-{
-  "roomId": "A1B2C3D4",
-  "revision": 10,
-  "event": {
-    "id": "A1B2C3D4:10",
-    "type": "duel.round_resolved",
-    "at": 1700000000000,
-    "payload": {}
-  },
-  "state": {
-    "status": "active",
-    "board": {},
-    "players": [],
-    "duels": []
-  }
-}
-```
+- `player.joined`;
+- `player.disconnected`;
+- `player.reconnected`;
+- `edge.played`;
+- `card.played`;
+- `duel.cards_submitted`;
+- `duel.round_resolved`.
 
 ## Erros estáveis
 
@@ -238,4 +223,4 @@ Cada `room.patch` contém:
 - `NOT_ENOUGH_DUEL_ENERGY`
 - `DUEL_NOT_FOUND`
 
-Clientes devem tratar o `code` como identificador estável e o texto como mensagem humana.
+Clientes devem tratar `code` como identificador estável e o texto como mensagem humana.
