@@ -42,6 +42,7 @@ test("restores rooms, sessions and board state after process restart", () => {
     assert.equal(restored.players.length, 2);
     assert.equal(restored.players[0].sessionToken, created.player.sessionToken);
     assert.equal(restored.players[1].sessionToken, joined.player.sessionToken);
+    assert.equal(restored.players.every((player) => player.connected === false), true);
 
     const reconnect = restoredManager.reconnect({
       roomId: restored.id,
@@ -50,6 +51,8 @@ test("restores rooms, sessions and board state after process restart", () => {
       lastRevision: 0,
     });
     assert.ok(["patches", "snapshot"].includes(reconnect.mode));
+    assert.equal(reconnect.player.connected, true);
+    assert.equal(reconnect.connectionPatch.event.type, "player.reconnected");
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
