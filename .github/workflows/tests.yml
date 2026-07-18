@@ -174,8 +174,10 @@ jobs:
   android-install-smoke:
     needs: godot-client
     runs-on: ubuntu-latest
+    env:
+      ANDROID_AVD_HOME: ${{ runner.temp }}/android-avd
+      ANDROID_SDK_HOME: ${{ runner.temp }}/android-sdk-home
     steps:
-      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: hexa-octarina-android-0.11.1
@@ -186,36 +188,97 @@ jobs:
             | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Install, update and launch on Android emulator
-        uses: reactivecircus/android-emulator-runner@v2
+          ls -l /dev/kvm
+      - name: Install Android emulator image
+        run: |
+          mkdir -p "$ANDROID_AVD_HOME" "$ANDROID_SDK_HOME"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
+            "platform-tools" \
+            "emulator" \
+            "system-images;android-29;default;x86_64"
+          echo no | "$AVDMANAGER" create avd \
+            --force \
+            --name hexa-ci \
+            --package "system-images;android-29;default;x86_64" \
+            --device "pixel_2"
+          find "$ANDROID_AVD_HOME" -maxdepth 2 -type f -print
+          test -f "$ANDROID_AVD_HOME/hexa-ci.ini"
+      - name: Boot Android emulator
+        run: |
+          mkdir -p build/android
+          "$ANDROID_HOME/emulator/emulator" -list-avds | tee build/android/avd-list.log
+          "$ANDROID_HOME/emulator/emulator" -list-avds | grep '^hexa-ci$'
+          nohup "$ANDROID_HOME/emulator/emulator" \
+            -avd hexa-ci \
+            -no-window \
+            -gpu swiftshader_indirect \
+            -no-snapshot \
+            -noaudio \
+            -no-boot-anim \
+            -camera-back none \
+            -accel on \
+            > build/android/emulator.log 2>&1 &
+          echo $! > build/android/emulator.pid
+          timeout 180 adb wait-for-device
+          booted=0
+          for attempt in $(seq 1 180); do
+            completed="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')"
+            if [ "$completed" = "1" ]; then
+              booted=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$booted" -ne 1 ]; then
+            tail -n 200 build/android/emulator.log
+            exit 1
+          fi
+          adb shell input keyevent 82 || true
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb devices -l
+      - name: Install, update and launch APK
+        run: |
+          set -euxo pipefail
+          APK="$GITHUB_WORKSPACE/build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk"
+          adb uninstall com.tehkne.hexaoctarina >/dev/null 2>&1 || true
+          adb install "$APK" | tee build/android/adb-install.log
+          grep -q 'Success' build/android/adb-install.log
+          adb shell pm path com.tehkne.hexaoctarina | tee build/android/package-path.log
+          grep -q '^package:' build/android/package-path.log
+          adb install -r "$APK" | tee build/android/adb-update.log
+          grep -q 'Success' build/android/adb-update.log
+          ACTIVITY="$(adb shell cmd package resolve-activity --brief \
+            -a android.intent.action.MAIN \
+            -c android.intent.category.LAUNCHER \
+            com.tehkne.hexaoctarina | tr -d '\r' | tail -n 1)"
+          test -n "$ACTIVITY"
+          echo "$ACTIVITY" | tee build/android/activity-resolve.log
+          echo "$ACTIVITY" | grep 'com.tehkne.hexaoctarina'
+          adb shell am start -W -n "$ACTIVITY" | tee build/android/activity-start.log
+          grep -Eq 'Status: ok|Warning: Activity not started, its current task has been brought to the front' build/android/activity-start.log
+          adb shell dumpsys package com.tehkne.hexaoctarina | tee build/android/package-dump.log
+          grep -q 'versionCode=12' build/android/package-dump.log
+          grep -q 'versionName=0.11.1' build/android/package-dump.log
+          adb uninstall com.tehkne.hexaoctarina | tee build/android/adb-uninstall.log
+          grep -q 'Success' build/android/adb-uninstall.log
+      - name: Stop emulator
+        if: always()
+        run: |
+          adb emu kill || true
+          if [ -f build/android/emulator.pid ]; then
+            kill "$(cat build/android/emulator.pid)" || true
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          api-level: 30
-          target: google_apis
-          arch: x86_64
-          profile: pixel_2
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
-          disable-animations: true
-          script: |
-            set -euxo pipefail
-            APK="$GITHUB_WORKSPACE/build/android/HexaOctarinaConquer-v0.11.1-ci-x86_64.apk"
-            adb uninstall com.tehkne.hexaoctarina >/dev/null 2>&1 || true
-            adb install "$APK" | tee /tmp/adb-install.log
-            grep -q 'Success' /tmp/adb-install.log
-            adb shell pm path com.tehkne.hexaoctarina | grep '^package:'
-            adb install -r "$APK" | tee /tmp/adb-update.log
-            grep -q 'Success' /tmp/adb-update.log
-            ACTIVITY="$(adb shell cmd package resolve-activity --brief \
-              -a android.intent.action.MAIN \
-              -c android.intent.category.LAUNCHER \
-              com.tehkne.hexaoctarina | tr -d '\r' | tail -n 1)"
-            test -n "$ACTIVITY"
-            echo "$ACTIVITY" | grep 'com.tehkne.hexaoctarina'
-            adb shell am start -W -n "$ACTIVITY" | tee /tmp/activity-start.log
-            grep -Eq 'Status: ok|Warning: Activity not started, its current task has been brought to the front' /tmp/activity-start.log
-            adb shell dumpsys package com.tehkne.hexaoctarina | tee /tmp/package-dump.log
-            grep -q 'versionCode=12' /tmp/package-dump.log
-            grep -q 'versionName=0.11.1' /tmp/package-dump.log
-            adb uninstall com.tehkne.hexaoctarina | grep 'Success'
+          name: android-emulator-diagnostic
+          path: build/android/*.log
+          if-no-files-found: warn
 
   node-authoritative-server:
     runs-on: ubuntu-latest
