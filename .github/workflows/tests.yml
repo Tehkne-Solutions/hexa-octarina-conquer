@@ -139,14 +139,29 @@ jobs:
         run: npm install
       - name: Validate JavaScript syntax
         run: npm run syntax
-      - name: Test protocol, rooms, identity and observability
-        run: node --test test/protocol.test.js test/room-manager.test.js test/private-state.test.js test/identity.test.js test/observability.test.js
+      - name: Test protocol, rooms, identity, competition and observability
+        run: node --test test/protocol.test.js test/room-manager.test.js test/private-state.test.js test/identity.test.js test/competition.test.js test/observability.test.js
       - name: Test duel flow and connected provinces
         run: node --test test/duel-flow.test.js test/provinces.test.js
       - name: Test SQLite and PostgreSQL persistence
-        run: node --test test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js
-      - name: Test WebSocket, accounts and ranking
-        run: node --test test/websocket.test.js test/account-websocket.test.js
+        run: node --test test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js test/postgres-room-store.test.js test/postgres-competition.test.js
+      - name: Test WebSocket accounts, ranking and matchmaking
+        run: node --test test/websocket.test.js test/account-websocket.test.js test/competitive-websocket.test.js
+      - name: Boot fully distributed server
+        env:
+          PORT: 8090
+          HEXA_STORE: postgres
+          HEXA_IDENTITY_STORE: postgres
+          HEXA_COMPETITION_STORE: postgres
+        run: |
+          node src/index.js > /tmp/hexa-distributed.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8090/health > /tmp/health.json; then break; fi
+            sleep 1
+          done
+          node -e "const fs=require('fs'); const h=JSON.parse(fs.readFileSync('/tmp/health.json')); if(h.roomStore!=='postgres'||h.identityStore!=='postgres'||h.competitionStore!=='postgres') process.exit(1)"
       - name: Compare Node and Python engines
         env:
           PYTHON: python
