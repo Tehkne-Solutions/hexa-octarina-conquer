@@ -20,18 +20,18 @@ export class RoomManager {
     }
   }
 
-  createRoom({ playerName, boardSize }) {
+  createRoom({ playerName, boardSize, accountId = null }) {
     const roomId = this.createRoomId();
     const room = new GameRoom({ id: roomId, boardSize, idFactory: this.idFactory, clock: this.clock });
     this.rooms.set(roomId, room);
-    const joined = room.addPlayer(playerName);
+    const joined = room.addPlayer(playerName, { accountId });
     this.persist(room);
     return { room, ...joined };
   }
 
-  joinRoom({ roomId, playerName }) {
+  joinRoom({ roomId, playerName, accountId = null }) {
     const room = this.getRoom(roomId);
-    const joined = room.addPlayer(playerName);
+    const joined = room.addPlayer(playerName, { accountId });
     this.persist(room);
     return { room, ...joined };
   }
