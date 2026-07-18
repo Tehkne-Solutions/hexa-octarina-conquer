@@ -2,9 +2,9 @@
 
 Jogo tático híbrido de conquista geométrica por **Dots and Boxes**, conexão e cerco inspirados em **Go**, cartas, recursos, províncias e Duelos de Célula em uma arena de fantasia.
 
-## Estado atual — Sprint 10
+## Estado atual — Sprint 11
 
-A versão `0.10.0` possui oito camadas complementares:
+A versão `0.11.0` possui dez camadas complementares:
 
 - **motor Python de referência**: especificação executável das regras e regressões;
 - **servidor Node.js autoritativo**: WebSocket, turnos, províncias, duelos e encerramento de partidas;
@@ -12,8 +12,10 @@ A versão `0.10.0` possui oito camadas complementares:
 - **barramento de cluster**: eventos persistidos e distribuídos por `LISTEN/NOTIFY`;
 - **identidade e progressão**: contas, sessões, XP, níveis, rating global e histórico;
 - **competição e governança**: temporadas, matchmaking, penalidades e administração protegida;
-- **cliente Godot 4 em 3D**: conta, recuperação, fila ranqueada, arena, cartas, presença e touch;
-- **operação e distribuição**: Prometheus, logs JSON, Docker Compose e APK Android ARM64.
+- **resiliência de partidas**: grace period, leases distribuídos, abandono idempotente e penalidades;
+- **espectador e replay**: acompanhamento público ao vivo e histórico autoritativo por revisão;
+- **cliente Godot 4 em 3D**: conta, fila ranqueada, arena, cartas, presença e touch;
+- **operação e distribuição**: painel web, Prometheus, logs JSON, Docker Compose e APK Android ARM64.
 
 ### Implementado
 
@@ -21,23 +23,24 @@ A versão `0.10.0` possui oito camadas complementares:
 - cartas macro e combate simultâneo TCG;
 - separação entre estado público e estado privado autenticado;
 - contas com senha protegida por `scrypt` e tokens armazenados somente por hash;
-- recuperação por código temporário de uso único;
-- entrega de recuperação por webhook, console ou modo desativado;
-- invalidação das sessões anteriores após redefinição de senha;
+- recuperação por código temporário de uso único e entrega externa por webhook;
 - XP, nível, vitórias, derrotas, rating global e histórico idempotente;
-- temporadas com rating, vitórias, derrotas e partidas de colocação separados do perfil global;
-- matchmaking com faixa inicial de ±100 pontos e expansão gradual até ±500;
-- cooldown por ausência na confirmação do pareamento;
+- temporadas com rating, vitórias, derrotas e partidas de colocação;
+- matchmaking por faixa, região e tamanho do tabuleiro;
+- cooldown por ausência na confirmação e abandono da partida;
 - administração de temporadas e penalidades por API protegida;
 - snapshots e journal de salas no PostgreSQL;
 - recarga da sala antes de cada comando e rejeição de escritor obsoleto;
 - eventos entre réplicas com payload persistido e notificação por referência;
 - presença distribuída com heartbeat, TTL e limpeza;
-- atualização remota de patches públicos e mãos privadas;
-- métricas Prometheus em `/metrics` e logs estruturados em JSON;
-- cliente Godot com réplica conectada, presença, ranking sazonal e cooldown;
-- unidades procedurais compostas com banners, torres e brilho elemental;
-- APK Android debug ARM64 gerado automaticamente no GitHub Actions;
+- leases de reconexão reivindicados com `FOR UPDATE SKIP LOCKED`;
+- retorno por qualquer réplica durante o prazo de reconexão;
+- abandono autoritativo após vencimento do grace period;
+- replay público persistido e deduplicado por sala e revisão;
+- WebSocket de espectador sem acesso a mãos ou tokens;
+- painel operacional incorporado em `/admin`;
+- métricas Prometheus e logs estruturados em JSON;
+- cliente Godot e APK Android debug ARM64 versionados como `0.11.0`;
 - CI para Python, Node.js, PostgreSQL, duas réplicas, Godot, Android, Docker e conformidade cruzada.
 
 ## Motor Python
@@ -58,27 +61,46 @@ npm install
 npm start
 ```
 
-Endpoints públicos:
+### Endpoints públicos
 
 ```text
-HTTP health:             http://localhost:8080/health
-HTTP lobby:              http://localhost:8080/rooms
-HTTP presença:           http://localhost:8080/presence
-HTTP ranking global:     http://localhost:8080/leaderboard
-HTTP temporadas:         http://localhost:8080/seasons
-HTTP ranking sazonal:    http://localhost:8080/season-leaderboard
-Prometheus:              http://localhost:8080/metrics
-WebSocket:               ws://localhost:8080/ws
+GET  /health
+GET  /rooms
+GET  /presence
+GET  /leaderboard
+GET  /seasons
+GET  /season-leaderboard
+GET  /replays
+GET  /replays/{roomId}
+GET  /metrics
+WS   /ws
+WS   /spectator?roomId=ROOM_ID
 ```
 
-Endpoints administrativos:
+Consulta incremental de replay:
 
 ```text
-GET|POST /admin/seasons
-GET|POST /admin/penalties
+GET /replays/ROOM_ID?afterRevision=20&limit=500
 ```
 
-Todos exigem:
+### Administração
+
+Interface:
+
+```text
+GET /admin
+```
+
+API protegida:
+
+```text
+GET       /admin/overview
+GET       /admin/disconnects
+GET|POST  /admin/seasons
+GET|POST  /admin/penalties
+```
+
+Todos os endpoints administrativos exigem:
 
 ```text
 Authorization: Bearer <HEXA_ADMIN_TOKEN>
@@ -93,24 +115,69 @@ HEXA_COMPETITION_STORE=postgres \
 HEXA_CLUSTER_BUS=postgres \
 HEXA_PRESENCE_STORE=postgres \
 HEXA_GOVERNANCE_STORE=postgres \
+HEXA_RESILIENCE_STORE=postgres \
 DATABASE_URL=postgresql://hexa:senha@localhost:5432/hexa_octarina \
 HEXA_ADMIN_TOKEN=uma-chave-administrativa-longa \
 npm start
 ```
 
-Cada comando recarrega o snapshot atual, aplica a regra e grava somente quando a revisão persistida ainda corresponde à revisão esperada. Uma instância atrasada recebe `ROOM_WRITE_CONFLICT` e deve reconectar antes de tentar novamente.
+Cada comando recarrega o snapshot atual e grava somente quando a revisão persistida ainda corresponde à revisão esperada. Uma réplica atrasada recebe `ROOM_WRITE_CONFLICT` e deve recarregar o estado.
 
-O barramento registra o payload completo em `cluster_events` e transmite somente o ID pelo PostgreSQL `LISTEN/NOTIFY`. Cada réplica busca o evento e atualiza seus próprios sockets.
+O barramento registra o payload completo em `cluster_events` e transmite somente o ID pelo PostgreSQL `LISTEN/NOTIFY`.
 
-### Modos locais
+### Reconexão e abandono
 
-```bash
-HEXA_STORE=sqlite HEXA_DB_PATH=.data/hexa-octarina.sqlite npm start
-HEXA_STORE=files HEXA_DATA_DIR=.data/rooms npm start
-HEXA_STORE=memory npm start
+Variáveis principais:
+
+```text
+HEXA_RECONNECT_GRACE_MS=60000
+HEXA_RESILIENCE_MAINTENANCE_MS=5000
+HEXA_ABANDONMENT_COOLDOWN_MS=600000
 ```
 
-Para uma execução local sem PostgreSQL:
+Fluxo:
+
+1. o socket fecha e a presença local é removida;
+2. se o jogador não estiver em outra réplica, um lease é criado;
+3. a sala recebe `player.reconnect_grace`;
+4. uma reconexão válida cancela o lease e publica `player.reconnect_restored`;
+5. após o prazo, uma réplica reivindica o lease;
+6. se o jogador continuar offline, a partida termina por `abandonment`;
+7. progressão, temporada e penalidade são registradas uma única vez.
+
+### Espectador
+
+```text
+ws://localhost:8080/spectator?roomId=ROOM_ID
+```
+
+Eventos iniciais:
+
+```text
+server.hello
+spectator.established
+```
+
+Eventos ao vivo:
+
+```text
+room.patch
+presence.updated
+match.progression
+player.reconnect_grace
+player.reconnect_restored
+```
+
+Comandos permitidos:
+
+```text
+ping
+replay.get
+```
+
+O espectador recebe somente estado público. `player.private_state`, mãos e tokens nunca são enviados ou gravados no replay.
+
+### Modos locais
 
 ```bash
 HEXA_STORE=memory \
@@ -119,6 +186,7 @@ HEXA_COMPETITION_STORE=memory \
 HEXA_CLUSTER_BUS=memory \
 HEXA_PRESENCE_STORE=memory \
 HEXA_GOVERNANCE_STORE=memory \
+HEXA_RESILIENCE_STORE=memory \
 npm start
 ```
 
@@ -133,50 +201,9 @@ HEXA_RECOVERY_WEBHOOK_SECRET=uma-chave-secreta \
 npm start
 ```
 
-Desenvolvimento:
-
-```bash
-HEXA_RECOVERY_PROVIDER=console npm start
-```
-
 A resposta do protocolo permanece genérica para não revelar se uma conta existe.
 
-### Comandos WebSocket principais
-
-```text
-account.register
-account.login
-account.profile
-account.history
-account.recovery.request
-account.recovery.confirm
-leaderboard.list
-season.list
-season.leaderboard
-matchmaking.enqueue
-matchmaking.status
-matchmaking.accept
-matchmaking.cancel
-telemetry.track
-room.create
-room.join
-room.reconnect
-action.play_edge
-action.play_card
-action.resolve_duel_round
-match.forfeit
-```
-
-Eventos públicos adicionais:
-
-```text
-presence.updated
-lobby.updated
-season.data
-room.patch
-```
-
-Validação:
+### Validação
 
 ```bash
 cd server
@@ -192,18 +219,17 @@ HEXA_ADMIN_TOKEN=uma-chave-administrativa-longa \
 docker compose up --build
 ```
 
-A composição inicia PostgreSQL e o servidor com:
+A composição utiliza PostgreSQL para:
 
-- salas, snapshots e eventos no PostgreSQL;
-- contas e progressão global no PostgreSQL;
-- temporadas, fila, recuperação e telemetria no PostgreSQL;
-- barramento entre réplicas no PostgreSQL;
-- presença distribuída no PostgreSQL;
-- penalidades e governança no PostgreSQL;
-- health check que confirma todos os adaptadores;
-- apenas a porta `8080` publicada pelo servidor.
+- salas, snapshots e journal;
+- contas e progressão global;
+- temporadas, fila, recuperação e telemetria;
+- barramento entre réplicas;
+- presença distribuída;
+- penalidades e governança;
+- leases de reconexão e replay público.
 
-Para escalar o processo Node horizontalmente, todas as réplicas devem apontar para o mesmo `DATABASE_URL` e usar identificadores de instância distintos.
+Todas as réplicas devem apontar para o mesmo `DATABASE_URL` e usar identificadores de instância distintos.
 
 ## Cliente Godot 4
 
@@ -212,15 +238,13 @@ Abra `client/godot/project.godot` no Godot 4.6.3.
 Jogadores autenticados podem:
 
 - criar conta, entrar ou recuperar acesso;
-- visualizar perfil, ranking global e ranking da temporada;
-- entrar na fila ranqueada e acompanhar a expansão da faixa de busca;
-- receber cooldown competitivo quando aplicável;
-- aceitar automaticamente a sala reservada;
-- acompanhar jogadores online na sala;
+- visualizar perfil e rankings;
+- entrar na fila ranqueada;
+- receber cooldown competitivo;
+- reconectar durante o grace period;
+- acompanhar jogadores online;
 - consultar histórico e progressão;
 - jogar por mouse ou toque.
-
-Visitantes continuam usando o lobby público sem progressão persistente.
 
 Argumentos opcionais:
 
@@ -234,7 +258,7 @@ godot --path client/godot -- --server=ws://192.168.0.10:8080/ws
 
 ## Android
 
-O preset `0.10.0` gera um APK debug ARM64 com Internet, landscape, toque e compressão ETC2/ASTC:
+O preset `0.11.0` gera um APK debug ARM64 com Internet, landscape, toque e compressão ETC2/ASTC:
 
 ```bash
 GODOT_BIN=/caminho/Godot_4.6.3 \
@@ -248,7 +272,7 @@ Saída:
 build/android/HexaOctarinaConquer-debug.apk
 ```
 
-O GitHub Actions publica o mesmo pacote no artefato `hexa-octarina-android-debug`.
+O GitHub Actions publica o pacote no artefato `hexa-octarina-android-debug`.
 
 ## Estrutura
 
@@ -258,29 +282,31 @@ O GitHub Actions publica o mesmo pacote no artefato `hexa-octarina-android-debug
 - `server/src/distributed-room-manager.js`: carregamento por comando e revisão otimista;
 - `server/src/cluster-bus.js`: eventos entre réplicas;
 - `server/src/presence-store.js`: presença e heartbeat;
-- `server/src/governance-store.js`: penalidades e administração de temporadas;
+- `server/src/governance-store.js`: penalidades e temporadas;
+- `server/src/resilience-store.js`: reconexões e replay;
+- `server/src/server-sprint11.js`: espectador, painel e manutenção de abandono;
+- `server/src/admin-panel.js`: interface operacional incorporada;
 - `server/src/recovery-provider.js`: entrega externa da recuperação;
 - `server/src/identity-*.js`: contas, sessões e progressão global;
-- `server/src/competition-*.js`: temporadas, fila, desafios e telemetria;
-- `server/test/`: regras, concorrência, cluster, PostgreSQL, WebSocket e observabilidade;
-- `client/godot/`: cliente 3D, interface competitiva e preset Android;
+- `server/src/competition-*.js`: temporadas, fila e telemetria;
+- `server/test/`: regras, concorrência, cluster, replay, PostgreSQL e WebSocket;
+- `client/godot/`: cliente 3D e preset Android;
 - `Dockerfile` e `compose.yaml`: execução local e distribuída;
-- `docs/sprint-10-cluster-presenca-governanca.md`: relatório e operação;
-- `docs/adr/0005-postgres-cluster-bus.md`: decisão do barramento;
-- `docs/adr/`: demais decisões arquiteturais.
+- `docs/sprint-11-reconnect-spectator-replay.md`: arquitetura e operação da Sprint 11;
+- `docs/adr/`: decisões arquiteturais.
 
 ## Limites atuais
 
 - `LISTEN/NOTIFY` não substitui um broker dedicado para escala extrema ou múltiplas regiões;
-- a penalidade automática cobre ausência na confirmação, mas não abandono durante a batalha;
-- a administração ainda é uma API protegida, sem painel web dedicado;
+- o espectador ainda não possui uma tela dedicada no cliente Godot;
+- o replay ainda não executa uma timeline cinematográfica;
 - recuperação em produção depende de integrar o webhook a um canal real;
-- personagens e cenários finais ainda dependem de assets GLB e animações produzidos externamente;
-- o duelo permanece sobre a arena, sem cena cinematográfica dedicada.
+- personagens e cenários finais ainda dependem de assets GLB e animações;
+- AAB de release, testes de carga e chaos testing permanecem como próximos endurecimentos.
 
 ## Próximo marco
 
-Sprint 11: abandono e reconexão com tolerância, espectador, replay, painel administrativo web, integração real de recuperação, personagens GLB, AAB de release, testes de carga e chaos testing.
+Sprint 12: tela de espectador e replay no Godot, AAB assinado, testes de carga e chaos, moderação, personagens GLB e cena cinematográfica de duelo.
 
 ---
 
