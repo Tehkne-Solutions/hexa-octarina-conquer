@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { EventEmitter, once } from "node:events";
+import { EventEmitter } from "node:events";
 import test from "node:test";
 
 import { MemoryClusterBus } from "../src/cluster-bus.js";
@@ -9,23 +9,28 @@ test("memory cluster bus broadcasts durable-style envelopes to every replica", a
   const first = new MemoryClusterBus({ emitter, instanceId: "instance-a" });
   const second = new MemoryClusterBus({ emitter, instanceId: "instance-b" });
   const received = [];
-  const signal = new EventEmitter();
+  let resolveDelivery;
+  const delivered = new Promise((resolve) => {
+    resolveDelivery = resolve;
+  });
 
-  first.subscribe((event) => {
-    received.push(["first", event]);
-    signal.emit("received");
-  });
-  second.subscribe((event) => {
-    received.push(["second", event]);
-    signal.emit("received");
-  });
+  function capture(replica, event) {
+    received.push([replica, event]);
+    if (received.length === 2) resolveDelivery();
+  }
+
+  first.subscribe((event) => capture("first", event));
+  second.subscribe((event) => capture("second", event));
 
   try {
     const published = await first.publish("room.update", {
       roomId: "ROOM0001",
       messages: [{ type: "room.patch", payload: { text: "x".repeat(12_000) } }],
     });
-    await Promise.all([once(signal, "received"), once(signal, "received")]);
+    await Promise.race([
+      delivered,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("cluster event delivery timed out")), 1_000)),
+    ]);
     assert.equal(received.length, 2);
     assert.equal(received[0][1].id, published.id);
     assert.equal(received[1][1].originInstanceId, "instance-a");
