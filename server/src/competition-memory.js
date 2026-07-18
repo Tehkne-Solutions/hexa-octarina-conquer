@@ -56,7 +56,7 @@ export class MemoryCompetitionStore {
         accountId: account.id,
         handle: account.handle,
         displayName: account.displayName,
-        rating: account.rating ?? 1000,
+        rating: 1000,
         wins: 0,
         losses: 0,
         placementGames: 0,
