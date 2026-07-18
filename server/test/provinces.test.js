@@ -57,7 +57,7 @@ test("captured territory merges with adjacent allied province", () => {
 });
 
 test("surrounded province opens one automatic duel", () => {
-  const ids = ["ROOM", "TOKEN-A", "PLAYER-A", "TOKEN-B", "PLAYER-B"];
+  const ids = ["PLAYER-A", "TOKEN-A", "PLAYER-B", "TOKEN-B"];
   const room = new GameRoom({ id: "ROOM", boardSize: 3, idFactory: () => ids.shift() ?? crypto.randomUUID() });
   const first = room.addPlayer("A").player;
   const second = room.addPlayer("B").player;
@@ -70,7 +70,7 @@ test("surrounded province opens one automatic duel", () => {
   const repeated = room.openAutomaticSieges();
 
   assert.equal(opened.length, 1);
-  assert.equal(repeated.length, 1);
+  assert.equal(repeated.length, 0);
   const duel = room.duels.get(opened[0]);
   assert.equal(duel.reason, "surround");
   assert.equal(duel.attackerId, second.id);
