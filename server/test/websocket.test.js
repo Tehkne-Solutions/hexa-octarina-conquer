@@ -14,28 +14,26 @@ function createInbox(socket) {
     const waiterIndex = waiters.findIndex((waiter) => waiter.type === message.type);
     if (waiterIndex >= 0) {
       const [waiter] = waiters.splice(waiterIndex, 1);
+      clearTimeout(waiter.timer);
       waiter.resolve(message);
     } else {
       queue.push(message);
     }
   });
+
   return {
     next(type) {
       const index = queue.findIndex((message) => message.type === type);
       if (index >= 0) return Promise.resolve(queue.splice(index, 1)[0]);
+
       return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => {
-          const pendingIndex = waiters.findIndex((waiter) => waiter.resolve === resolve);
+        const waiter = { type, resolve, timer: undefined };
+        waiter.timer = setTimeout(() => {
+          const pendingIndex = waiters.indexOf(waiter);
           if (pendingIndex >= 0) waiters.splice(pendingIndex, 1);
           reject(new Error(`timeout waiting for ${type}`));
         }, 2_000);
-        waiters.push({
-          type,
-          resolve: (message) => {
-            clearTimeout(timer);
-            resolve(message);
-          },
-        });
+        waiters.push(waiter);
       });
     },
   };
@@ -50,53 +48,63 @@ function send(socket, type, payload, requestId) {
   }));
 }
 
+async function closeSocket(socket) {
+  if (!socket || socket.readyState === WebSocket.CLOSED) return;
+  const closed = once(socket, "close");
+  socket.close();
+  await closed;
+}
+
 test("creates, joins and synchronizes a room over WebSocket", async () => {
   const instance = startServer({ port: 0 });
-  await once(instance.httpServer, "listening");
-  const address = instance.httpServer.address();
-  const url = `ws://127.0.0.1:${address.port}/ws`;
+  let firstSocket;
+  let secondSocket;
 
-  const firstSocket = new WebSocket(url);
-  const firstInbox = createInbox(firstSocket);
-  await once(firstSocket, "open");
-  await firstInbox.next("server.hello");
+  try {
+    await once(instance.httpServer, "listening");
+    const address = instance.httpServer.address();
+    const url = `ws://127.0.0.1:${address.port}/ws`;
 
-  send(firstSocket, "room.create", { playerName: "A", boardSize: 3 }, "create-1");
-  const firstSession = await firstInbox.next("session.established");
-  await firstInbox.next("room.patch");
+    firstSocket = new WebSocket(url);
+    const firstInbox = createInbox(firstSocket);
+    await once(firstSocket, "open");
+    await firstInbox.next("server.hello");
 
-  const secondSocket = new WebSocket(url);
-  const secondInbox = createInbox(secondSocket);
-  await once(secondSocket, "open");
-  await secondInbox.next("server.hello");
-  send(secondSocket, "room.join", {
-    roomId: firstSession.payload.roomId,
-    playerName: "B",
-  }, "join-1");
+    send(firstSocket, "room.create", { playerName: "A", boardSize: 3 }, "create-1");
+    const firstSession = await firstInbox.next("session.established");
+    await firstInbox.next("room.patch");
 
-  const secondSession = await secondInbox.next("session.established");
-  const firstJoinPatch = await firstInbox.next("room.patch");
-  await secondInbox.next("room.patch");
-  assert.equal(firstJoinPatch.payload.state.status, "active");
+    secondSocket = new WebSocket(url);
+    const secondInbox = createInbox(secondSocket);
+    await once(secondSocket, "open");
+    await secondInbox.next("server.hello");
+    send(secondSocket, "room.join", {
+      roomId: firstSession.payload.roomId,
+      playerName: "B",
+    }, "join-1");
 
-  send(firstSocket, "action.play_edge", {
-    roomId: firstSession.payload.roomId,
-    playerId: firstSession.payload.playerId,
-    sessionToken: firstSession.payload.sessionToken,
-    expectedRevision: firstJoinPatch.payload.revision,
-    start: [0, 0],
-    end: [1, 0],
-  }, "edge-1");
+    const secondSession = await secondInbox.next("session.established");
+    const firstJoinPatch = await firstInbox.next("room.patch");
+    await secondInbox.next("room.patch");
+    assert.equal(firstJoinPatch.payload.state.status, "active");
 
-  const accepted = await firstInbox.next("command.accepted");
-  const firstEdgePatch = await firstInbox.next("room.patch");
-  const secondEdgePatch = await secondInbox.next("room.patch");
-  assert.equal(accepted.payload.revision, firstEdgePatch.payload.revision);
-  assert.equal(secondEdgePatch.payload.state.board.edges.length, 1);
-  assert.equal(secondEdgePatch.payload.state.board.currentPlayerId, secondSession.payload.playerId);
+    send(firstSocket, "action.play_edge", {
+      roomId: firstSession.payload.roomId,
+      playerId: firstSession.payload.playerId,
+      sessionToken: firstSession.payload.sessionToken,
+      expectedRevision: firstJoinPatch.payload.revision,
+      start: [0, 0],
+      end: [1, 0],
+    }, "edge-1");
 
-  firstSocket.close();
-  secondSocket.close();
-  await Promise.all([once(firstSocket, "close"), once(secondSocket, "close")]);
-  await instance.close();
+    const accepted = await firstInbox.next("command.accepted");
+    const firstEdgePatch = await firstInbox.next("room.patch");
+    const secondEdgePatch = await secondInbox.next("room.patch");
+    assert.equal(accepted.payload.revision, firstEdgePatch.payload.revision);
+    assert.equal(secondEdgePatch.payload.state.board.edges.length, 1);
+    assert.equal(secondEdgePatch.payload.state.board.currentPlayerId, secondSession.payload.playerId);
+  } finally {
+    await Promise.allSettled([closeSocket(firstSocket), closeSocket(secondSocket)]);
+    await instance.close();
+  }
 });
