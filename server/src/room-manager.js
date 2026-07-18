@@ -20,10 +20,11 @@ export class RoomManager {
     }
   }
 
-  createRoom({ playerName, boardSize, accountId = null }) {
-    const roomId = this.createRoomId();
-    const room = new GameRoom({ id: roomId, boardSize, idFactory: this.idFactory, clock: this.clock });
-    this.rooms.set(roomId, room);
+  createRoom({ playerName, boardSize, accountId = null, roomId = null }) {
+    const resolvedRoomId = roomId ?? this.createRoomId();
+    if (this.rooms.has(resolvedRoomId)) throw new ProtocolError("ROOM_EXISTS", "room already exists");
+    const room = new GameRoom({ id: resolvedRoomId, boardSize, idFactory: this.idFactory, clock: this.clock });
+    this.rooms.set(resolvedRoomId, room);
     const joined = room.addPlayer(playerName, { accountId });
     this.persist(room);
     return { room, ...joined };
