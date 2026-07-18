@@ -44,7 +44,9 @@ jobs:
           "$SDKMANAGER" --sdk_root="$ANDROID_HOME" \
             "platform-tools" \
             "build-tools;35.0.1" \
-            "platforms;android-35"
+            "platforms;android-35" \
+            "cmake;3.10.2.4988404" \
+            "ndk;28.1.13356709"
       - name: Download official Godot 4.6.3 and export templates
         run: |
           curl -fsSL -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
@@ -94,13 +96,14 @@ jobs:
             > "$HOME/.config/godot/editor_settings-4.6.tres"
       - name: Install Godot Android Gradle template
         run: |
+          ANDROID_SOURCE="$HOME/.local/share/godot/export_templates/4.6.3.stable/android_source.zip"
+          test -f "$ANDROID_SOURCE"
           rm -rf client/godot/android
-          ./Godot_v4.6.3-stable_linux.x86_64 --headless \
-            --path client/godot \
-            --install-android-build-template \
-            --editor \
-            --quit-after 2
+          mkdir -p client/godot/android/build
+          unzip -q "$ANDROID_SOURCE" -d client/godot/android/build
           test -f client/godot/android/build/build.gradle
+          test -f client/godot/android/build/gradlew
+          chmod +x client/godot/android/build/gradlew
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
       - name: Export universal and emulator APKs
