@@ -40,6 +40,23 @@ test("connected cells merge into one persistent province", () => {
   assert.equal(board.cells.get("1,0").provinceId, province.id);
 });
 
+test("one edge closing two cells grants two bonus actions", () => {
+  const board = new BoardState(3);
+  board.setPlayerOrder(["A", "B"]);
+  const setupEdges = [
+    [[0, 0], [1, 0]], [[0, 0], [0, 1]], [[0, 1], [1, 1]],
+    [[1, 0], [2, 0]], [[2, 0], [2, 1]], [[1, 1], [2, 1]],
+  ];
+  for (const [start, end] of setupEdges) board.playEdge("A", start, end, { consumeAction: false });
+  board.actionsRemaining = 1;
+
+  const result = board.playEdge("A", [1, 0], [1, 1]);
+
+  assert.deepEqual(result.claimedCellIds, ["cell:0,0", "cell:1,0"]);
+  assert.equal(board.actionsRemaining, 2);
+  assert.equal(board.currentPlayerId, "A");
+});
+
 test("captured territory merges with adjacent allied province", () => {
   const board = new BoardState(3);
   board.setPlayerOrder(["A", "B"]);
@@ -54,6 +71,27 @@ test("captured territory merges with adjacent allied province", () => {
   assert.equal(board.cells.get("0,0").ownerId, "A");
   assert.equal(board.cells.get("1,0").ownerId, "A");
   assert.equal(left.ownerId, "A");
+});
+
+test("legacy cell snapshots migrate into connected provinces", () => {
+  const board = BoardState.fromJSON({
+    boardSize: 3,
+    playerOrder: ["A", "B"],
+    currentPlayerIndex: 0,
+    turnNumber: 4,
+    actionsRemaining: 1,
+    edges: [],
+    cells: [
+      { id: "cell:0,0", x: 0, y: 0, ownerId: "A", unit: { kind: "fortress", level: 2, hp: 8 } },
+      { id: "cell:1,0", x: 1, y: 0, ownerId: "A", unit: { kind: "recruit", level: 1, hp: 3 } },
+    ],
+  });
+
+  assert.equal(board.provinces.size, 1);
+  const province = [...board.provinces.values()][0];
+  assert.deepEqual(province.cellIds, ["cell:0,0", "cell:1,0"]);
+  assert.equal(province.unit.kind, "fortress");
+  assert.equal(province.unit.hp, 8);
 });
 
 test("surrounded province opens one automatic duel", () => {
