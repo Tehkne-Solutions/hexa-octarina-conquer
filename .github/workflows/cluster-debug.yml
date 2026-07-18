@@ -1,0 +1,28 @@
+name: Cluster Transport Debug
+
+on:
+  push:
+    branches: ["agent/sprint-10-barramento-presenca-admin"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: cluster-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cluster-websocket:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: npm install
+      - name: Run isolated cross-replica transport test
+        run: node --test --test-force-exit test/cluster-websocket.test.js
