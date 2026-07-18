@@ -41,7 +41,6 @@ function applyCards(actor, target, cardIds) {
       if (card.element === "electric" && (target.statuses.wet ?? 0) > 0) damage *= 2;
       const result = applyDamage(target, damage);
       log.push({ actorId: actor.playerId, cardId, effect: "attack", damage: result.actual, absorbed: result.absorbed });
-      continue;
     }
   }
   return log;
@@ -54,19 +53,47 @@ function tickStatuses(combatant) {
   }
 }
 
-export function createDuel({ id, attackerId, defenderId, provinceId }) {
+export function createDuel({
+  id,
+  attackerId,
+  defenderId,
+  provinceId,
+  reason = "contact",
+  attackerSupport = 0,
+  defenderSupport = 0,
+  defenderUnit = { level: 1, hp: 3 },
+}) {
+  const attackerHp = 8 + attackerSupport;
+  const defenderHp = Math.max(5, defenderUnit.hp + defenderUnit.level * 2 + defenderSupport);
   return {
     id,
     attackerId,
     defenderId,
     provinceId,
+    reason,
     status: "pending",
     round: 1,
     winnerId: null,
     submissions: {},
     combatants: {
-      [attackerId]: { playerId: attackerId, hp: 8, maxHp: 8, shield: 0, energy: 3, statuses: {} },
-      [defenderId]: { playerId: defenderId, hp: 5, maxHp: 5, shield: 0, energy: 3, statuses: {} },
+      [attackerId]: {
+        playerId: attackerId,
+        hp: attackerHp,
+        maxHp: attackerHp,
+        shield: 0,
+        energy: Math.min(7, 3 + attackerSupport),
+        support: attackerSupport,
+        statuses: {},
+      },
+      [defenderId]: {
+        playerId: defenderId,
+        hp: defenderHp,
+        maxHp: defenderHp,
+        shield: 0,
+        energy: Math.min(7, 3 + defenderSupport),
+        support: defenderSupport,
+        statuses: {},
+      },
     },
     log: [],
   };
@@ -137,6 +164,7 @@ export function duelSnapshot(duel) {
     attackerId: duel.attackerId,
     defenderId: duel.defenderId,
     provinceId: duel.provinceId,
+    reason: duel.reason ?? "contact",
     status: duel.status,
     round: duel.round,
     winnerId: duel.winnerId,
@@ -146,6 +174,7 @@ export function duelSnapshot(duel) {
       maxHp: state.maxHp,
       shield: state.shield,
       energy: state.energy,
+      support: state.support ?? 0,
       statuses: { ...state.statuses },
     }])),
     log: duel.log.slice(-20),

@@ -16,6 +16,15 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
       response.end(JSON.stringify({ ok: true, rooms: manager.rooms.size }));
       return;
     }
+    if (request.url === "/rooms") {
+      response.writeHead(200, {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+      });
+      response.end(JSON.stringify({ rooms: manager.listRooms() }));
+      return;
+    }
     response.writeHead(404, { "content-type": "application/json" });
     response.end(JSON.stringify({ ok: false, error: "not_found" }));
   });
@@ -23,6 +32,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
   const websocketServer = new WebSocketServer({ server: httpServer, path: "/ws" });
   const sessionBySocket = new WeakMap();
   const socketsByRoom = new Map();
+  const connectedSockets = new Set();
 
   function registerSocket(socket, roomId, playerId) {
     const previous = sessionBySocket.get(socket);
@@ -36,10 +46,23 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
     for (const socket of socketsByRoom.get(roomId) ?? []) send(socket, message);
   }
 
+  function broadcastExcept(roomId, message, excludedSocket) {
+    for (const socket of socketsByRoom.get(roomId) ?? []) {
+      if (socket !== excludedSocket) send(socket, message);
+    }
+  }
+
+  function broadcastLobby() {
+    const message = serverMessage("lobby.updated", { rooms: manager.listRooms() });
+    for (const socket of connectedSockets) send(socket, message);
+  }
+
   websocketServer.on("connection", (socket) => {
+    connectedSockets.add(socket);
     send(socket, serverMessage("server.hello", {
       transport: "websocket",
       commands: [
+        "lobby.list",
         "room.create",
         "room.join",
         "room.reconnect",
@@ -60,6 +83,13 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
           return;
         }
 
+        if (command.type === "lobby.list") {
+          send(socket, serverMessage("lobby.rooms", {
+            rooms: manager.listRooms({ status: command.payload.status }),
+          }, requestId));
+          return;
+        }
+
         if (command.type === "room.create") {
           const { room, player, patch } = manager.createRoom(command.payload);
           registerSocket(socket, room.id, player.id);
@@ -70,6 +100,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             snapshot: room.snapshot(),
           }, requestId));
           broadcast(room.id, serverMessage("room.patch", patch));
+          broadcastLobby();
           return;
         }
 
@@ -83,6 +114,7 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             snapshot: room.snapshot(),
           }, requestId));
           broadcast(room.id, serverMessage("room.patch", patch));
+          broadcastLobby();
           return;
         }
 
@@ -97,6 +129,10 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
             snapshot: result.snapshot,
             patches: result.patches,
           }, requestId));
+          if (result.connectionPatch) {
+            broadcastExcept(result.room.id, serverMessage("room.patch", result.connectionPatch), socket);
+          }
+          broadcastLobby();
           return;
         }
 
@@ -120,11 +156,15 @@ export function startServer({ port = 8080, manager = new RoomManager() } = {}) {
     });
 
     socket.on("close", () => {
+      connectedSockets.delete(socket);
       const session = sessionBySocket.get(socket);
       if (!session) return;
       socketsByRoom.get(session.roomId)?.delete(socket);
       const result = manager.disconnect(session.roomId, session.playerId);
-      if (result) broadcast(session.roomId, serverMessage("room.patch", result.patch));
+      if (result) {
+        broadcast(session.roomId, serverMessage("room.patch", result.patch));
+        broadcastLobby();
+      }
     });
   });
 

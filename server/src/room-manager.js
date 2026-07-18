@@ -2,12 +2,22 @@ import { randomUUID } from "node:crypto";
 
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
+import { MemoryRoomStore } from "./room-store.js";
 
 export class RoomManager {
-  constructor({ idFactory = randomUUID, clock = () => Date.now() } = {}) {
+  constructor({ idFactory = randomUUID, clock = () => Date.now(), store = new MemoryRoomStore() } = {}) {
     this.idFactory = idFactory;
     this.clock = clock;
+    this.store = store;
     this.rooms = new Map();
+    for (const record of this.store.loadRooms()) {
+      try {
+        const room = GameRoom.restore(record, { idFactory: this.idFactory, clock: this.clock });
+        this.rooms.set(room.id, room);
+      } catch (error) {
+        console.error(`Failed to restore room ${record?.id ?? "unknown"}:`, error);
+      }
+    }
   }
 
   createRoom({ playerName, boardSize }) {
@@ -15,23 +25,28 @@ export class RoomManager {
     const room = new GameRoom({ id: roomId, boardSize, idFactory: this.idFactory, clock: this.clock });
     this.rooms.set(roomId, room);
     const joined = room.addPlayer(playerName);
+    this.persist(room);
     return { room, ...joined };
   }
 
   joinRoom({ roomId, playerName }) {
     const room = this.getRoom(roomId);
     const joined = room.addPlayer(playerName);
+    this.persist(room);
     return { room, ...joined };
   }
 
   reconnect(payload) {
     const room = this.getRoom(payload.roomId);
-    return { room, ...room.reconnect(payload) };
+    const result = room.reconnect(payload);
+    this.persist(room);
+    return { room, ...result };
   }
 
   applyCommand(command) {
     const room = this.getRoom(command.payload.roomId);
     const patch = room.applyCommand(command);
+    this.persist(room);
     return { room, patch };
   }
 
@@ -39,7 +54,25 @@ export class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room) return null;
     const patch = room.disconnect(playerId);
+    if (patch) this.persist(room);
     return patch ? { room, patch } : null;
+  }
+
+  listRooms({ status } = {}) {
+    return [...this.rooms.values()]
+      .filter((room) => !status || room.status === status)
+      .sort((left, right) => right.updatedAt - left.updatedAt)
+      .map((room) => room.lobbySummary());
+  }
+
+  removeRoom(roomId) {
+    const existed = this.rooms.delete(roomId);
+    if (existed) this.store.deleteRoom(roomId);
+    return existed;
+  }
+
+  persist(room) {
+    this.store.saveRoom(room);
   }
 
   getRoom(roomId) {

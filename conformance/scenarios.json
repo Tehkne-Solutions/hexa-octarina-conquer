@@ -1,0 +1,41 @@
+[
+  {
+    "name": "mixed_edges_owner_is_final_closer",
+    "size": 2,
+    "players": ["A", "B"],
+    "operations": [
+      { "actor": "A", "start": [0, 0], "end": [1, 0] },
+      { "actor": "B", "start": [0, 0], "end": [0, 1] },
+      { "actor": "A", "start": [1, 0], "end": [1, 1] },
+      { "actor": "B", "start": [0, 1], "end": [1, 1] }
+    ]
+  },
+  {
+    "name": "connected_cells_form_one_province",
+    "size": 3,
+    "players": ["A", "B"],
+    "operations": [
+      { "actor": "A", "start": [0, 0], "end": [1, 0] },
+      { "actor": "A", "start": [0, 0], "end": [0, 1] },
+      { "actor": "A", "start": [1, 0], "end": [1, 1] },
+      { "actor": "A", "start": [0, 1], "end": [1, 1] },
+      { "actor": "A", "start": [1, 0], "end": [2, 0] },
+      { "actor": "A", "start": [2, 0], "end": [2, 1] },
+      { "actor": "A", "start": [1, 1], "end": [2, 1] }
+    ]
+  },
+  {
+    "name": "separate_players_keep_separate_provinces",
+    "size": 3,
+    "players": ["A", "B"],
+    "operations": [
+      { "actor": "A", "start": [0, 0], "end": [1, 0] },
+      { "actor": "A", "start": [0, 0], "end": [0, 1] },
+      { "actor": "A", "start": [1, 0], "end": [1, 1] },
+      { "actor": "A", "start": [0, 1], "end": [1, 1] },
+      { "actor": "B", "start": [1, 0], "end": [2, 0] },
+      { "actor": "B", "start": [2, 0], "end": [2, 1] },
+      { "actor": "B", "start": [1, 1], "end": [2, 1] }
+    ]
+  }
+]

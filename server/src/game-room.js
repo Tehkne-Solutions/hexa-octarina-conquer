@@ -20,6 +20,8 @@ export class GameRoom extends RoomActions {
     this.nextDuelId = 1;
     this.usedMacroTurns = new Set();
     this.patchLog = [];
+    this.createdAt = this.clock();
+    this.updatedAt = this.createdAt;
   }
 
   addPlayer(playerName) {
@@ -57,10 +59,14 @@ export class GameRoom extends RoomActions {
   }
 
   reconnect({ playerId, sessionToken, lastRevision = 0 }) {
+    const existing = this.players.find((item) => item.id === playerId);
+    const wasConnected = existing?.connected ?? false;
     const player = this.authenticate(playerId, sessionToken);
+    const connectionPatch = wasConnected ? null : this.commit("player.reconnected", { playerId });
     const patches = this.patchesSince(lastRevision);
     return {
       player,
+      connectionPatch,
       mode: patches === null ? "snapshot" : "patches",
       snapshot: patches === null ? this.snapshot() : undefined,
       patches: patches ?? undefined,
@@ -86,13 +92,14 @@ export class GameRoom extends RoomActions {
 
   commit(eventType, payload) {
     this.revision += 1;
+    this.updatedAt = this.clock();
     const patch = {
       roomId: this.id,
       revision: this.revision,
       event: {
         id: `${this.id}:${this.revision}`,
         type: eventType,
-        at: this.clock(),
+        at: this.updatedAt,
         payload,
       },
       state: {
@@ -125,14 +132,73 @@ export class GameRoom extends RoomActions {
     }));
   }
 
+  lobbySummary() {
+    return {
+      roomId: this.id,
+      status: this.status,
+      boardSize: this.board.size,
+      playerCount: this.players.length,
+      players: this.players.map((player) => ({ name: player.name, connected: player.connected })),
+      revision: this.revision,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+
   snapshot() {
     return {
       roomId: this.id,
       revision: this.revision,
       status: this.status,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
       board: this.board.snapshot(),
       players: this.publicPlayers(),
       duels: [...this.duels.values()].map(duelSnapshot),
     };
+  }
+
+  serialize() {
+    return {
+      schemaVersion: 1,
+      id: this.id,
+      status: this.status,
+      revision: this.revision,
+      players: this.players.map((player) => ({ ...player, hand: [...player.hand] })),
+      board: this.board.serialize(),
+      duels: [...this.duels.values()],
+      nextDuelId: this.nextDuelId,
+      usedMacroTurns: [...this.usedMacroTurns],
+      patchLog: this.patchLog,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+
+  static restore(raw, { idFactory = randomUUID, clock = () => Date.now() } = {}) {
+    if (!raw || raw.schemaVersion !== 1) {
+      throw new ProtocolError("INVALID_ROOM_DATA", "unsupported persisted room schema");
+    }
+    const room = new GameRoom({
+      id: raw.id,
+      boardSize: raw.board?.boardSize ?? 5,
+      idFactory,
+      clock,
+    });
+    room.status = raw.status;
+    room.revision = raw.revision;
+    room.players = (raw.players ?? []).map((player) => ({
+      ...player,
+      connected: false,
+      hand: [...player.hand],
+    }));
+    room.board = BoardState.fromJSON(raw.board);
+    room.duels = new Map((raw.duels ?? []).map((duel) => [duel.id, duel]));
+    room.nextDuelId = raw.nextDuelId ?? 1;
+    room.usedMacroTurns = new Set(raw.usedMacroTurns ?? []);
+    room.patchLog = raw.patchLog ?? [];
+    room.createdAt = raw.createdAt ?? room.createdAt;
+    room.updatedAt = raw.updatedAt ?? room.updatedAt;
+    return room;
   }
 }

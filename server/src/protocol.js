@@ -69,8 +69,16 @@ export function parseClientMessage(raw) {
     });
   }
 
-  if (type === "ping") {
-    return { type, requestId, protocolVersion };
+  if (type === "ping") return { type, requestId, protocolVersion };
+
+  if (type === "lobby.list") {
+    const payload = message.payload ?? {};
+    assertObject(payload, "payload");
+    const status = optionalString(payload.status, "payload.status");
+    if (status && !["waiting", "active", "finished"].includes(status)) {
+      throw new ProtocolError("INVALID_MESSAGE", "payload.status must be waiting, active or finished");
+    }
+    return { type, requestId, protocolVersion, payload: { status } };
   }
 
   assertObject(message.payload, "payload");

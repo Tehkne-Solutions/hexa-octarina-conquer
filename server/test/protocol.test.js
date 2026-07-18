@@ -15,6 +15,17 @@ test("parses a room creation command with a default board size", () => {
   assert.equal(command.payload.boardSize, 5);
 });
 
+test("parses a lobby request without requiring a payload", () => {
+  const command = parseClientMessage(JSON.stringify({
+    protocolVersion: PROTOCOL_VERSION,
+    type: "lobby.list",
+    requestId: "lobby-1",
+  }));
+
+  assert.equal(command.type, "lobby.list");
+  assert.equal(command.payload.status, undefined);
+});
+
 test("rejects incompatible protocol versions", () => {
   assert.throws(() => parseClientMessage(JSON.stringify({
     protocolVersion: "2.0",

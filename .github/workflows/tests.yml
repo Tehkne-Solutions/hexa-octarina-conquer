@@ -20,8 +20,8 @@ jobs:
       - name: Install package
         run: python -m pip install -e .
       - name: Compile sources
-        run: python -m compileall -q src tests
-      - name: Run unit tests
+        run: python -m compileall -q src tests conformance
+      - name: Run unit and Godot package tests
         run: python -m unittest discover -s tests -v
 
   node-authoritative-server:
@@ -34,7 +34,32 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
       - name: Install dependencies
         run: npm install
-      - name: Validate server
-        run: npm run check
+      - name: Validate JavaScript syntax
+        run: npm run syntax
+      - name: Test protocol and room lifecycle
+        run: node --test test/protocol.test.js test/room-manager.test.js
+      - name: Test duel flow
+        run: node --test test/duel-flow.test.js
+      - name: Test connected province merge
+        run: node --test --test-name-pattern="connected cells" test/provinces.test.js
+      - name: Test double cell closure bonus
+        run: node --test --test-name-pattern="one edge closing" test/provinces.test.js
+      - name: Test captured province merge
+        run: node --test --test-name-pattern="captured territory" test/provinces.test.js
+      - name: Test legacy province migration
+        run: node --test --test-name-pattern="legacy cell" test/provinces.test.js
+      - name: Test automatic siege
+        run: node --test --test-name-pattern="surrounded province" test/provinces.test.js
+      - name: Test persistence
+        run: node --test test/persistence.test.js
+      - name: Test WebSocket and lobby transport
+        run: node --test test/websocket.test.js
+      - name: Compare Node and Python engines
+        env:
+          PYTHON: python
+        run: npm run test:conformance
