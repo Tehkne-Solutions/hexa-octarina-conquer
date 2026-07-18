@@ -28,15 +28,26 @@ services:
       HEXA_STORE: postgres
       HEXA_IDENTITY_STORE: postgres
       HEXA_COMPETITION_STORE: postgres
+      HEXA_CLUSTER_BUS: postgres
+      HEXA_PRESENCE_STORE: postgres
+      HEXA_GOVERNANCE_STORE: postgres
       DATABASE_URL: postgresql://hexa:${POSTGRES_PASSWORD:-hexa-development}@postgres:5432/hexa_octarina
       HEXA_PG_POOL_SIZE: 10
       HEXA_ROOM_PG_POOL_SIZE: 10
       HEXA_COMPETITION_PG_POOL_SIZE: 8
+      HEXA_CLUSTER_PG_POOL_SIZE: 4
+      HEXA_PRESENCE_PG_POOL_SIZE: 4
+      HEXA_GOVERNANCE_PG_POOL_SIZE: 4
+      HEXA_PRESENCE_TTL_MS: 45000
+      HEXA_ADMIN_TOKEN: ${HEXA_ADMIN_TOKEN:-replace-in-production}
+      HEXA_RECOVERY_PROVIDER: ${HEXA_RECOVERY_PROVIDER:-none}
+      HEXA_RECOVERY_WEBHOOK_URL: ${HEXA_RECOVERY_WEBHOOK_URL:-}
+      HEXA_RECOVERY_WEBHOOK_SECRET: ${HEXA_RECOVERY_WEBHOOK_SECRET:-}
       HEXA_RECOVERY_EXPOSE_CODE: "false"
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>r.json()).then(h=>{if(!h.ok||h.roomStore!=='postgres'||h.identityStore!=='postgres'||h.competitionStore!=='postgres')process.exit(1)}).catch(()=>process.exit(1))"]
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/health').then(r=>r.json()).then(h=>{if(!h.ok||h.roomStore!=='postgres'||h.identityStore!=='postgres'||h.competitionStore!=='postgres'||h.clusterBus!=='postgres'||h.presenceStore!=='postgres'||h.governanceStore!=='postgres')process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 20s
       timeout: 4s
       retries: 3

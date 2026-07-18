@@ -13,8 +13,11 @@ signal season_leaderboard_changed(entries: Array)
 signal matchmaking_changed(state: Dictionary)
 signal recovery_changed(data: Dictionary)
 signal telemetry_accepted(data: Dictionary)
+signal presence_changed(players: Array)
+signal penalty_changed(data: Dictionary)
 
 const PROTOCOL_VERSION := "1.0"
+const CLIENT_VERSION := "0.10.0"
 const SESSION_PATH := "user://hexa_session.cfg"
 
 @export var server_url := "ws://127.0.0.1:8080/ws"
@@ -26,6 +29,7 @@ var socket_open := false
 var hello_received := false
 var request_sequence := 0
 var reconnect_delay := 0.0
+var server_instance_id := ""
 
 var room_id := ""
 var player_id := ""
@@ -33,6 +37,7 @@ var session_token := ""
 var revision := 0
 var room_state: Dictionary = {}
 var private_state: Dictionary = {}
+var presence_state: Array = []
 var room_to_join := ""
 var player_name := ""
 var force_create := false
@@ -325,8 +330,9 @@ func _handle_packet(raw: String) -> void:
 	match message_type:
 		"server.hello":
 			hello_received = true
-			_set_status("Servidor compatível com protocolo %s" % PROTOCOL_VERSION)
-			track_event("client.connected", {"platform": OS.get_name(), "version": "0.9.0"})
+			server_instance_id = payload.get("instanceId", "")
+			_set_status("Servidor %s • protocolo %s" % [server_instance_id.left(12), PROTOCOL_VERSION])
+			track_event("client.connected", {"platform": OS.get_name(), "version": CLIENT_VERSION, "instanceId": server_instance_id})
 			_establish_session()
 		"account.session":
 			account_id = payload.get("account", {}).get("id", "")
@@ -365,6 +371,12 @@ func _handle_packet(raw: String) -> void:
 				_set_status("Buscando adversário • faixa ±%d" % payload.get("searchWindow", 100))
 			else:
 				pending_match_id = ""
+		"matchmaking.penalty":
+			penalty_changed.emit(payload)
+			var penalty: Dictionary = payload.get("penalty", payload)
+			var retry_at: int = int(penalty.get("retryAt", penalty.get("expiresAt", 0)))
+			var remaining := maxi(0, int((retry_at - Time.get_unix_time_from_system() * 1000.0) / 1000.0))
+			_set_status("Fila competitiva bloqueada por %d segundos." % remaining)
 		"telemetry.accepted":
 			telemetry_accepted.emit(payload)
 		"match.progression":
@@ -386,18 +398,21 @@ func _handle_packet(raw: String) -> void:
 					_join_room(room_to_join)
 		"lobby.updated":
 			lobby_changed.emit(payload.get("rooms", []))
+		"presence.updated":
+			_apply_presence(payload.get("players", []))
 		"session.established":
 			room_id = payload.get("roomId", "")
 			player_id = payload.get("playerId", "")
 			session_token = payload.get("sessionToken", "")
 			_apply_snapshot(payload.get("snapshot", {}))
 			_apply_private_state(payload.get("privateState", {}))
+			_apply_presence(payload.get("presence", []))
 			pending_match_id = ""
 			matchmaking_state = {"state": "claimed", "matchmaking": payload.get("matchmaking", {})}
 			matchmaking_changed.emit(matchmaking_state)
 			_save_session()
-			track_event("mobile.matchmaking.claimed", {"roomId": room_id})
-			_set_status("Sala %s conectada." % room_id)
+			track_event("mobile.matchmaking.claimed", {"roomId": room_id, "instanceId": server_instance_id})
+			_set_status("Sala %s conectada na réplica %s." % [room_id, server_instance_id.left(12)])
 		"session.reconnected":
 			room_id = payload.get("roomId", room_id)
 			player_id = payload.get("playerId", player_id)
@@ -408,6 +423,7 @@ func _handle_packet(raw: String) -> void:
 			else:
 				_apply_snapshot(payload.get("snapshot", {}))
 			_apply_private_state(payload.get("privateState", {}))
+			_apply_presence(payload.get("presence", []))
 			_save_session()
 			_set_status("Sessão restaurada na sala %s." % room_id)
 		"room.patch":
@@ -427,6 +443,12 @@ func _handle_packet(raw: String) -> void:
 				logout_account()
 			elif code == "MATCH_HOST_PENDING":
 				matchmaking_poll_delay = 1.0
+			elif code == "MATCHMAKING_COOLDOWN":
+				var details: Dictionary = payload.get("details", {})
+				penalty_changed.emit(details)
+				matchmaking_started = false
+				matchmaking_state = {"state": "cooldown", "penalty": details}
+				matchmaking_changed.emit(matchmaking_state)
 			elif code in ["ROOM_WRITE_CONFLICT", "REVISION_CONFLICT"] and _has_session():
 				_send("room.reconnect", {
 					"roomId": room_id,
@@ -455,6 +477,10 @@ func _apply_private_state(state: Dictionary) -> void:
 		return
 	private_state = state
 	private_state_changed.emit(private_state)
+
+func _apply_presence(players: Array) -> void:
+	presence_state = players
+	presence_changed.emit(presence_state)
 
 func _apply_patch(patch: Dictionary) -> void:
 	if patch.is_empty():
@@ -521,4 +547,6 @@ func _clear_room_session() -> void:
 	revision = 0
 	room_state = {}
 	private_state = {}
+	presence_state = []
+	presence_changed.emit(presence_state)
 	_save_session()

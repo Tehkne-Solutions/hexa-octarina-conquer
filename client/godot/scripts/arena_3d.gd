@@ -1,5 +1,6 @@
 extends Node3D
 
+const UNIT_FACTORY = preload("res://scripts/unit_factory.gd")
 const PLAYER_COLORS := [
 	Color("4cc9f0"),
 	Color("f72585"),
@@ -22,6 +23,7 @@ var selected_point: Variant = null
 var board_size := 5
 var grid_gap := 1.8
 var camera_home := Vector3.ZERO
+var online_players := 0
 
 func _ready() -> void:
 	network.state_changed.connect(_on_state_changed)
@@ -29,6 +31,8 @@ func _ready() -> void:
 	network.event_received.connect(_on_event_received)
 	network.status_changed.connect(_on_status_changed)
 	network.lobby_changed.connect(_on_lobby_changed)
+	if network.has_signal("presence_changed"):
+		network.presence_changed.connect(_on_presence_changed)
 	battle_ui.macro_requested.connect(_on_macro_requested)
 	battle_ui.expansion_armed.connect(_on_expansion_armed)
 	battle_ui.duel_submitted.connect(_on_duel_submitted)
@@ -57,7 +61,11 @@ func _on_lobby_changed(rooms: Array) -> void:
 			waiting += 1
 		elif room.get("status", "") == "active":
 			active += 1
-	lobby_label.text = "Lobby: %d aguardando | %d em batalha" % [waiting, active]
+	lobby_label.text = "Lobby: %d aguardando | %d em batalha | %d online" % [waiting, active, online_players]
+
+func _on_presence_changed(players: Array) -> void:
+	online_players = players.size()
+	_on_lobby_changed([])
 
 func _on_macro_requested(card_id: String, province_id: String) -> void:
 	if not network.is_local_turn():
@@ -224,21 +232,14 @@ func _build_provinces(provinces: Array, cells: Array) -> void:
 			continue
 		center /= float(valid_cells)
 		var unit: Dictionary = province.get("unit", {})
-		var level: int = unit.get("level", 1)
-		var height := 0.65 + level * 0.22
-		var mesh: PrimitiveMesh
-		if unit.get("kind", "recruit") == "fortress":
-			var fortress := BoxMesh.new()
-			fortress.size = Vector3(0.6 + level * 0.08, height, 0.6 + level * 0.08)
-			mesh = fortress
-		else:
-			var recruit := CylinderMesh.new()
-			recruit.top_radius = 0.20 + level * 0.04
-			recruit.bottom_radius = 0.28 + level * 0.05
-			recruit.height = height
-			mesh = recruit
-		var position := _grid_world(center.x, center.y, height * 0.5 + 0.18)
-		_add_mesh(mesh, _player_color(province.get("ownerId", "")).lightened(0.12), position, province.get("id", "Province"), 0.42, 0.46)
+		var position := _grid_world(center.x, center.y, 0.18)
+		UNIT_FACTORY.build_unit(
+			board_root,
+			_player_color(province.get("ownerId", "")).lightened(0.12),
+			unit,
+			position,
+			province.get("id", "Province")
+		)
 
 func _add_mesh(mesh: PrimitiveMesh, color: Color, position: Vector3, node_name: String, metallic: float, roughness: float) -> MeshInstance3D:
 	var instance := MeshInstance3D.new()
@@ -261,10 +262,11 @@ func _update_camera() -> void:
 
 func _update_hud(board: Dictionary) -> void:
 	var current_player: String = board.get("currentPlayerId", "")
-	room_label.text = "Sala %s | Revisão %d | Províncias %d" % [
+	room_label.text = "Sala %s | Revisão %d | Províncias %d | Online %d" % [
 		network.room_id if not network.room_id.is_empty() else "—",
 		network.revision,
-		board.get("provinces", []).size()
+		board.get("provinces", []).size(),
+		online_players
 	]
 	turn_label.text = ("SEU TURNO" if current_player == network.player_id else "Turno do oponente") + " | Ações %d" % board.get("actionsRemaining", 0)
 	turn_label.modulate = _player_color(current_player)

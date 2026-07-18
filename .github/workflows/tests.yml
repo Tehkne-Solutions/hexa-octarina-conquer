@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: core-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   python-reference-engine:
     runs-on: ubuntu-latest
@@ -139,29 +143,73 @@ jobs:
         run: npm install
       - name: Validate JavaScript syntax
         run: npm run syntax
-      - name: Test protocol, rooms, identity, competition and observability
-        run: node --test test/protocol.test.js test/room-manager.test.js test/private-state.test.js test/identity.test.js test/competition.test.js test/observability.test.js
+      - name: Test protocol, identity, governance and observability
+        run: >-
+          node --test
+          test/protocol.test.js test/room-manager.test.js test/private-state.test.js
+          test/identity.test.js test/competition.test.js test/cluster-bus.test.js
+          test/presence.test.js test/governance.test.js test/recovery-provider.test.js
+          test/admin.test.js test/observability.test.js
       - name: Test duel flow and connected provinces
         run: node --test test/duel-flow.test.js test/provinces.test.js
       - name: Test SQLite and PostgreSQL persistence
-        run: node --test --test-concurrency=1 test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js test/postgres-room-store.test.js test/postgres-competition.test.js
-      - name: Test WebSocket accounts, ranking and matchmaking
-        run: node --test test/websocket.test.js test/account-websocket.test.js test/competitive-websocket.test.js
-      - name: Boot fully distributed server
+        run: >-
+          node --test --test-concurrency=1
+          test/persistence.test.js test/sqlite-store.test.js test/postgres-identity.test.js
+          test/postgres-room-store.test.js test/postgres-competition.test.js test/postgres-cluster.test.js
+      - name: Test base WebSocket transport
+        run: node --test test/websocket.test.js
+      - name: Test authenticated WebSocket transport
+        run: node --test test/account-websocket.test.js
+      - name: Test competitive WebSocket transport
+        run: node --test test/competitive-websocket.test.js
+      - name: Test cross-replica WebSocket transport
+        run: node --test --test-force-exit test/cluster-websocket.test.js
+      - name: Boot two fully distributed replicas
         env:
-          PORT: 8090
           HEXA_STORE: postgres
           HEXA_IDENTITY_STORE: postgres
           HEXA_COMPETITION_STORE: postgres
+          HEXA_CLUSTER_BUS: postgres
+          HEXA_PRESENCE_STORE: postgres
+          HEXA_GOVERNANCE_STORE: postgres
+          HEXA_RECOVERY_PROVIDER: none
+          HEXA_ADMIN_TOKEN: ci-admin-token
         run: |
-          node src/index.js > /tmp/hexa-distributed.log 2>&1 &
-          server_pid=$!
-          trap 'kill $server_pid || true' EXIT
+          PORT=8090 HEXA_INSTANCE_ID=ci-replica-a node src/index.js > /tmp/hexa-a.log 2>&1 &
+          first_pid=$!
+          PORT=8091 HEXA_INSTANCE_ID=ci-replica-b node src/index.js > /tmp/hexa-b.log 2>&1 &
+          second_pid=$!
+          trap 'kill $first_pid $second_pid || true' EXIT
           for attempt in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:8090/health > /tmp/health.json; then break; fi
+            if curl -fsS http://127.0.0.1:8090/health > /tmp/health-a.json && \
+               curl -fsS http://127.0.0.1:8091/health > /tmp/health-b.json; then
+              if node - <<'NODE'
+          const fs = require('fs');
+          const health = [
+            JSON.parse(fs.readFileSync('/tmp/health-a.json')),
+            JSON.parse(fs.readFileSync('/tmp/health-b.json')),
+          ];
+          if (health.every((item) => item.activeInstances >= 2)) process.exit(0);
+          process.exit(1);
+          NODE
+              then break; fi
+            fi
             sleep 1
           done
-          node -e "const fs=require('fs'); const h=JSON.parse(fs.readFileSync('/tmp/health.json')); if(h.roomStore!=='postgres'||h.identityStore!=='postgres'||h.competitionStore!=='postgres') process.exit(1)"
+          node - <<'NODE'
+          const fs = require('fs');
+          const health = [
+            JSON.parse(fs.readFileSync('/tmp/health-a.json')),
+            JSON.parse(fs.readFileSync('/tmp/health-b.json')),
+          ];
+          for (const item of health) {
+            for (const field of ['roomStore', 'identityStore', 'competitionStore', 'clusterBus', 'presenceStore', 'governanceStore']) {
+              if (item[field] !== 'postgres') throw new Error(`${field} is not postgres`);
+            }
+            if (item.activeInstances < 2) throw new Error('distributed presence did not detect both replicas');
+          }
+          NODE
       - name: Compare Node and Python engines
         env:
           PYTHON: python
