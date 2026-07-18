@@ -3,6 +3,8 @@ name: Android Hotfix Debug
 on:
   push:
     branches: ["agent/hotfix-0.11.1-android-install"]
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: android-hotfix-debug-${{ github.ref }}
