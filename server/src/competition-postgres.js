@@ -170,7 +170,7 @@ export class PostgresCompetitionStore {
       ON CONFLICT (season_id, account_id) DO UPDATE SET
         handle = excluded.handle,
         display_name = excluded.display_name
-    `, [seasonId, account.id, account.handle, account.displayName, account.rating ?? 1000, this.clock()]);
+    `, [seasonId, account.id, account.handle, account.displayName, 1000, this.clock()]);
   }
 
   async seasonLeaderboard(limit = 50, seasonId = undefined) {
@@ -303,13 +303,14 @@ export class PostgresCompetitionStore {
   }
 
   async accept(accountId, matchId) {
+    const now = this.clock();
     const result = await this.pool.query(`
       UPDATE matchmaking_matches
       SET accepted = accepted || jsonb_build_object($2::text, $3::bigint)
       WHERE id = $1 AND status = 'matched' AND expires_at > $3
         AND (host_account_id = $2 OR guest_account_id = $2)
       RETURNING *
-    `, [matchId, accountId, this.clock()]);
+    `, [matchId, accountId, now]);
     if (!result.rows[0]) throw new ProtocolError("MATCH_NOT_FOUND", "matchmaking assignment is unavailable or expired");
     const match = matchFromRow(result.rows[0]);
     return { match, role: match.hostAccountId === accountId ? "host" : "guest" };
@@ -378,26 +379,36 @@ export class PostgresCompetitionStore {
 
   async consumeRecovery(accountId, code) {
     const client = await this.pool.connect();
+    let transactionOpen = false;
+    let invalidCode = false;
     try {
       await client.query("BEGIN");
+      transactionOpen = true;
       const result = await client.query("SELECT * FROM recovery_challenges WHERE account_id = $1 FOR UPDATE", [accountId]);
       const challenge = result.rows[0];
       if (!challenge || Number(challenge.expires_at) <= this.clock() || Number(challenge.attempts) >= 5) {
+        await client.query("ROLLBACK");
+        transactionOpen = false;
         throw new ProtocolError("RECOVERY_INVALID", "recovery code is invalid or expired");
       }
       await client.query("UPDATE recovery_challenges SET attempts = attempts + 1 WHERE account_id = $1", [accountId]);
       if (hashToken(code.toUpperCase()) !== challenge.code_hash) {
-        throw new ProtocolError("RECOVERY_INVALID", "recovery code is invalid or expired");
+        await client.query("COMMIT");
+        transactionOpen = false;
+        invalidCode = true;
+      } else {
+        await client.query("DELETE FROM recovery_challenges WHERE account_id = $1", [accountId]);
+        await client.query("COMMIT");
+        transactionOpen = false;
       }
-      await client.query("DELETE FROM recovery_challenges WHERE account_id = $1", [accountId]);
-      await client.query("COMMIT");
-      return { verified: true };
     } catch (error) {
-      await client.query("ROLLBACK");
+      if (transactionOpen) await client.query("ROLLBACK");
       throw error;
     } finally {
       client.release();
     }
+    if (invalidCode) throw new ProtocolError("RECOVERY_INVALID", "recovery code is invalid or expired");
+    return { verified: true };
   }
 
   async close() {
