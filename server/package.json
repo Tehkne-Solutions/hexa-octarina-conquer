@@ -1,16 +1,16 @@
 {
   "name": "@tehkne/hexa-octarina-server",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "start": "node src/index.js",
     "syntax": "node --check src/server.js && node --check src/index.js && node --check src/board-state.js && node --check src/game-room.js && node --check src/room-store.js",
     "test": "node --test test/*.test.js",
-    "test:core": "node --test test/protocol.test.js test/room-manager.test.js test/duel-flow.test.js test/provinces.test.js test/persistence.test.js test/websocket.test.js",
+    "test:core": "node --test test/protocol.test.js test/room-manager.test.js test/duel-flow.test.js test/provinces.test.js test/persistence.test.js test/private-state.test.js test/sqlite-store.test.js test/websocket.test.js",
     "test:conformance": "node --test test/conformance.test.js",
     "check": "npm run syntax && npm run test:core && npm run test:conformance"
   },
