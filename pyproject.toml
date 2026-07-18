@@ -4,11 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hexa-octarina-conquer"
-version = "0.1.0"
-description = "Prototype for a hybrid tactical board/card game inspired by Go, Dots and Boxes, and fantasy RPG progression."
+version = "0.2.0"
+description = "Authoritative reference engine for a hybrid tactical game inspired by Go, Dots and Boxes, TCG combat, and fantasy era progression."
 requires-python = ">=3.10"
 readme = "README.md"
-authors = [{ name = "Projeto Hexa Octarina Conquer" }]
+authors = [{ name = "Tehkné Solutions" }]
+
+[project.scripts]
+hexa-octarina = "hexa_octarina_conquer.cli:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
