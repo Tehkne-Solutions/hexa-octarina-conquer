@@ -92,6 +92,15 @@ jobs:
             'export/android/debug_keystore_user = "tehkne-debug"' \
             'export/android/debug_keystore_pass = "android"' \
             > "$HOME/.config/godot/editor_settings-4.6.tres"
+      - name: Install Godot Android Gradle template
+        run: |
+          rm -rf client/godot/android
+          ./Godot_v4.6.3-stable_linux.x86_64 --headless \
+            --path client/godot \
+            --install-android-build-template \
+            --editor \
+            --quit-after 2
+          test -f client/godot/android/build/build.gradle
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
       - name: Export universal and emulator APKs
