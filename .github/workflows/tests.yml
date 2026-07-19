@@ -77,7 +77,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.android/tehkne-dev.keystore
-          key: tehkne-android-dev-keystore-v1
+          key: tehkne-android-dev-keystore-v2
       - name: Configure stable Tehkné development signing
         run: |
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
