@@ -79,8 +79,11 @@ class GodotAssetTests(unittest.TestCase):
     def test_android_export_preset_has_mobile_identity_and_network_permissions(self):
         preset = (GODOT / "export_presets.cfg").read_text(encoding="utf-8")
         self.assertIn('platform="Android"', preset)
-        self.assertIn('package/unique_name="com.tehkne.hexaoctarina"', preset)
+        self.assertIn('package/unique_name="com.tehkne.hexaoctarina.mobile"', preset)
+        self.assertIn('name="Android"', preset)
+        self.assertIn('name="Android ARMv7"', preset)
         self.assertIn('architectures/arm64-v8a=true', preset)
+        self.assertIn('architectures/armeabi-v7a=true', preset)
         self.assertIn('permissions/internet=true', preset)
         export_script = (ROOT / "scripts" / "export-android.sh").read_text(encoding="utf-8")
         self.assertIn("--export-debug Android", export_script)
