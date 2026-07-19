@@ -26,7 +26,19 @@ jobs:
       - name: Compile sources
         run: python -m compileall -q src tests conformance
       - name: Run unit and Godot package tests
-        run: python -m unittest discover -s tests -v
+        run: |
+          mkdir -p build/test-logs
+          set +e
+          python -m unittest discover -s tests -v 2>&1 | tee "build/test-logs/python-${{ matrix.python-version }}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          exit "$status"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-test-log-${{ matrix.python-version }}
+          path: build/test-logs/python-${{ matrix.python-version }}.log
+          if-no-files-found: error
 
   godot-client:
     runs-on: ubuntu-latest
@@ -73,21 +85,21 @@ jobs:
             keytool -genkeypair -v \
               -keystore "$HOME/.android/tehkne-dev.keystore" \
               -storepass android \
-              -alias tehkneandroiddebug \
+              -alias androiddebugkey \
               -keypass android \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
               -dname "CN=Tehkne Solutions Android Development,O=Tehkne Solutions,C=BR"
           fi
-          keytool -list -keystore "$HOME/.android/tehkne-dev.keystore" -storepass android -alias tehkneandroiddebug >/dev/null
+          keytool -list -keystore "$HOME/.android/tehkne-dev.keystore" -storepass android -alias androiddebugkey >/dev/null
           printf '%s\n' \
             '[gd_resource type="EditorSettings" format=3]' \
             '[resource]' \
             "export/android/android_sdk_path = \"$ANDROID_HOME\"" \
             "export/android/java_sdk_path = \"$JAVA_HOME\"" \
             "export/android/debug_keystore = \"$HOME/.android/tehkne-dev.keystore\"" \
-            'export/android/debug_keystore_user = "tehkneandroiddebug"' \
+            'export/android/debug_keystore_user = "androiddebugkey"' \
             'export/android/debug_keystore_pass = "android"' \
             > "$HOME/.config/godot/editor_settings-4.6.tres"
           python -m pip install --disable-pip-version-check androguard
@@ -96,7 +108,7 @@ jobs:
       - name: Export physical-device APKs
         env:
           GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.home }}/.android/tehkne-dev.keystore
-          GODOT_ANDROID_KEYSTORE_DEBUG_USER: tehkneandroiddebug
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
           mkdir -p build/android
@@ -118,7 +130,7 @@ jobs:
             fi
             test -s "$output"
           }
-          export_apk "Android ARM64" "build/android/HexaOctarinaConquer-v0.11.2-arm64.apk" "build/android/godot-export-arm64.log"
+          export_apk "Android" "build/android/HexaOctarinaConquer-v0.11.2-arm64.apk" "build/android/godot-export-arm64.log"
           export_apk "Android ARMv7" "build/android/HexaOctarinaConquer-v0.11.2-armv7.apk" "build/android/godot-export-armv7.log"
           export_apk "Android x86_64 CI" "build/android/HexaOctarinaConquer-v0.11.2-x86_64-ci.apk" "build/android/godot-export-x86_64.log"
       - name: Validate APKs, signatures and physical size
