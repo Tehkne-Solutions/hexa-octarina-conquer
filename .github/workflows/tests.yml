@@ -76,14 +76,14 @@ jobs:
       - name: Restore stable development signing cache
         uses: actions/cache@v4
         with:
-          path: ~/.android/tehkne-dev.keystore
-          key: tehkne-android-dev-keystore-v2
+          path: ~/.android/debug.keystore
+          key: tehkne-android-debug-keystore-v3
       - name: Configure stable Tehkné development signing
         run: |
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
-          if [ ! -f "$HOME/.android/tehkne-dev.keystore" ]; then
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
             keytool -genkeypair -v \
-              -keystore "$HOME/.android/tehkne-dev.keystore" \
+              -keystore "$HOME/.android/debug.keystore" \
               -storepass android \
               -alias androiddebugkey \
               -keypass android \
@@ -92,13 +92,13 @@ jobs:
               -validity 10000 \
               -dname "CN=Tehkne Solutions Android Development,O=Tehkne Solutions,C=BR"
           fi
-          keytool -list -keystore "$HOME/.android/tehkne-dev.keystore" -storepass android -alias androiddebugkey >/dev/null
+          keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
           printf '%s\n' \
             '[gd_resource type="EditorSettings" format=3]' \
             '[resource]' \
             "export/android/android_sdk_path = \"$ANDROID_HOME\"" \
             "export/android/java_sdk_path = \"$JAVA_HOME\"" \
-            "export/android/debug_keystore = \"$HOME/.android/tehkne-dev.keystore\"" \
+            "export/android/debug_keystore = \"$HOME/.android/debug.keystore\"" \
             'export/android/debug_keystore_user = "androiddebugkey"' \
             'export/android/debug_keystore_pass = "android"' \
             > "$HOME/.config/godot/editor_settings-4.6.tres"
@@ -107,7 +107,7 @@ jobs:
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
       - name: Export physical-device APKs
         env:
-          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.home }}/.android/tehkne-dev.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.home }}/.android/debug.keystore
           GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
