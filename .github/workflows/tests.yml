@@ -61,77 +61,134 @@ jobs:
           cp -R template-unpack/templates/. "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
       - name: Install Godot Android Gradle template
         run: bash scripts/install-godot-android-template.sh client/godot
-      - name: Configure Android export tools
+      - name: Restore stable development signing cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/tehkne-dev.keystore
+          key: tehkne-android-dev-keystore-v1
+      - name: Configure stable Tehkné development signing
         run: |
           mkdir -p "$HOME/.config/godot" "$HOME/.android"
+          if [ ! -f "$HOME/.android/tehkne-dev.keystore" ]; then
+            keytool -genkeypair -v \
+              -keystore "$HOME/.android/tehkne-dev.keystore" \
+              -storepass android \
+              -alias tehkneandroiddebug \
+              -keypass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Tehkne Solutions Android Development,O=Tehkne Solutions,C=BR"
+          fi
+          keytool -list -keystore "$HOME/.android/tehkne-dev.keystore" -storepass android -alias tehkneandroiddebug >/dev/null
           printf '%s\n' \
             '[gd_resource type="EditorSettings" format=3]' \
             '[resource]' \
             "export/android/android_sdk_path = \"$ANDROID_HOME\"" \
             "export/android/java_sdk_path = \"$JAVA_HOME\"" \
-            "export/android/debug_keystore = \"$HOME/.android/debug.keystore\"" \
-            'export/android/debug_keystore_user = "androiddebugkey"' \
+            "export/android/debug_keystore = \"$HOME/.android/tehkne-dev.keystore\"" \
+            'export/android/debug_keystore_user = "tehkneandroiddebug"' \
             'export/android/debug_keystore_pass = "android"' \
             > "$HOME/.config/godot/editor_settings-4.6.tres"
-          if [ ! -f "$HOME/.android/debug.keystore" ]; then
-            keytool -genkeypair -v \
-              -keystore "$HOME/.android/debug.keystore" \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -keyalg RSA \
-              -keysize 2048 \
-              -validity 10000 \
-              -dname "CN=Android Debug,O=Tehkné Solutions,C=BR"
-          fi
           python -m pip install --disable-pip-version-check androguard
       - name: Import and parse Godot project
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
-      - name: Export Android universal debug APK
+      - name: Export physical-device APKs
         env:
-          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/.ci/debug.keystore
-          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.home }}/.android/tehkne-dev.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: tehkneandroiddebug
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
-          mkdir -p build/android .ci
-          cp "$HOME/.android/debug.keystore" .ci/debug.keystore
-          set +e
-          ./Godot_v4.6.3-stable_linux.x86_64 --verbose --headless \
-            --path client/godot \
-            --export-debug Android \
-            "$PWD/build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk" \
-            2>&1 | tee build/android/godot-export.log
-          status=${PIPESTATUS[0]}
-          set -e
-          if [ "$status" -ne 0 ]; then
-            echo "::error title=Godot Android export failed::$(tail -n 30 build/android/godot-export.log | tr '\n' ' ')"
-            exit "$status"
-          fi
-          test -s build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
-      - name: Validate APK manifest, ABIs and signature
+          mkdir -p build/android
+          export_apk() {
+            preset="$1"
+            output="$2"
+            log="$3"
+            set +e
+            ./Godot_v4.6.3-stable_linux.x86_64 --verbose --headless \
+              --path client/godot \
+              --export-debug "$preset" \
+              "$PWD/$output" \
+              2>&1 | tee "$log"
+            status=${PIPESTATUS[0]}
+            set -e
+            if [ "$status" -ne 0 ]; then
+              echo "::error title=Godot Android export failed ($preset)::$(tail -n 30 "$log" | tr '\n' ' ')"
+              exit "$status"
+            fi
+            test -s "$output"
+          }
+          export_apk "Android ARM64" "build/android/HexaOctarinaConquer-v0.11.2-arm64.apk" "build/android/godot-export-arm64.log"
+          export_apk "Android ARMv7" "build/android/HexaOctarinaConquer-v0.11.2-armv7.apk" "build/android/godot-export-armv7.log"
+          export_apk "Android x86_64 CI" "build/android/HexaOctarinaConquer-v0.11.2-x86_64-ci.apk" "build/android/godot-export-x86_64.log"
+      - name: Validate APKs, signatures and physical size
         run: |
-          APK=build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
-          "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose --print-certs "$APK"
-          python scripts/validate-android-apk.py "$APK" | tee build/android/apk-validation.json
-      - name: Install APK on Android 7 emulator
+          PACKAGE=com.tehkne.hexaoctarina.mobile
+          VERSION_NAME=0.11.2
+          VERSION_CODE=13
+          for APK in build/android/*.apk; do
+            "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --verbose --print-certs "$APK"
+          done
+          python scripts/validate-android-apk.py \
+            build/android/HexaOctarinaConquer-v0.11.2-arm64.apk \
+            --package "$PACKAGE" --version-name "$VERSION_NAME" --version-code "$VERSION_CODE" \
+            --required-abi arm64-v8a --max-size-mb 110 \
+            | tee build/android/apk-validation-arm64.json
+          python scripts/validate-android-apk.py \
+            build/android/HexaOctarinaConquer-v0.11.2-armv7.apk \
+            --package "$PACKAGE" --version-name "$VERSION_NAME" --version-code "$VERSION_CODE" \
+            --required-abi armeabi-v7a --max-size-mb 110 \
+            | tee build/android/apk-validation-armv7.json
+          python scripts/validate-android-apk.py \
+            build/android/HexaOctarinaConquer-v0.11.2-x86_64-ci.apk \
+            --package "$PACKAGE" --version-name "$VERSION_NAME" --version-code "$VERSION_CODE" \
+            --required-abi x86_64 --max-size-mb 110 \
+            | tee build/android/apk-validation-x86_64.json
+          certs=$(for APK in build/android/*.apk; do
+            "$ANDROID_HOME/build-tools/35.0.1/apksigner" verify --print-certs "$APK" \
+              | sed -n 's/^Signer #1 certificate SHA-256 digest: //p'
+          done | sort -u)
+          test "$(printf '%s\n' "$certs" | sed '/^$/d' | wc -l)" -eq 1
+      - name: Install and launch on Android 8
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 24
+          api-level: 26
           arch: x86_64
           profile: pixel_2
           disable-animations: true
           script: |
-            adb install -r build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
-            adb shell pm path com.tehkne.hexaoctarina
-            adb shell dumpsys package com.tehkne.hexaoctarina | grep -E 'versionCode=12|versionName=0.11.1'
+            adb install --no-streaming build/android/HexaOctarinaConquer-v0.11.2-x86_64-ci.apk
+            adb shell pm path com.tehkne.hexaoctarina.mobile
+            adb shell dumpsys package com.tehkne.hexaoctarina.mobile | grep -E 'versionCode=13|versionName=0.11.2'
+            adb shell monkey -p com.tehkne.hexaoctarina.mobile -c android.intent.category.LAUNCHER 1
+            sleep 5
+            adb shell pidof com.tehkne.hexaoctarina.mobile
+      - name: Install and launch on Android 14
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            adb install --no-streaming build/android/HexaOctarinaConquer-v0.11.2-x86_64-ci.apk
+            adb shell pm path com.tehkne.hexaoctarina.mobile
+            adb shell dumpsys package com.tehkne.hexaoctarina.mobile | grep -E 'versionCode=13|versionName=0.11.2'
+            adb shell monkey -p com.tehkne.hexaoctarina.mobile -c android.intent.category.LAUNCHER 1
+            sleep 5
+            adb shell pidof com.tehkne.hexaoctarina.mobile
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: hexa-octarina-android-universal-0.11.1
+          name: hexa-octarina-android-physical-0.11.2
           path: |
-            build/android/HexaOctarinaConquer-v0.11.1-universal-debug.apk
-            build/android/godot-export.log
-            build/android/apk-validation.json
+            build/android/HexaOctarinaConquer-v0.11.2-arm64.apk
+            build/android/HexaOctarinaConquer-v0.11.2-armv7.apk
+            build/android/godot-export-arm64.log
+            build/android/godot-export-armv7.log
+            build/android/apk-validation-arm64.json
+            build/android/apk-validation-armv7.json
+            scripts/INSTALAR-ANDROID-WINDOWS.cmd
           if-no-files-found: error
 
   node-authoritative-server:
