@@ -93,6 +93,8 @@ jobs:
               -dname "CN=Tehkne Solutions Android Development,O=Tehkne Solutions,C=BR"
           fi
           keytool -list -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey >/dev/null
+          mkdir -p "$GITHUB_WORKSPACE/.ci"
+          cp "$HOME/.android/debug.keystore" "$GITHUB_WORKSPACE/.ci/debug.keystore"
           printf '%s\n' \
             '[gd_resource type="EditorSettings" format=3]' \
             '[resource]' \
@@ -107,7 +109,7 @@ jobs:
         run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
       - name: Export physical-device APKs
         env:
-          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ runner.home }}/.android/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/.ci/debug.keystore
           GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
           GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
         run: |
