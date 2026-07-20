@@ -66,10 +66,11 @@ export class RoomManager {
 
   applyCommand(command) {
     const room = this.getRoom(command.payload.roomId);
-    const patch = room.applyCommand(command);
+    const humanPatch = room.applyCommand(command);
     const followUpPatches = runCampaignAI(room);
+    const patch = followUpPatches.at(-1) ?? humanPatch;
     this.persist(room);
-    return { room, patch, followUpPatches };
+    return { room, patch, humanPatch, followUpPatches };
   }
 
   disconnect(roomId, playerId) {
