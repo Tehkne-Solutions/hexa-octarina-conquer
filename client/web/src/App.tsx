@@ -171,7 +171,11 @@ export function App() {
       }
 
       if (message.type === "error") {
-        setNotice(`${String(payload.code ?? "ERRO")}: ${String(payload.message ?? "Ação recusada")}`);
+        if (payload.code === "ROOM_NOT_READY") {
+          setNotice("Esta sala multiplayer ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");
+        } else {
+          setNotice(`${String(payload.code ?? "ERRO")}: ${String(payload.message ?? "Ação recusada")}`);
+        }
         if (payload.code === "REVISION_CONFLICT" && client.roomSession) client.reconnectRoom();
       }
     };
@@ -218,6 +222,8 @@ export function App() {
   const opponent = snapshot?.players.find((player) => player.id !== localPlayerId) ?? null;
   const activeDuel = snapshot?.duels.find((duel) => duel.status !== "resolved") ?? null;
   const isMyTurn = snapshot?.board.currentPlayerId === localPlayerId;
+  const roomReady = snapshot?.status === "active" && (snapshot?.players.length ?? 0) >= 2;
+  const waitingForRival = snapshot?.status === "waiting" || (snapshot?.players.length ?? 0) < 2;
   const duelEnergy = activeDuel?.attackerId === localPlayerId
     ? activeDuel.attacker?.energy ?? 0
     : activeDuel?.defender?.energy ?? 0;
@@ -283,6 +289,10 @@ export function App() {
   };
 
   const playEdge = (start: Point, end: Point) => {
+    if (!roomReady) {
+      setNotice("A sala ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");
+      return;
+    }
     try {
       if (armedCard?.effect === "expansion") {
         client.playCard(armedCard, { start, end });
@@ -294,6 +304,10 @@ export function App() {
   };
 
   const playMacroCard = (card: CardState) => {
+    if (!roomReady) {
+      setNotice("As cartas serão liberadas quando a partida começar.");
+      return;
+    }
     try {
       if (card.effect === "expansion") {
         setArmedCard(card);
@@ -318,6 +332,14 @@ export function App() {
     setDuelCards((current) => current.includes(card.id)
       ? current.filter((id) => id !== card.id)
       : [...current, card.id]);
+  };
+
+  const exitCurrentRoom = () => {
+    if (snapshot?.status === "active" && (snapshot.players.length ?? 0) >= 2) {
+      client.forfeit();
+      return;
+    }
+    void returnToLobby(snapshot?.mode === "campaign" ? "campaign" : "multiplayer");
   };
 
   const submitDuel = () => {
@@ -428,13 +450,13 @@ export function App() {
         </div>
         <div className="turn-summary">
           <small>{campaign ? `MISSÃO ${campaign.mission.order}` : `SALA ${snapshot.roomId}`}</small>
-          <strong>{snapshot.status === "finished" ? "PARTIDA ENCERRADA" : isMyTurn ? "SEU TURNO" : opponent?.isBot ? "IA PENSANDO" : "TURNO RIVAL"}</strong>
+          <strong>{snapshot.status === "finished" ? "PARTIDA ENCERRADA" : waitingForRival ? "AGUARDANDO RIVAL" : isMyTurn ? "SEU TURNO" : opponent?.isBot ? "IA PENSANDO" : "TURNO RIVAL"}</strong>
           <span>Rodada {snapshot.board.turnNumber} · {snapshot.board.actionsRemaining} ação</span>
         </div>
         <div className="player-summary rival">
           <strong>{opponent?.name ?? "Aguardando rival"}{opponent?.isBot ? " · IA" : ""}</strong>
           <span>♥ {opponent?.hp ?? 0}</span>
-          <span>{opponent?.isBot ? opponent.difficulty : opponent?.connected ? "Online" : "Reconectando"}</span>
+          <span>{waitingForRival ? "Sala incompleta" : opponent?.isBot ? opponent.difficulty : opponent?.connected ? "Online" : "Reconectando"}</span>
         </div>
       </header>
 
@@ -442,7 +464,7 @@ export function App() {
         <Board
           snapshot={snapshot}
           localPlayerId={localPlayerId}
-          disabled={Boolean(activeDuel) || snapshot.status === "finished"}
+          disabled={!roomReady || Boolean(activeDuel) || snapshot.status === "finished"}
           onPlayEdge={playEdge}
           onSelectProvince={setSelectedProvinceId}
           selectedProvinceId={selectedProvinceId}
@@ -459,10 +481,20 @@ export function App() {
               <small className="mission-limit">Limite: {campaign.failure.turnLimit} rodadas</small>
             </>
           ) : (
-            <><strong>ORÁCULO</strong><p>{notice}</p></>
+            <>
+              <strong>{waitingForRival ? "SALA MULTIPLAYER" : "ORÁCULO"}</strong>
+              <p>{waitingForRival ? "Esta sala ainda não tem um segundo jogador. Você pode aguardar, voltar ao menu ou iniciar a campanha contra a IA." : notice}</p>
+              {waitingForRival && (
+                <button className="campaign-button compact-campaign-button" onClick={() => void returnToLobby("campaign")}>
+                  <span>⬡</span><div><strong>Jogar Campanha Solo</strong><small>Iniciar missão contra a IA</small></div>
+                </button>
+              )}
+            </>
           )}
           {armedCard && <button className="cancel-button" onClick={() => setArmedCard(null)}>Cancelar {armedCard.name}</button>}
-          <button className="danger-link" onClick={() => client.forfeit()}>{campaign ? "Abandonar missão" : "Abandonar partida"}</button>
+          <button className={waitingForRival ? "ghost-button" : "danger-link"} onClick={exitCurrentRoom}>
+            {waitingForRival ? "Voltar ao menu" : campaign ? "Abandonar missão" : "Abandonar partida"}
+          </button>
         </aside>
       </section>
 
@@ -486,7 +518,7 @@ export function App() {
         </section>
       )}
 
-      {!activeDuel && snapshot.status !== "finished" && (
+      {roomReady && !activeDuel && snapshot.status !== "finished" && (
         <section className="hand-tray glass">
           <div className="hand-label"><strong>MÃO</strong><span>{privateState?.hand.length ?? 0} cartas</span></div>
           <div className="hand-scroll">
