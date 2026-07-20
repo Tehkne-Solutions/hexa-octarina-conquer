@@ -125,6 +125,28 @@ export function parseClientMessage(raw) {
 
   if (type === "season.list") return { type, requestId, protocolVersion, payload: {} };
 
+  if (type === "campaign.catalog") {
+    return { type, requestId, protocolVersion, payload: accountCredentials(optionalPayload) };
+  }
+
+  if (type === "campaign.progress") {
+    return { type, requestId, protocolVersion, payload: requiredAccountCredentials(optionalPayload) };
+  }
+
+  if (type === "campaign.start") {
+    const credentials = accountCredentials(optionalPayload);
+    const playerName = optionalString(optionalPayload.playerName, "payload.playerName");
+    if (!playerName && !credentials.accountId) throw new ProtocolError("INVALID_MESSAGE", "playerName or account credentials are required");
+    return {
+      type, requestId, protocolVersion,
+      payload: {
+        missionId: requireString(optionalPayload.missionId, "payload.missionId"),
+        playerName,
+        ...credentials,
+      },
+    };
+  }
+
   if (type === "account.register") {
     return {
       type, requestId, protocolVersion,
