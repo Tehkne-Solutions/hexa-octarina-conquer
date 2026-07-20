@@ -23,6 +23,7 @@ export class MemoryIdentityStore {
     this.accountIdByHandle = new Map();
     this.sessions = new Map();
     this.matches = new Map();
+    this.campaignRewards = new Map();
   }
 
   async register(input) {
@@ -89,6 +90,21 @@ export class MemoryIdentityStore {
       .sort((left, right) => right.finishedAt - left.finishedAt)
       .slice(0, limit)
       .map((match) => ({ ...match }));
+  }
+
+  async awardCampaignXp({ roomId, accountId, xp }) {
+    if (!roomId || !accountId || !Number.isFinite(xp) || xp <= 0) return { recorded: false };
+    const account = this.accounts.get(accountId);
+    if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+    if (this.campaignRewards.has(roomId)) {
+      return { recorded: false, xpAwarded: 0, profile: await this.getProfile(accountId) };
+    }
+    const amount = Math.max(0, Math.floor(xp));
+    account.xp += amount;
+    account.level = levelForXp(account.xp);
+    account.updatedAt = this.clock();
+    this.campaignRewards.set(roomId, { roomId, accountId, xp: amount, awardedAt: this.clock() });
+    return { recorded: true, xpAwarded: amount, profile: await this.getProfile(accountId) };
   }
 
   async recordMatch(result) {
