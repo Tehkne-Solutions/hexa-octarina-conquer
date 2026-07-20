@@ -55,13 +55,21 @@ export class PostgresCampaignStore {
     const client = await this.pool.connect();
     try {
       await client.query("BEGIN");
-      await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", ["hexa_campaign_schema_v1"]);
+      await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", ["hexa_campaign_schema_v2"]);
       await client.query(`
         CREATE TABLE IF NOT EXISTS campaign_progress (
           account_id TEXT PRIMARY KEY,
           progress JSONB NOT NULL,
           updated_at BIGINT NOT NULL
-        )
+        );
+        CREATE TABLE IF NOT EXISTS campaign_rewards (
+          room_id TEXT PRIMARY KEY,
+          account_id TEXT NOT NULL,
+          xp INTEGER NOT NULL,
+          awarded_at BIGINT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_campaign_rewards_account
+          ON campaign_rewards(account_id, awarded_at DESC)
       `);
       await client.query("COMMIT");
     } catch (error) {
