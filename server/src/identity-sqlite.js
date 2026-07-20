@@ -82,9 +82,17 @@ export class SqliteIdentityStore {
         FOREIGN KEY (winner_account_id) REFERENCES accounts(id),
         FOREIGN KEY (loser_account_id) REFERENCES accounts(id)
       );
+      CREATE TABLE IF NOT EXISTS campaign_rewards (
+        room_id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        xp INTEGER NOT NULL,
+        awarded_at INTEGER NOT NULL,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+      );
       CREATE INDEX IF NOT EXISTS idx_accounts_ranking ON accounts(rating DESC, xp DESC);
       CREATE INDEX IF NOT EXISTS idx_match_winner ON match_history(winner_account_id, finished_at DESC);
       CREATE INDEX IF NOT EXISTS idx_match_loser ON match_history(loser_account_id, finished_at DESC);
+      CREATE INDEX IF NOT EXISTS idx_campaign_rewards_account ON campaign_rewards(account_id, awarded_at DESC);
     `);
     this.findByHandle = this.database.prepare("SELECT * FROM accounts WHERE handle = ?");
     this.findById = this.database.prepare("SELECT * FROM accounts WHERE id = ?");
@@ -189,6 +197,33 @@ export class SqliteIdentityStore {
       loserRatingDelta: Number(row.loser_rating_delta),
       finishedAt: Number(row.finished_at),
     }));
+  }
+
+  async awardCampaignXp({ roomId, accountId, xp }) {
+    if (!roomId || !accountId || !Number.isFinite(xp) || xp <= 0) return { recorded: false };
+    const account = accountFromRow(this.findById.get(accountId));
+    if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+    const amount = Math.max(0, Math.floor(xp));
+    this.database.exec("BEGIN IMMEDIATE");
+    try {
+      const inserted = this.database.prepare(`
+        INSERT OR IGNORE INTO campaign_rewards (room_id, account_id, xp, awarded_at)
+        VALUES (?, ?, ?, ?)
+      `).run(roomId, accountId, amount, this.clock());
+      if (inserted.changes === 0) {
+        this.database.exec("ROLLBACK");
+        return { recorded: false, xpAwarded: 0, profile: await this.getProfile(accountId) };
+      }
+      const nextXp = account.xp + amount;
+      this.database.prepare(`
+        UPDATE accounts SET xp = ?, level = ?, updated_at = ? WHERE id = ?
+      `).run(nextXp, levelForXp(nextXp), this.clock(), accountId);
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
+    return { recorded: true, xpAwarded: amount, profile: await this.getProfile(accountId) };
   }
 
   async recordMatch(result) {
