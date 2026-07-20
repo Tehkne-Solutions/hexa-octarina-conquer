@@ -204,6 +204,40 @@ export class PostgresIdentityStore {
     }));
   }
 
+  async awardCampaignXp({ roomId, accountId, xp }) {
+    if (!roomId || !accountId || !Number.isFinite(xp) || xp <= 0) return { recorded: false };
+    const amount = Math.max(0, Math.floor(xp));
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`campaign-reward:${roomId}`]);
+      const inserted = await client.query(`
+        INSERT INTO campaign_rewards (room_id, account_id, xp, awarded_at)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (room_id) DO NOTHING
+        RETURNING room_id
+      `, [roomId, accountId, amount, this.clock()]);
+      if (inserted.rowCount === 0) {
+        await client.query("ROLLBACK");
+        return { recorded: false, xpAwarded: 0, profile: await this.getProfile(accountId) };
+      }
+      const accountResult = await client.query("SELECT * FROM accounts WHERE id = $1 FOR UPDATE", [accountId]);
+      const account = accountFromRow(accountResult.rows[0]);
+      if (!account) throw new ProtocolError("ACCOUNT_NOT_FOUND", "account does not exist");
+      const nextXp = account.xp + amount;
+      await client.query(`
+        UPDATE accounts SET xp = $2, level = $3, updated_at = $4 WHERE id = $1
+      `, [accountId, nextXp, levelForXp(nextXp), this.clock()]);
+      await client.query("COMMIT");
+      return { recorded: true, xpAwarded: amount, profile: await this.getProfile(accountId) };
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async recordMatch(result) {
     if (!result?.roomId || !result.winnerAccountId || !result.loserAccountId) return { recorded: false };
     const client = await this.pool.connect();
