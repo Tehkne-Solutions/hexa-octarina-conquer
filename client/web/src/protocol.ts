@@ -82,8 +82,11 @@ export interface DuelState {
   reason?: string;
   status: string;
   round: number;
+  roundNumber?: number;
   winnerId?: string | null;
   submittedPlayerIds?: string[];
+  attacker?: DuelCombatantState;
+  defender?: DuelCombatantState;
   combatants: Record<string, DuelCombatantState>;
 }
 
