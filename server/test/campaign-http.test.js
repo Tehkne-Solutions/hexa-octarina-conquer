@@ -83,6 +83,9 @@ test("serves the catalog, starts a solo mission and records authenticated progre
     assert.equal(completeResponse.payload.result.success, true);
     assert.equal(completeResponse.payload.catalog.totals.stars, 3);
     assert.equal(completeResponse.payload.catalog.missions[1].unlocked, true);
+    assert.equal(completeResponse.payload.xpReward.recorded, true);
+    assert.equal(completeResponse.payload.xpReward.xpAwarded, completeResponse.payload.result.rewardXp);
+    assert.equal(completeResponse.payload.xpReward.profile.xp, completeResponse.payload.result.rewardXp);
 
     const duplicate = await jsonRequest(base, "/campaign/complete", {
       method: "POST",
@@ -94,6 +97,9 @@ test("serves the catalog, starts a solo mission and records authenticated progre
       }),
     });
     assert.equal(duplicate.payload.recorded, false);
+    assert.equal(duplicate.payload.xpReward.recorded, false);
+    assert.equal(duplicate.payload.xpReward.xpAwarded, 0);
+    assert.equal(duplicate.payload.xpReward.profile.xp, completeResponse.payload.result.rewardXp);
   } finally {
     await instance.close();
   }
