@@ -82,6 +82,7 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
         json(response, 200, {
           progress: await campaign.getProgress(account.id),
           catalog: await campaign.getCatalog(account.id),
+          profile: await identity.getProfile(account.id),
         });
         return;
       }
@@ -120,10 +121,25 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
         const result = room.campaignResult();
         if (!result || room.mode !== "campaign") throw new ProtocolError("CAMPAIGN_NOT_FINISHED", "campaign mission is not finished");
         if (result.accountId !== account.id) throw new ProtocolError("CAMPAIGN_ACCOUNT_MISMATCH", "mission does not belong to this account");
+
         const recorded = await campaign.recordResult(account.id, result);
+        const xpReward = result.success
+          ? await identity.awardCampaignXp({
+            roomId: result.roomId,
+            accountId: account.id,
+            xp: result.rewardXp,
+          })
+          : {
+            recorded: false,
+            xpAwarded: 0,
+            profile: await identity.getProfile(account.id),
+          };
+
         metrics?.inc?.("hexa_campaign_completed_total", { mission: result.missionId, success: String(result.success) });
+        if (xpReward.recorded) metrics?.inc?.("hexa_campaign_xp_awarded_total", { mission: result.missionId });
         json(response, 200, {
           ...recorded,
+          xpReward,
           result,
           catalog: await campaign.getCatalog(account.id),
         });
