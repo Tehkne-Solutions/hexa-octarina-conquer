@@ -76,23 +76,24 @@
   content: "PASSO 1 — TOQUE NA LINHA DOURADA DO TABULEIRO. AS CARTAS SERÃO LIBERADAS DEPOIS.";
   position: fixed;
   z-index: 40;
-  left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
-  width: min(760px, calc(100% - 24px));
-  min-height: 92px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  min-height: 142px;
   display: grid;
   place-items: center;
-  padding: 18px 24px;
-  transform: translateX(-50%);
+  padding: 20px max(24px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
   text-align: center;
   color: #fff2b0;
   font-size: clamp(0.82rem, 1.8vw, 1.05rem);
   font-weight: 900;
   letter-spacing: 0.04em;
   border: 2px solid #ffe27b88;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #302817f5, #101936f5);
-  box-shadow: 0 0 42px #ffe27b33, 0 18px 55px #000c;
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(135deg, #302817fa, #101936fa);
+  box-shadow: 0 -12px 42px #ffe27b22, 0 -18px 55px #000c;
   pointer-events: auto;
 }
 
@@ -121,9 +122,9 @@
   .board-guide span { font-size: 0.64rem; }
 
   .tutorial-board::after {
-    min-height: 74px;
-    padding: 12px 16px;
+    min-height: 108px;
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
     font-size: 0.74rem;
-    border-radius: 17px;
+    border-radius: 17px 17px 0 0;
   }
 }
