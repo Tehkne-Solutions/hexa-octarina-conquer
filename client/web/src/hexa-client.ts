@@ -185,10 +185,28 @@ export class HexaClient extends EventTarget {
     return result;
   }
 
-  async completeCampaign(roomId: string): Promise<{ result: CampaignResult; catalog: CampaignCatalog; unlockedAchievements: string[] }> {
+  async completeCampaign(roomId: string): Promise<{
+    result: CampaignResult;
+    catalog: CampaignCatalog;
+    unlockedAchievements: string[];
+    xpReward: {
+      recorded: boolean;
+      xpAwarded: number;
+      profile: AccountSession["account"];
+    };
+  }> {
     const account = this.accountSession;
     if (!account) throw new Error("O progresso visitante é salvo somente neste aparelho.");
-    return readResponse(await fetch(apiUrl("/campaign/complete"), {
+    const result = await readResponse<{
+      result: CampaignResult;
+      catalog: CampaignCatalog;
+      unlockedAchievements: string[];
+      xpReward: {
+        recorded: boolean;
+        xpAwarded: number;
+        profile: AccountSession["account"];
+      };
+    }>(await fetch(apiUrl("/campaign/complete"), {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -197,6 +215,16 @@ export class HexaClient extends EventTarget {
         accessToken: account.accessToken,
       }),
     }));
+
+    if (result.xpReward?.profile) {
+      this.accountSession = {
+        ...account,
+        account: { ...account.account, ...result.xpReward.profile },
+      };
+      localStorage.setItem(ACCOUNT_SESSION_KEY, JSON.stringify(this.accountSession));
+      this.dispatch("account", this.accountSession);
+    }
+    return result;
   }
 
   reconnectRoom(): void {
