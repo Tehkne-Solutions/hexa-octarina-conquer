@@ -1,0 +1,129 @@
+.board-shell {
+  position: relative;
+}
+
+.board-guide {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 12px;
+  display: grid;
+  gap: 2px;
+  width: min(560px, calc(100% - 28px));
+  padding: 10px 16px;
+  transform: translateX(-50%);
+  text-align: center;
+  border: 1px solid #79d7ff55;
+  border-radius: 16px;
+  background: #080d20ed;
+  box-shadow: 0 12px 35px #0009;
+  pointer-events: none;
+}
+
+.board-guide strong {
+  color: #ffe27b;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+
+.board-guide span {
+  color: #d6ddf3;
+  font-size: 0.78rem;
+}
+
+.board-guide.pending {
+  border-color: #ffe27b88;
+}
+
+.edge-option-visible {
+  stroke: #7180ae;
+  opacity: 0.24;
+  transition: 160ms ease;
+}
+
+.edge-option:hover .edge-option-visible,
+.edge-option.valid .edge-option-visible {
+  stroke: #79efac;
+  opacity: 0.9;
+}
+
+.edge-option.suggested .edge-option-visible {
+  stroke: #ffe27b;
+  opacity: 1;
+  filter: url(#glow);
+  animation: suggested-edge-pulse 1.15s ease-in-out infinite;
+}
+
+.edge-option.pending .edge-option-visible {
+  stroke: #fff;
+  opacity: 1;
+  animation: pending-edge 700ms linear infinite;
+}
+
+.edge-option-hit {
+  cursor: pointer;
+}
+
+.neighbor-pulse {
+  fill: none;
+  stroke: #75efa8;
+  stroke-width: 4;
+  opacity: 0.65;
+  animation: neighbor-pulse 1s ease-out infinite;
+}
+
+.tutorial-board::after {
+  content: "PASSO 1 — TOQUE NA LINHA DOURADA DO TABULEIRO. AS CARTAS SERÃO LIBERADAS DEPOIS.";
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  width: min(760px, calc(100% - 24px));
+  min-height: 92px;
+  display: grid;
+  place-items: center;
+  padding: 18px 24px;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff2b0;
+  font-size: clamp(0.82rem, 1.8vw, 1.05rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  border: 2px solid #ffe27b88;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #302817f5, #101936f5);
+  box-shadow: 0 0 42px #ffe27b33, 0 18px 55px #000c;
+  pointer-events: auto;
+}
+
+@keyframes suggested-edge-pulse {
+  0%, 100% { stroke-width: 8; opacity: 0.72; }
+  50% { stroke-width: 13; opacity: 1; }
+}
+
+@keyframes pending-edge {
+  to { stroke-dashoffset: -46; }
+}
+
+@keyframes neighbor-pulse {
+  from { r: 20; opacity: 0.8; }
+  to { r: 32; opacity: 0; }
+}
+
+@media (max-width: 820px) {
+  .board-guide {
+    top: 7px;
+    width: calc(100% - 14px);
+    padding: 7px 10px;
+  }
+
+  .board-guide strong { font-size: 0.58rem; }
+  .board-guide span { font-size: 0.64rem; }
+
+  .tutorial-board::after {
+    min-height: 74px;
+    padding: 12px 16px;
+    font-size: 0.74rem;
+    border-radius: 17px;
+  }
+}
