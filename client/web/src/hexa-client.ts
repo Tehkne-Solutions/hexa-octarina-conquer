@@ -43,7 +43,10 @@ export class HexaClient extends EventTarget {
   }
 
   connect(url = defaultSocketUrl()): void {
-    if (this.socket && [WebSocket.OPEN, WebSocket.CONNECTING].includes(this.socket.readyState)) return;
+    if (
+      this.socket
+      && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)
+    ) return;
     this.manualClose = false;
     this.dispatch("connection", { status: "connecting", url });
     const socket = new WebSocket(url);
