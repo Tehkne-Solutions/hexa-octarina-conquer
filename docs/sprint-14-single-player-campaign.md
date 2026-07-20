@@ -68,18 +68,14 @@ O adversário é criado como um jogador real controlado pelo servidor. A interfa
 
 ## Baralho de campanha
 
-A campanha fornece uma reserva maior que a mão multiplayer para garantir que missões de longa duração sejam concluíveis. Ela inclui múltiplas cópias de:
+A campanha utiliza a mesma mão visual enxuta do multiplayer, sem criar cartas duplicadas na interface. Depois de utilizadas em uma missão, as cartas retornam à mão do respectivo jogador.
 
-- Expansão Rúnica;
-- Fortaleza Octarina;
-- Convocar Duelo;
-- Golpe Rúnico;
-- Égide de Pedra;
-- Maré Rúnica;
-- Raio Encadeado;
-- Cura Alquímica.
+Isso permite missões longas e objetivos repetidos de fortificação ou duelo, preservando os limitadores táticos:
 
-O limite de uma carta macro por turno continua valendo.
+- mana continua sendo consumida;
+- energia de duelo continua sendo consumida;
+- somente uma carta macro pode ser usada por turno;
+- cartas só podem ser reutilizadas em ações ou rodadas posteriores.
 
 ## Progressão
 
