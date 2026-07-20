@@ -1,14 +1,24 @@
+FROM node:24-bookworm-slim AS web-build
+
+WORKDIR /web
+COPY client/web/package*.json ./
+RUN npm install --no-audit --no-fund
+COPY client/web/ ./
+RUN npm run build
+
 FROM node:24-bookworm-slim
 
 WORKDIR /app
 
 COPY server/package.json ./package.json
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm install --omit=dev --no-audit --no-fund && npm cache clean --force
 
 COPY server/src ./src
+COPY --from=web-build /web/dist ./web
 
 ENV NODE_ENV=production \
     PORT=8080 \
+    HEXA_WEB_ROOT=/app/web \
     HEXA_STORE=sqlite \
     HEXA_DB_PATH=/data/hexa-octarina.sqlite \
     HEXA_IDENTITY_STORE=sqlite \
@@ -28,6 +38,6 @@ EXPOSE 8080
 VOLUME ["/data"]
 
 HEALTHCHECK --interval=20s --timeout=4s --start-period=10s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:8080/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+  CMD node -e "const p=process.env.PORT||8080;fetch('http://127.0.0.1:'+p+'/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
 
 CMD ["node", "src/index.js"]
