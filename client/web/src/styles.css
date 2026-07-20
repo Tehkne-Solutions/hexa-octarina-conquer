@@ -139,6 +139,11 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 .province-label { fill: #fff; font-size: 22px; font-weight: 900; pointer-events: none; }
 .battle-log { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 22px; }
 .battle-log p { flex: 1; color: #aab4d1; font-size: 0.85rem; }
+.compact-campaign-button { min-height: 66px; margin: 4px 0; padding: 10px; }
+.compact-campaign-button > span { width: 40px; height: 40px; flex-basis: 40px; font-size: 1.45rem; }
+.compact-campaign-button strong { font-size: 0.82rem; }
+.compact-campaign-button small { font-size: 0.67rem; }
+.waiting-room-panel .ghost-button { width: 100%; border-radius: 12px; background: #111936; }
 .campaign-objectives p { flex: 0; max-height: 82px; overflow: hidden; }
 .live-objective { display: flex; gap: 8px; align-items: center; padding: 8px; border-radius: 11px; background: #090f21; }
 .live-objective > span { color: #ffe27b; }
@@ -206,8 +211,10 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
   .turn-summary span { display: none; }
   .battlefield { grid-template-columns: 1fr; }
   .battle-log { position: absolute; right: 8px; bottom: 8px; width: min(240px, 58%); max-height: 75%; padding: 10px; overflow-y: auto; }
-  .battle-log:not(.campaign-objectives) { pointer-events: none; }
-  .battle-log:not(.campaign-objectives) strong, .battle-log:not(.campaign-objectives) button { display: none; }
+  .battle-log:not(.campaign-objectives):not(.waiting-room-panel) { pointer-events: none; }
+  .battle-log:not(.campaign-objectives):not(.waiting-room-panel) strong, .battle-log:not(.campaign-objectives):not(.waiting-room-panel) button { display: none; }
+  .waiting-room-panel { width: min(290px, 72%); pointer-events: auto; }
+  .waiting-room-panel p { flex: 0; }
   .battle-log p { margin: 0; font-size: 0.7rem; }
   .campaign-objectives p { display: none; }
   .live-objective { padding: 6px; }

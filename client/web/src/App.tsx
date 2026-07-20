@@ -469,7 +469,7 @@ export function App() {
           onSelectProvince={setSelectedProvinceId}
           selectedProvinceId={selectedProvinceId}
         />
-        <aside className={`battle-log glass ${campaign ? "campaign-objectives" : ""}`}>
+        <aside className={`battle-log glass ${campaign ? "campaign-objectives" : waitingForRival ? "waiting-room-panel" : ""}`}>
           {campaign ? (
             <>
               <strong>{campaign.mission.title}</strong>
