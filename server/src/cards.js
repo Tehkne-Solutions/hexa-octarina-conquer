@@ -53,7 +53,13 @@ export function getCard(cardId) {
 }
 
 export function cardSnapshot(cardId) {
-  return { ...getCard(cardId) };
+  const card = getCard(cardId);
+  return {
+    ...card,
+    // The rules engine keeps the canonical "conquest" effect; clients use the
+    // product-facing "expansion" action to arm point selection.
+    effect: card.id === "expansion" ? "expansion" : card.effect,
+  };
 }
 
 export function totalCardCost(cardIds) {
