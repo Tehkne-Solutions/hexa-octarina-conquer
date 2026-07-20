@@ -1,0 +1,61 @@
+name: Web Mobile PWA
+
+on:
+  push:
+    branches: [main, "feature/web-pwa-mobile"]
+    paths:
+      - "client/web/**"
+      - ".github/workflows/web-client.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "client/web/**"
+      - ".github/workflows/web-client.yml"
+
+concurrency:
+  group: web-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: client/web/package.json
+      - name: Install dependencies
+        working-directory: client/web
+        run: npm install --no-audit --no-fund
+      - name: Run unit tests
+        working-directory: client/web
+        run: npm test
+      - name: Build production PWA
+        working-directory: client/web
+        env:
+          VITE_HEXA_WS_URL: wss://example.invalid/ws
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee web-build.log
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hexa-octarina-web-build-log
+          path: client/web/web-build.log
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Validate installable shell
+        run: |
+          test -s client/web/dist/index.html
+          test -s client/web/dist/manifest.webmanifest
+          test -n "$(find client/web/dist -name 'sw.js' -o -name 'service-worker.js' | head -n 1)"
+          grep -q 'Hexa Octarina Conquer' client/web/dist/manifest.webmanifest
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hexa-octarina-web-mobile
+          path: client/web/dist
+          if-no-files-found: error
+          retention-days: 30
