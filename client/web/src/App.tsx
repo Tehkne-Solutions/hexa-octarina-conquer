@@ -119,8 +119,9 @@ export function App() {
       if (message.type === "session.reconnected") {
         if (payload.snapshot) setSnapshot(payload.snapshot as RoomSnapshot);
         if (Array.isArray(payload.patches)) {
-          setSnapshot((current) => payload.patches.reduce(
-            (state, patch) => snapshotFromPatch(state, patch as Record<string, unknown>),
+          const patches = payload.patches as Record<string, unknown>[];
+          setSnapshot((current) => patches.reduce<RoomSnapshot | null>(
+            (state, patch) => snapshotFromPatch(state, patch),
             current,
           ));
         }
