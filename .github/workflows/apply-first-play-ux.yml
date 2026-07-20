@@ -1,0 +1,284 @@
+name: Apply First Play UX
+
+on:
+  push:
+    branches: ["fix/campaign-first-play-ux"]
+    paths:
+      - ".github/workflows/apply-first-play-ux.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/campaign-first-play-ux
+          fetch-depth: 0
+      - name: Patch campaign onboarding and card clarity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          app_path = Path("client/web/src/App.tsx")
+          app = app_path.read_text(encoding="utf-8")
+
+          replacements = [
+              (
+                  '''      if (message.type === "room.patch") {
+                  setSnapshot((current) => snapshotFromPatch(current, payload));
+                  const eventType = (payload.event as { type?: string } | undefined)?.type;
+                  if (eventType) setNotice(eventType.replaceAll(".", " "));
+                }
+          ''',
+                  '''      if (message.type === "room.patch") {
+                  setSnapshot((current) => snapshotFromPatch(current, payload));
+                  const eventType = (payload.event as { type?: string } | undefined)?.type;
+                  const eventMessages: Record<string, string> = {
+                    "edge.played": "Linha criada com sucesso.",
+                    "turn.started": "Novo turno iniciado.",
+                    "card.played": "Carta ativada com sucesso.",
+                    "duel.opened": "Duelo de Célula iniciado.",
+                    "duel.round_resolved": "Rodada do duelo resolvida.",
+                    "campaign.completed": "Objetivo da missão concluído.",
+                  };
+                  if (eventType) setNotice(eventMessages[eventType] ?? eventType.replaceAll(".", " "));
+                }
+          ''',
+              ),
+              (
+                  '''  const playEdge = (start: Point, end: Point) => {
+              if (!roomReady) {
+                setNotice("A sala ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");
+                return;
+              }
+              try {
+                if (armedCard?.effect === "expansion") {
+                  client.playCard(armedCard, { start, end });
+                  setArmedCard(null);
+                } else client.playEdge(start, end);
+              } catch (error) {
+          ''',
+                  '''  const playEdge = (start: Point, end: Point) => {
+              if (!roomReady) {
+                setNotice("A sala ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");
+                return;
+              }
+              try {
+                if (armedCard?.effect === "expansion") {
+                  setNotice("Enviando Expansão Rúnica...");
+                  client.playCard(armedCard, { start, end });
+                  setArmedCard(null);
+                } else {
+                  setNotice("Criando linha...");
+                  client.playEdge(start, end);
+                }
+              } catch (error) {
+          ''',
+              ),
+              (
+                  '''  const playMacroCard = (card: CardState) => {
+              if (!roomReady) {
+                setNotice("As cartas serão liberadas quando a partida começar.");
+                return;
+              }
+              try {
+          ''',
+                  '''  const playMacroCard = (card: CardState) => {
+              if (!roomReady) {
+                setNotice("As cartas serão liberadas quando a partida começar.");
+                return;
+              }
+              if (card.kind === "duel") {
+                setNotice("Essa carta é usada somente dentro de um Duelo de Célula.");
+                return;
+              }
+              if (!isMyTurn) {
+                setNotice("Aguarde a IA concluir o turno dela.");
+                return;
+              }
+              if ((privateState?.mana ?? 0) < card.cost) {
+                setNotice("Mana insuficiente para usar essa carta.");
+                return;
+              }
+              try {
+          ''',
+              ),
+              (
+                  '''  const nextMission = campaignCatalog?.missions.find((mission) => mission.order === (campaign?.mission.order ?? 0) + 1 && mission.unlocked);
+          ''',
+                  '''  const nextMission = campaignCatalog?.missions.find((mission) => mission.order === (campaign?.mission.order ?? 0) + 1 && mission.unlocked);
+              const tutorialFirstMove = campaign?.mission.order === 1
+                && Number(campaign.stats.edgesPlayed ?? 0) === 0
+                && !campaignResult;
+              const macroCards = privateState?.hand.filter((card) => card.kind === "macro") ?? [];
+              const duelCardCount = privateState?.hand.filter((card) => card.kind === "duel").length ?? 0;
+              const selectedProvince = snapshot.board.provinces.find((province) => province.id === selectedProvinceId) ?? null;
+              const cardBlockReason = (card: CardState): string | null => {
+                if (!isMyTurn) return "Aguarde seu turno";
+                if ((privateState?.mana ?? 0) < card.cost) return "Mana insuficiente";
+                if (card.effect === "fortify") {
+                  if (!selectedProvince) return "Selecione um território seu";
+                  if (selectedProvince.ownerId !== localPlayerId) return "Escolha um território aliado";
+                }
+                if (card.effect === "duel") {
+                  if (!selectedProvince) return "Selecione um território rival";
+                  if (selectedProvince.ownerId === localPlayerId) return "Escolha um território inimigo";
+                }
+                return null;
+              };
+          ''',
+              ),
+              (
+                  '''              <p>{campaign.mission.briefing}</p>
+                  <div className={`live-objective ${campaign.primary.completed ? "done" : ""}`}><span>◆</span><div><b>{campaign.primary.label}</b><small>{campaign.primary.current}/{campaign.primary.target}</small></div></div>
+          ''',
+                  '''              <p>{campaign.mission.briefing}</p>
+                  {tutorialFirstMove && (
+                    <div className="tutorial-panel">
+                      <span>1</span>
+                      <div><b>Crie sua primeira linha</b><small>Toque diretamente no segmento dourado entre dois pilares. Não use cartas ainda.</small></div>
+                    </div>
+                  )}
+                  <div className={`live-objective ${campaign.primary.completed ? "done" : ""}`}><span>◆</span><div><b>{campaign.primary.label}</b><small>{campaign.primary.current}/{campaign.primary.target}</small></div></div>
+          ''',
+              ),
+              (
+                  '''              <small className="mission-limit">Limite: {campaign.failure.turnLimit} rodadas</small>
+                </>
+          ''',
+                  '''              <small className="mission-limit">Limite: {campaign.failure.turnLimit} rodadas</small>
+                  <div className="action-notice" role="status">{notice}</div>
+                </>
+          ''',
+              ),
+              (
+                  '''      {roomReady && !activeDuel && snapshot.status !== "finished" && (
+                <section className="hand-tray glass">
+                  <div className="hand-label"><strong>MÃO</strong><span>{privateState?.hand.length ?? 0} cartas</span></div>
+                  <div className="hand-scroll">
+                    {privateState?.hand.map((card) => (
+                      <button key={card.id} className={`card ${armedCard?.id === card.id ? "selected" : ""}`} onClick={() => playMacroCard(card)}>
+                        <span className="card-icon">{card.icon}</span>
+                        <strong>{card.name}</strong>
+                        <small>{card.description}</small>
+                        <em>{card.cost}</em>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+          ''',
+                  '''      {roomReady && !activeDuel && snapshot.status !== "finished" && (
+                tutorialFirstMove ? (
+                  <section className="first-move-coach glass">
+                    <span className="coach-step">1</span>
+                    <div><strong>Faça a primeira linha</strong><small>Toque no segmento dourado ou escolha um pilar e depois um vizinho verde.</small></div>
+                    <span className="coach-arrow">↑</span>
+                  </section>
+                ) : (
+                  <section className="hand-tray glass">
+                    <div className="hand-label"><strong>CARTAS</strong><span>{macroCards.length} estratégicas</span></div>
+                    <div className="hand-scroll">
+                      {macroCards.map((card) => {
+                        const blocked = cardBlockReason(card);
+                        return (
+                          <button
+                            key={card.id}
+                            disabled={Boolean(blocked)}
+                            className={`card ${armedCard?.id === card.id ? "selected" : ""} ${blocked ? "locked" : ""}`}
+                            onClick={() => playMacroCard(card)}
+                          >
+                            <span className="card-icon">{card.icon}</span>
+                            <strong>{card.name}</strong>
+                            <small>{card.description}</small>
+                            {blocked && <span className="card-state">{blocked}</span>}
+                            <em>{card.cost}</em>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="duel-reserve"><span>⚔</span><strong>{duelCardCount}</strong><small>cartas liberadas durante duelos</small></div>
+                  </section>
+                )
+              )}
+          ''',
+              ),
+          ]
+
+          for old, new in replacements:
+              if old not in app:
+                  raise SystemExit(f"expected App.tsx fragment was not found:\n{old}")
+              app = app.replace(old, new, 1)
+
+          app_path.write_text(app, encoding="utf-8")
+
+          css_path = Path("client/web/src/styles.css")
+          css = css_path.read_text(encoding="utf-8")
+          css = css.replace(
+              '.board-shell { display: grid; place-items: center; min-width: 0; min-height: 0; overflow: hidden; border-radius: 30px; background: radial-gradient(circle at center, #20294e 0, #070914 68%); }',
+              '.board-shell { position: relative; display: grid; place-items: center; min-width: 0; min-height: 0; overflow: hidden; border-radius: 30px; background: radial-gradient(circle at center, #20294e 0, #070914 68%); }\n'
+              '.board-guide { position: absolute; z-index: 8; left: 50%; top: 12px; display: grid; gap: 2px; width: min(560px, calc(100% - 28px)); padding: 10px 16px; transform: translateX(-50%); text-align: center; border: 1px solid #79d7ff55; border-radius: 16px; background: #080d20e8; box-shadow: 0 12px 35px #0009; pointer-events: none; }\n'
+              '.board-guide strong { color: #ffe27b; font-size: 0.68rem; letter-spacing: 0.14em; }\n'
+              '.board-guide span { color: #d6ddf3; font-size: 0.78rem; }\n'
+              '.board-guide.pending { border-color: #ffe27b88; }\n'
+              '.edge-option-visible { stroke: #7180ae; opacity: 0.22; transition: 160ms ease; }\n'
+              '.edge-option:hover .edge-option-visible, .edge-option.valid .edge-option-visible { stroke: #79efac; opacity: 0.85; }\n'
+              '.edge-option.suggested .edge-option-visible { stroke: #ffe27b; opacity: 1; filter: url(#glow); animation: suggested-edge-pulse 1.15s ease-in-out infinite; }\n'
+              '.edge-option.pending .edge-option-visible { stroke: #ffffff; opacity: 1; animation: pending-edge 700ms linear infinite; }\n'
+              '.edge-option-hit { cursor: pointer; }\n'
+              '.neighbor-pulse { fill: none; stroke: #75efa8; stroke-width: 4; opacity: 0.65; animation: neighbor-pulse 1s ease-out infinite; }\n'
+              '@keyframes suggested-edge-pulse { 0%, 100% { stroke-width: 8; opacity: 0.72; } 50% { stroke-width: 13; opacity: 1; } }\n'
+              '@keyframes pending-edge { to { stroke-dashoffset: -46; } }\n'
+              '@keyframes neighbor-pulse { from { r: 20; opacity: 0.8; } to { r: 32; opacity: 0; } }'
+          )
+          css = css.replace(
+              '.mission-limit { color: #ff8ca0; }',
+              '.mission-limit { color: #ff8ca0; }\n'
+              '.tutorial-panel { display: flex; gap: 9px; align-items: center; padding: 10px; border: 1px solid #ffe27b55; border-radius: 13px; background: #302817; }\n'
+              '.tutorial-panel > span { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 10px; color: #11152a; font-weight: 950; background: #ffe27b; }\n'
+              '.tutorial-panel > div { display: grid; gap: 2px; }\n'
+              '.tutorial-panel b { font-size: 0.72rem; }\n'
+              '.tutorial-panel small { color: #d4c995; font-size: 0.64rem; line-height: 1.25; }\n'
+              '.action-notice { margin-top: auto; padding: 9px; border-radius: 11px; color: #9fe4ff; font-size: 0.68rem; background: #071226; }'
+          )
+          css = css.replace(
+              '.hand-tray { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 10px; }',
+              '.hand-tray { display: grid; grid-template-columns: 82px minmax(0, 1fr) 104px; gap: 10px; }\n'
+              '.first-move-coach { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 104px; padding: 16px 24px; border-color: #ffe27b55; background: linear-gradient(135deg, #302817ee, #101936ee); }\n'
+              '.coach-step { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 16px; color: #12162b; font-size: 1.4rem; font-weight: 950; background: #ffe27b; box-shadow: 0 0 30px #ffe27b55; }\n'
+              '.first-move-coach > div { display: grid; gap: 4px; }\n'
+              '.first-move-coach strong { font-size: 1rem; }\n'
+              '.first-move-coach small { color: #c8d1eb; }\n'
+              '.coach-arrow { color: #ffe27b; font-size: 2.4rem; animation: coach-arrow 900ms ease-in-out infinite; }\n'
+              '.duel-reserve { display: grid; place-content: center; text-align: center; border: 1px solid #ffffff12; border-radius: 15px; color: #8f9abb; background: #080e20; }\n'
+              '.duel-reserve > span { color: #ff8da0; font-size: 1.2rem; }\n'
+              '.duel-reserve strong { color: #fff; }\n'
+              '.duel-reserve small { padding: 0 7px; font-size: 0.58rem; line-height: 1.2; }\n'
+              '.card.locked { filter: grayscale(0.45); }\n'
+              '.card-state { align-self: end; padding: 4px 6px; border-radius: 7px; color: #ffbdc8; font-size: 0.56rem; font-weight: 800; background: #371522; }\n'
+              '@keyframes coach-arrow { 0%, 100% { transform: translateY(4px); } 50% { transform: translateY(-5px); } }'
+          )
+          css = css.replace(
+              '  .hand-tray { grid-template-columns: 1fr; padding: 7px; }',
+              '  .hand-tray { grid-template-columns: 1fr; padding: 7px; }\n'
+              '  .duel-reserve { display: none; }\n'
+              '  .board-guide { top: 7px; width: calc(100% - 14px); padding: 7px 10px; }\n'
+              '  .board-guide strong { font-size: 0.58rem; }\n'
+              '  .board-guide span { font-size: 0.64rem; }\n'
+              '  .first-move-coach { min-height: 82px; padding: 10px 14px; }\n'
+              '  .coach-step { width: 38px; height: 38px; }\n'
+              '  .first-move-coach small { font-size: 0.66rem; }'
+          )
+          css_path.write_text(css, encoding="utf-8")
+          PY
+      - name: Commit product fixes and remove temporary workflow
+        run: |
+          git config user.name "Tehkné Solutions Bot"
+          git config user.email "tehkne-solutions@users.noreply.github.com"
+          git rm .github/workflows/apply-first-play-ux.yml
+          git add client/web/src/App.tsx client/web/src/styles.css
+          git commit -m "fix: tornar primeira missão guiada e jogável"
+          git push origin HEAD:fix/campaign-first-play-ux
