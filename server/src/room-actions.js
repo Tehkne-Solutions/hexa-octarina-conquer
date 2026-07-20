@@ -31,6 +31,7 @@ export class RoomActions {
       playerId: player.id,
       edge: result.edge,
       claimedProvinceIds: result.claimed,
+      claimedCellIds: result.claimedCellIds,
       automaticDuelIds,
       turnChanged: result.turnChanged,
       turnNumber: result.turnNumber,
@@ -136,7 +137,13 @@ export class RoomActions {
       }
     }
     return this.commit(ready ? "duel.round_resolved" : "duel.cards_submitted", {
-      duelId, playerId: player.id, ready, resolution, mergedProvinceId, automaticDuelIds,
+      duelId,
+      playerId: player.id,
+      submittedCardCount: cardIds.length,
+      ready,
+      resolution,
+      mergedProvinceId,
+      automaticDuelIds,
     });
   }
 
