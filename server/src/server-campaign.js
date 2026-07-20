@@ -93,7 +93,7 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
         const missionId = String(body.missionId ?? "").trim();
         if (!missionId) throw new ProtocolError("MISSION_REQUIRED", "missionId is required");
         await campaign.assertMissionUnlocked(account?.id ?? null, missionId);
-        const playerName = account?.displayName ?? String(body.playerName ?? "Arquiteto").trim() || "Arquiteto";
+        const playerName = (account?.displayName ?? String(body.playerName ?? "Arquiteto").trim()) || "Arquiteto";
         const result = await manager.createCampaignRoom({
           missionId,
           playerName,
