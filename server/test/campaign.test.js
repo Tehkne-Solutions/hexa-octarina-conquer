@@ -53,6 +53,35 @@ test("the campaign AI completes its turn after a human edge", () => {
   assert.ok(result.room.board.edges.size >= 2);
 });
 
+test("campaign cards return to the compact hand after use", () => {
+  const manager = new RoomManager();
+  const started = manager.createCampaignRoom({ missionId: "c2-m2", playerName: "Arquiteto" });
+  const room = started.room;
+  const human = started.player;
+  const originalHand = [...human.hand];
+
+  room.board.cells.set("0,0", {
+    id: "cell:0,0", x: 0, y: 0, ownerId: human.id, provinceId: "province-recycle",
+  });
+  room.board.provinces.set("province-recycle", {
+    id: "province-recycle",
+    ownerId: human.id,
+    cellIds: ["cell:0,0"],
+    unit: { kind: "recruit", level: 1, hp: 3, element: "physical" },
+    protectedTurns: 0,
+  });
+
+  manager.applyCommand(command(room, human, "action.play_card", {
+    cardId: "fortify",
+    provinceId: "province-recycle",
+  }));
+
+  assert.equal(human.hand.length, originalHand.length);
+  assert.equal(human.hand.filter((cardId) => cardId === "fortify").length, 1);
+  assert.equal(room.campaign.stats.fortifications, 1);
+  assert.equal(room.board.getProvince("province-recycle").unit.hp, 6);
+});
+
 test("finishes a mission and awards objective stars", () => {
   const manager = new RoomManager();
   const started = manager.createCampaignRoom({ missionId: "c1-m1", playerName: "Arquiteto" });
