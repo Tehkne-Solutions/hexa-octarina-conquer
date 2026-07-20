@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { runCampaignAI } from "./campaign-ai.js";
 import { getCampaignMission } from "./campaign-catalog.js";
+import { applyCampaignLoadout } from "./campaign-loadout.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 
@@ -42,8 +43,8 @@ export class DistributedRoomManager {
       idFactory: this.idFactory,
       clock: this.clock,
     });
-    const human = room.addPlayer(playerName, { accountId }).player;
-    const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
+    const human = applyCampaignLoadout(room.addPlayer(playerName, { accountId }).player);
+    const bot = applyCampaignLoadout(room.addBot(mission.aiName, { difficulty: mission.difficulty }).player);
     const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
     await this.store.saveRoom(room, { expectedRevision: null });
     this.rooms.set(room.id, room);
