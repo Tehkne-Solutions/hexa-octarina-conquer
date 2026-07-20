@@ -158,7 +158,20 @@ export function resolveDuelRound(duel) {
   return { resolved: false, winnerId: null };
 }
 
+function publicCombatant(state) {
+  return {
+    hp: state.hp,
+    maxHp: state.maxHp,
+    shield: state.shield,
+    energy: state.energy,
+    support: state.support ?? 0,
+    statuses: { ...state.statuses },
+  };
+}
+
 export function duelSnapshot(duel) {
+  const attacker = publicCombatant(duel.combatants[duel.attackerId]);
+  const defender = publicCombatant(duel.combatants[duel.defenderId]);
   return {
     id: duel.id,
     attackerId: duel.attackerId,
@@ -167,16 +180,15 @@ export function duelSnapshot(duel) {
     reason: duel.reason ?? "contact",
     status: duel.status,
     round: duel.round,
+    roundNumber: duel.round,
     winnerId: duel.winnerId,
     submittedPlayerIds: Object.keys(duel.submissions),
-    combatants: Object.fromEntries(Object.entries(duel.combatants).map(([id, state]) => [id, {
-      hp: state.hp,
-      maxHp: state.maxHp,
-      shield: state.shield,
-      energy: state.energy,
-      support: state.support ?? 0,
-      statuses: { ...state.statuses },
-    }])),
+    attacker,
+    defender,
+    combatants: {
+      [duel.attackerId]: attacker,
+      [duel.defenderId]: defender,
+    },
     log: duel.log.slice(-20),
   };
 }

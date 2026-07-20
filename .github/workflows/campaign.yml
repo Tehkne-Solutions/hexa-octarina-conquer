@@ -1,0 +1,109 @@
+name: Single Player Campaign
+
+on:
+  push:
+    branches: [main, "feature/single-player-campaign"]
+    paths:
+      - "server/src/campaign-*.js"
+      - "server/src/identity-*.js"
+      - "server/src/game-room.js"
+      - "server/src/room-manager.js"
+      - "server/src/distributed-room-manager.js"
+      - "server/src/server-campaign.js"
+      - "server/test/campaign*.test.js"
+      - "server/test/postgres-campaign.test.js"
+      - "client/web/src/**"
+      - "render.yaml"
+      - "Dockerfile"
+      - ".github/workflows/campaign.yml"
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: campaign-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  campaign:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-bookworm
+        env:
+          POSTGRES_DB: hexa_octarina_campaign_test
+          POSTGRES_USER: hexa
+          POSTGRES_PASSWORD: hexa-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hexa -d hexa_octarina_campaign_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://hexa:hexa-test@127.0.0.1:5432/hexa_octarina_campaign_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install server dependencies
+        working-directory: server
+        run: npm install --no-audit --no-fund
+      - name: Validate campaign JavaScript
+        working-directory: server
+        run: |
+          node --check src/campaign-catalog.js
+          node --check src/campaign-store.js
+          node --check src/campaign-runtime.js
+          node --check src/campaign-ai.js
+          node --check src/server-campaign.js
+          node --check src/identity-memory.js
+          node --check src/identity-sqlite.js
+          node --check src/identity-postgres.js
+      - name: Test campaign engine, XP and HTTP lifecycle
+        working-directory: server
+        run: node --test test/campaign.test.js test/campaign-store.test.js test/campaign-xp.test.js test/campaign-http.test.js
+      - name: Test PostgreSQL campaign progress and XP
+        working-directory: server
+        run: node --test --test-concurrency=1 test/postgres-campaign.test.js
+      - name: Test simultaneous campaign schema initialization
+        working-directory: server
+        run: |
+          node --input-type=module - <<'NODE'
+          import { PostgresCampaignStore } from './src/campaign-store.js';
+          const connectionString = process.env.DATABASE_URL;
+          const stores = await Promise.all(Array.from({ length: 4 }, () => (
+            new PostgresCampaignStore({ connectionString, poolSize: 2 }).initialize()
+          )));
+          await Promise.all(stores.map((store) => store.close()));
+          NODE
+      - name: Install web dependencies
+        working-directory: client/web
+        run: npm install --no-audit --no-fund
+      - name: Test and build campaign PWA
+        working-directory: client/web
+        run: npm run check
+      - name: Build bundled campaign container
+        run: docker build -t hexa-octarina-campaign:test .
+      - name: Smoke test campaign catalog in the production image
+        run: |
+          docker run -d --name hexa-campaign-smoke \
+            -p 8180:8080 \
+            -e HEXA_STORE=memory \
+            -e HEXA_IDENTITY_STORE=memory \
+            -e HEXA_COMPETITION_STORE=memory \
+            -e HEXA_CAMPAIGN_STORE=memory \
+            -e HEXA_CLUSTER_BUS=memory \
+            -e HEXA_PRESENCE_STORE=memory \
+            -e HEXA_GOVERNANCE_STORE=memory \
+            -e HEXA_RESILIENCE_STORE=memory \
+            hexa-octarina-campaign:test
+          trap 'docker rm -f hexa-campaign-smoke >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8180/health >/dev/null && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8180/campaign/catalog > /tmp/campaign.json
+          node -e "const c=require('/tmp/campaign.json'); if(c.missions.length!==12||c.chapters.length!==3) process.exit(1)"
+          curl -fsS http://127.0.0.1:8180/ | grep -q 'Hexa Octarina'

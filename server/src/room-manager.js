@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 
+import { runCampaignAI } from "./campaign-ai.js";
+import { getCampaignMission } from "./campaign-catalog.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 import { MemoryRoomStore } from "./room-store.js";
@@ -27,14 +29,32 @@ export class RoomManager {
     this.rooms.set(resolvedRoomId, room);
     const joined = room.addPlayer(playerName, { accountId });
     this.persist(room);
-    return { room, ...joined };
+    return { room, ...joined, followUpPatches: [] };
+  }
+
+  createCampaignRoom({ playerName, accountId = null, missionId }) {
+    const mission = getCampaignMission(missionId);
+    const roomId = `C${mission.order.toString().padStart(2, "0")}${this.createRoomId().slice(0, 5)}`;
+    const room = new GameRoom({
+      id: roomId,
+      mode: "campaign",
+      boardSize: mission.boardSize,
+      idFactory: this.idFactory,
+      clock: this.clock,
+    });
+    this.rooms.set(roomId, room);
+    const human = room.addPlayer(playerName, { accountId }).player;
+    const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
+    const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
+    this.persist(room);
+    return { room, player: human, patch, followUpPatches: [] };
   }
 
   joinRoom({ roomId, playerName, accountId = null }) {
     const room = this.getRoom(roomId);
     const joined = room.addPlayer(playerName, { accountId });
     this.persist(room);
-    return { room, ...joined };
+    return { room, ...joined, followUpPatches: [] };
   }
 
   reconnect(payload) {
@@ -46,9 +66,11 @@ export class RoomManager {
 
   applyCommand(command) {
     const room = this.getRoom(command.payload.roomId);
-    const patch = room.applyCommand(command);
+    const humanPatch = room.applyCommand(command);
+    const followUpPatches = runCampaignAI(room);
+    const patch = followUpPatches.at(-1) ?? humanPatch;
     this.persist(room);
-    return { room, patch };
+    return { room, patch, humanPatch, followUpPatches };
   }
 
   disconnect(roomId, playerId) {
@@ -72,9 +94,9 @@ export class RoomManager {
     return patch ? { room, patch } : null;
   }
 
-  listRooms({ status } = {}) {
+  listRooms({ status, mode } = {}) {
     return [...this.rooms.values()]
-      .filter((room) => !status || room.status === status)
+      .filter((room) => (!status || room.status === status) && (!mode || room.mode === mode))
       .sort((left, right) => right.updatedAt - left.updatedAt)
       .map((room) => room.lobbySummary());
   }

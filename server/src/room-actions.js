@@ -31,6 +31,7 @@ export class RoomActions {
       playerId: player.id,
       edge: result.edge,
       claimedProvinceIds: result.claimed,
+      claimedCellIds: result.claimedCellIds,
       automaticDuelIds,
       turnChanged: result.turnChanged,
       turnNumber: result.turnNumber,
@@ -69,6 +70,7 @@ export class RoomActions {
 
     player.hand = removeCards(player.hand, [card.id]);
     player.mana -= card.cost;
+    if (this.mode === "campaign") player.hand.push(card.id);
     this.usedMacroTurns.add(turnKey);
     return this.commit("card.played", { playerId: player.id, cardId: card.id, actionResult });
   }
@@ -123,6 +125,7 @@ export class RoomActions {
     const duel = this.duels.get(duelId);
     if (!duel) throw new ProtocolError("DUEL_NOT_FOUND", "duel does not exist");
     const ready = submitDuelCards({ duel, player, cardIds });
+    if (this.mode === "campaign") player.hand.push(...cardIds);
     let resolution = { resolved: false, winnerId: null };
     let mergedProvinceId = null;
     let automaticDuelIds = [];
@@ -136,7 +139,13 @@ export class RoomActions {
       }
     }
     return this.commit(ready ? "duel.round_resolved" : "duel.cards_submitted", {
-      duelId, playerId: player.id, ready, resolution, mergedProvinceId, automaticDuelIds,
+      duelId,
+      playerId: player.id,
+      submittedCardCount: cardIds.length,
+      ready,
+      resolution,
+      mergedProvinceId,
+      automaticDuelIds,
     });
   }
 

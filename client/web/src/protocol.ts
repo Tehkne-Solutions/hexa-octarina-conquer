@@ -46,6 +46,8 @@ export interface PublicPlayer {
   name: string;
   connected: boolean;
   accountLinked: boolean;
+  isBot?: boolean;
+  difficulty?: "novice" | "adept" | "master" | null;
   mana: number;
   hp: number;
   handSize: number;
@@ -63,24 +65,111 @@ export interface CardState {
   icon: string;
 }
 
+export interface DuelCombatantState {
+  hp: number;
+  maxHp: number;
+  energy: number;
+  shield: number;
+  support: number;
+  statuses: Record<string, number>;
+}
+
 export interface DuelState {
   id: string;
   attackerId: string;
   defenderId: string;
   provinceId: string;
+  reason?: string;
   status: string;
+  round: number;
   roundNumber?: number;
-  attacker?: { hp: number; energy: number; shield?: number };
-  defender?: { hp: number; energy: number; shield?: number };
+  winnerId?: string | null;
+  submittedPlayerIds?: string[];
+  attacker?: DuelCombatantState;
+  defender?: DuelCombatantState;
+  combatants: Record<string, DuelCombatantState>;
+}
+
+export interface CampaignObjective {
+  type: string;
+  target: number;
+  label: string;
+  current?: number;
+  completed?: boolean;
+}
+
+export interface CampaignMission {
+  id: string;
+  chapterId: string;
+  order: number;
+  title: string;
+  briefing: string;
+  boardSize: number;
+  difficulty: "novice" | "adept" | "master";
+  aiName: string;
+  rewardXp: number;
+  primary: CampaignObjective;
+  bonus: CampaignObjective[];
+  failure: { turnLimit?: number; botCells?: number };
+  unlocked: boolean;
+  progress: null | { stars: number; attempts: number; bestTurns?: number | null; bestHp?: number };
+}
+
+export interface CampaignChapter {
+  id: string;
+  order: number;
+  title: string;
+  subtitle: string;
+}
+
+export interface CampaignAchievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  unlockedAt: number | null;
+}
+
+export interface CampaignCatalog {
+  chapters: CampaignChapter[];
+  missions: CampaignMission[];
+  achievements: CampaignAchievement[];
+  totals: { stars: number; cells: number; duelsWon: number; fortifications: number; attempts: number; completed: number };
+}
+
+export interface CampaignResult {
+  roomId: string;
+  missionId: string;
+  success: boolean;
+  stars: number;
+  rewardXp: number;
+  reason: string;
+  stats: Record<string, number>;
+  bonusCompleted: boolean[];
+  finishedAt: number;
+}
+
+export interface CampaignState {
+  mission: Pick<CampaignMission, "id" | "chapterId" | "order" | "title" | "briefing" | "difficulty" | "aiName" | "rewardXp">;
+  status: "active" | "completed" | "failed";
+  humanPlayerId: string;
+  botPlayerId: string;
+  primary: CampaignObjective;
+  bonus: CampaignObjective[];
+  failure: { turnLimit?: number; botCells?: number };
+  stats: Record<string, number>;
+  result: CampaignResult | null;
 }
 
 export interface RoomSnapshot {
   roomId: string;
+  mode?: "multiplayer" | "campaign";
   revision: number;
   status: "waiting" | "active" | "finished";
   board: BoardState;
   players: PublicPlayer[];
   duels: DuelState[];
+  campaign?: CampaignState | null;
   matchResult: null | {
     winnerPlayerId: string;
     loserPlayerId: string;
@@ -99,6 +188,7 @@ export interface PrivateState {
   hp: number;
   hand: CardState[];
   duelSubmissions: Record<string, string[]>;
+  campaign?: CampaignState | null;
 }
 
 export interface RoomSession {
@@ -122,10 +212,11 @@ export interface AccountSession {
 
 export interface LobbyRoom {
   roomId: string;
+  mode?: string;
   status: string;
   boardSize: number;
   playerCount: number;
-  players: Array<{ name: string; connected: boolean; accountLinked: boolean }>;
+  players: Array<{ name: string; connected: boolean; accountLinked: boolean; isBot?: boolean }>;
   revision: number;
 }
 

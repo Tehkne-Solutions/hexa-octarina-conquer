@@ -2,14 +2,16 @@ import { randomUUID } from "node:crypto";
 
 import { BoardState } from "./board-state.js";
 import { STARTER_HAND, cardSnapshot } from "./cards.js";
+import { beforeCampaignCommit, campaignResultForPersistence, initializeCampaign, publicCampaignState } from "./campaign-runtime.js";
 import { duelSnapshot } from "./duel-engine.js";
 import { ProtocolError } from "./protocol.js";
 import { RoomActions } from "./room-actions.js";
 
 export class GameRoom extends RoomActions {
-  constructor({ id, boardSize = 5, idFactory = randomUUID, clock = () => Date.now() }) {
+  constructor({ id, boardSize = 5, mode = "multiplayer", idFactory = randomUUID, clock = () => Date.now() }) {
     super();
     this.id = id;
+    this.mode = mode;
     this.idFactory = idFactory;
     this.clock = clock;
     this.status = "waiting";
@@ -21,6 +23,7 @@ export class GameRoom extends RoomActions {
     this.usedMacroTurns = new Set();
     this.patchLog = [];
     this.matchResult = null;
+    this.campaign = null;
     this.createdAt = this.clock();
     this.updatedAt = this.createdAt;
   }
@@ -41,6 +44,8 @@ export class GameRoom extends RoomActions {
       sessionToken: this.idFactory(),
       name: normalizedName,
       connected: true,
+      isBot: false,
+      difficulty: null,
       lastSeenAt: this.clock(),
       mana: 5,
       hp: 20,
@@ -53,14 +58,49 @@ export class GameRoom extends RoomActions {
       playerId: player.id,
       playerName: player.name,
       accountLinked: Boolean(player.accountId),
+      isBot: false,
       status: this.status,
     });
     return { player, patch };
   }
 
+  addBot(playerName, { difficulty = "novice" } = {}) {
+    if (this.players.length >= 2) throw new ProtocolError("ROOM_FULL", "room already has two players");
+    const player = {
+      id: `bot-${this.idFactory()}`,
+      accountId: null,
+      sessionToken: this.idFactory(),
+      name: playerName.trim(),
+      connected: true,
+      isBot: true,
+      difficulty,
+      lastSeenAt: this.clock(),
+      mana: difficulty === "master" ? 6 : 5,
+      hp: 20,
+      hand: [...STARTER_HAND],
+    };
+    this.players.push(player);
+    this.board.setPlayerOrder(this.players.map((item) => item.id));
+    this.status = "active";
+    const patch = this.commit("player.joined", {
+      playerId: player.id,
+      playerName: player.name,
+      accountLinked: false,
+      isBot: true,
+      difficulty,
+      status: this.status,
+    });
+    return { player, patch };
+  }
+
+  startCampaign({ missionId, humanPlayerId, botPlayerId }) {
+    initializeCampaign(this, { missionId, humanPlayerId, botPlayerId });
+    return this.commit("campaign.started", { missionId, humanPlayerId, botPlayerId });
+  }
+
   authenticate(playerId, sessionToken) {
     const player = this.players.find((item) => item.id === playerId);
-    if (!player || player.sessionToken !== sessionToken) {
+    if (!player || player.sessionToken !== sessionToken || player.isBot) {
       throw new ProtocolError("INVALID_SESSION", "player credentials are invalid");
     }
     player.connected = true;
@@ -86,7 +126,7 @@ export class GameRoom extends RoomActions {
 
   disconnect(playerId) {
     const player = this.players.find((item) => item.id === playerId);
-    if (!player || !player.connected) return null;
+    if (!player || player.isBot || !player.connected) return null;
     player.connected = false;
     player.lastSeenAt = this.clock();
     return this.commit("player.disconnected", { playerId });
@@ -102,6 +142,7 @@ export class GameRoom extends RoomActions {
   }
 
   commit(eventType, payload) {
+    beforeCampaignCommit(this, eventType, payload);
     this.revision += 1;
     this.updatedAt = this.clock();
     const patch = {
@@ -114,11 +155,13 @@ export class GameRoom extends RoomActions {
         payload,
       },
       state: {
+        mode: this.mode,
         status: this.status,
         board: this.board.snapshot(),
         players: this.publicPlayers(),
         duels: [...this.duels.values()].map(duelSnapshot),
         matchResult: this.publicMatchResult(),
+        campaign: publicCampaignState(this),
       },
     };
     this.patchLog.push(patch);
@@ -139,6 +182,8 @@ export class GameRoom extends RoomActions {
       name: player.name,
       connected: player.connected,
       accountLinked: Boolean(player.accountId),
+      isBot: Boolean(player.isBot),
+      difficulty: player.difficulty ?? null,
       mana: player.mana,
       hp: player.hp,
       handSize: player.hand.length,
@@ -157,7 +202,7 @@ export class GameRoom extends RoomActions {
 
   privateStateFor(playerId) {
     const player = this.players.find((item) => item.id === playerId);
-    if (!player) throw new ProtocolError("PLAYER_NOT_FOUND", "player does not exist in this room");
+    if (!player || player.isBot) throw new ProtocolError("PLAYER_NOT_FOUND", "player does not exist in this room");
     const duelSubmissions = {};
     for (const duel of this.duels.values()) {
       if (duel.submissions?.[playerId]) duelSubmissions[duel.id] = [...duel.submissions[playerId]];
@@ -172,12 +217,14 @@ export class GameRoom extends RoomActions {
       hp: player.hp,
       hand: player.hand.map(cardSnapshot),
       duelSubmissions,
+      campaign: publicCampaignState(this),
     };
   }
 
   lobbySummary() {
     return {
       roomId: this.id,
+      mode: this.mode,
       status: this.status,
       boardSize: this.board.size,
       playerCount: this.players.length,
@@ -185,6 +232,7 @@ export class GameRoom extends RoomActions {
         name: player.name,
         connected: player.connected,
         accountLinked: Boolean(player.accountId),
+        isBot: Boolean(player.isBot),
       })),
       revision: this.revision,
       createdAt: this.createdAt,
@@ -195,6 +243,7 @@ export class GameRoom extends RoomActions {
   snapshot() {
     return {
       roomId: this.id,
+      mode: this.mode,
       revision: this.revision,
       status: this.status,
       createdAt: this.createdAt,
@@ -203,13 +252,19 @@ export class GameRoom extends RoomActions {
       players: this.publicPlayers(),
       duels: [...this.duels.values()].map(duelSnapshot),
       matchResult: this.publicMatchResult(),
+      campaign: publicCampaignState(this),
     };
+  }
+
+  campaignResult() {
+    return campaignResultForPersistence(this);
   }
 
   serialize() {
     return {
-      schemaVersion: 2,
+      schemaVersion: 3,
       id: this.id,
+      mode: this.mode,
       status: this.status,
       revision: this.revision,
       players: this.players.map((player) => ({ ...player, hand: [...player.hand] })),
@@ -219,17 +274,19 @@ export class GameRoom extends RoomActions {
       usedMacroTurns: [...this.usedMacroTurns],
       patchLog: this.patchLog,
       matchResult: this.matchResult,
+      campaign: this.campaign,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
   }
 
   static restore(raw, { idFactory = randomUUID, clock = () => Date.now() } = {}) {
-    if (!raw || ![1, 2].includes(raw.schemaVersion)) {
+    if (!raw || ![1, 2, 3].includes(raw.schemaVersion)) {
       throw new ProtocolError("INVALID_ROOM_DATA", "unsupported persisted room schema");
     }
     const room = new GameRoom({
       id: raw.id,
+      mode: raw.mode ?? "multiplayer",
       boardSize: raw.board?.boardSize ?? 5,
       idFactory,
       clock,
@@ -239,7 +296,9 @@ export class GameRoom extends RoomActions {
     room.players = (raw.players ?? []).map((player) => ({
       ...player,
       accountId: player.accountId ?? null,
-      connected: false,
+      isBot: Boolean(player.isBot),
+      difficulty: player.difficulty ?? null,
+      connected: player.isBot ? true : false,
       hand: [...player.hand],
     }));
     room.board = BoardState.fromJSON(raw.board);
@@ -248,6 +307,7 @@ export class GameRoom extends RoomActions {
     room.usedMacroTurns = new Set(raw.usedMacroTurns ?? []);
     room.patchLog = raw.patchLog ?? [];
     room.matchResult = raw.matchResult ?? null;
+    room.campaign = raw.campaign ?? null;
     room.createdAt = raw.createdAt ?? room.createdAt;
     room.updatedAt = raw.updatedAt ?? room.updatedAt;
     return room;

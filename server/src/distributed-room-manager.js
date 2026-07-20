@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
 
+import { runCampaignAI } from "./campaign-ai.js";
+import { getCampaignMission } from "./campaign-catalog.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 
@@ -23,7 +25,29 @@ export class DistributedRoomManager {
     const joined = room.addPlayer(playerName, { accountId });
     await this.store.saveRoom(room, { expectedRevision: null });
     this.rooms.set(room.id, room);
-    return { room, ...joined };
+    return { room, ...joined, followUpPatches: [] };
+  }
+
+  async createCampaignRoom({ playerName, accountId = null, missionId }) {
+    const mission = getCampaignMission(missionId);
+    let roomId;
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      roomId = `C${mission.order.toString().padStart(2, "0")}${(await this.createRoomId()).slice(0, 5)}`;
+      if (!(await this.store.loadRoom(roomId))) break;
+    }
+    const room = new GameRoom({
+      id: roomId,
+      mode: "campaign",
+      boardSize: mission.boardSize,
+      idFactory: this.idFactory,
+      clock: this.clock,
+    });
+    const human = room.addPlayer(playerName, { accountId }).player;
+    const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
+    const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
+    await this.store.saveRoom(room, { expectedRevision: null });
+    this.rooms.set(room.id, room);
+    return { room, player: human, patch, followUpPatches: [] };
   }
 
   async joinRoom({ roomId, playerName, accountId = null }) {
@@ -32,7 +56,7 @@ export class DistributedRoomManager {
     const joined = room.addPlayer(playerName, { accountId });
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
-    return { room, ...joined };
+    return { room, ...joined, followUpPatches: [] };
   }
 
   async reconnect(payload) {
@@ -49,10 +73,12 @@ export class DistributedRoomManager {
   async applyCommand(command) {
     const room = await this.getRoom(command.payload.roomId);
     const expectedRevision = room.revision;
-    const patch = room.applyCommand(command);
+    const humanPatch = room.applyCommand(command);
+    const followUpPatches = runCampaignAI(room);
+    const patch = followUpPatches.at(-1) ?? humanPatch;
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
-    return { room, patch };
+    return { room, patch, humanPatch, followUpPatches };
   }
 
   async disconnect(roomId, playerId) {
@@ -85,14 +111,14 @@ export class DistributedRoomManager {
     return { room, patch };
   }
 
-  async listRooms({ status } = {}) {
+  async listRooms({ status, mode } = {}) {
     const records = await this.store.loadRooms();
     const rooms = [];
     for (const record of records) {
       try {
         const room = this.restore(record);
         this.rooms.set(room.id, room);
-        if (!status || room.status === status) rooms.push(room);
+        if ((!status || room.status === status) && (!mode || room.mode === mode)) rooms.push(room);
       } catch (error) {
         console.error(`Failed to restore distributed room ${record?.id ?? "unknown"}:`, error);
       }
