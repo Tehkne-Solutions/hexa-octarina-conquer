@@ -5,6 +5,7 @@ on:
     branches: [main, "feature/single-player-campaign"]
     paths:
       - "server/src/campaign-*.js"
+      - "server/src/identity-*.js"
       - "server/src/game-room.js"
       - "server/src/room-manager.js"
       - "server/src/distributed-room-manager.js"
@@ -57,10 +58,13 @@ jobs:
           node --check src/campaign-runtime.js
           node --check src/campaign-ai.js
           node --check src/server-campaign.js
-      - name: Test campaign engine and HTTP lifecycle
+          node --check src/identity-memory.js
+          node --check src/identity-sqlite.js
+          node --check src/identity-postgres.js
+      - name: Test campaign engine, XP and HTTP lifecycle
         working-directory: server
-        run: node --test test/campaign.test.js test/campaign-store.test.js test/campaign-http.test.js
-      - name: Test PostgreSQL campaign progress
+        run: node --test test/campaign.test.js test/campaign-store.test.js test/campaign-xp.test.js test/campaign-http.test.js
+      - name: Test PostgreSQL campaign progress and XP
         working-directory: server
         run: node --test --test-concurrency=1 test/postgres-campaign.test.js
       - name: Test simultaneous campaign schema initialization
