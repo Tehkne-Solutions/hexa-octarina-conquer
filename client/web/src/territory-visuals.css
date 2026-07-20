@@ -1,0 +1,81 @@
+.rune-wall {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wall-rise 420ms cubic-bezier(.2,.85,.25,1) both;
+}
+
+.rune-wall .wall-color {
+  filter: url(#glow);
+}
+
+.wall-rune,
+.wall-core,
+.structure-core {
+  filter: url(#glow);
+  animation: rune-breathe 1.8s ease-in-out infinite;
+}
+
+.territory-platform {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: territory-foundation 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.territory-structure {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: structure-rise 620ms cubic-bezier(.15,.9,.2,1.15) both;
+  cursor: pointer;
+}
+
+.territory-structure.selected {
+  filter: url(#glow);
+}
+
+.territory-structure:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.structure-hud text {
+  fill: #f5f7ff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .04em;
+}
+
+.province-cell {
+  cursor: pointer;
+}
+
+@keyframes wall-rise {
+  0% { opacity: 0; transform: scaleY(.05) scaleX(.65); }
+  55% { opacity: 1; transform: scaleY(1.18) scaleX(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes territory-foundation {
+  from { opacity: 0; transform: scale(.45) rotate(-4deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes structure-rise {
+  0% { opacity: 0; transform: translateY(28px) scale(.3); }
+  70% { opacity: 1; transform: translateY(-4px) scale(1.06); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes rune-breathe {
+  0%, 100% { opacity: .65; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rune-wall,
+  .territory-platform,
+  .territory-structure,
+  .wall-rune,
+  .wall-core,
+  .structure-core {
+    animation: none;
+  }
+}
