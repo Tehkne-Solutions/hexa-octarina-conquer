@@ -15,6 +15,7 @@ html, body, #root { width: 100%; min-height: 100%; margin: 0; }
 body { overflow-x: hidden; overscroll-behavior: none; background: radial-gradient(circle at 20% 0%, #222d5a 0, transparent 35%), #070914; }
 button, input { font: inherit; }
 button { color: inherit; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: not-allowed; opacity: 0.52; }
 input { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid #343d65; border-radius: 14px; color: #fff; background: #0b1023; outline: none; }
 input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 
@@ -48,7 +49,12 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 .lobby-content { display: grid; grid-template-columns: minmax(300px, 0.85fr) minmax(0, 1.15fr); gap: 22px; max-width: 1200px; margin: 6vh auto 0; }
 .hero-card { padding: clamp(24px, 4vw, 44px); border-radius: 30px; }
 .hero-card h2 { margin: 0 0 24px; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.98; }
-.hero-card .primary-button { width: 100%; margin-top: 18px; }
+.hero-card .primary-button { width: 100%; margin-top: 12px; }
+.campaign-button { width: 100%; min-height: 86px; display: flex; align-items: center; gap: 16px; margin: 18px 0 8px; padding: 16px; text-align: left; border: 1px solid #ffe27b44; border-radius: 20px; background: linear-gradient(135deg, #3b3154, #161d3e); box-shadow: 0 15px 40px #6553c633; }
+.campaign-button > span { display: grid; place-items: center; width: 52px; height: 52px; flex: 0 0 52px; border-radius: 16px; color: #ffe27b; font-size: 2rem; background: #0d122a; }
+.campaign-button > div { display: grid; gap: 4px; }
+.campaign-button strong { font-size: 1.05rem; }
+.campaign-button small { color: #aab5d4; }
 .join-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; }
 .join-row button, .section-heading button { padding: 0 18px; border-radius: 14px; background: #27305a; }
 .rooms-panel { min-width: 0; }
@@ -63,10 +69,63 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 .online-dot, .offline-dot { width: 8px; height: 8px; border-radius: 50%; background: #55e68c; box-shadow: 0 0 12px #55e68c; }
 .offline-dot { background: #ff657c; box-shadow: 0 0 12px #ff657c; }
 
+.campaign-screen { min-height: 100dvh; background: radial-gradient(circle at 80% 0%, #4a295a55, transparent 34%), radial-gradient(circle at 10% 80%, #164c5d55, transparent 35%); }
+.campaign-topbar { max-width: 1500px; margin: auto; }
+.back-button { padding: 0 14px; border-radius: 14px; background: #121a35; }
+.campaign-brand { place-items: center; }
+.campaign-brand strong { letter-spacing: 0.14em; }
+.campaign-total { align-items: end; }
+.campaign-total strong { color: #ffe27b; font-size: 1.2rem; }
+.campaign-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.5fr); gap: 18px; max-width: 1500px; margin: 0 auto; }
+.chapter-map { display: grid; gap: 16px; min-width: 0; }
+.chapter-section { padding: 20px; border-radius: 26px; }
+.chapter-heading { display: flex; justify-content: space-between; gap: 20px; align-items: start; }
+.chapter-heading span, .mission-detail-header > span { color: #79d7ff; font-size: 0.65rem; font-weight: 900; letter-spacing: 0.16em; }
+.chapter-heading h2 { margin: 4px 0; font-size: clamp(1.2rem, 2.4vw, 2rem); }
+.chapter-heading p { max-width: 720px; margin: 0 0 14px; color: #909bbb; font-size: 0.8rem; }
+.chapter-heading > strong { display: grid; place-items: center; min-width: 48px; min-height: 42px; border-radius: 14px; color: #ffe27b; background: #080d20; }
+.mission-path { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; }
+.mission-node { position: relative; display: grid; gap: 7px; min-height: 118px; padding: 14px; text-align: left; border: 1px solid #34416b; border-radius: 18px; background: linear-gradient(145deg, #182342, #0d132a); }
+.mission-node.unlocked::after { content: ""; position: absolute; top: 50%; right: -11px; width: 12px; height: 2px; background: #50628e; }
+.mission-node:last-child::after { display: none; }
+.mission-node.selected { border-color: #ffe27b; box-shadow: 0 0 25px #ffe27b33; transform: translateY(-3px); }
+.mission-node.locked { filter: grayscale(1); }
+.mission-number { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; color: #0b1024; font-weight: 900; background: #77d7ff; }
+.mission-node small { color: #ffe27b; }
+.mission-detail { position: sticky; top: 16px; align-self: start; padding: 24px; border-radius: 28px; }
+.mission-detail-header { display: flex; align-items: center; justify-content: space-between; }
+.difficulty { padding: 7px 10px; border-radius: 999px; font-size: 0.7rem; background: #243052; }
+.difficulty.adept { color: #ffe27b; }
+.difficulty.master { color: #ff8da0; }
+.mission-detail h1 { margin: 18px 0 8px; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 0.92; }
+.mission-briefing { color: #abb5d2; line-height: 1.5; }
+.enemy-card { display: grid; gap: 4px; margin: 18px 0; padding: 14px; border: 1px solid #ff7e9233; border-radius: 16px; background: #2b1725; }
+.enemy-card span, .mission-record span { color: #ff9aaa; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.14em; }
+.enemy-card small { color: #a9afc3; }
+.objective-list { display: grid; gap: 8px; }
+.objective { display: flex; gap: 12px; padding: 12px; border-radius: 14px; background: #0a1024; }
+.objective > span { color: #9ba7cb; }
+.objective.primary > span { color: #ffe27b; }
+.objective div { display: grid; gap: 2px; }
+.objective p { margin: 0; color: #9aa5c6; font-size: 0.76rem; }
+.mission-record { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; margin: 18px 0; }
+.mission-record strong { color: #ffe27b; letter-spacing: 0.08em; }
+.mission-record small { grid-column: 1 / -1; color: #818ba9; }
+.campaign-start { width: 100%; }
+.achievement-strip { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; max-width: 1500px; margin: 18px auto 0; padding: 12px; border-radius: 22px; }
+.achievement-strip > div:first-child { display: grid; place-content: center; padding: 0 10px; }
+.achievement-strip > div:first-child span { color: #7fdcff; font-size: 0.62rem; letter-spacing: 0.13em; }
+.achievement-scroll { display: flex; gap: 10px; overflow-x: auto; }
+.achievement { flex: 0 0 220px; display: flex; align-items: center; gap: 10px; padding: 11px; border-radius: 14px; opacity: 0.42; background: #080d1d; }
+.achievement.earned { opacity: 1; box-shadow: inset 0 0 0 1px #ffe27b44; }
+.achievement > span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; color: #ffe27b; font-size: 1.3rem; background: #19213d; }
+.achievement > div { display: grid; }
+.achievement small { color: #8791ae; font-size: 0.65rem; }
+
 .game-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; height: 100dvh; overflow: hidden; }
 .game-header { min-height: 74px; padding: 10px 16px; border-radius: 22px; }
 .player-summary { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.player-summary strong { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-summary strong { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .player-summary span { padding: 6px 9px; border-radius: 10px; background: #070b19; }
 .rival { justify-content: flex-end; }
 .turn-summary { display: grid; place-items: center; text-align: center; }
@@ -80,6 +139,16 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 .province-label { fill: #fff; font-size: 22px; font-weight: 900; pointer-events: none; }
 .battle-log { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 22px; }
 .battle-log p { flex: 1; color: #aab4d1; font-size: 0.85rem; }
+.campaign-objectives p { flex: 0; max-height: 82px; overflow: hidden; }
+.live-objective { display: flex; gap: 8px; align-items: center; padding: 8px; border-radius: 11px; background: #090f21; }
+.live-objective > span { color: #ffe27b; }
+.live-objective > div { display: grid; }
+.live-objective b { font-size: 0.68rem; }
+.live-objective small { color: #8290b4; }
+.live-objective.done { box-shadow: inset 0 0 0 1px #57e58c55; }
+.live-objective.done > span { color: #57e58c; }
+.live-objective.bonus > span { color: #8fdcff; }
+.mission-limit { color: #ff8ca0; }
 .cancel-button { min-height: 40px; border-radius: 12px; background: #453b20; }
 .danger-link { padding: 10px; color: #ff8194; background: transparent; }
 .hand-tray, .duel-panel { min-width: 0; padding: 10px; border-radius: 22px; }
@@ -100,6 +169,24 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 .duel-heading > div { display: grid; }
 .duel-heading small { color: #ff8998; }
 
+.campaign-result-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 20px; background: #040611dd; backdrop-filter: blur(12px); }
+.campaign-result { width: min(520px, 100%); padding: 34px; text-align: center; border-radius: 32px; }
+.campaign-result.victory { box-shadow: 0 0 80px #ffe27b33; }
+.campaign-result.defeat { box-shadow: 0 0 80px #ff627733; }
+.result-rune { display: grid; place-items: center; width: 76px; height: 76px; margin: auto; border-radius: 24px; color: #ffe27b; font-size: 3.3rem; background: #111a36; }
+.campaign-result h2 { margin: 8px 0; font-size: clamp(2rem, 6vw, 3.5rem); }
+.result-stars { color: #ffe27b; font-size: 2.5rem; letter-spacing: 0.12em; }
+.result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 22px 0; }
+.result-stats span { display: grid; gap: 3px; padding: 12px; border-radius: 14px; color: #8f9aba; font-size: 0.68rem; background: #080e20; }
+.result-stats b { color: #fff; font-size: 1.4rem; }
+.result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.result-actions .ghost-button { border-radius: 16px; background: #151d39; }
+
+@media (max-width: 980px) {
+  .campaign-layout { grid-template-columns: 1fr; }
+  .mission-detail { position: relative; top: 0; }
+}
+
 @media (max-width: 820px) {
   .app { padding: calc(10px + var(--safe-top)) calc(10px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(10px + var(--safe-left)); }
   .auth-screen { grid-template-columns: 1fr; align-content: center; }
@@ -107,13 +194,24 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
   .auth-card { width: min(100%, 460px); margin: auto; }
   .lobby-content { grid-template-columns: 1fr; margin-top: 2vh; }
   .rooms-panel { min-height: 0; }
+  .campaign-screen { overflow-y: auto; }
+  .campaign-topbar { position: sticky; z-index: 10; top: 0; padding: 8px; border-radius: 16px; background: #080c1ddd; backdrop-filter: blur(12px); }
+  .campaign-brand span { display: none; }
+  .mission-path { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+  .mission-node.unlocked::after { display: none; }
+  .achievement-strip { grid-template-columns: 1fr; }
+  .achievement-strip > div:first-child { display: flex; justify-content: space-between; }
   .game-header { min-height: 58px; padding: 7px 10px; }
   .player-summary span:nth-of-type(2), .player-summary.rival span:nth-of-type(1) { display: none; }
   .turn-summary span { display: none; }
   .battlefield { grid-template-columns: 1fr; }
-  .battle-log { position: absolute; right: 8px; bottom: 8px; width: min(240px, 55%); padding: 10px; pointer-events: none; }
-  .battle-log strong, .battle-log button { display: none; }
+  .battle-log { position: absolute; right: 8px; bottom: 8px; width: min(240px, 58%); max-height: 75%; padding: 10px; overflow-y: auto; }
+  .battle-log:not(.campaign-objectives) { pointer-events: none; }
+  .battle-log:not(.campaign-objectives) strong, .battle-log:not(.campaign-objectives) button { display: none; }
   .battle-log p { margin: 0; font-size: 0.7rem; }
+  .campaign-objectives p { display: none; }
+  .live-objective { padding: 6px; }
+  .live-objective b { font-size: 0.6rem; }
   .hand-tray { grid-template-columns: 1fr; padding: 7px; }
   .hand-label { display: none; }
   .card { flex-basis: 126px; min-height: 106px; padding: 9px; }
@@ -122,4 +220,5 @@ input:focus { border-color: #68c7ff; box-shadow: 0 0 0 3px #68c7ff22; }
 
 @media (orientation: portrait) and (max-width: 820px) {
   .game-screen::before { content: "Gire o celular para jogar em tela ampla"; position: fixed; z-index: 50; inset: 0; display: grid; place-items: center; padding: 40px; text-align: center; font-size: 1.4rem; font-weight: 900; background: #070914f5; }
+  .campaign-screen::before { display: none; }
 }
