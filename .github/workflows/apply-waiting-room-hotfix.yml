@@ -1,0 +1,133 @@
+name: Apply Waiting Room Hotfix
+
+on:
+  push:
+    branches: ["hotfix/waiting-room-campaign-entry"]
+    paths:
+      - ".github/workflows/apply-waiting-room-hotfix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: hotfix/waiting-room-campaign-entry
+          fetch-depth: 0
+      - name: Patch stale waiting-room UX
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("client/web/src/App.tsx")
+          text = path.read_text(encoding="utf-8")
+
+          replacements = [
+              (
+                  '  const isMyTurn = snapshot?.board.currentPlayerId === localPlayerId;\n',
+                  '  const isMyTurn = snapshot?.board.currentPlayerId === localPlayerId;\n'
+                  '  const roomReady = snapshot?.status === "active" && (snapshot?.players.length ?? 0) >= 2;\n'
+                  '  const waitingForRival = snapshot?.status === "waiting" || (snapshot?.players.length ?? 0) < 2;\n',
+              ),
+              (
+                  '      if (message.type === "error") {\n'
+                  '        setNotice(`${String(payload.code ?? "ERRO")}: ${String(payload.message ?? "Ação recusada")}`);\n'
+                  '        if (payload.code === "REVISION_CONFLICT" && client.roomSession) client.reconnectRoom();\n'
+                  '      }\n',
+                  '      if (message.type === "error") {\n'
+                  '        if (payload.code === "ROOM_NOT_READY") {\n'
+                  '          setNotice("Esta sala multiplayer ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");\n'
+                  '        } else {\n'
+                  '          setNotice(`${String(payload.code ?? "ERRO")}: ${String(payload.message ?? "Ação recusada")}`);\n'
+                  '        }\n'
+                  '        if (payload.code === "REVISION_CONFLICT" && client.roomSession) client.reconnectRoom();\n'
+                  '      }\n',
+              ),
+              (
+                  '  const playEdge = (start: Point, end: Point) => {\n'
+                  '    try {\n',
+                  '  const playEdge = (start: Point, end: Point) => {\n'
+                  '    if (!roomReady) {\n'
+                  '      setNotice("A sala ainda não possui rival. Volte ao menu ou abra a Campanha Solo.");\n'
+                  '      return;\n'
+                  '    }\n'
+                  '    try {\n',
+              ),
+              (
+                  '  const playMacroCard = (card: CardState) => {\n'
+                  '    try {\n',
+                  '  const playMacroCard = (card: CardState) => {\n'
+                  '    if (!roomReady) {\n'
+                  '      setNotice("As cartas serão liberadas quando a partida começar.");\n'
+                  '      return;\n'
+                  '    }\n'
+                  '    try {\n',
+              ),
+              (
+                  '  const submitDuel = () => {\n',
+                  '  const exitCurrentRoom = () => {\n'
+                  '    if (snapshot?.status === "active" && (snapshot.players.length ?? 0) >= 2) {\n'
+                  '      client.forfeit();\n'
+                  '      return;\n'
+                  '    }\n'
+                  '    void returnToLobby(snapshot?.mode === "campaign" ? "campaign" : "multiplayer");\n'
+                  '  };\n\n'
+                  '  const submitDuel = () => {\n',
+              ),
+              (
+                  '<strong>{snapshot.status === "finished" ? "PARTIDA ENCERRADA" : isMyTurn ? "SEU TURNO" : opponent?.isBot ? "IA PENSANDO" : "TURNO RIVAL"}</strong>',
+                  '<strong>{snapshot.status === "finished" ? "PARTIDA ENCERRADA" : waitingForRival ? "AGUARDANDO RIVAL" : isMyTurn ? "SEU TURNO" : opponent?.isBot ? "IA PENSANDO" : "TURNO RIVAL"}</strong>',
+              ),
+              (
+                  '<span>{opponent?.isBot ? opponent.difficulty : opponent?.connected ? "Online" : "Reconectando"}</span>',
+                  '<span>{waitingForRival ? "Sala incompleta" : opponent?.isBot ? opponent.difficulty : opponent?.connected ? "Online" : "Reconectando"}</span>',
+              ),
+              (
+                  '          disabled={Boolean(activeDuel) || snapshot.status === "finished"}\n',
+                  '          disabled={!roomReady || Boolean(activeDuel) || snapshot.status === "finished"}\n',
+              ),
+              (
+                  '          ) : (\n'
+                  '            <><strong>ORÁCULO</strong><p>{notice}</p></>\n'
+                  '          )}\n',
+                  '          ) : (\n'
+                  '            <>\n'
+                  '              <strong>{waitingForRival ? "SALA MULTIPLAYER" : "ORÁCULO"}</strong>\n'
+                  '              <p>{waitingForRival ? "Esta sala ainda não tem um segundo jogador. Você pode aguardar, voltar ao menu ou iniciar a campanha contra a IA." : notice}</p>\n'
+                  '              {waitingForRival && (\n'
+                  '                <button className="campaign-button compact-campaign-button" onClick={() => void returnToLobby("campaign")}>\n'
+                  '                  <span>⬡</span><div><strong>Jogar Campanha Solo</strong><small>Iniciar missão contra a IA</small></div>\n'
+                  '                </button>\n'
+                  '              )}\n'
+                  '            </>\n'
+                  '          )}\n',
+              ),
+              (
+                  '          <button className="danger-link" onClick={() => client.forfeit()}>{campaign ? "Abandonar missão" : "Abandonar partida"}</button>\n',
+                  '          <button className={waitingForRival ? "ghost-button" : "danger-link"} onClick={exitCurrentRoom}>\n'
+                  '            {waitingForRival ? "Voltar ao menu" : campaign ? "Abandonar missão" : "Abandonar partida"}\n'
+                  '          </button>\n',
+              ),
+              (
+                  '      {!activeDuel && snapshot.status !== "finished" && (\n',
+                  '      {roomReady && !activeDuel && snapshot.status !== "finished" && (\n',
+              ),
+          ]
+
+          for old, new in replacements:
+              if old not in text:
+                  raise SystemExit(f"expected source fragment was not found:\n{old}")
+              text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding="utf-8")
+          PY
+      - name: Commit patched client
+        run: |
+          git config user.name "Tehkné Solutions Bot"
+          git config user.email "tehkne-solutions@users.noreply.github.com"
+          git add client/web/src/App.tsx
+          git commit -m "fix: recover from incomplete multiplayer rooms"
+          git push origin HEAD:hotfix/waiting-room-campaign-entry
