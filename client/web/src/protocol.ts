@@ -65,15 +65,26 @@ export interface CardState {
   icon: string;
 }
 
+export interface DuelCombatantState {
+  hp: number;
+  maxHp: number;
+  energy: number;
+  shield: number;
+  support: number;
+  statuses: Record<string, number>;
+}
+
 export interface DuelState {
   id: string;
   attackerId: string;
   defenderId: string;
   provinceId: string;
+  reason?: string;
   status: string;
-  roundNumber?: number;
-  attacker?: { hp: number; energy: number; shield?: number };
-  defender?: { hp: number; energy: number; shield?: number };
+  round: number;
+  winnerId?: string | null;
+  submittedPlayerIds?: string[];
+  combatants: Record<string, DuelCombatantState>;
 }
 
 export interface CampaignObjective {
