@@ -73,11 +73,12 @@ export class DistributedRoomManager {
   async applyCommand(command) {
     const room = await this.getRoom(command.payload.roomId);
     const expectedRevision = room.revision;
-    const patch = room.applyCommand(command);
+    const humanPatch = room.applyCommand(command);
     const followUpPatches = runCampaignAI(room);
+    const patch = followUpPatches.at(-1) ?? humanPatch;
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
-    return { room, patch, followUpPatches };
+    return { room, patch, humanPatch, followUpPatches };
   }
 
   async disconnect(roomId, playerId) {
