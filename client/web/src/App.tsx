@@ -1,9 +1,13 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { Board } from "./Board";
+import { CampaignScreen } from "./CampaignScreen";
+import { decorateGuestCampaign, recordGuestCampaignResult } from "./campaign-local";
 import { HexaClient } from "./hexa-client";
 import type {
   AccountSession,
+  CampaignCatalog,
+  CampaignResult,
   CardState,
   LobbyRoom,
   Point,
@@ -19,12 +23,14 @@ interface BeforeInstallPromptEvent extends Event {
 
 type ConnectionStatus = "idle" | "connecting" | "open" | "closed" | "error";
 type AuthMode = "login" | "register";
+type LobbyMode = "multiplayer" | "campaign";
 
 function snapshotFromPatch(previous: RoomSnapshot | null, payload: Record<string, unknown>): RoomSnapshot | null {
   const state = payload.state as Partial<RoomSnapshot> | undefined;
   if (!state) return previous;
   return {
     roomId: String(payload.roomId ?? previous?.roomId ?? ""),
+    mode: state.mode ?? previous?.mode ?? "multiplayer",
     revision: Number(payload.revision ?? previous?.revision ?? 0),
     status: (state.status ?? previous?.status ?? "waiting") as RoomSnapshot["status"],
     board: state.board ?? previous?.board ?? {
@@ -38,6 +44,7 @@ function snapshotFromPatch(previous: RoomSnapshot | null, payload: Record<string
     },
     players: state.players ?? previous?.players ?? [],
     duels: state.duels ?? previous?.duels ?? [],
+    campaign: state.campaign ?? previous?.campaign ?? null,
     matchResult: state.matchResult ?? previous?.matchResult ?? null,
   };
 }
@@ -63,16 +70,24 @@ function useInstallPrompt() {
   };
 }
 
+function resultStars(amount: number): string {
+  return [0, 1, 2].map((index) => index < amount ? "★" : "☆").join("");
+}
+
 export function App() {
   const clientRef = useRef<HexaClient | null>(null);
   if (!clientRef.current) clientRef.current = new HexaClient();
   const client = clientRef.current;
+  const recordedCampaignRoom = useRef<string | null>(null);
 
   const [connection, setConnection] = useState<ConnectionStatus>("idle");
   const [account, setAccount] = useState<AccountSession | null>(client.accountSession);
   const [snapshot, setSnapshot] = useState<RoomSnapshot | null>(null);
   const [privateState, setPrivateState] = useState<PrivateState | null>(null);
   const [lobby, setLobby] = useState<LobbyRoom[]>([]);
+  const [campaignCatalog, setCampaignCatalog] = useState<CampaignCatalog | null>(null);
+  const [campaignLoading, setCampaignLoading] = useState(false);
+  const [lobbyMode, setLobbyMode] = useState<LobbyMode>("multiplayer");
   const [notice, setNotice] = useState("Inicializando conexão...");
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [handle, setHandle] = useState("");
@@ -85,6 +100,15 @@ export function App() {
   const [duelCards, setDuelCards] = useState<string[]>([]);
   const [showAuth, setShowAuth] = useState(!client.accountSession);
   const installPrompt = useInstallPrompt();
+
+  const refreshCampaign = async () => {
+    try {
+      const catalog = await client.loadCampaignCatalog();
+      setCampaignCatalog(client.accountSession ? catalog : decorateGuestCampaign(catalog));
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Não foi possível carregar a campanha.");
+    }
+  };
 
   useEffect(() => {
     const onConnection = (event: Event) => {
@@ -102,6 +126,7 @@ export function App() {
       if (message.type === "server.hello") {
         if (client.roomSession) client.reconnectRoom();
         else client.listLobby();
+        void refreshCampaign();
       }
 
       if (message.type === "account.session") {
@@ -113,6 +138,7 @@ export function App() {
       if (message.type === "session.established") {
         setSnapshot(payload.snapshot as RoomSnapshot);
         setPrivateState(payload.privateState as PrivateState);
+        recordedCampaignRoom.current = null;
         setNotice(`Sala ${String(payload.roomId)} conectada.`);
       }
 
@@ -141,7 +167,7 @@ export function App() {
 
       if (message.type === "lobby.rooms" || message.type === "lobby.updated") {
         const rooms = (payload.rooms ?? payload.lobby ?? []) as LobbyRoom[];
-        if (Array.isArray(rooms)) setLobby(rooms);
+        if (Array.isArray(rooms)) setLobby(rooms.filter((room) => room.mode !== "campaign"));
       }
 
       if (message.type === "error") {
@@ -164,6 +190,28 @@ export function App() {
       client.close();
     };
   }, [client]);
+
+  useEffect(() => {
+    if (connection === "open") void refreshCampaign();
+  }, [account]);
+
+  useEffect(() => {
+    const result = snapshot?.campaign?.result;
+    if (!result || !snapshot || recordedCampaignRoom.current === snapshot.roomId) return;
+    recordedCampaignRoom.current = snapshot.roomId;
+    if (account) {
+      client.completeCampaign(snapshot.roomId)
+        .then((recorded) => {
+          setCampaignCatalog(recorded.catalog);
+          if (recorded.unlockedAchievements.length > 0) {
+            setNotice(`Conquista desbloqueada: ${recorded.unlockedAchievements.join(", ")}`);
+          }
+        })
+        .catch((error) => setNotice(error instanceof Error ? error.message : "Falha ao salvar progresso."));
+    } else if (campaignCatalog) {
+      setCampaignCatalog(recordGuestCampaignResult(campaignCatalog, result));
+    }
+  }, [snapshot?.campaign?.result, account, campaignCatalog, client]);
 
   const localPlayerId = client.roomSession?.playerId ?? null;
   const localPlayer = snapshot?.players.find((player) => player.id === localPlayerId) ?? null;
@@ -204,6 +252,34 @@ export function App() {
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Não foi possível entrar na sala.");
     }
+  };
+
+  const startCampaign = async (missionId: string) => {
+    setCampaignLoading(true);
+    try {
+      const result = await client.startCampaign(missionId, account?.account.displayName || guestName.trim() || "Arquiteto");
+      setSnapshot(result.snapshot);
+      setPrivateState(result.privateState);
+      setSelectedProvinceId(null);
+      recordedCampaignRoom.current = null;
+      setNotice(`Missão iniciada: ${result.snapshot.campaign?.mission.title ?? missionId}`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Não foi possível iniciar a missão.");
+    } finally {
+      setCampaignLoading(false);
+    }
+  };
+
+  const returnToLobby = async (mode: LobbyMode) => {
+    client.leaveRoomLocal();
+    setSnapshot(null);
+    setPrivateState(null);
+    setSelectedProvinceId(null);
+    setArmedCard(null);
+    setDuelCards([]);
+    setLobbyMode(mode);
+    await refreshCampaign();
+    if (mode === "multiplayer" && connection === "open") client.listLobby();
   };
 
   const playEdge = (start: Point, end: Point) => {
@@ -285,6 +361,18 @@ export function App() {
     );
   }
 
+  if (!snapshot && lobbyMode === "campaign" && campaignCatalog) {
+    return (
+      <CampaignScreen
+        catalog={campaignCatalog}
+        loading={campaignLoading}
+        playerName={account?.account.displayName ?? guestName}
+        onStart={startCampaign}
+        onBack={() => setLobbyMode("multiplayer")}
+      />
+    );
+  }
+
   if (!snapshot) {
     return (
       <main className="app lobby-screen">
@@ -294,10 +382,13 @@ export function App() {
         </header>
         <section className="lobby-content">
           <div className="hero-card glass">
-            <p className="eyebrow">PARTIDA RÁPIDA</p>
-            <h2>Entre no tabuleiro sem instalar APK.</h2>
+            <p className="eyebrow">ESCOLHA SEU DESTINO</p>
+            <h2>Campanha solo ou batalha multiplayer.</h2>
             {!account && <label>Nome de batalha<input value={guestName} onChange={(event) => setGuestName(event.target.value)} /></label>}
-            <button className="primary-button" onClick={createRoom}>Criar nova sala</button>
+            <button className="campaign-button" onClick={() => setLobbyMode("campaign")}>
+              <span>⬡</span><div><strong>Campanha solo</strong><small>12 missões, IA, estrelas e conquistas</small></div>
+            </button>
+            <button className="primary-button" onClick={createRoom}>Criar sala multiplayer</button>
             <div className="join-row">
               <input placeholder="Código da sala" value={roomCode} onChange={(event) => setRoomCode(event.target.value.toUpperCase())} />
               <button onClick={() => joinRoom(roomCode)}>Entrar</button>
@@ -307,7 +398,7 @@ export function App() {
           <section className="rooms-panel">
             <div className="section-heading"><h3>Salas aguardando</h3><button onClick={() => client.listLobby()}>Atualizar</button></div>
             <div className="room-list">
-              {lobby.length === 0 && <div className="empty-state">Nenhuma sala pública disponível.</div>}
+              {lobby.length === 0 && <div className="empty-state">Nenhuma sala pública disponível. A campanha solo está sempre disponível.</div>}
               {lobby.map((room) => (
                 <button key={room.roomId} className="room-card" onClick={() => joinRoom(room.roomId)}>
                   <span className="room-code">{room.roomId}</span>
@@ -323,6 +414,10 @@ export function App() {
     );
   }
 
+  const campaign = snapshot.campaign;
+  const campaignResult = campaign?.result ?? null;
+  const nextMission = campaignCatalog?.missions.find((mission) => mission.order === (campaign?.mission.order ?? 0) + 1 && mission.unlocked);
+
   return (
     <main className="app game-screen">
       <header className="game-header glass">
@@ -332,14 +427,14 @@ export function App() {
           <span>✦ {privateState?.mana ?? localPlayer?.mana ?? 0}</span>
         </div>
         <div className="turn-summary">
-          <small>SALA {snapshot.roomId}</small>
-          <strong>{isMyTurn ? "SEU TURNO" : "TURNO RIVAL"}</strong>
+          <small>{campaign ? `MISSÃO ${campaign.mission.order}` : `SALA ${snapshot.roomId}`}</small>
+          <strong>{snapshot.status === "finished" ? "PARTIDA ENCERRADA" : isMyTurn ? "SEU TURNO" : opponent?.isBot ? "IA PENSANDO" : "TURNO RIVAL"}</strong>
           <span>Rodada {snapshot.board.turnNumber} · {snapshot.board.actionsRemaining} ação</span>
         </div>
         <div className="player-summary rival">
-          <strong>{opponent?.name ?? "Aguardando rival"}</strong>
+          <strong>{opponent?.name ?? "Aguardando rival"}{opponent?.isBot ? " · IA" : ""}</strong>
           <span>♥ {opponent?.hp ?? 0}</span>
-          <span>{opponent?.connected ? "Online" : "Reconectando"}</span>
+          <span>{opponent?.isBot ? opponent.difficulty : opponent?.connected ? "Online" : "Reconectando"}</span>
         </div>
       </header>
 
@@ -347,20 +442,31 @@ export function App() {
         <Board
           snapshot={snapshot}
           localPlayerId={localPlayerId}
-          disabled={Boolean(activeDuel)}
+          disabled={Boolean(activeDuel) || snapshot.status === "finished"}
           onPlayEdge={playEdge}
           onSelectProvince={setSelectedProvinceId}
           selectedProvinceId={selectedProvinceId}
         />
-        <aside className="battle-log glass">
-          <strong>ORÁCULO</strong>
-          <p>{notice}</p>
+        <aside className={`battle-log glass ${campaign ? "campaign-objectives" : ""}`}>
+          {campaign ? (
+            <>
+              <strong>{campaign.mission.title}</strong>
+              <p>{campaign.mission.briefing}</p>
+              <div className={`live-objective ${campaign.primary.completed ? "done" : ""}`}><span>◆</span><div><b>{campaign.primary.label}</b><small>{campaign.primary.current}/{campaign.primary.target}</small></div></div>
+              {campaign.bonus.map((objective) => (
+                <div key={objective.type} className={`live-objective bonus ${objective.completed ? "done" : ""}`}><span>☆</span><div><b>{objective.label}</b><small>{objective.current}/{objective.target}</small></div></div>
+              ))}
+              <small className="mission-limit">Limite: {campaign.failure.turnLimit} rodadas</small>
+            </>
+          ) : (
+            <><strong>ORÁCULO</strong><p>{notice}</p></>
+          )}
           {armedCard && <button className="cancel-button" onClick={() => setArmedCard(null)}>Cancelar {armedCard.name}</button>}
-          <button className="danger-link" onClick={() => client.forfeit()}>Abandonar partida</button>
+          <button className="danger-link" onClick={() => client.forfeit()}>{campaign ? "Abandonar missão" : "Abandonar partida"}</button>
         </aside>
       </section>
 
-      {activeDuel && (
+      {activeDuel && snapshot.status !== "finished" && (
         <section className="duel-panel glass">
           <div className="duel-heading">
             <div><small>DUELO DE CÉLULA</small><strong>Energia {selectedDuelCost}/{duelEnergy}</strong></div>
@@ -380,7 +486,7 @@ export function App() {
         </section>
       )}
 
-      {!activeDuel && (
+      {!activeDuel && snapshot.status !== "finished" && (
         <section className="hand-tray glass">
           <div className="hand-label"><strong>MÃO</strong><span>{privateState?.hand.length ?? 0} cartas</span></div>
           <div className="hand-scroll">
@@ -392,6 +498,30 @@ export function App() {
                 <em>{card.cost}</em>
               </button>
             ))}
+          </div>
+        </section>
+      )}
+
+      {campaignResult && (
+        <section className="campaign-result-backdrop">
+          <div className={`campaign-result glass ${campaignResult.success ? "victory" : "defeat"}`}>
+            <span className="result-rune">{campaignResult.success ? "⬡" : "◇"}</span>
+            <p className="eyebrow">{campaignResult.success ? "MISSÃO CONCLUÍDA" : "MISSÃO FRACASSADA"}</p>
+            <h2>{campaign?.mission.title}</h2>
+            <div className="result-stars">{resultStars(campaignResult.stars)}</div>
+            <p>{campaignResult.success ? `Recompensa: ${campaignResult.rewardXp} XP` : "Ajuste sua estratégia e tente novamente."}</p>
+            <div className="result-stats">
+              <span><b>{campaignResult.stats.cells ?? 0}</b>Células</span>
+              <span><b>{campaignResult.stats.duelsWon ?? 0}</b>Duelos</span>
+              <span><b>{campaignResult.stats.turns ?? 0}</b>Rodadas</span>
+            </div>
+            <div className="result-actions">
+              <button className="ghost-button" onClick={() => void returnToLobby("campaign")}>Mapa da campanha</button>
+              <button className="primary-button" onClick={() => {
+                const missionId = nextMission?.id ?? campaignResult.missionId;
+                void returnToLobby("campaign").then(() => startCampaign(missionId));
+              }}>{nextMission ? "Próxima missão" : "Jogar novamente"}</button>
+            </div>
           </div>
         </section>
       )}
