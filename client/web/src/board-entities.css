@@ -1,42 +1,58 @@
 .rune-wall {
   isolation: isolate;
+  opacity: 1;
+  visibility: visible;
 }
 
 .wall-build {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: wall-grow 520ms cubic-bezier(.2, .85, .25, 1) forwards;
+  opacity: 1;
+  visibility: visible;
+  animation: wall-grow-safe 420ms cubic-bezier(.2, .85, .25, 1) both;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .wall-rune-channel {
-  animation-delay: 110ms;
+  animation-delay: 80ms;
 }
 
 .wall-stone {
-  opacity: 0;
+  opacity: 1;
+  visibility: visible;
   transform-box: fill-box;
   transform-origin: center;
-  animation: wall-stone-rise 360ms cubic-bezier(.18, .88, .28, 1.2) forwards;
+  animation: wall-stone-rise-safe 320ms cubic-bezier(.18, .88, .28, 1.2) both;
 }
 
 .wall-cap {
+  opacity: 1;
+  visibility: visible;
   transform-box: fill-box;
   transform-origin: center;
-  animation: wall-cap-rise 440ms cubic-bezier(.18, .88, .28, 1.2) both;
+  animation: wall-cap-rise-safe 360ms cubic-bezier(.18, .88, .28, 1.2) both;
 }
 
 .territory-tile {
+  opacity: 1;
+  visibility: visible;
   filter: drop-shadow(0 9px 8px rgb(0 0 0 / 42%));
+  animation: territory-found-safe 360ms ease-out both;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .territory-entity {
+  opacity: 1;
+  visibility: visible;
   transform-box: fill-box;
   transform-origin: center bottom;
-  animation: entity-deploy 520ms cubic-bezier(.18, .88, .28, 1.15) both;
+  animation: entity-deploy-safe 460ms cubic-bezier(.18, .88, .28, 1.15) both;
   filter: drop-shadow(0 7px 5px rgb(0 0 0 / 58%));
 }
 
 .territory-entity .entity-core {
+  opacity: 1;
+  visibility: visible;
   animation: entity-core-pulse 1.8s ease-in-out infinite;
 }
 
@@ -50,6 +66,8 @@
 }
 
 .entity-hp-badge {
+  opacity: 1;
+  visibility: visible;
   filter: drop-shadow(0 4px 4px rgb(0 0 0 / 65%));
 }
 
@@ -63,21 +81,21 @@
   filter: drop-shadow(0 0 6px rgb(255 255 255 / 60%));
 }
 
-@keyframes wall-grow {
+@keyframes wall-grow-safe {
   from {
-    stroke-dashoffset: 1;
-    opacity: 0.12;
+    opacity: .45;
+    transform: scale(.35, .72);
   }
   to {
-    stroke-dashoffset: 0;
     opacity: 1;
+    transform: scale(1);
   }
 }
 
-@keyframes wall-stone-rise {
+@keyframes wall-stone-rise-safe {
   from {
-    opacity: 0;
-    transform: translateY(12px) scale(.55);
+    opacity: .35;
+    transform: translateY(9px) scale(.72);
   }
   to {
     opacity: 1;
@@ -85,21 +103,32 @@
   }
 }
 
-@keyframes wall-cap-rise {
+@keyframes wall-cap-rise-safe {
   from {
-    opacity: 0;
-    scale: .35;
+    opacity: .4;
+    transform: scale(.62);
   }
   to {
     opacity: 1;
-    scale: 1;
+    transform: scale(1);
   }
 }
 
-@keyframes entity-deploy {
+@keyframes territory-found-safe {
   from {
-    opacity: 0;
-    transform: translateY(18px) scale(.55);
+    opacity: .45;
+    transform: scale(.76);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes entity-deploy-safe {
+  from {
+    opacity: .45;
+    transform: translateY(12px) scale(.72);
   }
   70% {
     opacity: 1;
@@ -112,12 +141,8 @@
 }
 
 @keyframes entity-core-pulse {
-  0%, 100% {
-    opacity: .72;
-  }
-  50% {
-    opacity: 1;
-  }
+  0%, 100% { opacity: .76; }
+  50% { opacity: 1; }
 }
 
 @media (max-width: 820px) {
@@ -134,9 +159,12 @@
   .wall-build,
   .wall-stone,
   .wall-cap,
+  .territory-tile,
   .territory-entity,
   .territory-entity .entity-core {
-    animation: none;
-    opacity: 1;
+    animation: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
   }
 }
