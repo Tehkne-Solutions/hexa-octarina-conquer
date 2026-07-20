@@ -9,7 +9,7 @@ import { createRecoveryProvider } from "./recovery-provider.js";
 import { createResilienceStore } from "./resilience-store.js";
 import { createRoomManager } from "./room-manager-factory.js";
 import { createRoomStore } from "./room-store.js";
-import { startServer } from "./server.js";
+import { startServer } from "./server-web.js";
 
 const port = Number.parseInt(process.env.PORT ?? "8080", 10);
 const logger = createLogger();
@@ -39,6 +39,7 @@ const server = startServer({
 
 logger.info("server started", {
   port,
+  webClient: process.env.HEXA_WEB_ROOT ?? null,
   websocket: `ws://0.0.0.0:${port}/ws`,
   spectatorWebsocket: `ws://0.0.0.0:${port}/spectator?roomId=ROOM_ID`,
   adminPanel: `http://0.0.0.0:${port}/admin`,

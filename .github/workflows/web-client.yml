@@ -5,11 +5,27 @@ on:
     branches: [main, "feature/web-pwa-mobile"]
     paths:
       - "client/web/**"
+      - "server/src/web-client.js"
+      - "server/src/server-web.js"
+      - "server/src/index.js"
+      - "server/test/web-client.test.js"
+      - "server/package.json"
+      - "Dockerfile"
+      - "render.yaml"
+      - "scripts/validate-render-blueprint.mjs"
       - ".github/workflows/web-client.yml"
   pull_request:
     branches: [main]
     paths:
       - "client/web/**"
+      - "server/src/web-client.js"
+      - "server/src/server-web.js"
+      - "server/src/index.js"
+      - "server/test/web-client.test.js"
+      - "server/package.json"
+      - "Dockerfile"
+      - "render.yaml"
+      - "scripts/validate-render-blueprint.mjs"
       - ".github/workflows/web-client.yml"
 
 concurrency:
@@ -34,8 +50,6 @@ jobs:
         run: npm test
       - name: Build production PWA
         working-directory: client/web
-        env:
-          VITE_HEXA_WS_URL: wss://example.invalid/ws
         run: |
           set -o pipefail
           npm run build 2>&1 | tee web-build.log
@@ -53,6 +67,28 @@ jobs:
           test -s client/web/dist/manifest.webmanifest
           test -n "$(find client/web/dist -name 'sw.js' -o -name 'service-worker.js' | head -n 1)"
           grep -q 'Hexa Octarina Conquer' client/web/dist/manifest.webmanifest
+      - name: Validate Render Blueprint
+        run: node scripts/validate-render-blueprint.mjs
+      - name: Build single-domain Docker image
+        run: docker build -t hexa-octarina-web-mobile:test .
+      - name: Smoke test bundled PWA and API
+        run: |
+          set -e
+          docker run -d --name hexa-web-smoke -p 18080:8080 hexa-octarina-web-mobile:test
+          cleanup() {
+            docker logs hexa-web-smoke || true
+            docker rm -f hexa-web-smoke || true
+          }
+          trap cleanup EXIT
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:18080/health > /tmp/health.json; then
+              break
+            fi
+            sleep 2
+          done
+          grep -q '"ok":true' /tmp/health.json
+          curl --fail --silent http://127.0.0.1:18080/ | grep -q 'Hexa Octarina Conquer'
+          curl --fail --silent http://127.0.0.1:18080/manifest.webmanifest | grep -q 'Hexa Octarina Conquer'
       - uses: actions/upload-artifact@v4
         with:
           name: hexa-octarina-web-mobile
