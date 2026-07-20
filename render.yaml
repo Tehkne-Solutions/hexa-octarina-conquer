@@ -15,6 +15,8 @@ services:
         value: postgres
       - key: HEXA_COMPETITION_STORE
         value: postgres
+      - key: HEXA_CAMPAIGN_STORE
+        value: postgres
       - key: HEXA_CLUSTER_BUS
         value: postgres
       - key: HEXA_PRESENCE_STORE
@@ -33,6 +35,8 @@ services:
         value: "4"
       - key: HEXA_COMPETITION_PG_POOL_SIZE
         value: "4"
+      - key: HEXA_CAMPAIGN_PG_POOL_SIZE
+        value: "3"
       - key: HEXA_CLUSTER_PG_POOL_SIZE
         value: "2"
       - key: HEXA_PRESENCE_PG_POOL_SIZE
