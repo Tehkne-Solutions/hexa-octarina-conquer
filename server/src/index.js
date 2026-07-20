@@ -1,3 +1,4 @@
+import { createCampaignStore } from "./campaign-store.js";
 import { createClusterBus } from "./cluster-bus.js";
 import { createCompetitionStore } from "./competition-store.js";
 import { createGovernanceStore } from "./governance-store.js";
@@ -9,7 +10,7 @@ import { createRecoveryProvider } from "./recovery-provider.js";
 import { createResilienceStore } from "./resilience-store.js";
 import { createRoomManager } from "./room-manager-factory.js";
 import { createRoomStore } from "./room-store.js";
-import { startServer } from "./server-web.js";
+import { startServer } from "./server-campaign.js";
 
 const port = Number.parseInt(process.env.PORT ?? "8080", 10);
 const logger = createLogger();
@@ -17,6 +18,7 @@ const metrics = new MetricsRegistry();
 const store = await createRoomStore();
 const identity = await createIdentityStore();
 const competition = await createCompetitionStore();
+const campaign = await createCampaignStore();
 const eventBus = await createClusterBus();
 const presence = await createPresenceStore({ instanceId: eventBus.instanceId });
 const governance = await createGovernanceStore({ competition });
@@ -28,6 +30,7 @@ const server = startServer({
   manager,
   identity,
   competition,
+  campaign,
   eventBus,
   presence,
   governance,
@@ -42,12 +45,14 @@ logger.info("server started", {
   webClient: process.env.HEXA_WEB_ROOT ?? null,
   websocket: `ws://0.0.0.0:${port}/ws`,
   spectatorWebsocket: `ws://0.0.0.0:${port}/spectator?roomId=ROOM_ID`,
+  campaignApi: `http://0.0.0.0:${port}/campaign/catalog`,
   adminPanel: `http://0.0.0.0:${port}/admin`,
   instanceId: eventBus.instanceId,
   cachedRooms: manager.rooms.size,
   roomStore: store.kind,
   identityStore: identity.kind,
   competitionStore: competition.kind,
+  campaignStore: campaign.kind,
   governanceStore: governance.kind,
   clusterBus: eventBus.kind,
   presenceStore: presence.kind,
