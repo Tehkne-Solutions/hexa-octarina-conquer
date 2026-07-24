@@ -18,7 +18,6 @@ import {
   nearestSignificantFrame,
   replayEventMeta,
   sanitizePublicSnapshot,
-  type ReplayEvent,
   type ReplayRecord,
   type ReplaySummary,
 } from "./replay-state";
@@ -193,8 +192,10 @@ export function SpectatorReplayScreen({ onClose }: SpectatorReplayScreenProps) {
         return;
       }
       if (message.type === "room.patch" && isReplayPatch(message.payload)) {
-        const entry = eventFromPatch(selectedSummary.roomId, message.payload);
-        setRecord((current) => current ? { ...current, status: message.payload.state?.status ?? current.status, latestRevision: Math.max(current.latestRevision, entry.revision), updatedAt: entry.occurredAt, events: mergeReplayEvents(current.events, [entry]) } : current);
+        const patch = message.payload;
+        const entry = eventFromPatch(selectedSummary.roomId, patch);
+        const patchedStatus = patch.state?.status;
+        setRecord((current) => current ? { ...current, status: patchedStatus ?? current.status, latestRevision: Math.max(current.latestRevision, entry.revision), updatedAt: entry.occurredAt, events: mergeReplayEvents(current.events, [entry]) } : current);
         setLiveSnapshot((current) => current ? applyReplayEvent(current, entry) : current);
         return;
       }
