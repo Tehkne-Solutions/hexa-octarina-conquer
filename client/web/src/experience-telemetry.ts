@@ -55,9 +55,11 @@ function safeToken(value: string | undefined, fallback: string): string {
 
 function currentDevice(): ExperienceEvent["device"] {
   const value = document.documentElement.dataset.widthClass;
-  return value === "mobile" || value === "tablet" || value === "notebook" || value === "desktop"
-    ? value
-    : "unknown";
+  if (value === "mobile" || value === "tablet" || value === "notebook" || value === "desktop") return value;
+  if (window.innerWidth <= 720) return "mobile";
+  if (window.innerWidth <= 1024) return "tablet";
+  if (window.innerWidth <= 1440) return "notebook";
+  return "desktop";
 }
 
 export function telemetryEnabled(storage: Pick<Storage, "getItem"> = window.localStorage): boolean {
@@ -193,8 +195,17 @@ async function readJsonEndpoint(path: string): Promise<unknown> {
   }
 }
 
+async function storageEstimate(): Promise<StorageEstimate> {
+  if (!navigator.storage?.estimate) return {};
+  try {
+    return await navigator.storage.estimate();
+  } catch {
+    return {};
+  }
+}
+
 export async function collectSupportBundle(realmStatus: string): Promise<SupportBundle> {
-  const estimate = navigator.storage?.estimate ? await navigator.storage.estimate().catch(() => ({})) : {};
+  const estimate = await storageEstimate();
   const cacheNames = typeof caches !== "undefined" ? await caches.keys().catch(() => []) : [];
   const [health, serverRelease] = await Promise.all([readJsonEndpoint("/health"), readJsonEndpoint("/release")]);
   return {
