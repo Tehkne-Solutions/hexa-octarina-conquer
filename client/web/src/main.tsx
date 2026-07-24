@@ -29,8 +29,10 @@ import "./sprint-ui-05.css";
 import "./sprint-ui-06-final.css";
 import "./sprint-ui-07.css";
 import "./sprint-ui-08.css";
+import "./sprint-ui-08-qa.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
+const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
 
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
@@ -93,14 +95,27 @@ if (!root) throw new Error("root element was not found");
 const pageUrl = new URL(window.location.href);
 const legacyRequested = pageUrl.searchParams.get("dev-client") === "legacy";
 const legacyAllowed = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LEGACY_CLIENT === "true";
+const requestedQaScene = pageUrl.searchParams.get("screen") ?? "";
+const ui08QaRequested = pageUrl.searchParams.get("qa") === "1" && requestedQaScene.startsWith("ui08-");
+if (ui08QaRequested) {
+  document.documentElement.dataset.visualQa = "true";
+  document.documentElement.dataset.qaStable = pageUrl.searchParams.get("stable") === "1" ? "true" : "false";
+  document.documentElement.dataset.qaScreen = requestedQaScene;
+}
 
 createRoot(root).render(
   <StrictMode>
     <GameErrorBoundary>
-      <RuntimeEnhancements />
-      <Suspense fallback={<BootFallback />}>
-        {legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}
-      </Suspense>
+      {ui08QaRequested ? (
+        <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
+      ) : (
+        <>
+          <RuntimeEnhancements />
+          <Suspense fallback={<BootFallback />}>
+            {legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}
+          </Suspense>
+        </>
+      )}
     </GameErrorBoundary>
   </StrictMode>,
 );
