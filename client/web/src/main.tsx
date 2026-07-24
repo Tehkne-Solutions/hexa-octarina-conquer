@@ -10,6 +10,7 @@ import {
   PWA_CHECK_UPDATE_EVENT,
   emitPwaRuntimePatch,
 } from "./pwa-lifecycle";
+import { RuntimeEnhancements } from "./RuntimeEnhancements";
 import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
@@ -21,6 +22,7 @@ import "./sprint-ui-02.css";
 import "./sprint-ui-03.css";
 import "./sprint-ui-04.css";
 import "./sprint-ui-05.css";
+import "./sprint-ui-06.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 
@@ -76,6 +78,7 @@ const legacyAllowed = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LEGACY_
 createRoot(root).render(
   <StrictMode>
     <GameErrorBoundary>
+      <RuntimeEnhancements />
       <Suspense fallback={<BootFallback />}>
         {legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}
       </Suspense>
