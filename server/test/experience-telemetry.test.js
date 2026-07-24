@@ -58,12 +58,19 @@ test("aggregates low-cardinality experience groups", () => {
   assert.equal(summary.signature, "Tehkné Solutions");
 });
 
-test("release and telemetry endpoints complete the browser-to-metrics flow", async () => {
+test("release, health and telemetry endpoints complete the browser-to-metrics flow", async () => {
   const instance = startServer({ port: 0 });
   try {
     await once(instance.httpServer, "listening");
     const port = instance.httpServer.address().port;
     const baseUrl = `http://127.0.0.1:${port}`;
+
+    const health = await fetch(`${baseUrl}/health`).then((response) => response.json());
+    assert.equal(health.ok, true);
+    assert.equal(health.version, "0.12.0");
+    assert.equal(health.design, "3.0");
+    assert.equal(health.experienceEvents, 0);
+    assert.equal(health.signature, "Tehkné Solutions");
 
     const release = await fetch(`${baseUrl}/release`).then((response) => response.json());
     assert.equal(release.ok, true);
@@ -86,6 +93,9 @@ test("release and telemetry endpoints complete the browser-to-metrics flow", asy
     assert.equal(payload.accepted, 1);
     assert.equal(payload.rejected, 1);
     assert.equal(instance.experienceTelemetry.summary().total, 1);
+
+    const updatedHealth = await fetch(`${baseUrl}/health`).then((response) => response.json());
+    assert.equal(updatedHealth.experienceEvents, 1);
 
     const metrics = await fetch(`${baseUrl}/metrics`).then((response) => response.text());
     assert.match(metrics, /hexa_client_experience_events_total/);
