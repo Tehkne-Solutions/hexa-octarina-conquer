@@ -45,14 +45,30 @@ export function SpectatorReplayPortal() {
   }, []);
 
   useEffect(() => {
-    const onHashChange = () => setOpen(window.location.hash === "#spectator");
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+    const synchronize = () => setOpen(window.location.hash === "#spectator");
+    window.addEventListener("hashchange", synchronize);
+    window.addEventListener("popstate", synchronize);
+    return () => {
+      window.removeEventListener("hashchange", synchronize);
+      window.removeEventListener("popstate", synchronize);
+    };
   }, []);
 
   useEffect(() => {
+    const appRoot = document.getElementById("root");
     document.documentElement.classList.toggle("spectator-overlay-open", open);
-    return () => document.documentElement.classList.remove("spectator-overlay-open");
+    if (appRoot) {
+      appRoot.inert = open;
+      if (open) appRoot.setAttribute("aria-hidden", "true");
+      else appRoot.removeAttribute("aria-hidden");
+    }
+    return () => {
+      document.documentElement.classList.remove("spectator-overlay-open");
+      if (appRoot) {
+        appRoot.inert = false;
+        appRoot.removeAttribute("aria-hidden");
+      }
+    };
   }, [open]);
 
   const openSpectator = () => {
