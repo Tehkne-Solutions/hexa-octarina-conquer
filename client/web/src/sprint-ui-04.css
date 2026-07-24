@@ -1,0 +1,835 @@
+.campaign-journey-screen,
+.campaign-briefing-screen {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  padding: clamp(20px, 3vw, 44px);
+}
+
+.campaign-journey-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.campaign-journey-header h1,
+.campaign-briefing-screen h1,
+.campaign-selected-panel h2 {
+  margin: 5px 0 8px;
+  color: var(--game-parchment);
+  font-family: "Cinzel", Georgia, serif;
+}
+
+.campaign-journey-header h1 {
+  font-size: clamp(30px, 4vw, 54px);
+}
+
+.campaign-journey-header > div:first-child > p:last-child {
+  max-width: 720px;
+  margin: 0;
+  color: var(--game-parchment-muted);
+  line-height: 1.6;
+}
+
+.campaign-back-link {
+  min-height: 40px;
+  margin-bottom: 16px;
+  padding: 0;
+  border: 0;
+  color: var(--game-gold-light);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.campaign-back-link:hover,
+.campaign-back-link:focus-visible {
+  color: #fff1bd;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.campaign-account-summary {
+  min-width: 250px;
+  display: grid;
+  justify-items: end;
+  gap: 7px;
+  padding: 16px 18px;
+  border: 1px solid var(--game-line);
+  border-radius: var(--game-radius-md);
+  background: var(--game-bg-raised);
+  box-shadow: var(--game-shadow-soft);
+}
+
+.campaign-account-summary strong {
+  color: var(--game-parchment);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 18px;
+}
+
+.campaign-account-summary small {
+  color: var(--game-parchment-muted);
+}
+
+.campaign-map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: 22px;
+  align-items: start;
+}
+
+.campaign-chapter-list {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.campaign-chapter {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--game-line);
+  border-radius: var(--game-radius-lg);
+  background:
+    linear-gradient(90deg, rgba(209, 167, 85, 0.04), transparent 38%),
+    var(--game-panel);
+  box-shadow: var(--game-shadow-soft);
+}
+
+.campaign-chapter::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: var(--game-bronze);
+  content: "";
+}
+
+.campaign-chapter.chapter-living-prologue::before {
+  background: var(--game-player);
+}
+
+.campaign-chapter > header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 16px;
+  padding: 20px 22px 12px 25px;
+}
+
+.campaign-chapter > header small {
+  color: var(--game-gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.campaign-chapter > header h2 {
+  margin: 4px 0;
+  color: var(--game-parchment);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: clamp(18px, 2vw, 25px);
+}
+
+.campaign-chapter > header p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--game-parchment-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.campaign-chapter > header > span {
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  color: var(--game-gold-light);
+}
+
+.campaign-chapter > header > span strong {
+  font-size: 20px;
+}
+
+.campaign-mission-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 22px 22px 25px;
+  overscroll-behavior-x: contain;
+  scrollbar-color: var(--game-bronze) transparent;
+}
+
+.campaign-mission-node {
+  position: relative;
+  min-width: 150px;
+  min-height: 132px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: start;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(224, 198, 137, 0.2);
+  border-radius: var(--game-radius-md);
+  color: var(--game-parchment);
+  background: #20231c;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.campaign-mission-node:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: var(--game-bronze);
+  background: #282a21;
+}
+
+.campaign-mission-node.selected {
+  border-color: var(--game-gold);
+  box-shadow: inset 0 0 0 2px rgba(209, 167, 85, 0.16), 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+.campaign-mission-node.completed {
+  border-color: rgba(136, 167, 101, 0.58);
+}
+
+.campaign-mission-node.locked {
+  opacity: 0.42;
+  filter: grayscale(0.72);
+  cursor: not-allowed;
+}
+
+.mission-node-number {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--game-bronze);
+  border-radius: 50%;
+  color: var(--game-gold-light);
+  background: #171a14;
+  font-weight: 800;
+}
+
+.campaign-mission-node.completed .mission-node-number {
+  border-color: var(--game-moss);
+  color: #d8edbe;
+  background: #27351f;
+}
+
+.campaign-mission-node strong {
+  align-self: center;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.campaign-mission-node small {
+  color: var(--game-gold-light);
+  letter-spacing: 0.08em;
+}
+
+.mission-track-line {
+  position: absolute;
+  top: 29px;
+  right: 100%;
+  width: 13px;
+  height: 2px;
+  background: var(--game-bronze);
+}
+
+.campaign-mission-node:first-child .mission-track-line {
+  display: none;
+}
+
+.campaign-selected-panel {
+  position: sticky;
+  top: calc(var(--game-header-height) + 20px);
+  display: grid;
+  gap: 13px;
+  padding: 20px;
+  border: 1px solid rgba(209, 167, 85, 0.36);
+  border-radius: var(--game-radius-lg);
+  background: var(--game-panel);
+  box-shadow: var(--game-shadow);
+}
+
+.selected-mission-art {
+  position: relative;
+  min-height: 170px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(224, 198, 137, 0.2);
+  border-radius: var(--game-radius-md);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(95, 149, 160, 0.32), transparent 22%),
+    linear-gradient(165deg, #354038, #171a15 68%);
+}
+
+.selected-mission-art::after {
+  position: absolute;
+  right: -10%;
+  bottom: -44%;
+  left: -10%;
+  height: 72%;
+  border-radius: 50% 50% 0 0;
+  background: #11140f;
+  content: "";
+  transform: rotate(-4deg);
+}
+
+.selected-mission-art > span {
+  z-index: 2;
+  color: var(--game-gold-light);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 56px;
+  text-shadow: 0 0 18px rgba(209, 167, 85, 0.36);
+}
+
+.selected-mission-art i,
+.selected-mission-art b {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--game-gold);
+  transform: rotate(45deg);
+}
+
+.selected-mission-art i { top: 24%; left: 18%; }
+.selected-mission-art b { top: 18%; right: 20%; }
+
+.campaign-selected-panel h2 {
+  margin: 0;
+  font-size: clamp(22px, 2.5vw, 32px);
+}
+
+.campaign-selected-panel > p:not(.fantasy-eyebrow) {
+  margin: 0;
+  color: var(--game-parchment-muted);
+  font-size: 13px;
+  line-height: 1.58;
+}
+
+.selected-mission-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.selected-mission-meta span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 9px;
+  border: 1px solid rgba(224, 198, 137, 0.14);
+  border-radius: var(--game-radius-sm);
+  background: var(--game-bg-raised);
+}
+
+.selected-mission-meta small {
+  color: var(--game-parchment-muted);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.selected-mission-meta strong {
+  overflow: hidden;
+  color: var(--game-parchment);
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+
+.selected-progress-bar {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #11140f;
+}
+
+.selected-progress-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--game-bronze), var(--game-gold-light));
+}
+
+.locked-requirement {
+  color: var(--game-parchment-muted);
+  text-align: center;
+}
+
+.campaign-empty-state {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  color: var(--game-parchment-muted);
+  text-align: center;
+}
+
+.campaign-briefing-screen {
+  min-height: calc(100dvh - var(--game-header-height));
+  display: grid;
+  grid-template-columns: minmax(380px, 1.08fr) minmax(420px, 0.92fr);
+  align-items: stretch;
+  gap: 0;
+  padding-top: 28px;
+}
+
+.campaign-briefing-screen > .campaign-back-link {
+  position: absolute;
+  z-index: 5;
+  margin: 14px 0 0 16px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: #fff1bd;
+  background: rgba(17, 20, 15, 0.78);
+}
+
+.briefing-illustration {
+  position: relative;
+  min-height: 660px;
+  overflow: hidden;
+  border: 1px solid var(--game-line);
+  border-radius: var(--game-radius-lg) 0 0 var(--game-radius-lg);
+  background:
+    radial-gradient(circle at 72% 16%, rgba(239, 208, 138, 0.75) 0 4%, transparent 5%),
+    linear-gradient(180deg, #313a3c 0 34%, #293429 35% 66%, #171b16 67%);
+  box-shadow: var(--game-shadow);
+}
+
+.briefing-illustration::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 56%, rgba(20, 23, 17, 0.78));
+  content: "";
+}
+
+.briefing-moon {
+  position: absolute;
+  top: 11%;
+  right: 17%;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ead7a1;
+  box-shadow: 0 0 26px rgba(234, 215, 161, 0.28);
+}
+
+.briefing-ridge {
+  position: absolute;
+  right: -12%;
+  bottom: 24%;
+  left: -12%;
+  height: 42%;
+  clip-path: polygon(0 62%, 14% 28%, 27% 56%, 42% 8%, 58% 48%, 72% 18%, 100% 66%, 100% 100%, 0 100%);
+}
+
+.ridge-one { background: #30382f; }
+.ridge-two { bottom: 8%; background: #1e251e; transform: scaleX(1.1) translateX(5%); }
+
+.briefing-path {
+  position: absolute;
+  bottom: -8%;
+  left: 38%;
+  width: 34%;
+  height: 62%;
+  clip-path: polygon(45% 0, 60% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, #846744, #3b2c20);
+  transform: rotate(-8deg);
+}
+
+.briefing-sigil {
+  position: absolute;
+  top: 27%;
+  left: 19%;
+  color: var(--game-gold-light);
+  font-size: 74px;
+  text-shadow: 0 0 22px rgba(209, 167, 85, 0.5);
+}
+
+.briefing-hero {
+  position: absolute;
+  z-index: 2;
+  bottom: 15%;
+  left: 25%;
+  color: #d7e5dd;
+  font-size: 104px;
+  filter: drop-shadow(0 16px 10px rgba(0, 0, 0, 0.6));
+}
+
+.briefing-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: clamp(28px, 4vw, 56px);
+  border: 1px solid var(--game-line);
+  border-left: 0;
+  border-radius: 0 var(--game-radius-lg) var(--game-radius-lg) 0;
+  background: var(--game-panel);
+  box-shadow: var(--game-shadow);
+}
+
+.briefing-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mission-difficulty {
+  padding: 5px 9px;
+  border: 1px solid var(--game-line);
+  border-radius: 999px;
+  color: var(--game-gold-light);
+  background: var(--game-bg-raised);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.difficulty-master { border-color: rgba(194, 91, 69, 0.65); color: #efaa9a; }
+.difficulty-adept { border-color: rgba(209, 167, 85, 0.65); }
+.difficulty-novice { border-color: rgba(88, 105, 67, 0.8); color: #cce3ae; }
+
+.campaign-briefing-screen h1 {
+  font-size: clamp(32px, 4vw, 58px);
+}
+
+.briefing-story {
+  margin: 0;
+  color: var(--game-parchment-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.briefing-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.briefing-facts article {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid rgba(224, 198, 137, 0.14);
+  border-radius: var(--game-radius-sm);
+  background: var(--game-bg-raised);
+}
+
+.briefing-facts small,
+.briefing-objectives small,
+.tutorial-toggle small {
+  color: var(--game-parchment-muted);
+  font-size: 10px;
+}
+
+.briefing-facts strong {
+  color: var(--game-parchment);
+  font-size: 13px;
+}
+
+.briefing-facts span {
+  color: var(--game-gold-light);
+  font-size: 10px;
+}
+
+.briefing-objectives {
+  display: grid;
+  gap: 8px;
+}
+
+.briefing-objectives article {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(224, 198, 137, 0.14);
+  border-radius: var(--game-radius-sm);
+  background: #22251e;
+}
+
+.briefing-objectives article.primary {
+  border-color: rgba(209, 167, 85, 0.48);
+  background: #2b281d;
+}
+
+.briefing-objectives article > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid var(--game-bronze);
+  border-radius: 50%;
+  color: var(--game-gold-light);
+}
+
+.briefing-objectives article div {
+  display: grid;
+  gap: 3px;
+}
+
+.briefing-objectives strong {
+  color: var(--game-parchment);
+  font-size: 12px;
+}
+
+.briefing-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid var(--game-line);
+}
+
+.tutorial-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.tutorial-toggle input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--game-bronze);
+}
+
+.tutorial-toggle span {
+  display: grid;
+  gap: 2px;
+}
+
+.tutorial-toggle strong {
+  color: var(--game-parchment);
+  font-size: 12px;
+}
+
+.briefing-start {
+  min-width: 190px;
+}
+
+.authoritative-campaign-launcher {
+  position: relative;
+  min-height: 100dvh;
+  background: var(--game-bg);
+}
+
+.campaign-floating-back {
+  position: fixed;
+  z-index: 900;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--game-bronze);
+  border-radius: var(--game-radius-sm);
+  color: var(--game-gold-light);
+  background: rgba(24, 27, 20, 0.94);
+  box-shadow: var(--game-shadow-soft);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.authoritative-campaign-launcher .campaign-topbar {
+  padding-left: 170px;
+}
+
+.authoritative-campaign-launcher .campaign-screen {
+  background: var(--game-bg);
+}
+
+.authoritative-campaign-launcher .chapter-section,
+.authoritative-campaign-launcher .mission-detail,
+.authoritative-campaign-launcher .achievement-strip {
+  border-color: var(--game-line);
+  background: var(--game-panel);
+  backdrop-filter: none;
+}
+
+.authoritative-campaign-launcher .mission-node.selected {
+  border-color: var(--game-gold);
+  box-shadow: 0 0 0 2px rgba(209, 167, 85, 0.15);
+}
+
+@media (max-width: 1050px) {
+  .campaign-map-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-selected-panel {
+    position: static;
+    grid-template-columns: minmax(210px, 0.45fr) minmax(0, 1fr);
+  }
+
+  .campaign-selected-panel > :not(.selected-mission-art) {
+    grid-column: 2;
+  }
+
+  .selected-mission-art {
+    grid-row: 1 / span 9;
+  }
+
+  .campaign-briefing-screen {
+    grid-template-columns: minmax(300px, 0.8fr) minmax(400px, 1.2fr);
+  }
+
+  .briefing-facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .campaign-journey-screen,
+  .campaign-briefing-screen {
+    padding: 15px 12px calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .campaign-journey-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .campaign-account-summary {
+    width: 100%;
+    justify-items: start;
+  }
+
+  .campaign-chapter > header {
+    padding: 17px 16px 9px 19px;
+  }
+
+  .campaign-mission-track {
+    padding: 10px 16px 18px 19px;
+  }
+
+  .campaign-mission-node {
+    min-width: 136px;
+    min-height: 122px;
+  }
+
+  .campaign-selected-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-selected-panel > :not(.selected-mission-art) {
+    grid-column: auto;
+  }
+
+  .selected-mission-art {
+    grid-row: auto;
+    min-height: 145px;
+  }
+
+  .selected-mission-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .campaign-briefing-screen {
+    display: block;
+    min-height: auto;
+  }
+
+  .briefing-illustration {
+    min-height: 300px;
+    border-radius: var(--game-radius-lg) var(--game-radius-lg) 0 0;
+  }
+
+  .briefing-illustration::after {
+    background: linear-gradient(180deg, transparent 46%, rgba(20, 23, 17, 0.78));
+  }
+
+  .briefing-content {
+    padding: 22px 17px;
+    border-top: 0;
+    border-left: 1px solid var(--game-line);
+    border-radius: 0 0 var(--game-radius-lg) var(--game-radius-lg);
+  }
+
+  .briefing-topline {
+    align-items: flex-start;
+  }
+
+  .briefing-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .briefing-start {
+    width: 100%;
+  }
+
+  .campaign-floating-back {
+    top: auto;
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: max(10px, env(safe-area-inset-left));
+    width: auto;
+  }
+
+  .authoritative-campaign-launcher .campaign-topbar {
+    padding-left: 16px;
+  }
+}
+
+@media (max-height: 800px) and (min-width: 761px) {
+  .campaign-journey-screen {
+    padding-top: 20px;
+  }
+
+  .campaign-journey-header {
+    margin-bottom: 16px;
+  }
+
+  .campaign-chapter > header {
+    padding-top: 14px;
+  }
+
+  .campaign-mission-node {
+    min-height: 112px;
+  }
+
+  .campaign-selected-panel {
+    gap: 9px;
+    padding: 14px;
+  }
+
+  .selected-mission-art {
+    min-height: 120px;
+  }
+
+  .briefing-illustration {
+    min-height: calc(100dvh - 110px);
+  }
+
+  .briefing-content {
+    gap: 12px;
+    padding: 25px 32px;
+  }
+
+  .campaign-briefing-screen h1 {
+    margin: 0;
+    font-size: 38px;
+  }
+
+  .briefing-story {
+    font-size: 13px;
+  }
+}
+
+.hexa-reduced-motion .campaign-mission-node,
+.hexa-reduced-motion .selected-progress-bar i {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-mission-node,
+  .selected-progress-bar i {
+    transition: none !important;
+  }
+}

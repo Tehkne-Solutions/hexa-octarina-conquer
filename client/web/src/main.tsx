@@ -13,6 +13,7 @@ import "./go-dots-living-board.css";
 import "./unified-game.css";
 import "./sprint-ui-02.css";
 import "./sprint-ui-03.css";
+import "./sprint-ui-04.css";
 
 registerSW({ immediate: true });
 
