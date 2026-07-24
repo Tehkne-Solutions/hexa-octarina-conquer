@@ -9,6 +9,7 @@ import {
   type BattleCoachSnapshot,
   type BattleCoachStepId,
 } from "./battle-coach-state";
+import { BattlePresentationLayer } from "./BattlePresentationLayer";
 import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
 import {
   beginLivingCampaignAttempt,
@@ -192,6 +193,7 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
   return (
     <div className="campaign-experience" ref={rootRef}>
       <GoDotsLivingBoardDemo playerName={playerName} onBack={onBack} />
+      <BattlePresentationLayer rootRef={rootRef} />
 
       <button
         type="button"
