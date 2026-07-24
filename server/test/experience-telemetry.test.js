@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
+import { once } from "node:events";
 import test from "node:test";
 
 import {
   ExperienceTelemetryRegistry,
   sanitizeExperienceEvent,
 } from "../src/experience-telemetry.js";
+import { startServer } from "../src/server.js";
 
 test("sanitizes operational telemetry without accepting personal fields", () => {
   const event = sanitizeExperienceEvent({
@@ -54,4 +56,40 @@ test("aggregates low-cardinality experience groups", () => {
   assert.equal(summary.groups[0].count, 2);
   assert.equal(summary.groups[1].durationMsAverage, 800);
   assert.equal(summary.signature, "Tehkné Solutions");
+});
+
+test("release and telemetry endpoints complete the browser-to-metrics flow", async () => {
+  const instance = startServer({ port: 0 });
+  try {
+    await once(instance.httpServer, "listening");
+    const port = instance.httpServer.address().port;
+    const baseUrl = `http://127.0.0.1:${port}`;
+
+    const release = await fetch(`${baseUrl}/release`).then((response) => response.json());
+    assert.equal(release.ok, true);
+    assert.equal(release.version, "0.12.0");
+    assert.equal(release.design, "3.0");
+    assert.equal(release.signature, "Tehkné Solutions");
+
+    const result = await fetch(`${baseUrl}/experience/events`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        events: [
+          { event: "screen_view", screen: "home", device: "mobile", realm: "online", release: "0.12.0", value: "opened" },
+          { event: "private_message", email: "never@example.com" },
+        ],
+      }),
+    });
+    assert.equal(result.status, 202);
+    const payload = await result.json();
+    assert.equal(payload.accepted, 1);
+    assert.equal(payload.rejected, 1);
+    assert.equal(instance.experienceTelemetry.summary().total, 1);
+
+    const metrics = await fetch(`${baseUrl}/metrics`).then((response) => response.text());
+    assert.match(metrics, /hexa_client_experience_events_total/);
+  } finally {
+    await instance.close();
+  }
 });
