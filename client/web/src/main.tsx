@@ -22,7 +22,7 @@ import "./sprint-ui-02.css";
 import "./sprint-ui-03.css";
 import "./sprint-ui-04.css";
 import "./sprint-ui-05.css";
-import "./sprint-ui-06.css";
+import "./sprint-ui-06-final.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 
