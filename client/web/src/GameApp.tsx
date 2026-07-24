@@ -189,7 +189,7 @@ export function GameApp() {
       window.sessionStorage.removeItem("hexa.unified.screen");
     }
     setMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: "instant" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [screen]);
 
   const navigate = (next: GameScreen) => setScreen(next);
