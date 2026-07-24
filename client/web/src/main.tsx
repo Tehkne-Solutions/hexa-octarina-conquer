@@ -15,6 +15,7 @@ import {
   emitPwaRuntimePatch,
 } from "./pwa-lifecycle";
 import { RuntimeEnhancements } from "./RuntimeEnhancements";
+import { SpectatorReplayPortal } from "./SpectatorReplayPortal";
 import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
@@ -31,6 +32,7 @@ import "./sprint-ui-07.css";
 import "./sprint-ui-08.css";
 import "./sprint-ui-08-qa.css";
 import "./sprint-ui-08-qa-stable.css";
+import "./sprint-ui-09.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
@@ -112,6 +114,7 @@ createRoot(root).render(
       ) : (
         <>
           <RuntimeEnhancements />
+          <SpectatorReplayPortal />
           <Suspense fallback={<BootFallback />}>
             {legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}
           </Suspense>
