@@ -8,6 +8,7 @@ import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
 import "./living-board.css";
+import "./living-board-playtest.css";
 import "./living-board-launcher.css";
 
 registerSW({ immediate: true });
