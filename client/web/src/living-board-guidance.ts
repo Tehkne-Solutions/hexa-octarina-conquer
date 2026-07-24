@@ -28,7 +28,9 @@ function cardScore(card: TcgCard): number {
 }
 
 export function recommendedCombatCards(deck: string[], energy = 3): string[] {
-  const cards = deck.map((id) => TCG_CARDS[id]).filter(Boolean);
+  const cards = deck
+    .map((id) => TCG_CARDS[id])
+    .filter((card): card is TcgCard => Boolean(card));
   let bestIds: string[] = [];
   let bestScore = -1;
 
