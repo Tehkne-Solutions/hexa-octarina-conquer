@@ -6,9 +6,8 @@ import { buildPlayerHand } from "./cards.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 
-function applyLoadout(player, loadout) {
-  player.hand = buildPlayerHand(loadout);
-  return player;
+function preparedHand(loadout) {
+  return buildPlayerHand(loadout);
 }
 
 export class DistributedRoomManager {
@@ -21,17 +20,19 @@ export class DistributedRoomManager {
   }
 
   async createRoom({ playerName, boardSize, accountId = null, roomId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const resolvedRoomId = roomId ?? await this.createRoomId();
     if (await this.store.loadRoom(resolvedRoomId)) throw new ProtocolError("ROOM_EXISTS", "room already exists");
     const room = new GameRoom({ id: resolvedRoomId, boardSize, idFactory: this.idFactory, clock: this.clock });
     const joined = room.addPlayer(playerName, { accountId });
-    applyLoadout(joined.player, loadout);
+    joined.player.hand = hand;
     await this.store.saveRoom(room, { expectedRevision: null });
     this.rooms.set(room.id, room);
     return { room, ...joined, followUpPatches: [] };
   }
 
   async createCampaignRoom({ playerName, accountId = null, missionId, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const mission = getCampaignMission(missionId);
     let roomId;
     for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -46,7 +47,7 @@ export class DistributedRoomManager {
       clock: this.clock,
     });
     const human = room.addPlayer(playerName, { accountId }).player;
-    applyLoadout(human, loadout);
+    human.hand = hand;
     const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
     const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
     await this.store.saveRoom(room, { expectedRevision: null });
@@ -55,10 +56,11 @@ export class DistributedRoomManager {
   }
 
   async joinRoom({ roomId, playerName, accountId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const room = await this.getRoom(roomId);
     const expectedRevision = room.revision;
     const joined = room.addPlayer(playerName, { accountId });
-    applyLoadout(joined.player, loadout);
+    joined.player.hand = hand;
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
     return { room, ...joined, followUpPatches: [] };
