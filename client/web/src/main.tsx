@@ -9,6 +9,8 @@ import {
 import { GameErrorBoundary } from "./GameErrorBoundary";
 import { GameApp } from "./GameApp";
 import { applyStoredInterfacePreferences } from "./interface-preferences";
+import { installLoadoutClientBridge } from "./loadout-client-bridge";
+import { LoadoutManagerPortal } from "./LoadoutManagerPortal";
 import {
   PWA_APPLY_UPDATE_EVENT,
   PWA_CHECK_UPDATE_EVENT,
@@ -34,12 +36,14 @@ import "./sprint-ui-08-qa.css";
 import "./sprint-ui-08-qa-stable.css";
 import "./sprint-ui-09.css";
 import "./sprint-ui-09-compact.css";
+import "./sprint-ui-10.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
 
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
+installLoadoutClientBridge();
 
 let serviceWorkerRegistration: ServiceWorkerRegistration | undefined;
 const updateSW = registerSW({
@@ -116,6 +120,7 @@ createRoot(root).render(
         <>
           <RuntimeEnhancements />
           <SpectatorReplayPortal />
+          <LoadoutManagerPortal />
           <Suspense fallback={<BootFallback />}>
             {legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}
           </Suspense>
