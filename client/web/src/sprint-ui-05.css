@@ -489,7 +489,11 @@
 }
 
 .hexa-reduced-motion .screen-loader > span,
-.hexa-reduced-motion .boot-fallback > span,
+.hexa-reduced-motion .boot-fallback > span {
+  transition: none !important;
+  animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .game-skip-link,
   .screen-loader > span,
