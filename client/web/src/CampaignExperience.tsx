@@ -11,6 +11,8 @@ interface CampaignExperienceProps {
   onBack: () => void;
 }
 
+let lastCampaignMountAt = 0;
+
 function readTurn(root: HTMLElement): number {
   const label = root.querySelector(".phase-banner small")?.textContent ?? "";
   const match = label.match(/\d+/);
@@ -55,7 +57,10 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    beginLivingCampaignAttempt();
+    const now = Date.now();
+    if (now - lastCampaignMountAt > 3_000) beginLivingCampaignAttempt();
+    lastCampaignMountAt = now;
+
     const root = rootRef.current;
     if (!root) return undefined;
 
