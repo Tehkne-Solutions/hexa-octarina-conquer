@@ -33,17 +33,51 @@ export const CARD_CATALOG = Object.freeze({
     id: "heal", name: "Cura Alquímica", kind: "duel", cost: 1, effect: "heal", value: 2,
     description: "Recupera até 2 HP do combatente.", icon: "+",
   }),
+  "kael-golpe-runico": Object.freeze({
+    id: "kael-golpe-runico", name: "Golpe Rúnico", kind: "duel", unitRole: "guardian", cost: 1,
+    effect: "attack", value: 4, element: "physical", description: "Kael rompe a guarda frontal com uma lâmina rúnica.", icon: "⚔",
+  }),
+  "kael-guardiao-celeste": Object.freeze({
+    id: "kael-guardiao-celeste", name: "Guardião Celeste", kind: "duel", unitRole: "guardian", cost: 1,
+    effect: "shield", value: 5, element: "light", description: "Ergue um selo de proteção de alta resistência.", icon: "🛡",
+  }),
+  "kael-contra-selo": Object.freeze({
+    id: "kael-contra-selo", name: "Contra-Selo", kind: "duel", unitRole: "guardian", cost: 2,
+    effect: "attack", value: 4, element: "octarina", description: "Converte a defesa acumulada em um contra-ataque octarino.", icon: "✦",
+  }),
+  "kael-muralha-astral": Object.freeze({
+    id: "kael-muralha-astral", name: "Muralha Astral", kind: "duel", unitRole: "guardian", cost: 2,
+    effect: "shield", value: 8, element: "light", description: "Materializa uma muralha cabalística quase impenetrável.", icon: "⬡",
+  }),
+  "lyra-flecha-eter": Object.freeze({
+    id: "lyra-flecha-eter", name: "Flecha do Éter", kind: "duel", unitRole: "archer", cost: 1,
+    effect: "attack", value: 4, element: "air", description: "Disparo veloz que atravessa a primeira abertura da guarda.", icon: "➶",
+  }),
+  "lyra-passo-lunar": Object.freeze({
+    id: "lyra-passo-lunar", name: "Passo Lunar", kind: "duel", unitRole: "archer", cost: 1,
+    effect: "shield", value: 4, element: "moon", description: "Lyra evita o ataque previsível ao reposicionar-se entre sombras.", icon: "☾",
+  }),
+  "lyra-marca-cacada": Object.freeze({
+    id: "lyra-marca-cacada", name: "Marca da Caçada", kind: "duel", unitRole: "archer", cost: 2,
+    effect: "attack", value: 6, element: "ether", description: "Marca um ponto vital e concentra o disparo seguinte.", icon: "◎",
+  }),
+  "lyra-chuva-prismatica": Object.freeze({
+    id: "lyra-chuva-prismatica", name: "Chuva Prismática", kind: "duel", unitRole: "archer", cost: 3,
+    effect: "attack", value: 8, element: "octarina", description: "Fragmenta uma flecha em múltiplos projéteis elementais.", icon: "✧",
+  }),
 });
 
+export const FIXED_TACTIC_IDS = Object.freeze(["expansion", "fortify", "duel"]);
+export const PLAYER_LOADOUT_CARD_IDS = Object.freeze([
+  "kael-golpe-runico", "kael-guardiao-celeste", "kael-contra-selo", "kael-muralha-astral",
+  "lyra-flecha-eter", "lyra-passo-lunar", "lyra-marca-cacada", "lyra-chuva-prismatica",
+]);
+export const DEFAULT_PLAYER_LOADOUT = Object.freeze([
+  "kael-golpe-runico", "kael-golpe-runico", "kael-guardiao-celeste", "lyra-flecha-eter", "lyra-flecha-eter",
+]);
+
 export const STARTER_HAND = Object.freeze([
-  "expansion",
-  "fortify",
-  "duel",
-  "strike",
-  "shield",
-  "wet",
-  "lightning",
-  "heal",
+  "expansion", "fortify", "duel", "strike", "shield", "wet", "lightning", "heal",
 ]);
 
 export function getCard(cardId) {
@@ -52,12 +86,39 @@ export function getCard(cardId) {
   return card;
 }
 
+export function buildPlayerHand(loadout = undefined) {
+  if (loadout === undefined || loadout === null) return [...STARTER_HAND];
+  if (!Array.isArray(loadout) || loadout.length !== 5) {
+    throw new ProtocolError("INVALID_LOADOUT", "loadout must contain exactly 5 combat cards");
+  }
+  const counts = new Map();
+  let totalCost = 0;
+  let guardians = 0;
+  let archers = 0;
+  for (const rawId of loadout) {
+    const cardId = String(rawId);
+    if (!PLAYER_LOADOUT_CARD_IDS.includes(cardId)) {
+      throw new ProtocolError("INVALID_LOADOUT_CARD", `card is not available for player loadouts: ${cardId}`);
+    }
+    const amount = (counts.get(cardId) ?? 0) + 1;
+    if (amount > 2) throw new ProtocolError("INVALID_LOADOUT_COPIES", `loadout contains too many copies of ${cardId}`);
+    counts.set(cardId, amount);
+    const card = getCard(cardId);
+    totalCost += card.cost;
+    if (card.unitRole === "guardian") guardians += 1;
+    if (card.unitRole === "archer") archers += 1;
+  }
+  if (totalCost > 9) throw new ProtocolError("INVALID_LOADOUT_COST", "loadout energy cost must not exceed 9");
+  if (guardians < 2 || archers < 2) {
+    throw new ProtocolError("INVALID_LOADOUT_ROLES", "loadout requires at least 2 guardian and 2 archer cards");
+  }
+  return [...FIXED_TACTIC_IDS, ...loadout.map(String)];
+}
+
 export function cardSnapshot(cardId) {
   const card = getCard(cardId);
   return {
     ...card,
-    // The rules engine keeps the canonical "conquest" effect; clients use the
-    // product-facing "expansion" action to arm point selection.
     effect: card.id === "expansion" ? "expansion" : card.effect,
   };
 }
