@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it } from "vitest";
 import { INITIAL_LIVING_UNITS } from "./living-board-data";
 import {
   FIXED_TACTIC_IDS,
-  LOADOUT_STORAGE_KEY,
   activeLoadout,
   applyActiveLoadoutToLivingUnits,
   authoritativeHandPreview,
@@ -22,10 +21,20 @@ const VALID_LOADOUT = [
   "lyra-flecha-eter",
 ];
 
+class MemoryStorage implements Storage {
+  private values = new Map<string, string>();
+
+  get length(): number { return this.values.size; }
+  clear(): void { this.values.clear(); }
+  getItem(key: string): string | null { return this.values.get(key) ?? null; }
+  key(index: number): string | null { return [...this.values.keys()][index] ?? null; }
+  removeItem(key: string): void { this.values.delete(key); }
+  setItem(key: string, value: string): void { this.values.set(key, String(value)); }
+}
+
 const originalDecks = new Map(INITIAL_LIVING_UNITS.map((unit) => [unit.id, [...unit.deck]]));
 
 afterEach(() => {
-  window.localStorage.removeItem(LOADOUT_STORAGE_KEY);
   for (const unit of INITIAL_LIVING_UNITS) unit.deck = [...(originalDecks.get(unit.id) ?? [])];
 });
 
@@ -67,21 +76,22 @@ describe("loadout store", () => {
   });
 
   it("persists the active deck and previews fixed authoritative tactics", () => {
-    const initial = readLoadoutCollection();
+    const storage = new MemoryStorage();
+    const initial = readLoadoutCollection(storage);
     const deck = activeLoadout(initial);
     const collection: LoadoutCollection = {
       ...initial,
       decks: [{ ...deck, cardIds: VALID_LOADOUT, name: "Linha Prismática", updatedAt: Date.now() }],
     };
-    saveLoadoutCollection(collection);
-    const restored = readLoadoutCollection();
+    saveLoadoutCollection(collection, storage);
+    const restored = readLoadoutCollection(storage);
     expect(activeLoadout(restored).name).toBe("Linha Prismática");
     expect(activeLoadout(restored).cardIds).toEqual(VALID_LOADOUT);
     expect(authoritativeHandPreview(VALID_LOADOUT)).toEqual([...FIXED_TACTIC_IDS, ...VALID_LOADOUT]);
   });
 
   it("applies the active deck to Kael and Lyra in the living campaign", () => {
-    const initial = readLoadoutCollection();
+    const initial = readLoadoutCollection(null);
     const deck = activeLoadout(initial);
     const collection: LoadoutCollection = {
       ...initial,
