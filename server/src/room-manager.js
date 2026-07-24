@@ -7,9 +7,8 @@ import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 import { MemoryRoomStore } from "./room-store.js";
 
-function applyLoadout(player, loadout) {
-  player.hand = buildPlayerHand(loadout);
-  return player;
+function preparedHand(loadout) {
+  return buildPlayerHand(loadout);
 }
 
 export class RoomManager {
@@ -29,17 +28,19 @@ export class RoomManager {
   }
 
   createRoom({ playerName, boardSize, accountId = null, roomId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const resolvedRoomId = roomId ?? this.createRoomId();
     if (this.rooms.has(resolvedRoomId)) throw new ProtocolError("ROOM_EXISTS", "room already exists");
     const room = new GameRoom({ id: resolvedRoomId, boardSize, idFactory: this.idFactory, clock: this.clock });
-    this.rooms.set(resolvedRoomId, room);
     const joined = room.addPlayer(playerName, { accountId });
-    applyLoadout(joined.player, loadout);
+    joined.player.hand = hand;
+    this.rooms.set(resolvedRoomId, room);
     this.persist(room);
     return { room, ...joined, followUpPatches: [] };
   }
 
   createCampaignRoom({ playerName, accountId = null, missionId, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const mission = getCampaignMission(missionId);
     const roomId = `C${mission.order.toString().padStart(2, "0")}${this.createRoomId().slice(0, 5)}`;
     const room = new GameRoom({
@@ -49,19 +50,20 @@ export class RoomManager {
       idFactory: this.idFactory,
       clock: this.clock,
     });
-    this.rooms.set(roomId, room);
     const human = room.addPlayer(playerName, { accountId }).player;
-    applyLoadout(human, loadout);
+    human.hand = hand;
     const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
     const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
+    this.rooms.set(roomId, room);
     this.persist(room);
     return { room, player: human, patch, followUpPatches: [] };
   }
 
   joinRoom({ roomId, playerName, accountId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const room = this.getRoom(roomId);
     const joined = room.addPlayer(playerName, { accountId });
-    applyLoadout(joined.player, loadout);
+    joined.player.hand = hand;
     this.persist(room);
     return { room, ...joined, followUpPatches: [] };
   }
