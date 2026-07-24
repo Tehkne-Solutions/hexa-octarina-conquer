@@ -1,0 +1,82 @@
+name: Visual QA Matrix
+
+on:
+  pull_request:
+    paths:
+      - "client/web/**"
+      - ".github/workflows/visual-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test and build production PWA
+        run: npm run check
+
+      - name: Install Chromium for visual QA
+        run: npx --yes playwright@1.54.2 install --with-deps chromium
+
+      - name: Start production preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/hexa-visual-qa-preview.log 2>&1 &
+          echo $! > /tmp/hexa-visual-qa-preview.pid
+          npx --yes wait-on@8.0.3 http://127.0.0.1:4173
+
+      - name: Capture responsive reference screens
+        run: |
+          mkdir -p visual-qa
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="1440,900" --wait-for-timeout=4500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=home" visual-qa/home-desktop-1440x900.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="1366,768" --wait-for-timeout=4500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=home" visual-qa/home-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="390,844" --wait-for-timeout=4500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=home" visual-qa/home-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="1366,768" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign" visual-qa/campaign-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="390,844" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign" visual-qa/campaign-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="390,844" --wait-for-timeout=4500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=settings" visual-qa/settings-mobile-390x844.png
+          printf '%s\n' \
+            'Hexa Octarina Conquer — Visual QA Matrix' \
+            'home desktop: 1440x900' \
+            'home notebook: 1366x768' \
+            'home mobile: 390x844' \
+            'campaign notebook: 1366x768' \
+            'campaign mobile: 390x844' \
+            'settings mobile: 390x844' \
+            'Tehkné Solutions' > visual-qa/manifest.txt
+
+      - name: Upload visual QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hexa-octarina-visual-qa
+          path: client/web/visual-qa
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/hexa-visual-qa-preview.pid ]; then
+            kill "$(cat /tmp/hexa-visual-qa-preview.pid)" || true
+          fi
+          cat /tmp/hexa-visual-qa-preview.log || true
