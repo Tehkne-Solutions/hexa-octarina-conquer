@@ -1,9 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { App as MultiplayerApp } from "./App";
-import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
+import { CampaignExperience } from "./CampaignExperience";
+import { decorateGuestCampaign } from "./campaign-local";
+import { CollectionScreen } from "./CollectionScreen";
+import { HexaClient } from "./hexa-client";
+import { ProfileScreen } from "./ProfileScreen";
+import type { AccountSession, CampaignCatalog } from "./protocol";
+import {
+  deriveProfileSummary,
+  readLivingCampaignProgress,
+  subscribeLivingCampaignProgress,
+  type LivingCampaignProgress,
+  type UnifiedProfileSummary,
+} from "./unified-progress";
 
 type GameScreen = "home" | "campaign" | "multiplayer" | "collection" | "profile" | "settings";
+type RealmStatus = "loading" | "online" | "offline";
 
 interface MenuItem {
   id: GameScreen;
@@ -11,7 +24,6 @@ interface MenuItem {
   description: string;
   eyebrow: string;
   icon: string;
-  status?: string;
 }
 
 const MENU_ITEMS: MenuItem[] = [
@@ -32,43 +44,53 @@ const MENU_ITEMS: MenuItem[] = [
   {
     id: "collection",
     title: "Coleção",
-    description: "Consulte unidades, cartas, armas e construções conquistadas.",
-    eyebrow: "Compêndio",
+    description: "Consulte cartas, unidades, relíquias e conquistas desbloqueadas.",
+    eyebrow: "Arquivo funcional",
     icon: "◆",
-    status: "Em evolução",
   },
   {
     id: "profile",
     title: "Perfil",
-    description: "Acompanhe nível, conquistas, missões e histórico de batalha.",
-    eyebrow: "Progressão",
+    description: "Acompanhe nível, XP, campanha, estrelas e rating multiplayer.",
+    eyebrow: "Progressão real",
     icon: "✦",
-    status: "Em evolução",
   },
 ];
-
-const screenTitle: Record<GameScreen, string> = {
-  home: "Salão de Comando",
-  campaign: "A Ponte das Cinzas",
-  multiplayer: "Confronto entre Arquitetos",
-  collection: "Arquivo Octarino",
-  profile: "Crônica do Arquiteto",
-  settings: "Configurações",
-};
 
 function BrandMark() {
   return (
     <div className="game-brand" aria-label="Hexa Octarina Conquer">
       <span className="game-brand-mark" aria-hidden="true">✦</span>
-      <span>
-        <strong>Hexa Octarina</strong>
-        <small>Conquer</small>
-      </span>
+      <span><strong>Hexa Octarina</strong><small>Conquer</small></span>
     </div>
   );
 }
 
-function HomeScreen({ onNavigate }: { onNavigate: (screen: GameScreen) => void }) {
+function campaignStage(progress: LivingCampaignProgress): string {
+  if (progress.status === "victory") return "Missão concluída";
+  if (progress.completedObjectives > 0) return `Objetivo ${Math.min(5, progress.completedObjectives + 1)} de 5`;
+  if (progress.status === "active") return "Prólogo iniciado";
+  if (progress.status === "defeat") return "Nova tentativa disponível";
+  return "Missão inicial";
+}
+
+function HomeScreen({
+  onNavigate,
+  summary,
+  progress,
+  realmStatus,
+}: {
+  onNavigate: (screen: GameScreen) => void;
+  summary: UnifiedProfileSummary;
+  progress: LivingCampaignProgress;
+  realmStatus: RealmStatus;
+}) {
+  const continueLabel = progress.status === "not-started"
+    ? "Iniciar campanha"
+    : progress.status === "victory"
+      ? "Jogar novamente"
+      : "Continuar campanha";
+
   return (
     <main className="unified-home">
       <section className="campaign-hero" aria-labelledby="campaign-title">
@@ -83,93 +105,73 @@ function HomeScreen({ onNavigate }: { onNavigate: (screen: GameScreen) => void }
           <span className="hero-figure hero-lyra">➶</span>
         </div>
         <div className="campaign-hero-copy">
-          <p className="fantasy-eyebrow">Campanha atual</p>
-          <h1 id="campaign-title">A Ponte das Cinzas</h1>
-          <p>
-            O moinho de Orun foi tomado. Reúna os heróis, controle os nós da rede e
-            transforme trilhas em territórios vivos.
-          </p>
-          <div className="hero-progress" aria-label="Progresso da campanha">
-            <span><i style={{ width: "18%" }} /></span>
-            <small>Capítulo I · Missão inicial</small>
+          <div className="hero-copy-topline">
+            <p className="fantasy-eyebrow">Campanha atual</p>
+            <span className={`realm-state state-${realmStatus}`}>
+              <i />{realmStatus === "online" ? "Sincronizada" : realmStatus === "loading" ? "Sincronizando" : "Progresso local"}
+            </span>
           </div>
-          <button className="fantasy-button primary" onClick={() => onNavigate("campaign")}>
-            Continuar campanha
-          </button>
+          <h1 id="campaign-title">A Ponte das Cinzas</h1>
+          <p>O moinho de Orun foi tomado. Reúna os heróis, controle os nós da rede e transforme trilhas em territórios vivos.</p>
+          <div className="hero-progress" aria-label={`Progresso da campanha: ${progress.percent}%`}>
+            <span><i style={{ width: `${progress.percent}%` }} /></span>
+            <small>{campaignStage(progress)} · {progress.percent}%</small>
+          </div>
+          <div className="hero-action-row">
+            <button className="fantasy-button primary" onClick={() => onNavigate("campaign")}>{continueLabel}</button>
+            <button className="fantasy-button compact" onClick={() => onNavigate("profile")}>Ver progresso</button>
+          </div>
         </div>
       </section>
 
       <section className="home-menu-grid" aria-label="Modos de jogo">
         {MENU_ITEMS.map((item) => (
-          <button
-            className={`home-mode-card mode-${item.id}`}
-            key={item.id}
-            onClick={() => onNavigate(item.id)}
-          >
+          <button className={`home-mode-card mode-${item.id}`} key={item.id} onClick={() => onNavigate(item.id)}>
             <span className="mode-card-icon" aria-hidden="true">{item.icon}</span>
-            <span className="mode-card-copy">
-              <small>{item.eyebrow}</small>
-              <strong>{item.title}</strong>
-              <p>{item.description}</p>
-            </span>
-            {item.status ? <em>{item.status}</em> : <span className="mode-card-arrow">→</span>}
+            <span className="mode-card-copy"><small>{item.eyebrow}</small><strong>{item.title}</strong><p>{item.description}</p></span>
+            <span className="mode-card-arrow">→</span>
           </button>
         ))}
       </section>
 
       <aside className="home-chronicle" aria-label="Crônica do jogador">
-        <div>
-          <p className="fantasy-eyebrow">Arquiteto</p>
-          <strong>Nível 4</strong>
-          <span className="profile-xp"><i style={{ width: "63%" }} /></span>
-          <small>630 / 1.000 XP</small>
+        <div className="chronicle-profile">
+          <p className="fantasy-eyebrow">{summary.isAuthenticated ? "Arquiteto conectado" : "Arquiteto visitante"}</p>
+          <strong>{summary.displayName}</strong>
+          <span>Nível {summary.level} · {summary.xp.toLocaleString("pt-BR")} XP</span>
+          <span className="profile-xp"><i style={{ width: `${summary.xpPercent}%` }} /></span>
+          <small>{summary.isAuthenticated ? `Rating ${summary.rating.toLocaleString("pt-BR")}` : "Progresso salvo neste dispositivo"}</small>
         </div>
-        <div className="chronicle-stat"><strong>8</strong><span>Conquistas</span></div>
-        <div className="chronicle-stat"><strong>12</strong><span>Cartas</span></div>
-        <div className="chronicle-stat"><strong>2</strong><span>Heróis</span></div>
+        <button className="chronicle-stat" onClick={() => onNavigate("profile")}><strong>{summary.achievementsUnlocked}</strong><span>Conquistas</span></button>
+        <button className="chronicle-stat" onClick={() => onNavigate("collection")}><strong>{summary.cardsUnlocked}</strong><span>Cartas</span></button>
+        <button className="chronicle-stat" onClick={() => onNavigate("collection")}><strong>{summary.heroesUnlocked}</strong><span>Heróis</span></button>
       </aside>
     </main>
   );
 }
 
-function PlaceholderScreen({
-  screen,
-  onBack,
-}: {
-  screen: "collection" | "profile" | "settings";
-  onBack: () => void;
-}) {
-  const content = {
-    collection: {
-      icon: "◆",
-      title: "Arquivo Octarino",
-      text: "A coleção unificada será conectada às cartas, unidades, armas e construções desbloqueadas na campanha.",
-      columns: ["Unidades", "Cartas TCG", "Armas", "Construções"],
-    },
-    profile: {
-      icon: "✦",
-      title: "Crônica do Arquiteto",
-      text: "O perfil reunirá nível, conquistas, histórico, estrelas da campanha e classificação multiplayer.",
-      columns: ["Nível 4", "8 conquistas", "3 missões", "Rating 1.000"],
-    },
-    settings: {
-      icon: "⚙",
-      title: "Configurações",
-      text: "Controles de áudio, animação, acessibilidade, instalação PWA e qualidade visual ficarão neste salão.",
-      columns: ["Áudio", "Interface", "Acessibilidade", "Conta"],
-    },
-  }[screen];
+function SettingsScreen({ onBack }: { onBack: () => void }) {
+  const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("hexa.settings.reduced-motion") === "true");
+  const [denseInterface, setDenseInterface] = useState(() => localStorage.getItem("hexa.settings.dense-interface") === "true");
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("hexa-reduced-motion", reducedMotion);
+    document.documentElement.classList.toggle("hexa-dense-interface", denseInterface);
+    localStorage.setItem("hexa.settings.reduced-motion", String(reducedMotion));
+    localStorage.setItem("hexa.settings.dense-interface", String(denseInterface));
+  }, [reducedMotion, denseInterface]);
 
   return (
-    <main className="unified-placeholder">
-      <div className="placeholder-seal" aria-hidden="true">{content.icon}</div>
-      <p className="fantasy-eyebrow">Em construção</p>
-      <h1>{content.title}</h1>
-      <p>{content.text}</p>
-      <div className="placeholder-grid">
-        {content.columns.map((column) => <span key={column}>{column}</span>)}
-      </div>
-      <button className="fantasy-button" onClick={onBack}>Voltar ao salão</button>
+    <main className="settings-screen">
+      <header className="screen-heading">
+        <div><p className="fantasy-eyebrow">Preferências locais</p><h1>Configurações</h1></div>
+        <button className="fantasy-button compact" onClick={onBack}>Voltar</button>
+      </header>
+      <section className="settings-panel">
+        <label><span><strong>Reduzir animações</strong><small>Minimiza transições e efeitos de batalha.</small></span><input type="checkbox" checked={reducedMotion} onChange={(event) => setReducedMotion(event.target.checked)} /></label>
+        <label><span><strong>Interface compacta</strong><small>Otimiza o espaço em notebooks com menor altura.</small></span><input type="checkbox" checked={denseInterface} onChange={(event) => setDenseInterface(event.target.checked)} /></label>
+        <article><span>⬡</span><div><strong>PWA e conta</strong><small>A instalação e autenticação continuam disponíveis dentro do multiplayer.</small></div></article>
+      </section>
     </main>
   );
 }
@@ -181,29 +183,56 @@ export function GameApp() {
   }, []);
   const [screen, setScreen] = useState<GameScreen>(initialScreen);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [account, setAccount] = useState<AccountSession | null>(() => new HexaClient().accountSession);
+  const [catalog, setCatalog] = useState<CampaignCatalog | null>(null);
+  const [progress, setProgress] = useState<LivingCampaignProgress>(() => readLivingCampaignProgress());
+  const [realmStatus, setRealmStatus] = useState<RealmStatus>("loading");
+
+  const refreshDashboard = useCallback(async () => {
+    const client = new HexaClient();
+    setAccount(client.accountSession);
+    setRealmStatus("loading");
+    try {
+      const loaded = await client.loadCampaignCatalog();
+      setCatalog(client.accountSession ? loaded : decorateGuestCampaign(loaded));
+      setRealmStatus("online");
+    } catch {
+      setRealmStatus("offline");
+    }
+    setProgress(readLivingCampaignProgress());
+  }, []);
 
   useEffect(() => {
-    if (screen === "campaign" || screen === "multiplayer") {
-      window.sessionStorage.setItem("hexa.unified.screen", screen);
-    } else {
-      window.sessionStorage.removeItem("hexa.unified.screen");
-    }
+    void refreshDashboard();
+    const unsubscribe = subscribeLivingCampaignProgress(setProgress);
+    const refreshOnFocus = () => void refreshDashboard();
+    window.addEventListener("focus", refreshOnFocus);
+    window.addEventListener("storage", refreshOnFocus);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("focus", refreshOnFocus);
+      window.removeEventListener("storage", refreshOnFocus);
+    };
+  }, [refreshDashboard]);
+
+  useEffect(() => {
+    if (screen === "campaign" || screen === "multiplayer") window.sessionStorage.setItem("hexa.unified.screen", screen);
+    else window.sessionStorage.removeItem("hexa.unified.screen");
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [screen]);
 
+  const summary = useMemo(() => deriveProfileSummary(account, catalog, progress), [account, catalog, progress]);
   const navigate = (next: GameScreen) => setScreen(next);
-  const backHome = () => setScreen("home");
+  const backHome = () => { setScreen("home"); void refreshDashboard(); };
   const isScreen = (target: GameScreen) => screen === target;
-  const battleActive = isScreen("campaign");
+  const battleActive = isScreen("campaign") || isScreen("multiplayer");
 
   return (
     <div className={`unified-game-shell screen-${screen} ${battleActive ? "battle-active" : ""}`}>
       {!battleActive ? (
         <header className="unified-header">
-          <button className="brand-button" onClick={backHome} aria-label="Ir para o início">
-            <BrandMark />
-          </button>
+          <button className="brand-button" onClick={backHome} aria-label="Ir para o início"><BrandMark /></button>
           <nav className={menuOpen ? "open" : ""} aria-label="Navegação principal">
             <button className={isScreen("home") ? "active" : ""} onClick={() => navigate("home")}>Início</button>
             <button className={isScreen("campaign") ? "active" : ""} onClick={() => navigate("campaign")}>Campanha</button>
@@ -211,48 +240,34 @@ export function GameApp() {
             <button className={isScreen("collection") ? "active" : ""} onClick={() => navigate("collection")}>Coleção</button>
           </nav>
           <div className="header-actions">
-            <span className="connection-indicator"><i /> Reino online</span>
-            <button className="icon-button" onClick={() => navigate("profile")} aria-label="Abrir perfil">♙</button>
+            <span className={`connection-indicator ${realmStatus}`}><i /> {realmStatus === "online" ? "Reino online" : realmStatus === "loading" ? "Sincronizando" : "Modo local"}</span>
+            <button className="icon-button profile-avatar-button" onClick={() => navigate("profile")} aria-label="Abrir perfil">{summary.displayName.slice(0, 1).toUpperCase()}</button>
             <button className="icon-button" onClick={() => navigate("settings")} aria-label="Abrir configurações">⚙</button>
-            <button
-              className="mobile-menu-button"
-              onClick={() => setMenuOpen((current) => !current)}
-              aria-expanded={menuOpen}
-              aria-label="Abrir menu"
-            >☰</button>
+            <button className="mobile-menu-button" onClick={() => setMenuOpen((current) => !current)} aria-expanded={menuOpen} aria-label="Abrir menu">☰</button>
           </div>
         </header>
       ) : null}
 
       <div className="unified-screen-frame">
-        {isScreen("home") ? <HomeScreen onNavigate={navigate} /> : null}
-        {isScreen("campaign") ? (
-          <GoDotsLivingBoardDemo playerName="Arquiteto" onBack={backHome} />
-        ) : null}
+        {isScreen("home") ? <HomeScreen onNavigate={navigate} summary={summary} progress={progress} realmStatus={realmStatus} /> : null}
+        {isScreen("campaign") ? <CampaignExperience playerName={summary.displayName} onBack={backHome} /> : null}
         {isScreen("multiplayer") ? (
           <section className="embedded-multiplayer">
-            <div className="screen-heading">
-              <div>
-                <p className="fantasy-eyebrow">Duelo online</p>
-                <h1>{screenTitle.multiplayer}</h1>
-              </div>
-              <button className="fantasy-button compact" onClick={backHome}>Voltar</button>
+            <div className="screen-heading multiplayer-shell-heading">
+              <div><p className="fantasy-eyebrow">Duelo online</p><h1>Confronto entre Arquitetos</h1><p>O multiplayer agora utiliza a mesma linguagem visual, densidade e shell responsivo da campanha.</p></div>
+              <button className="fantasy-button compact" onClick={backHome}>Voltar ao salão</button>
             </div>
             <MultiplayerApp />
           </section>
         ) : null}
-        {isScreen("collection") || isScreen("profile") || isScreen("settings") ? (
-          <PlaceholderScreen screen={screen as "collection" | "profile" | "settings"} onBack={backHome} />
+        {isScreen("collection") ? <CollectionScreen catalog={catalog} progress={progress} onBack={backHome} /> : null}
+        {isScreen("profile") ? (
+          <ProfileScreen account={account} catalog={catalog} progress={progress} onBack={backHome} onOpenCollection={() => navigate("collection")} onOpenCampaign={() => navigate("campaign")} />
         ) : null}
+        {isScreen("settings") ? <SettingsScreen onBack={backHome} /> : null}
       </div>
 
-      {!battleActive ? (
-        <footer className="unified-footer">
-          <span>Hexa Octarina Conquer</span>
-          <small>Tehkné Solutions</small>
-        </footer>
-      ) : null}
-
+      {!battleActive ? <footer className="unified-footer"><span>Hexa Octarina Conquer</span><small>Tehkné Solutions</small></footer> : null}
       {!battleActive ? (
         <nav className="mobile-bottom-nav" aria-label="Navegação mobile">
           <button className={isScreen("home") ? "active" : ""} onClick={() => navigate("home")}><span>⌂</span>Início</button>

@@ -11,6 +11,7 @@ import "./living-board.css";
 import "./living-board-playtest.css";
 import "./go-dots-living-board.css";
 import "./unified-game.css";
+import "./sprint-ui-02.css";
 
 registerSW({ immediate: true });
 
