@@ -3,13 +3,14 @@ import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
 import { App } from "./App";
-import { LivingBoardDemo } from "./LivingBoardDemo";
+import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
 import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
 import "./living-board.css";
 import "./living-board-playtest.css";
 import "./living-board-launcher.css";
+import "./go-dots-living-board.css";
 
 registerSW({ immediate: true });
 
@@ -34,13 +35,13 @@ function leaveLivingBoard() {
 createRoot(root).render(
   <StrictMode>
     {livingBoardActive ? (
-      <LivingBoardDemo playerName="Arquiteto" onBack={leaveLivingBoard} />
+      <GoDotsLivingBoardDemo playerName="Arquiteto" onBack={leaveLivingBoard} />
     ) : (
       <>
         <App />
         <button className="living-board-launcher" onClick={navigateToLivingBoard}>
           <span>✦</span>
-          <div><strong>Testar GDD 2.0</strong><small>A Ponte das Cinzas</small></div>
+          <div><strong>Testar GDD 2.1</strong><small>Go + Dots + RPG vivo</small></div>
         </button>
       </>
     )}
