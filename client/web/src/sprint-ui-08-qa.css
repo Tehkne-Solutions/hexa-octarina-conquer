@@ -1,0 +1,264 @@
+.ui08-qa-scene {
+  min-height: 100dvh;
+  padding: clamp(20px, 4vw, 54px);
+  display: grid;
+  align-content: start;
+  gap: 24px;
+  color: #f2ecda;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(93 204 194 / 13%), transparent 38%),
+    linear-gradient(155deg, #242a22, #111410 72%);
+}
+
+.ui08-qa-header {
+  width: min(1220px, 100%);
+  margin-inline: auto;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ui08-qa-header small,
+.ui08-qa-unit-grid small,
+.ui08-qa-building-grid small {
+  color: #d9b970;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+}
+
+.ui08-qa-header h1 {
+  margin: 5px 0;
+  font-size: clamp(34px, 5vw, 62px);
+  line-height: 1;
+}
+
+.ui08-qa-header p,
+.ui08-qa-header > span {
+  margin: 0;
+  color: #a9aaa0;
+  font-size: 13px;
+}
+
+.ui08-qa-unit-grid,
+.ui08-qa-building-grid {
+  width: min(1220px, 100%);
+  margin-inline: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.ui08-qa-unit-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.ui08-qa-building-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ui08-qa-unit-grid article,
+.ui08-qa-building-grid article {
+  min-width: 0;
+  min-height: 240px;
+  padding: 18px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid rgb(221 185 103 / 18%);
+  border-radius: 16px;
+  background: rgb(8 12 9 / 42%);
+  box-shadow: 0 18px 35px rgb(0 0 0 / 28%);
+  text-align: center;
+}
+
+.ui08-qa-unit-grid .fantasy-unit-sprite {
+  width: 124px;
+  height: 158px;
+}
+
+.ui08-qa-building-grid article {
+  min-height: 220px;
+}
+
+.ui08-qa-unit-grid strong,
+.ui08-qa-building-grid strong {
+  font-size: 14px;
+}
+
+.ui08-qa-combat-stage {
+  position: relative;
+  width: min(1080px, 100%);
+  min-height: 650px;
+  margin: auto;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgb(221 185 103 / 28%);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 40%, rgb(89 181 177 / 16%), transparent 34%),
+    linear-gradient(145deg, rgb(34 38 31 / 98%), rgb(13 16 13 / 99%));
+  box-shadow: 0 28px 70px rgb(0 0 0 / 52%);
+}
+
+.ui08-qa-combat-stage > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ui08-qa-combat-stage > header small {
+  color: #d9b970;
+  font-size: 10px;
+  letter-spacing: .15em;
+}
+
+.ui08-qa-combat-stage > header h2 {
+  margin: 5px 0 0;
+  font-size: clamp(28px, 4vw, 46px);
+}
+
+.ui08-qa-combat-stage .fighters {
+  margin-top: 36px;
+}
+
+.ui08-qa-combat-stage .fighter .fantasy-unit-sprite {
+  width: 170px;
+  height: 214px;
+}
+
+.ui08-qa-combat-stage .enemy-intent {
+  width: min(430px, 100%);
+  margin: 18px auto;
+}
+
+.ui08-qa-combat-stage .battle-resolution-panel {
+  position: relative;
+  z-index: 5;
+  width: min(620px, 100%);
+  margin: 18px auto 0;
+}
+
+.qa-impact-static,
+.qa-impact-static * {
+  animation-play-state: paused !important;
+}
+
+.qa-impact-static .impact-flash {
+  opacity: .68;
+  transform: scale(1.15);
+}
+
+.qa-impact-static .impact-slash {
+  opacity: .88;
+  scale: 1 1;
+}
+
+.qa-impact-static .impact-number {
+  opacity: 1;
+  transform: translateY(-12px) scale(1);
+}
+
+.qa-feedback-static {
+  top: 88px;
+}
+
+.outcome-qa-scene {
+  place-items: center;
+}
+
+.outcome-qa-scene .post-battle-cinematic {
+  min-height: min(760px, calc(100dvh - 40px));
+}
+
+.ui08-qa-bow {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  color: #89efff;
+  font-size: 42px;
+  text-shadow: 0 0 18px rgb(116 229 255 / 72%);
+}
+
+html[data-qa-stable="true"] .ui08-qa-scene *,
+html[data-qa-stable="true"] .ui08-qa-scene *::before,
+html[data-qa-stable="true"] .ui08-qa-scene *::after {
+  animation-play-state: paused !important;
+}
+
+@media (max-width: 900px) {
+  .ui08-qa-unit-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .ui08-qa-scene {
+    padding: 14px 10px 90px;
+    gap: 15px;
+  }
+
+  .ui08-qa-header {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ui08-qa-header h1 {
+    font-size: 36px;
+  }
+
+  .ui08-qa-unit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .ui08-qa-unit-grid article,
+  .ui08-qa-building-grid article {
+    min-height: 200px;
+    padding: 10px 6px;
+  }
+
+  .ui08-qa-unit-grid .fantasy-unit-sprite {
+    width: 100px;
+    height: 130px;
+  }
+
+  .ui08-qa-building-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ui08-qa-building-grid article {
+    min-height: 180px;
+  }
+
+  .ui08-qa-combat-stage {
+    min-height: 710px;
+    padding: 16px 10px;
+    border-radius: 16px;
+  }
+
+  .ui08-qa-combat-stage > header {
+    padding-right: 0;
+    align-items: start;
+  }
+
+  .ui08-qa-combat-stage .fighters {
+    margin-top: 74px;
+  }
+
+  .ui08-qa-combat-stage .fighter .fantasy-unit-sprite {
+    width: 116px;
+    height: 154px;
+  }
+
+  .ui08-qa-combat-stage .combat-impact-layer {
+    inset: 100px 0 0;
+  }
+
+  .qa-feedback-static {
+    top: 72px;
+  }
+}

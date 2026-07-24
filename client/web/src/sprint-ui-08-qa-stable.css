@@ -1,0 +1,37 @@
+html[data-qa-stable="true"] .ui08-qa-scene *,
+html[data-qa-stable="true"] .ui08-qa-scene *::before,
+html[data-qa-stable="true"] .ui08-qa-scene *::after {
+  animation: none !important;
+}
+
+html[data-qa-stable="true"] .ui08-qa-scene .fantasy-building-sprite.state-built,
+html[data-qa-stable="true"] .ui08-qa-scene .fantasy-building-sprite.state-preview {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+html[data-qa-stable="true"] .ui08-qa-scene .fantasy-building-sprite svg,
+html[data-qa-stable="true"] .ui08-qa-scene .building-core,
+html[data-qa-stable="true"] .ui08-qa-scene .building-crystal,
+html[data-qa-stable="true"] .ui08-qa-scene .building-rune-line {
+  opacity: 1 !important;
+}
+
+html[data-qa-stable="true"] .qa-impact-static {
+  display: block !important;
+}
+
+html[data-qa-stable="true"] .qa-impact-static .impact-flash {
+  opacity: .72 !important;
+  transform: scale(1.15) !important;
+}
+
+html[data-qa-stable="true"] .qa-impact-static .impact-slash {
+  opacity: .9 !important;
+  scale: 1 1 !important;
+}
+
+html[data-qa-stable="true"] .qa-impact-static .impact-number {
+  opacity: 1 !important;
+  transform: translateY(-12px) scale(1) !important;
+}
