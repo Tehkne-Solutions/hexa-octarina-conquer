@@ -1,11 +1,42 @@
 import { HexaClient } from "./hexa-client";
-import { activeLoadoutCardIds } from "./loadout-store";
+import {
+  activeLoadout,
+  activeLoadoutCardIds,
+  readLoadoutCollection,
+  updateLoadoutCards,
+} from "./loadout-store";
 
-const INSTALL_KEY = Symbol.for("hexa.loadout-client-bridge");
+const LEGACY_STARTER = [
+  "kael-golpe-runico",
+  "kael-guardiao-celeste",
+  "lyra-flecha-eter",
+  "lyra-passo-lunar",
+  "lyra-marca-cacada",
+];
+
+const VALID_STARTER = [
+  "kael-golpe-runico",
+  "kael-golpe-runico",
+  "kael-guardiao-celeste",
+  "lyra-flecha-eter",
+  "lyra-flecha-eter",
+];
 
 type LoadoutClientPrototype = HexaClient & {
-  [INSTALL_KEY]?: boolean;
+  __hexaLoadoutBridgeInstalled?: boolean;
 };
+
+function sameCardSequence(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((cardId, index) => cardId === right[index]);
+}
+
+function migrateStarterLoadout(): void {
+  const collection = readLoadoutCollection();
+  const deck = activeLoadout(collection);
+  if (deck.id === "orun-balanced" && sameCardSequence(deck.cardIds, LEGACY_STARTER)) {
+    updateLoadoutCards(deck.id, VALID_STARTER);
+  }
+}
 
 function injectCampaignLoadout(): void {
   const marker = window as typeof window & { __hexaLoadoutFetchInstalled?: boolean };
@@ -34,9 +65,10 @@ function injectCampaignLoadout(): void {
 }
 
 export function installLoadoutClientBridge(): void {
+  migrateStarterLoadout();
   const prototype = HexaClient.prototype as LoadoutClientPrototype;
-  if (prototype[INSTALL_KEY]) return;
-  prototype[INSTALL_KEY] = true;
+  if (prototype.__hexaLoadoutBridgeInstalled) return;
+  prototype.__hexaLoadoutBridgeInstalled = true;
 
   prototype.createRoom = function createRoomWithLoadout(playerName: string, boardSize = 5): void {
     const account = this.accountSession;
