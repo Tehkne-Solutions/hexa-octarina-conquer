@@ -34,13 +34,47 @@ export function startServer({
   ...options
 } = {}) {
   const instance = startSprint11Server(options);
-  const { httpServer, metrics, logger } = instance;
+  const {
+    httpServer,
+    metrics,
+    logger,
+    manager,
+    identity,
+    competition,
+    governance,
+    eventBus,
+    presence,
+    resilience,
+    spectatorServer,
+  } = instance;
   const baseRequestHandlers = httpServer.listeners("request");
   httpServer.removeAllListeners("request");
 
   httpServer.on("request", async (request, response) => {
     const url = new URL(request.url ?? "/", "http://127.0.0.1");
     try {
+      if (url.pathname === "/health" && request.method === "GET") {
+        json(response, 200, {
+          ok: true,
+          version: RELEASE_VERSION,
+          releaseSha: RELEASE_SHA,
+          design: "3.0",
+          instanceId: eventBus.instanceId,
+          roomStore: manager.store?.kind ?? "memory",
+          identityStore: identity.kind ?? "memory",
+          competitionStore: competition.kind ?? "memory",
+          governanceStore: governance.kind ?? "memory",
+          clusterBus: eventBus.kind ?? "memory",
+          presenceStore: presence.kind ?? "memory",
+          resilienceStore: resilience.kind,
+          spectators: spectatorServer?.clients?.size ?? 0,
+          experienceEvents: experienceTelemetry.total,
+          ...(await presence.summary()),
+          signature: "Tehkné Solutions",
+        });
+        return;
+      }
+
       if (url.pathname === "/release" && request.method === "GET") {
         json(response, 200, {
           ok: true,
