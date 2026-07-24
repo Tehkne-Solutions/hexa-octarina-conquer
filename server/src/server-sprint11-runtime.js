@@ -8,7 +8,7 @@ import { MemoryPresenceStore } from "./presence-store.js";
 import { createRecoveryProvider } from "./recovery-provider.js";
 import { MemoryResilienceStore } from "./resilience-store.js";
 import { RoomManager } from "./room-manager.js";
-import { startServer as startSprint11Server } from "./server-sprint11.js";
+import { startServer as startSprint12Server } from "./server-sprint12.js";
 
 export function startServer(options = {}) {
   const eventBus = options.eventBus ?? new MemoryClusterBus();
@@ -24,7 +24,7 @@ export function startServer(options = {}) {
   const closeResilience = resilience.close?.bind(resilience) ?? (async () => {});
   resilience.close = async () => {};
 
-  const instance = startSprint11Server({
+  const instance = startSprint12Server({
     ...options,
     manager,
     identity,

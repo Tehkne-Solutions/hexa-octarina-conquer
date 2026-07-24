@@ -1,0 +1,89 @@
+name: Post Deploy Smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "URL pública do Hexa Octarina Conquer"
+        required: false
+        type: string
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: post-deploy-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  production-smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.HOC_PRODUCTION_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TARGET_URL: ${{ inputs.target_url || vars.HOC_PRODUCTION_URL }}
+
+    steps:
+      - name: Resolve target
+        run: |
+          test -n "$TARGET_URL" || { echo "Defina target_url ou a variável HOC_PRODUCTION_URL"; exit 1; }
+          echo "Validando ${TARGET_URL%/}"
+
+      - name: Wait for deployment health
+        run: |
+          target="${TARGET_URL%/}"
+          for attempt in $(seq 1 24); do
+            if curl --fail --silent --show-error --max-time 10 "$target/health" > /tmp/hexa-health.json; then
+              exit 0
+            fi
+            echo "Health ainda indisponível na tentativa $attempt"
+            sleep 15
+          done
+          exit 1
+
+      - name: Validate public release contract
+        run: |
+          target="${TARGET_URL%/}"
+          curl --fail --silent --show-error "$target/release" > /tmp/hexa-release.json
+          curl --fail --silent --show-error "$target/campaign/catalog" > /tmp/hexa-campaign.json
+          curl --fail --silent --show-error "$target/" > /tmp/hexa-index.html
+          node <<'NODE'
+          const fs = require('node:fs');
+          const health = JSON.parse(fs.readFileSync('/tmp/hexa-health.json', 'utf8'));
+          const release = JSON.parse(fs.readFileSync('/tmp/hexa-release.json', 'utf8'));
+          const campaign = JSON.parse(fs.readFileSync('/tmp/hexa-campaign.json', 'utf8'));
+          const html = fs.readFileSync('/tmp/hexa-index.html', 'utf8');
+          if (!health.ok || health.signature !== 'Tehkné Solutions') throw new Error('health contract invalid');
+          if (!release.ok || release.version !== '0.12.0' || release.design !== '3.0') throw new Error('release contract invalid');
+          if (release.signature !== 'Tehkné Solutions') throw new Error('release signature invalid');
+          if (!campaign || typeof campaign !== 'object') throw new Error('campaign catalog invalid');
+          if (!html.includes('Hexa Octarina')) throw new Error('PWA shell not found');
+          console.log(JSON.stringify({ health, release, campaignLoaded: true, shellLoaded: true }, null, 2));
+          NODE
+
+      - name: Validate anonymous telemetry ingestion
+        run: |
+          target="${TARGET_URL%/}"
+          status=$(curl --silent --output /tmp/hexa-telemetry.json --write-out "%{http_code}" \
+            -X POST "$target/experience/events" \
+            -H "content-type: application/json" \
+            --data '{"events":[{"event":"performance","screen":"home","device":"desktop","realm":"online","release":"0.12.0","value":"post-deploy-smoke","durationMs":1}]}')
+          test "$status" = "202"
+          node -e "const p=require('/tmp/hexa-telemetry.json');if(p.accepted!==1)process.exit(1);console.log(p)"
+
+      - name: Publish verification summary
+        run: |
+          {
+            echo '## Hexa Octarina Conquer — Pós-deploy'
+            echo
+            echo "- URL: ${TARGET_URL%/}"
+            echo '- Health: aprovado'
+            echo '- Release 0.12.0 / Design 3.0: aprovada'
+            echo '- PWA shell: aprovado'
+            echo '- Catálogo de campanha: aprovado'
+            echo '- Telemetria anônima: aprovada'
+            echo
+            echo '**Tehkné Solutions**'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,5 +1,10 @@
 FROM node:24-bookworm-slim AS web-build
 
+ARG HEXA_RELEASE_VERSION=0.12.0
+ARG HEXA_RELEASE_SHA=unknown
+ENV VITE_RELEASE_VERSION=${HEXA_RELEASE_VERSION} \
+    VITE_RELEASE_SHA=${HEXA_RELEASE_SHA}
+
 WORKDIR /web
 COPY client/web/package*.json ./
 RUN npm install --no-audit --no-fund
@@ -7,6 +12,9 @@ COPY client/web/ ./
 RUN npm run build
 
 FROM node:24-bookworm-slim
+
+ARG HEXA_RELEASE_VERSION=0.12.0
+ARG HEXA_RELEASE_SHA=unknown
 
 WORKDIR /app
 
@@ -18,6 +26,8 @@ COPY --from=web-build /web/dist ./web
 
 ENV NODE_ENV=production \
     PORT=8080 \
+    HEXA_RELEASE_VERSION=${HEXA_RELEASE_VERSION} \
+    HEXA_RELEASE_SHA=${HEXA_RELEASE_SHA} \
     HEXA_WEB_ROOT=/app/web \
     HEXA_STORE=sqlite \
     HEXA_DB_PATH=/data/hexa-octarina.sqlite \

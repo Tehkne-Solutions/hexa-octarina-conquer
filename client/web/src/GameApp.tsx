@@ -6,6 +6,12 @@ import {
   saveCampaignCatalogSnapshot,
 } from "./campaign-cache";
 import { decorateGuestCampaign } from "./campaign-local";
+import { DiagnosticsPanel } from "./DiagnosticsPanel";
+import {
+  CLIENT_RELEASE_VERSION,
+  trackExperience,
+  type ExperienceScreen,
+} from "./experience-telemetry";
 import { HexaClient } from "./hexa-client";
 import {
   applyInterfacePreferences,
@@ -87,6 +93,15 @@ function campaignStage(progress: LivingCampaignProgress): string {
   if (progress.status === "active") return "Prólogo iniciado";
   if (progress.status === "defeat") return "Nova tentativa disponível";
   return "Missão inicial";
+}
+
+function experienceScreen(screen: GameScreen, campaignView: CampaignView): ExperienceScreen {
+  if (screen === "campaign") {
+    if (campaignView === "living") return "campaign-living";
+    if (campaignView === "server") return "campaign-server";
+    return "campaign-map";
+  }
+  return screen;
 }
 
 function ScreenLoader() {
@@ -177,7 +192,7 @@ function HomeScreen({
   );
 }
 
-function SettingsScreen({ onBack }: { onBack: () => void }) {
+function SettingsScreen({ onBack, realmStatus }: { onBack: () => void; realmStatus: RealmStatus }) {
   const [preferences, setPreferences] = useState<InterfacePreferences>(readInterfacePreferences);
 
   useEffect(() => {
@@ -201,8 +216,10 @@ function SettingsScreen({ onBack }: { onBack: () => void }) {
         <label><span><strong>Alto contraste</strong><small>Reforça bordas, foco, textos e estados sem depender somente de cor.</small></span><input type="checkbox" checked={preferences.highContrast} onChange={(event) => updatePreference("highContrast", event.target.checked)} /></label>
         <label><span><strong>Texto ampliado</strong><small>Aumenta textos funcionais e descrições sem aplicar zoom na página.</small></span><input type="checkbox" checked={preferences.largeText} onChange={(event) => updatePreference("largeText", event.target.checked)} /></label>
         <label><span><strong>Efeitos leves</strong><small>Reduz desfoques, filtros e sombras para aparelhos com menor desempenho.</small></span><input type="checkbox" checked={preferences.lowEffects} onChange={(event) => updatePreference("lowEffects", event.target.checked)} /></label>
-        <article><span>⬡</span><div><strong>PWA, cache e conta</strong><small>Atualizações agora exigem confirmação e nunca interrompem uma batalha sem autorização.</small></div></article>
+        <label><span><strong>Telemetria técnica anônima</strong><small>Envia apenas tela, dispositivo, conectividade, tempos e tipos de erro. Não envia conta, chat ou conteúdo da partida.</small></span><input type="checkbox" checked={preferences.experienceTelemetry} onChange={(event) => updatePreference("experienceTelemetry", event.target.checked)} /></label>
+        <article><span>⬡</span><div><strong>PWA, cache e conta</strong><small>Atualizações exigem confirmação e nunca interrompem uma batalha sem autorização.</small></div></article>
       </section>
+      <DiagnosticsPanel realmStatus={realmStatus} />
     </main>
   );
 }
@@ -241,6 +258,7 @@ export function GameApp() {
   const [progress, setProgress] = useState<LivingCampaignProgress>(() => readLivingCampaignProgress());
   const [realmStatus, setRealmStatus] = useState<RealmStatus>("loading");
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const previousBattleActive = useRef(false);
 
   const refreshDashboard = useCallback(async () => {
     const client = new HexaClient();
@@ -280,7 +298,21 @@ export function GameApp() {
     if (screen === "campaign") window.sessionStorage.setItem("hexa.unified.campaign-view", campaignView);
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "auto" });
+    trackExperience("screen_view", {
+      screen: experienceScreen(screen, campaignView),
+      realm: realmStatus,
+      value: "opened",
+    });
   }, [screen, campaignView]);
+
+  useEffect(() => {
+    if (realmStatus === "loading") return;
+    trackExperience("realm_status", {
+      screen: experienceScreen(screen, campaignView),
+      realm: realmStatus,
+      value: realmStatus,
+    });
+  }, [realmStatus]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => contentRef.current?.focus({ preventScroll: true }));
@@ -310,6 +342,16 @@ export function GameApp() {
   const isScreen = (target: GameScreen) => screen === target;
   const campaignBattleActive = isScreen("campaign") && campaignView !== "map";
   const battleActive = isScreen("multiplayer") || campaignBattleActive;
+
+  useEffect(() => {
+    if (previousBattleActive.current === battleActive) return;
+    previousBattleActive.current = battleActive;
+    trackExperience("battle_session", {
+      screen: experienceScreen(screen, campaignView),
+      realm: realmStatus,
+      value: battleActive ? "entered" : "left",
+    });
+  }, [battleActive, campaignView, realmStatus, screen]);
 
   return (
     <div className={`unified-game-shell screen-${screen} campaign-view-${campaignView} ${battleActive ? "battle-active" : ""}`} data-realm-status={realmStatus}>
@@ -364,11 +406,11 @@ export function GameApp() {
           {isScreen("profile") ? (
             <ProfileScreen account={account} catalog={catalog} progress={progress} onBack={backHome} onOpenCollection={() => setScreen("collection")} onOpenCampaign={openCampaignMap} />
           ) : null}
-          {isScreen("settings") ? <SettingsScreen onBack={backHome} /> : null}
+          {isScreen("settings") ? <SettingsScreen onBack={backHome} realmStatus={realmStatus} /> : null}
         </Suspense>
       </div>
 
-      {!battleActive ? <footer className="unified-footer"><span>Hexa Octarina Conquer</span><small>Tehkné Solutions</small></footer> : null}
+      {!battleActive ? <footer className="unified-footer"><span>Hexa Octarina Conquer</span><small>Tehkné Solutions · v{CLIENT_RELEASE_VERSION}</small></footer> : null}
       {!battleActive ? (
         <nav className="mobile-bottom-nav" aria-label="Navegação mobile">
           <button type="button" aria-current={isScreen("home") ? "page" : undefined} className={isScreen("home") ? "active" : ""} onClick={() => setScreen("home")}><span>⌂</span>Início</button>

@@ -5,6 +5,7 @@ export interface InterfacePreferences {
   highContrast: boolean;
   largeText: boolean;
   lowEffects: boolean;
+  experienceTelemetry: boolean;
 }
 
 export const INTERFACE_PREFERENCE_KEYS = {
@@ -14,6 +15,7 @@ export const INTERFACE_PREFERENCE_KEYS = {
   highContrast: "hexa.settings.high-contrast",
   largeText: "hexa.settings.large-text",
   lowEffects: "hexa.settings.low-effects",
+  experienceTelemetry: "hexa.settings.experience-telemetry",
 } as const;
 
 export const DEFAULT_INTERFACE_PREFERENCES: InterfacePreferences = {
@@ -23,6 +25,7 @@ export const DEFAULT_INTERFACE_PREFERENCES: InterfacePreferences = {
   highContrast: false,
   largeText: false,
   lowEffects: false,
+  experienceTelemetry: true,
 };
 
 type ReadableStorage = Pick<Storage, "getItem">;
@@ -45,6 +48,7 @@ export function readInterfacePreferences(
     highContrast: readBoolean(storage, INTERFACE_PREFERENCE_KEYS.highContrast, false),
     largeText: readBoolean(storage, INTERFACE_PREFERENCE_KEYS.largeText, false),
     lowEffects: readBoolean(storage, INTERFACE_PREFERENCE_KEYS.lowEffects, false),
+    experienceTelemetry: readBoolean(storage, INTERFACE_PREFERENCE_KEYS.experienceTelemetry, true),
   };
 }
 
@@ -58,6 +62,7 @@ export function writeInterfacePreferences(
   storage.setItem(INTERFACE_PREFERENCE_KEYS.highContrast, String(preferences.highContrast));
   storage.setItem(INTERFACE_PREFERENCE_KEYS.largeText, String(preferences.largeText));
   storage.setItem(INTERFACE_PREFERENCE_KEYS.lowEffects, String(preferences.lowEffects));
+  storage.setItem(INTERFACE_PREFERENCE_KEYS.experienceTelemetry, String(preferences.experienceTelemetry));
 }
 
 export function interfacePreferenceClassNames(preferences: InterfacePreferences): string[] {

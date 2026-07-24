@@ -2,6 +2,10 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
+import {
+  installExperienceTelemetry,
+  trackExperience,
+} from "./experience-telemetry";
 import { GameErrorBoundary } from "./GameErrorBoundary";
 import { GameApp } from "./GameApp";
 import { applyStoredInterfacePreferences } from "./interface-preferences";
@@ -23,35 +27,49 @@ import "./sprint-ui-03.css";
 import "./sprint-ui-04.css";
 import "./sprint-ui-05.css";
 import "./sprint-ui-06-final.css";
+import "./sprint-ui-07.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 
 applyStoredInterfacePreferences();
+installExperienceTelemetry();
 
 let serviceWorkerRegistration: ServiceWorkerRegistration | undefined;
 const updateSW = registerSW({
   immediate: true,
-  onNeedRefresh: () => emitPwaRuntimePatch({ updateAvailable: true }),
-  onOfflineReady: () => emitPwaRuntimePatch({ offlineReady: true }),
+  onNeedRefresh: () => {
+    emitPwaRuntimePatch({ updateAvailable: true });
+    trackExperience("pwa_state", { value: "update-available" });
+  },
+  onOfflineReady: () => {
+    emitPwaRuntimePatch({ offlineReady: true });
+    trackExperience("pwa_state", { value: "offline-ready" });
+  },
   onRegisteredSW: (_serviceWorkerUrl, registration) => {
     serviceWorkerRegistration = registration;
     emitPwaRuntimePatch({ registrationReady: true, registrationError: null });
+    trackExperience("pwa_state", { value: "registered" });
   },
   onRegisterError: (error) => {
     emitPwaRuntimePatch({
       registrationReady: false,
       registrationError: error instanceof Error ? error.message : String(error),
     });
+    trackExperience("client_error", {
+      value: error instanceof Error ? error.name : "service-worker-registration",
+    });
   },
 });
 
 window.addEventListener(PWA_APPLY_UPDATE_EVENT, () => {
   emitPwaRuntimePatch({ updateAvailable: false });
+  trackExperience("pwa_state", { value: "update-applied" });
   void updateSW(true);
 });
 
 window.addEventListener(PWA_CHECK_UPDATE_EVENT, () => {
   emitPwaRuntimePatch({ lastCheckedAt: Date.now(), registrationError: null });
+  trackExperience("pwa_state", { value: "update-check" });
   if (!serviceWorkerRegistration) return;
   void serviceWorkerRegistration.update().catch((error: unknown) => {
     emitPwaRuntimePatch({ registrationError: error instanceof Error ? error.message : String(error) });
