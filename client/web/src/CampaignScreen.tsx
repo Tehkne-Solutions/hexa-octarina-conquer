@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { CampaignCatalog, CampaignMission } from "./protocol";
 
@@ -22,15 +22,21 @@ function difficultyLabel(difficulty: CampaignMission["difficulty"]): string {
 
 export function CampaignScreen({ catalog, loading, playerName, onStart, onBack }: CampaignScreenProps) {
   const firstUnlocked = catalog.missions.find((mission) => mission.unlocked && !mission.progress?.stars) ?? catalog.missions[0];
-  const [selectedId, setSelectedId] = useState(firstUnlocked?.id ?? "");
+  const storedSelectedId = window.sessionStorage.getItem("hexa.campaign.selected-mission");
+  const storedMission = catalog.missions.find((mission) => mission.id === storedSelectedId && mission.unlocked);
+  const [selectedId, setSelectedId] = useState(storedMission?.id ?? firstUnlocked?.id ?? "");
   const selected = useMemo(() => catalog.missions.find((mission) => mission.id === selectedId) ?? firstUnlocked, [catalog, selectedId, firstUnlocked]);
+
+  useEffect(() => {
+    if (selected?.id) window.sessionStorage.setItem("hexa.campaign.selected-mission", selected.id);
+  }, [selected?.id]);
 
   return (
     <main className="app campaign-screen">
       <header className="topbar campaign-topbar">
-        <button className="ghost-button back-button" onClick={onBack}>← Multiplayer</button>
+        <button className="ghost-button back-button" onClick={onBack}>← Salão multiplayer</button>
         <div className="campaign-brand"><strong>CAMPANHA OCTARINA</strong><span>{playerName}</span></div>
-        <div className="campaign-total"><strong>{catalog.totals.stars} ★</strong><span>{catalog.totals.completed}/12 missões</span></div>
+        <div className="campaign-total"><strong>{catalog.totals.stars} ★</strong><span>{catalog.totals.completed}/{catalog.missions.length} missões</span></div>
       </header>
 
       <section className="campaign-layout">
@@ -39,12 +45,13 @@ export function CampaignScreen({ catalog, loading, playerName, onStart, onBack }
             <section key={chapter.id} className="chapter-section glass">
               <div className="chapter-heading">
                 <div><span>CAPÍTULO {chapter.order}</span><h2>{chapter.title}</h2><p>{chapter.subtitle}</p></div>
-                <strong>{catalog.missions.filter((mission) => mission.chapterId === chapter.id && (mission.progress?.stars ?? 0) > 0).length}/4</strong>
+                <strong>{catalog.missions.filter((mission) => mission.chapterId === chapter.id && (mission.progress?.stars ?? 0) > 0).length}/{catalog.missions.filter((mission) => mission.chapterId === chapter.id).length}</strong>
               </div>
               <div className="mission-path">
                 {catalog.missions.filter((mission) => mission.chapterId === chapter.id).map((mission) => (
                   <button
                     key={mission.id}
+                    data-mission-id={mission.id}
                     className={`mission-node ${mission.unlocked ? "unlocked" : "locked"} ${selected?.id === mission.id ? "selected" : ""}`}
                     onClick={() => mission.unlocked && setSelectedId(mission.id)}
                     disabled={!mission.unlocked}
