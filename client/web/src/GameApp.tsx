@@ -194,7 +194,8 @@ export function GameApp() {
 
   const navigate = (next: GameScreen) => setScreen(next);
   const backHome = () => setScreen("home");
-  const battleActive = screen === "campaign";
+  const isScreen = (target: GameScreen) => screen === target;
+  const battleActive = isScreen("campaign");
 
   return (
     <div className={`unified-game-shell screen-${screen} ${battleActive ? "battle-active" : ""}`}>
@@ -204,10 +205,10 @@ export function GameApp() {
             <BrandMark />
           </button>
           <nav className={menuOpen ? "open" : ""} aria-label="Navegação principal">
-            <button className={screen === "home" ? "active" : ""} onClick={() => navigate("home")}>Início</button>
-            <button className={screen === "campaign" ? "active" : ""} onClick={() => navigate("campaign")}>Campanha</button>
-            <button className={screen === "multiplayer" ? "active" : ""} onClick={() => navigate("multiplayer")}>Multiplayer</button>
-            <button className={screen === "collection" ? "active" : ""} onClick={() => navigate("collection")}>Coleção</button>
+            <button className={isScreen("home") ? "active" : ""} onClick={() => navigate("home")}>Início</button>
+            <button className={isScreen("campaign") ? "active" : ""} onClick={() => navigate("campaign")}>Campanha</button>
+            <button className={isScreen("multiplayer") ? "active" : ""} onClick={() => navigate("multiplayer")}>Multiplayer</button>
+            <button className={isScreen("collection") ? "active" : ""} onClick={() => navigate("collection")}>Coleção</button>
           </nav>
           <div className="header-actions">
             <span className="connection-indicator"><i /> Reino online</span>
@@ -224,11 +225,11 @@ export function GameApp() {
       ) : null}
 
       <div className="unified-screen-frame">
-        {screen === "home" ? <HomeScreen onNavigate={navigate} /> : null}
-        {screen === "campaign" ? (
+        {isScreen("home") ? <HomeScreen onNavigate={navigate} /> : null}
+        {isScreen("campaign") ? (
           <GoDotsLivingBoardDemo playerName="Arquiteto" onBack={backHome} />
         ) : null}
-        {screen === "multiplayer" ? (
+        {isScreen("multiplayer") ? (
           <section className="embedded-multiplayer">
             <div className="screen-heading">
               <div>
@@ -240,8 +241,8 @@ export function GameApp() {
             <MultiplayerApp />
           </section>
         ) : null}
-        {screen === "collection" || screen === "profile" || screen === "settings" ? (
-          <PlaceholderScreen screen={screen} onBack={backHome} />
+        {isScreen("collection") || isScreen("profile") || isScreen("settings") ? (
+          <PlaceholderScreen screen={screen as "collection" | "profile" | "settings"} onBack={backHome} />
         ) : null}
       </div>
 
@@ -254,10 +255,10 @@ export function GameApp() {
 
       {!battleActive ? (
         <nav className="mobile-bottom-nav" aria-label="Navegação mobile">
-          <button className={screen === "home" ? "active" : ""} onClick={() => navigate("home")}><span>⌂</span>Início</button>
-          <button className={screen === "campaign" ? "active" : ""} onClick={() => navigate("campaign")}><span>⚔</span>Campanha</button>
-          <button className={screen === "multiplayer" ? "active" : ""} onClick={() => navigate("multiplayer")}><span>♜</span>Jogar</button>
-          <button className={screen === "collection" ? "active" : ""} onClick={() => navigate("collection")}><span>◆</span>Cartas</button>
+          <button className={isScreen("home") ? "active" : ""} onClick={() => navigate("home")}><span>⌂</span>Início</button>
+          <button className={isScreen("campaign") ? "active" : ""} onClick={() => navigate("campaign")}><span>⚔</span>Campanha</button>
+          <button className={isScreen("multiplayer") ? "active" : ""} onClick={() => navigate("multiplayer")}><span>♜</span>Jogar</button>
+          <button className={isScreen("collection") ? "active" : ""} onClick={() => navigate("collection")}><span>◆</span>Cartas</button>
         </nav>
       ) : null}
     </div>
