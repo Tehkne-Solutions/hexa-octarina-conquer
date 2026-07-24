@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { FantasyBuildingSprite } from "./FantasyBuildingSprite";
 import { FantasyUnitSprite } from "./FantasyUnitSprite";
 import {
   gridPercent,
@@ -32,6 +33,9 @@ function svgCoordinate(value: number): number {
 }
 
 function WorldLandmarks({ building }: { building: "farm" | "tower" | null }) {
+  const millAsset = building ?? "mill";
+  const millLabel = building === "tower" ? "Torre Rúnica" : building === "farm" ? "Fazenda Arcana" : "Moinho do Norte";
+
   return (
     <div className="go-world-landmarks" aria-hidden="true">
       <div className="landmark landmark-village">
@@ -52,14 +56,8 @@ function WorldLandmarks({ building }: { building: "farm" | "tower" | null }) {
         <small>Observatório</small>
       </div>
       <div className={`landmark landmark-mill ${building ? `has-${building}` : ""}`}>
-        {building === "tower" ? (
-          <span className="tower-building"><i /><b /></span>
-        ) : building === "farm" ? (
-          <span className="farm-building"><i /><b /><em /></span>
-        ) : (
-          <span className="windmill"><i /><b /><em /><u /></span>
-        )}
-        <small>{building === "tower" ? "Torre Rúnica" : building === "farm" ? "Fazenda Arcana" : "Moinho do Norte"}</small>
+        <FantasyBuildingSprite type={millAsset} state={building ? "built" : "neutral"} compact label={millLabel} />
+        <small>{millLabel}</small>
       </div>
       <div className="landmark landmark-mountains">
         <span className="mountain mountain-one" />
