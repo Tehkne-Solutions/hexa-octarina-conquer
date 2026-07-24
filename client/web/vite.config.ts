@@ -6,16 +6,16 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       includeAssets: ["favicon.svg", "icons/icon-192.svg", "icons/icon-512.svg"],
       manifest: {
         name: "Hexa Octarina Conquer",
         short_name: "Hexa Octarina",
         description: "Jogo tático territorial online da Tehkné Solutions.",
-        theme_color: "#070914",
-        background_color: "#070914",
+        theme_color: "#11120f",
+        background_color: "#11120f",
         display: "standalone",
-        orientation: "landscape",
+        orientation: "any",
         scope: "/",
         start_url: "/",
         categories: ["games", "strategy"],
@@ -37,14 +37,39 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/(?:campaign|ws)(?:\/|$)/],
+        cleanupOutdatedCaches: true,
         globPatterns: ["**/*.{js,css,html,svg,png,webp,woff2}"],
         runtimeCaching: [
+          {
+            urlPattern: ({ request, url }) => request.method === "GET"
+              && url.pathname === "/campaign/catalog"
+              && !request.headers.has("authorization")
+              && !request.headers.has("x-account-id"),
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "hexa-guest-campaign-catalog",
+              networkTimeoutSeconds: 4,
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 4, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            },
+          },
           {
             urlPattern: ({ request }) => request.destination === "image",
             handler: "CacheFirst",
             options: {
               cacheName: "hexa-images",
+              cacheableResponse: { statuses: [0, 200] },
               expiration: { maxEntries: 64, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === "font",
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "hexa-fonts",
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 12, maxAgeSeconds: 60 * 60 * 24 * 90 },
             },
           },
         ],
@@ -55,6 +80,9 @@ export default defineConfig({
   build: {
     target: "es2022",
     sourcemap: true,
+    cssCodeSplit: true,
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 500,
   },
   server: {
     port: 4173,

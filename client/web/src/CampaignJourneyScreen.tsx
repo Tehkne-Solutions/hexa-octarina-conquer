@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { App as AuthoritativeCampaignApp } from "./App";
 import {
   campaignTotals,
   createCampaignJourney,
@@ -22,11 +21,6 @@ interface CampaignJourneyScreenProps {
   onStartServer: (missionId: string) => void;
 }
 
-interface AuthoritativeCampaignLauncherProps {
-  missionId: string;
-  onBack: () => void;
-}
-
 function starLine(amount: number): string {
   return [0, 1, 2].map((index) => index < amount ? "★" : "☆").join("");
 }
@@ -36,37 +30,6 @@ function missionStatus(mission: CampaignJourneyMission): string {
   if (mission.completed) return "Concluída";
   if (mission.progressPercent > 0) return `${mission.progressPercent}% concluído`;
   return "Disponível";
-}
-
-export function AuthoritativeCampaignLauncher({ missionId, onBack }: AuthoritativeCampaignLauncherProps) {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    window.sessionStorage.setItem("hexa.campaign.selected-mission", missionId);
-    const root = rootRef.current;
-    if (!root) return undefined;
-
-    let lastClick = 0;
-    const enterCampaign = () => {
-      if (root.querySelector(".campaign-screen") || root.querySelector(".game-screen")) return;
-      const campaignButton = root.querySelector<HTMLButtonElement>(".lobby-screen .campaign-button");
-      if (!campaignButton || Date.now() - lastClick < 800) return;
-      lastClick = Date.now();
-      campaignButton.click();
-    };
-
-    const observer = new MutationObserver(enterCampaign);
-    observer.observe(root, { childList: true, subtree: true });
-    enterCampaign();
-    return () => observer.disconnect();
-  }, [missionId]);
-
-  return (
-    <section className="authoritative-campaign-launcher" ref={rootRef}>
-      <button type="button" className="campaign-floating-back" onClick={onBack}>← Mapa unificado</button>
-      <AuthoritativeCampaignApp />
-    </section>
-  );
 }
 
 export function CampaignJourneyScreen({
@@ -92,15 +55,25 @@ export function CampaignJourneyScreen({
   }, [missions, recommended, selectedId]);
 
   const selected = missions.find((mission) => mission.id === selectedId) ?? recommended ?? null;
+  const selectedNeedsNetwork = selected?.source === "server";
+  const selectedCanStart = Boolean(selected?.unlocked && (!selectedNeedsNetwork || realmStatus === "online"));
 
   const startSelectedMission = () => {
-    if (!selected?.unlocked) return;
+    if (!selected || !selectedCanStart) return;
     window.sessionStorage.setItem("hexa.campaign.selected-mission", selected.id);
     if (selected.source === "living") onStartLiving();
     else onStartServer(selected.id);
   };
 
   if (briefingOpen && selected) {
+    const startLabel = selectedNeedsNetwork && realmStatus !== "online"
+      ? "Disponível quando reconectar"
+      : selected.completed
+        ? "Jogar novamente"
+        : selected.progressPercent > 0
+          ? "Continuar missão"
+          : "Iniciar missão";
+
     return (
       <main className="campaign-briefing-screen">
         <button type="button" className="campaign-back-link" onClick={() => setBriefingOpen(false)}>← Mapa da campanha</button>
@@ -133,13 +106,17 @@ export function CampaignJourneyScreen({
             ))}
           </div>
 
+          {selectedNeedsNetwork && realmStatus !== "online" ? (
+            <p className="briefing-offline-note" role="status">Esta missão usa o servidor autoritativo. O briefing permanece disponível, mas a batalha será liberada quando a conexão voltar.</p>
+          ) : null}
+
           <div className="briefing-actions">
             <label className="tutorial-toggle">
               <input type="checkbox" defaultChecked={localStorage.getItem("hexa.settings.contextual-tutorial") !== "false"} onChange={(event) => localStorage.setItem("hexa.settings.contextual-tutorial", String(event.target.checked))} />
               <span><strong>Tutorial contextual</strong><small>Recomendado na primeira missão.</small></span>
             </label>
-            <button type="button" className="fantasy-button primary briefing-start" disabled={!selected.unlocked} onClick={startSelectedMission}>
-              {selected.completed ? "Jogar novamente" : selected.progressPercent > 0 ? "Continuar missão" : "Iniciar missão"}
+            <button type="button" className="fantasy-button primary briefing-start" disabled={!selectedCanStart} onClick={startSelectedMission}>
+              {startLabel}
             </button>
           </div>
         </section>
@@ -180,6 +157,7 @@ export function CampaignJourneyScreen({
                     className={`campaign-mission-node ${selected?.id === mission.id ? "selected" : ""} ${mission.unlocked ? "unlocked" : "locked"} ${mission.completed ? "completed" : ""}`}
                     disabled={!mission.unlocked}
                     onClick={() => { setSelectedId(mission.id); setBriefingOpen(false); }}
+                    aria-current={selected?.id === mission.id ? "step" : undefined}
                     aria-label={`${mission.title}: ${missionStatus(mission)}`}
                   >
                     <span className="mission-track-line" aria-hidden="true" />
@@ -208,6 +186,7 @@ export function CampaignJourneyScreen({
               <div className="selected-progress-bar"><i style={{ width: `${selected.progressPercent}%` }} /></div>
               <button type="button" className="fantasy-button primary" disabled={!selected.unlocked} onClick={() => setBriefingOpen(true)}>Abrir briefing</button>
               {!selected.unlocked ? <small className="locked-requirement">Conclua a missão anterior para abrir este caminho.</small> : null}
+              {selectedNeedsNetwork && realmStatus !== "online" && selected.unlocked ? <small className="locked-requirement online-requirement">A batalha será liberada quando o servidor reconectar.</small> : null}
             </>
           ) : <div className="campaign-empty-state">O catálogo da campanha está sendo restaurado.</div>}
         </aside>
