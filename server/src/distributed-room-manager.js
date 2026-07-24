@@ -2,33 +2,36 @@ import { randomUUID } from "node:crypto";
 
 import { runCampaignAI } from "./campaign-ai.js";
 import { getCampaignMission } from "./campaign-catalog.js";
+import { buildPlayerHand } from "./cards.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 
+function applyLoadout(player, loadout) {
+  player.hand = buildPlayerHand(loadout);
+  return player;
+}
+
 export class DistributedRoomManager {
   constructor({ idFactory = randomUUID, clock = () => Date.now(), store }) {
-    if (!store?.loadRoom || !store?.saveRoom) {
-      throw new Error("DistributedRoomManager requires a distributed room store");
-    }
+    if (!store?.loadRoom || !store?.saveRoom) throw new Error("DistributedRoomManager requires a distributed room store");
     this.idFactory = idFactory;
     this.clock = clock;
     this.store = store;
     this.rooms = new Map();
   }
 
-  async createRoom({ playerName, boardSize, accountId = null, roomId = null }) {
+  async createRoom({ playerName, boardSize, accountId = null, roomId = null, loadout = undefined }) {
     const resolvedRoomId = roomId ?? await this.createRoomId();
-    if (await this.store.loadRoom(resolvedRoomId)) {
-      throw new ProtocolError("ROOM_EXISTS", "room already exists");
-    }
+    if (await this.store.loadRoom(resolvedRoomId)) throw new ProtocolError("ROOM_EXISTS", "room already exists");
     const room = new GameRoom({ id: resolvedRoomId, boardSize, idFactory: this.idFactory, clock: this.clock });
     const joined = room.addPlayer(playerName, { accountId });
+    applyLoadout(joined.player, loadout);
     await this.store.saveRoom(room, { expectedRevision: null });
     this.rooms.set(room.id, room);
     return { room, ...joined, followUpPatches: [] };
   }
 
-  async createCampaignRoom({ playerName, accountId = null, missionId }) {
+  async createCampaignRoom({ playerName, accountId = null, missionId, loadout = undefined }) {
     const mission = getCampaignMission(missionId);
     let roomId;
     for (let attempt = 0; attempt < 20; attempt += 1) {
@@ -43,6 +46,7 @@ export class DistributedRoomManager {
       clock: this.clock,
     });
     const human = room.addPlayer(playerName, { accountId }).player;
+    applyLoadout(human, loadout);
     const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
     const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
     await this.store.saveRoom(room, { expectedRevision: null });
@@ -50,10 +54,11 @@ export class DistributedRoomManager {
     return { room, player: human, patch, followUpPatches: [] };
   }
 
-  async joinRoom({ roomId, playerName, accountId = null }) {
+  async joinRoom({ roomId, playerName, accountId = null, loadout = undefined }) {
     const room = await this.getRoom(roomId);
     const expectedRevision = room.revision;
     const joined = room.addPlayer(playerName, { accountId });
+    applyLoadout(joined.player, loadout);
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
     return { room, ...joined, followUpPatches: [] };
@@ -63,9 +68,7 @@ export class DistributedRoomManager {
     const room = await this.getRoom(payload.roomId);
     const expectedRevision = room.revision;
     const result = room.reconnect(payload);
-    if (room.revision !== expectedRevision) {
-      await this.store.saveRoom(room, { expectedRevision });
-    }
+    if (room.revision !== expectedRevision) await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
     return { room, ...result };
   }
@@ -99,12 +102,9 @@ export class DistributedRoomManager {
     const room = this.restore(raw);
     if (room.status === "finished") return null;
     const expectedRevision = room.revision;
-    let patch;
-    if (room.status === "active" && room.players.length === 2) {
-      patch = room.forfeitPlayer(playerId, "abandonment", { disconnect: true });
-    } else {
-      patch = room.disconnect(playerId);
-    }
+    const patch = room.status === "active" && room.players.length === 2
+      ? room.forfeitPlayer(playerId, "abandonment", { disconnect: true })
+      : room.disconnect(playerId);
     if (!patch) return null;
     await this.store.saveRoom(room, { expectedRevision });
     this.rooms.set(room.id, room);
@@ -123,9 +123,7 @@ export class DistributedRoomManager {
         console.error(`Failed to restore distributed room ${record?.id ?? "unknown"}:`, error);
       }
     }
-    return rooms
-      .sort((left, right) => right.updatedAt - left.updatedAt)
-      .map((room) => room.lobbySummary());
+    return rooms.sort((left, right) => right.updatedAt - left.updatedAt).map((room) => room.lobbySummary());
   }
 
   async removeRoom(roomId) {
