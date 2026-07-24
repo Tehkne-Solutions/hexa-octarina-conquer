@@ -1,0 +1,64 @@
+@media (min-width: 981px) and (max-height: 820px) {
+  .spectator-replay-screen {
+    padding: 10px;
+  }
+
+  .spectator-shell-header {
+    min-height: 74px;
+    margin-bottom: 9px;
+    padding-block: 9px;
+  }
+
+  .spectator-shell-header h1 {
+    font-size: 31px;
+  }
+
+  .spectator-layout {
+    min-height: calc(100vh - 103px);
+    gap: 10px;
+  }
+
+  .spectator-library,
+  .replay-timeline {
+    height: calc(100vh - 105px);
+    min-height: 0;
+  }
+
+  .spectator-match-header {
+    padding: 8px;
+  }
+
+  .spectator-player {
+    padding: 7px;
+  }
+
+  .spectator-board-shell {
+    min-height: 350px;
+    padding: 6px;
+  }
+
+  .spectator-board-shell .board {
+    max-height: 48vh;
+  }
+
+  .replay-controls {
+    padding: 9px;
+  }
+
+  .replay-current-event {
+    margin-bottom: 6px;
+  }
+
+  .event-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .replay-current-event p {
+    display: none;
+  }
+
+  .replay-control-row > button {
+    height: 34px;
+  }
+}
