@@ -17,7 +17,7 @@ concurrency:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: client/web
@@ -63,6 +63,8 @@ jobs:
           npx --yes playwright@1.54.2 screenshot --browser=chromium --full-page --viewport-size="390,844" --wait-for-timeout=2500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui08-outcome" visual-qa/ui08-outcome-mobile-390x844.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=spectator" visual-qa/ui09-spectator-notebook-1366x768.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=spectator" visual-qa/ui09-spectator-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=loadout" visual-qa/ui10-loadout-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=loadout" visual-qa/ui10-loadout-mobile-390x844.png
           printf '%s\n' \
             'Hexa Octarina Conquer — Visual QA Matrix' \
             'home desktop: 1440x900' \
@@ -75,6 +77,7 @@ jobs:
             'UI08 combat notebook/mobile' \
             'UI08 outcome notebook/mobile' \
             'UI09 spectator replay notebook/mobile viewport' \
+            'UI10 loadout editor notebook/mobile viewport' \
             'Tehkné Solutions' > visual-qa/manifest.txt
 
       - name: Upload visual QA artifact
