@@ -42,6 +42,7 @@ import "./sprint-ui-10.css";
 import "./sprint-ui-11.css";
 import "./sprint-ui-12.css";
 import "./sprint-ui-13.css";
+import "./sprint-ui-13-interaction.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
