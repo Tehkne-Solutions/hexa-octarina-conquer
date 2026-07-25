@@ -11,6 +11,19 @@ const ELEMENT_COLORS := {
 }
 
 static func build_unit(parent: Node3D, owner_color: Color, unit: Dictionary, position: Vector3, node_name: String) -> Node3D:
+	var runtime: Node = parent.get_node_or_null("/root/AssetRuntime")
+	if runtime != null and runtime.call("has_runtime"):
+		var runtime_unit: Variant = runtime.call(
+			"build_unit",
+			parent,
+			owner_color,
+			unit,
+			position,
+			node_name
+		)
+		if runtime_unit is Node3D:
+			return runtime_unit
+
 	var root := Node3D.new()
 	root.name = node_name
 	root.position = position
