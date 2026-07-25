@@ -9,6 +9,22 @@ import {
   isBoardThemeId,
 } from "./board-theme";
 
+function fakeElement(): HTMLElement & { attributes: Map<string, string>; properties: Map<string, string> } {
+  const attributes = new Map<string, string>();
+  const properties = new Map<string, string>();
+  return {
+    dataset: {},
+    attributes,
+    properties,
+    style: {
+      getPropertyValue: (key: string) => properties.get(key) ?? "",
+      setProperty: (key: string, value: string) => { properties.set(key, value); },
+    },
+    getAttribute: (key: string) => attributes.get(key) ?? null,
+    setAttribute: (key: string, value: string) => { attributes.set(key, value); },
+  } as unknown as HTMLElement & { attributes: Map<string, string>; properties: Map<string, string> };
+}
+
 describe("board themes", () => {
   it("maps campaign chapters to their regional boards", () => {
     expect(boardThemeForMission("bridge-of-ashes", "living-prologue", "campaign")).toBe("orun-mill");
@@ -31,13 +47,13 @@ describe("board themes", () => {
   });
 
   it("applies semantic theme metadata without touching board geometry", () => {
-    const element = document.createElement("section");
+    const element = fakeElement();
     applyBoardTheme(element, "ash-fortress");
     expect(element.dataset.boardTheme).toBe("ash-fortress");
     expect(element.dataset.boardRegion).toBe(BOARD_THEMES["ash-fortress"].region);
     expect(element.getAttribute("data-board-theme-label")).toBe("Fortaleza de Cinzas");
-    expect(element.style.left).toBe("");
-    expect(element.style.top).toBe("");
+    expect(element.properties.has("left")).toBe(false);
+    expect(element.properties.has("top")).toBe(false);
   });
 
   it("accepts only known theme identifiers", () => {
