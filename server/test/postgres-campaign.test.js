@@ -31,7 +31,7 @@ function result(roomId = "PG-CAMPAIGN-1") {
   };
 }
 
-test("PostgreSQL stores campaign results and XP transactionally and idempotently", { skip: !databaseUrl }, async () => {
+test("PostgreSQL stores campaign results, migrated guest progress and XP idempotently", { skip: !databaseUrl }, async () => {
   const identity = await PostgresIdentityStore.connect({ connectionString: databaseUrl });
   const store = await new PostgresCampaignStore({ connectionString: databaseUrl }).initialize();
   const handle = `pg-campaign-${Date.now()}`;
@@ -44,6 +44,23 @@ test("PostgreSQL stores campaign results and XP transactionally and idempotently
       password: "postgres-campaign-password",
     });
     accountId = session.account.id;
+
+    const preview = await store.syncGuestProgress(accountId, {
+      status: "victory",
+      percent: 100,
+      completedObjectives: 5,
+      attempts: 4,
+      bestTurn: 8,
+      lastTurn: 9,
+      building: "farm",
+      rewards: ["Arco Prismático", "Fazenda Arcana"],
+    }, "preview");
+    assert.equal(preview.relation, "local-ahead");
+    assert.equal((await store.getProgress(accountId)).guestPrologue.status, "not-started");
+
+    const guestSync = await store.syncGuestProgress(accountId, preview.local, "merge");
+    assert.equal(guestSync.changed, true);
+    assert.equal(guestSync.resolved.building, "farm");
 
     const first = await store.recordResult(accountId, result());
     const duplicate = await store.recordResult(accountId, result());
@@ -73,6 +90,8 @@ test("PostgreSQL stores campaign results and XP transactionally and idempotently
     );
     assert.equal(persisted.rowCount, 1);
     assert.equal(persisted.rows[0].progress.recordedRooms.length, 1);
+    assert.equal(persisted.rows[0].progress.guestPrologue.status, "victory");
+    assert.equal(persisted.rows[0].progress.guestPrologue.bestTurn, 8);
     assert.equal(reward.rowCount, 1);
     assert.equal(Number(reward.rows[0].xp), 150);
   } finally {
