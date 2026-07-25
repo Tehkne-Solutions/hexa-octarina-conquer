@@ -71,21 +71,42 @@ function browserStorage(): Storage | null {
   return typeof window === "undefined" ? null : window.localStorage;
 }
 
+function normalizedStatus(value: unknown): LivingCampaignStatus {
+  return value === "active" || value === "victory" || value === "defeat" ? value : "not-started";
+}
+
+function normalizeLivingProgress(value: Partial<LivingCampaignProgress> | null | undefined): LivingCampaignProgress {
+  const base = emptyLivingProgress();
+  const status = normalizedStatus(value?.status);
+  const bestTurn = Number(value?.bestTurn ?? 0);
+  const building = value?.building === "farm" || value?.building === "tower" ? value.building : null;
+  return {
+    ...base,
+    ...value,
+    missionId: "bridge-of-ashes",
+    title: "A Ponte das Cinzas",
+    status,
+    percent: status === "victory" ? 100 : clampPercent(Number(value?.percent ?? 0)),
+    completedObjectives: status === "victory" ? 5 : Math.max(0, Math.min(5, Number(value?.completedObjectives ?? 0))),
+    totalObjectives: 5,
+    attempts: Math.max(0, Number(value?.attempts ?? 0)),
+    bestTurn: Number.isFinite(bestTurn) && bestTurn > 0 ? bestTurn : null,
+    lastTurn: Math.max(0, Number(value?.lastTurn ?? 0)),
+    startedAt: Number(value?.startedAt ?? 0) > 0 ? Number(value?.startedAt) : null,
+    lastPlayedAt: Number(value?.lastPlayedAt ?? 0) > 0 ? Number(value?.lastPlayedAt) : null,
+    completedAt: status === "victory" && Number(value?.completedAt ?? 0) > 0 ? Number(value?.completedAt) : null,
+    building,
+    rewards: Array.isArray(value?.rewards) ? [...new Set(value.rewards.map(String))] : [],
+  };
+}
+
 export function readLivingCampaignProgress(): LivingCampaignProgress {
   const storage = browserStorage();
   if (!storage) return emptyLivingProgress();
   try {
     const raw = storage.getItem(LIVING_PROGRESS_KEY);
     if (!raw) return emptyLivingProgress();
-    const parsed = JSON.parse(raw) as Partial<LivingCampaignProgress>;
-    return {
-      ...emptyLivingProgress(),
-      ...parsed,
-      percent: clampPercent(Number(parsed.percent ?? 0)),
-      completedObjectives: Math.max(0, Math.min(5, Number(parsed.completedObjectives ?? 0))),
-      attempts: Math.max(0, Number(parsed.attempts ?? 0)),
-      rewards: Array.isArray(parsed.rewards) ? parsed.rewards.map(String) : [],
-    };
+    return normalizeLivingProgress(JSON.parse(raw) as Partial<LivingCampaignProgress>);
   } catch {
     storage.removeItem(LIVING_PROGRESS_KEY);
     return emptyLivingProgress();
@@ -99,6 +120,10 @@ function persistLivingProgress(progress: LivingCampaignProgress): LivingCampaign
     window.dispatchEvent(new CustomEvent<LivingCampaignProgress>(LIVING_PROGRESS_EVENT, { detail: progress }));
   }
   return progress;
+}
+
+export function replaceLivingCampaignProgress(progress: Partial<LivingCampaignProgress>): LivingCampaignProgress {
+  return persistLivingProgress(normalizeLivingProgress(progress));
 }
 
 export function beginLivingCampaignAttempt(): LivingCampaignProgress {
@@ -181,20 +206,14 @@ export function unlockedCardIds(
   const serverCampaignCompleted = (catalog?.totals.completed ?? 0) > 0;
   const objectives = serverCampaignCompleted ? 5 : progress.completedObjectives;
 
-  if (objectives >= 1) {
-    unlocked.add("lyra-passo-lunar");
-  }
-  if (objectives >= 2) {
-    unlocked.add("kael-contra-selo");
-  }
+  if (objectives >= 1) unlocked.add("lyra-passo-lunar");
+  if (objectives >= 2) unlocked.add("kael-contra-selo");
   if (objectives >= 3) {
     unlocked.add("raider-machado");
     unlocked.add("raider-couro");
     unlocked.add("raider-salto");
   }
-  if (objectives >= 4) {
-    unlocked.add("lyra-marca-cacada");
-  }
+  if (objectives >= 4) unlocked.add("lyra-marca-cacada");
   if (progress.status === "victory" || serverCampaignCompleted) {
     unlocked.add("kael-muralha-astral");
     unlocked.add("lyra-chuva-prismatica");
