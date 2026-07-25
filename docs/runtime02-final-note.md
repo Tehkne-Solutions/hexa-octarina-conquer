@@ -1,0 +1,1 @@
+Sprint Runtime 02 finalizada por Tehkné Solutions.
