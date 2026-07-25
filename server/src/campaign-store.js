@@ -1,9 +1,16 @@
 import { Pool } from "pg";
 
 import { emptyCampaignProgress, mergeCampaignResult, publicCampaignCatalog, unlockedMissionIds } from "./campaign-catalog.js";
+import { emptyGuestProgress, resolveGuestProgress } from "./guest-progress.js";
 
 function clone(value) {
   return structuredClone(value);
+}
+
+function progressWithGuest(progress) {
+  const next = clone(progress ?? emptyCampaignProgress());
+  next.guestPrologue ??= emptyGuestProgress();
+  return next;
 }
 
 export class MemoryCampaignStore {
@@ -14,7 +21,7 @@ export class MemoryCampaignStore {
   }
 
   async getProgress(accountId) {
-    return clone(this.progressByAccount.get(accountId) ?? emptyCampaignProgress());
+    return progressWithGuest(this.progressByAccount.get(accountId) ?? emptyCampaignProgress());
   }
 
   async getCatalog(accountId = null) {
@@ -37,6 +44,17 @@ export class MemoryCampaignStore {
     const merged = mergeCampaignResult(current, result, this.clock());
     if (merged.recorded) this.progressByAccount.set(accountId, clone(merged.progress));
     return clone(merged);
+  }
+
+  async syncGuestProgress(accountId, localProgress, strategy = "merge") {
+    const current = await this.getProgress(accountId);
+    const resolved = resolveGuestProgress(localProgress, current.guestPrologue, strategy, this.clock());
+    if (resolved.changed && !["preview", "remote"].includes(resolved.strategy)) {
+      current.guestPrologue = resolved.resolved;
+      current.updatedAt = this.clock();
+      this.progressByAccount.set(accountId, clone(current));
+    }
+    return clone({ ...resolved, progress: resolved.changed && !["preview", "remote"].includes(resolved.strategy) ? current : progressWithGuest(current) });
   }
 
   async close() {}
@@ -83,7 +101,7 @@ export class PostgresCampaignStore {
 
   async getProgress(accountId) {
     const result = await this.pool.query("SELECT progress FROM campaign_progress WHERE account_id = $1", [accountId]);
-    return clone(result.rows[0]?.progress ?? emptyCampaignProgress());
+    return progressWithGuest(result.rows[0]?.progress ?? emptyCampaignProgress());
   }
 
   async getCatalog(accountId = null) {
@@ -107,7 +125,7 @@ export class PostgresCampaignStore {
       await client.query("BEGIN");
       await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`campaign:${accountId}`]);
       const currentResult = await client.query("SELECT progress FROM campaign_progress WHERE account_id = $1 FOR UPDATE", [accountId]);
-      const current = currentResult.rows[0]?.progress ?? emptyCampaignProgress();
+      const current = progressWithGuest(currentResult.rows[0]?.progress ?? emptyCampaignProgress());
       const merged = mergeCampaignResult(current, result, this.clock());
       if (merged.recorded) {
         await client.query(`
@@ -119,6 +137,34 @@ export class PostgresCampaignStore {
       }
       await client.query("COMMIT");
       return clone(merged);
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async syncGuestProgress(accountId, localProgress, strategy = "merge") {
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`campaign:${accountId}`]);
+      const currentResult = await client.query("SELECT progress FROM campaign_progress WHERE account_id = $1 FOR UPDATE", [accountId]);
+      const current = progressWithGuest(currentResult.rows[0]?.progress ?? emptyCampaignProgress());
+      const resolved = resolveGuestProgress(localProgress, current.guestPrologue, strategy, this.clock());
+      if (resolved.changed && !["preview", "remote"].includes(resolved.strategy)) {
+        current.guestPrologue = resolved.resolved;
+        current.updatedAt = this.clock();
+        await client.query(`
+          INSERT INTO campaign_progress (account_id, progress, updated_at)
+          VALUES ($1, $2::jsonb, $3)
+          ON CONFLICT (account_id) DO UPDATE
+          SET progress = EXCLUDED.progress, updated_at = EXCLUDED.updated_at
+        `, [accountId, JSON.stringify(current), this.clock()]);
+      }
+      await client.query("COMMIT");
+      return clone({ ...resolved, progress: current });
     } catch (error) {
       await client.query("ROLLBACK");
       throw error;
