@@ -49,6 +49,7 @@ import "./sprint-ui-14.css";
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
 const SprintUi13BoardQa = lazy(() => import("./SprintUi13BoardQa").then((module) => ({ default: module.SprintUi13BoardQa })));
+const SprintUi14GameplayQa = lazy(() => import("./SprintUi14GameplayQa").then((module) => ({ default: module.SprintUi14GameplayQa })));
 
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
@@ -116,7 +117,8 @@ const requestedQaScene = pageUrl.searchParams.get("screen") ?? "";
 const qaEnabled = pageUrl.searchParams.get("qa") === "1";
 const ui08QaRequested = qaEnabled && requestedQaScene.startsWith("ui08-");
 const ui13QaRequested = qaEnabled && requestedQaScene.startsWith("ui13-");
-if (ui08QaRequested || ui13QaRequested) {
+const ui14QaRequested = qaEnabled && requestedQaScene.startsWith("ui14-");
+if (ui08QaRequested || ui13QaRequested || ui14QaRequested) {
   document.documentElement.dataset.visualQa = "true";
   document.documentElement.dataset.qaStable = pageUrl.searchParams.get("stable") === "1" ? "true" : "false";
   document.documentElement.dataset.qaScreen = requestedQaScene;
@@ -131,6 +133,8 @@ createRoot(root).render(
         <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
       ) : ui13QaRequested ? (
         <Suspense fallback={<BootFallback />}><SprintUi13BoardQa scene={requestedQaScene} /></Suspense>
+      ) : ui14QaRequested ? (
+        <Suspense fallback={<BootFallback />}><SprintUi14GameplayQa scene={requestedQaScene} /></Suspense>
       ) : (
         <>
           <RuntimeEnhancements />
