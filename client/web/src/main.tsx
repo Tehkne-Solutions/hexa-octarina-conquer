@@ -2,7 +2,6 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
-import { AccountOnboardingPortal } from "./AccountOnboardingPortal";
 import {
   installExperienceTelemetry,
   trackExperience,
@@ -19,6 +18,7 @@ import {
 } from "./pwa-lifecycle";
 import { RuntimeEnhancements } from "./RuntimeEnhancements";
 import { SpectatorReplayPortal } from "./SpectatorReplayPortal";
+import { AccountOnboardingPortal } from "./AccountOnboardingPortal";
 import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
@@ -39,6 +39,7 @@ import "./sprint-ui-09.css";
 import "./sprint-ui-09-compact.css";
 import "./sprint-ui-10.css";
 import "./sprint-ui-11.css";
+import "./sprint-ui-12.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
