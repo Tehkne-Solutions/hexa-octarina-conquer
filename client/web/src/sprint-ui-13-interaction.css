@@ -1,0 +1,25 @@
+/* Preserve authoritative board interaction colors over regional surfaces. */
+.board-shell[data-board-theme] .board-point > circle:last-of-type[r="20"] {
+  fill: #ffe99a !important;
+  stroke: #ffffff !important;
+  filter: drop-shadow(0 0 8px rgba(255, 233, 154, 0.78));
+}
+
+.board-shell[data-board-theme] .board-point > circle:last-of-type[r="18"] {
+  fill: #86f2b5 !important;
+  stroke: #d8ffe8 !important;
+  filter: drop-shadow(0 0 7px rgba(134, 242, 181, 0.72));
+}
+
+.hexa-high-contrast .board-shell[data-board-theme] .board-point > circle:last-of-type[r="20"],
+.hexa-high-contrast .board-shell[data-board-theme] .board-point > circle:last-of-type[r="18"] {
+  stroke-width: 7px;
+}
+
+@media (forced-colors: active) {
+  .board-shell[data-board-theme] .board-point > circle:last-of-type[r="20"],
+  .board-shell[data-board-theme] .board-point > circle:last-of-type[r="18"] {
+    fill: Highlight !important;
+    stroke: HighlightText !important;
+  }
+}
