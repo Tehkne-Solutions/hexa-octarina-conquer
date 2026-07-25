@@ -6,7 +6,7 @@ describe("living gameplay director", () => {
   it("maps gameplay messages to RPG speakers", () => {
     expect(speakerForMessage("Kael avançou para a ponte.").name).toBe("KAEL");
     expect(speakerForMessage("Lyra ativou o recurso do nó.").tone).toBe("ally");
-    expect(speakerForMessage("Brakk invadiu o nó de Kael.").tone).toBe("enemy");
+    expect(speakerForMessage("Brakk invadiu o nó central.").tone).toBe("enemy");
     expect(speakerForMessage("A trilha foi criada.").name).toBe("ORÁCULO DE CAMPO");
   });
 
