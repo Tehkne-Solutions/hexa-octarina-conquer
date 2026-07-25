@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Planícies Rúnicas</title><desc id="desc">Planícies com monólitos de basalto ligados por linhas turquesa.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#183437"/><stop offset=".58" stop-color="#43685f"/><stop offset="1" stop-color="#172221"/></linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#31483d"/><stop offset="1" stop-color="#101b19"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#52605c"/><stop offset=".54" stop-color="#273633"/><stop offset="1" stop-color="#111918"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="220" cy="140" r="72" fill="#cde7cf" opacity=".42"/>
+  <path d="M0 360L170 238 300 326 458 190 642 344 796 228 968 338 1130 232 1280 320V520H0Z" fill="#203631" opacity=".9"/>
+  <path d="M0 420L160 320 310 405 456 302 650 430 842 292 1036 420 1188 330 1280 390V540H0Z" fill="#182926"/>
+  <path d="M0 720V470c185-42 336-19 497 24 174 47 318 43 468-7 119-40 224-43 315-22v255Z" fill="url(#ground)"/>
+  <g fill="url(#stone)" stroke="#7caea6" stroke-width="3">
+    <path d="M170 516l34-202 66-20 42 222z"/><path d="M420 532l28-280 76-26 38 306z"/><path d="M742 528l34-236 72-20 40 256z"/><path d="M1030 524l26-190 60-18 40 208z"/>
+  </g>
+  <g fill="none" stroke="#8fe0d2" stroke-width="5" filter="url(#glow)">
+    <path d="M212 430l28-42 30 42-30 44z"/><path d="M470 402l25-38 26 38-26 40z"/><path d="M794 410l22-34 24 34-24 36z"/><path d="M1071 424l22-32 23 32-23 35z"/>
+    <path d="M240 454C382 404 516 404 796 438S1025 449 1090 438" stroke-dasharray="18 14"/>
+  </g>
+  <path d="M78 634C270 552 458 562 624 606c172 45 349 48 578-22" fill="none" stroke="#75b7b0" stroke-width="10" opacity=".3"/>
+  <g fill="#d7f7ef" opacity=".55"><circle cx="346" cy="274" r="3"/><circle cx="644" cy="204" r="4"/><circle cx="930" cy="264" r="3"/><circle cx="1168" cy="188" r="3"/></g>
+  <path d="M0 654c224-34 420-24 608 18 211 47 435 36 672-22v70H0Z" fill="#0c1514" opacity=".78"/>
+</svg>
