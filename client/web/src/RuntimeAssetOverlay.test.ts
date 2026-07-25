@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { animationAssetId } from "./RuntimePackSprite";
+import { animationAssetId, runtimeSpriteAnimation } from "./RuntimePackSprite";
 import { isDefeatedHealthText, runtimeCombatState, runtimeEntityForCombatant } from "./RuntimeAssetOverlay";
 
 describe("Sprint Runtime 02 asset mapping", () => {
   it("builds canonical PACK 99 animation IDs", () => {
     expect(animationAssetId("HERO_GUARDIAN_01", "attack", "SE")).toBe("HERO_GUARDIAN_01_ATTACK_SE_01");
+  });
+
+  it("preserves both endpoints of looping spritesheets", () => {
+    expect(runtimeSpriteAnimation(4, 6, true)).toBe("runtime-pack-frames 0.6666666666666666s steps(4, jump-none) infinite forwards");
+    expect(runtimeSpriteAnimation(1, 6, true)).toBeUndefined();
   });
 
   it("maps campaign combatants to runtime entities", () => {
