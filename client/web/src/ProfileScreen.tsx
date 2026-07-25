@@ -11,6 +11,7 @@ interface ProfileScreenProps {
   onBack: () => void;
   onOpenCollection: () => void;
   onOpenCampaign: () => void;
+  onOpenAccount: () => void;
 }
 
 function statusLabel(progress: LivingCampaignProgress): string {
@@ -27,6 +28,7 @@ export function ProfileScreen({
   onBack,
   onOpenCollection,
   onOpenCampaign,
+  onOpenAccount,
 }: ProfileScreenProps) {
   const summary = deriveProfileSummary(account, catalog, progress);
   const unlockedAchievements = catalog?.achievements.filter((item) => item.unlockedAt !== null) ?? [];
@@ -51,7 +53,10 @@ export function ProfileScreen({
         <div className="profile-identity">
           <small>{summary.isAuthenticated ? `@${summary.handle ?? "arquiteto"}` : "Perfil local deste dispositivo"}</small>
           <h2>{summary.displayName}</h2>
-          <p>{summary.isAuthenticated ? "Conta conectada ao reino Octarina" : "Entre pelo multiplayer para sincronizar em outros dispositivos."}</p>
+          <p>{summary.isAuthenticated ? "Conta conectada ao reino Octarina" : "Crie ou conecte uma conta quando quiser proteger esta jornada em outros dispositivos."}</p>
+          <button type="button" className="profile-account-action" onClick={onOpenAccount}>
+            {summary.isAuthenticated ? "Gerenciar conta e sincronização" : "Proteger progresso local"}
+          </button>
           <div className="profile-level-row">
             <b>Nível {summary.level}</b>
             <span>{summary.xp.toLocaleString("pt-BR")} XP</span>
