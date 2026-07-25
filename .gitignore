@@ -27,6 +27,12 @@ client/godot/.godot/
 .export/
 export.cfg
 
+# PACK 99 runtime generated locally
+client/godot/assets/runtime/*
+!client/godot/assets/runtime/README.md
+client/web/public/assets/runtime/*
+!client/web/public/assets/runtime/README.md
+
 # Local environment
 .env
 .env.*
