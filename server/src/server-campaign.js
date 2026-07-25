@@ -42,6 +42,14 @@ async function optionalAccount(identity, credentials) {
   return identity.authenticate(credentials.accountId, credentials.accessToken);
 }
 
+function syncStrategy(value) {
+  const strategy = String(value ?? "merge");
+  if (!["preview", "merge", "local", "remote"].includes(strategy)) {
+    throw new ProtocolError("INVALID_SYNC_STRATEGY", "strategy must be preview, merge, local or remote");
+  }
+  return strategy;
+}
+
 export function startServer({ campaign = new MemoryCampaignStore(), ...options } = {}) {
   const instance = startWebServer(options);
   const { httpServer, identity, manager, metrics, logger } = instance;
@@ -81,6 +89,35 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
           progress: await campaign.getProgress(account.id),
           catalog: await campaign.getCatalog(account.id),
           profile: await identity.getProfile(account.id),
+        });
+        return;
+      }
+
+      if (url.pathname === "/campaign/sync-guest" && request.method === "POST") {
+        const body = await readJsonBody(request);
+        const account = await optionalAccount(identity, credentialsFromRequest(request, body));
+        if (!account) throw new ProtocolError("ACCOUNT_REQUIRED", "an authenticated account is required");
+        const strategy = syncStrategy(body.strategy);
+        const synchronized = await campaign.syncGuestProgress(account.id, body.localProgress, strategy);
+        let xpReward = { recorded: false, xpAwarded: 0, profile: await identity.getProfile(account.id) };
+        if (strategy !== "preview" && synchronized.changed && synchronized.resolved.status === "victory") {
+          xpReward = await identity.awardCampaignXp({
+            roomId: `guest-prologue:${account.id}:bridge-of-ashes`,
+            accountId: account.id,
+            xp: 300,
+          });
+        }
+        metrics?.inc?.("hexa_guest_progress_sync_total", {
+          strategy,
+          relation: synchronized.relation,
+          changed: String(synchronized.changed),
+        });
+        json(response, 200, {
+          ...synchronized,
+          xpReward,
+          profile: xpReward.profile ?? await identity.getProfile(account.id),
+          catalog: await campaign.getCatalog(account.id),
+          signature: "Tehkné Solutions",
         });
         return;
       }
