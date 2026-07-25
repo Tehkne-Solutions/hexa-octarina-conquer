@@ -175,9 +175,10 @@ func play_unit_state(root: Node3D, state: String, return_to_idle := true) -> boo
 	var replacement := create_animated_billboard(entity_id, state, direction, 0.0048, tint)
 	if replacement == null:
 		return false
-	var current := root.get_node_or_null("RuntimeSprite")
-	if current != null:
-		current.queue_free()
+	for child in root.get_children():
+		if child is AnimatedSprite3D and child.has_meta("runtime_asset_id"):
+			root.remove_child(child)
+			child.queue_free()
 	replacement.position.y = 0.64
 	root.add_child(replacement)
 	if return_to_idle and state not in ["idle", "walk", "defeat"]:
