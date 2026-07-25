@@ -1,4 +1,9 @@
 import {
+  emitAccountSessionChanged,
+  type GuestProgressStrategy,
+  type GuestProgressSyncResponse,
+} from "./account-sync";
+import {
   PROTOCOL_VERSION,
   type AccountSession,
   type CampaignCatalog,
@@ -12,6 +17,7 @@ import {
   type ServerMessage,
   makeRequestId,
 } from "./protocol";
+import type { LivingCampaignProgress } from "./unified-progress";
 
 const ROOM_SESSION_KEY = "hexa.web.room-session.v1";
 const ACCOUNT_SESSION_KEY = "hexa.web.account-session.v1";
@@ -41,6 +47,13 @@ async function readResponse<T>(response: Response): Promise<T> {
   const payload = await response.json().catch(() => ({ message: response.statusText }));
   if (!response.ok) throw new Error(String(payload.message ?? payload.error ?? `Erro HTTP ${response.status}`));
   return payload as T;
+}
+
+function requestError(message: ServerMessage): Error {
+  const payload = message.payload as { code?: string; message?: string };
+  const error = new Error(payload.message ?? "A solicitação foi recusada pelo servidor.");
+  error.name = payload.code ?? "SERVER_ERROR";
+  return error;
 }
 
 export class HexaClient extends EventTarget {
@@ -91,6 +104,29 @@ export class HexaClient extends EventTarget {
     });
   }
 
+  async connectReady(timeoutMs = 10_000): Promise<void> {
+    if (this.connected) return;
+    await new Promise<void>((resolve, reject) => {
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error("O reino demorou para responder. Verifique a conexão e tente novamente."));
+      }, timeoutMs);
+      const onConnection = (event: Event) => {
+        const status = (event as CustomEvent<{ status?: string }>).detail?.status;
+        if (status === "open") {
+          cleanup();
+          resolve();
+        }
+      };
+      const cleanup = () => {
+        window.clearTimeout(timeout);
+        this.removeEventListener("connection", onConnection);
+      };
+      this.addEventListener("connection", onConnection);
+      this.connect();
+    });
+  }
+
   close(): void {
     this.manualClose = true;
     if (this.reconnectTimer !== null) window.clearTimeout(this.reconnectTimer);
@@ -109,18 +145,125 @@ export class HexaClient extends EventTarget {
     return requestId;
   }
 
+  request<T>(
+    type: string,
+    payload: unknown,
+    expectedType: string | string[],
+    requestPrefix = "request",
+    timeoutMs = 12_000,
+  ): Promise<T> {
+    const accepted = new Set(Array.isArray(expectedType) ? expectedType : [expectedType]);
+    return new Promise<T>((resolve, reject) => {
+      let requestId = "";
+      const timeout = window.setTimeout(() => {
+        cleanup();
+        reject(new Error("A solicitação expirou antes da resposta do reino."));
+      }, timeoutMs);
+      const onMessage = (event: Event) => {
+        const message = (event as CustomEvent<ServerMessage>).detail;
+        if (!requestId || message.requestId !== requestId) return;
+        if (message.type === "error") {
+          cleanup();
+          reject(requestError(message));
+          return;
+        }
+        if (!accepted.has(message.type)) return;
+        cleanup();
+        resolve(message.payload as T);
+      };
+      const cleanup = () => {
+        window.clearTimeout(timeout);
+        this.removeEventListener("message", onMessage);
+      };
+      this.addEventListener("message", onMessage);
+      try {
+        requestId = this.send(type, payload, requestPrefix);
+      } catch (error) {
+        cleanup();
+        reject(error);
+      }
+    });
+  }
+
   register(handle: string, displayName: string, password: string): void {
     this.send("account.register", { handle, displayName, password }, "register");
+  }
+
+  async registerAsync(handle: string, displayName: string, password: string): Promise<AccountSession> {
+    await this.connectReady();
+    return this.request<AccountSession>(
+      "account.register",
+      { handle, displayName, password },
+      "account.session",
+      "register",
+    );
   }
 
   login(handle: string, password: string): void {
     this.send("account.login", { handle, password }, "login");
   }
 
+  async loginAsync(handle: string, password: string): Promise<AccountSession> {
+    await this.connectReady();
+    return this.request<AccountSession>(
+      "account.login",
+      { handle, password },
+      "account.session",
+      "login",
+    );
+  }
+
+  async requestRecovery(handle: string): Promise<{ accepted: boolean; expiresAt: number; recoveryCode?: string }> {
+    await this.connectReady();
+    return this.request(
+      "account.recovery.request",
+      { handle },
+      "account.recovery.requested",
+      "recovery-request",
+    );
+  }
+
+  async confirmRecovery(handle: string, recoveryCode: string, newPassword: string): Promise<AccountSession> {
+    await this.connectReady();
+    return this.request<AccountSession>(
+      "account.recovery.confirm",
+      { handle, recoveryCode, newPassword },
+      "account.session",
+      "recovery-confirm",
+    );
+  }
+
   useGuest(): void {
     this.accountSession = null;
     localStorage.removeItem(ACCOUNT_SESSION_KEY);
     this.dispatch("account", null);
+    emitAccountSessionChanged(null);
+  }
+
+  async syncGuestProgress(
+    localProgress: LivingCampaignProgress,
+    strategy: GuestProgressStrategy,
+  ): Promise<GuestProgressSyncResponse> {
+    const account = this.accountSession;
+    if (!account) throw new Error("Entre com uma conta antes de sincronizar o progresso.");
+    const response = await readResponse<GuestProgressSyncResponse>(await fetch(apiUrl("/campaign/sync-guest"), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        accountId: account.account.id,
+        accessToken: account.accessToken,
+        localProgress,
+        strategy,
+      }),
+    }));
+    this.accountSession = {
+      ...account,
+      account: { ...account.account, ...(response.profile ?? response.xpReward?.profile ?? {}) },
+    };
+    localStorage.setItem(ACCOUNT_SESSION_KEY, JSON.stringify(this.accountSession));
+    this.dispatch("account", this.accountSession);
+    emitAccountSessionChanged(this.accountSession);
+    return response;
   }
 
   listLobby(status = "waiting"): void {
@@ -223,6 +366,7 @@ export class HexaClient extends EventTarget {
       };
       localStorage.setItem(ACCOUNT_SESSION_KEY, JSON.stringify(this.accountSession));
       this.dispatch("account", this.accountSession);
+      emitAccountSessionChanged(this.accountSession);
     }
     return result;
   }
@@ -294,6 +438,7 @@ export class HexaClient extends EventTarget {
       this.accountSession = message.payload as AccountSession;
       localStorage.setItem(ACCOUNT_SESSION_KEY, JSON.stringify(this.accountSession));
       this.dispatch("account", this.accountSession);
+      emitAccountSessionChanged(this.accountSession);
     }
 
     if (message.type === "session.established" || message.type === "session.reconnected") {
