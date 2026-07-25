@@ -1,3 +1,4 @@
+import { requestAccountOnboarding } from "./account-sync";
 import type { AccountSession, CampaignCatalog } from "./protocol";
 import {
   deriveProfileSummary,
@@ -11,7 +12,7 @@ interface ProfileScreenProps {
   onBack: () => void;
   onOpenCollection: () => void;
   onOpenCampaign: () => void;
-  onOpenAccount: () => void;
+  onOpenAccount?: () => void;
 }
 
 function statusLabel(progress: LivingCampaignProgress): string {
@@ -28,7 +29,7 @@ export function ProfileScreen({
   onBack,
   onOpenCollection,
   onOpenCampaign,
-  onOpenAccount,
+  onOpenAccount = requestAccountOnboarding,
 }: ProfileScreenProps) {
   const summary = deriveProfileSummary(account, catalog, progress);
   const unlockedAchievements = catalog?.achievements.filter((item) => item.unlockedAt !== null) ?? [];
