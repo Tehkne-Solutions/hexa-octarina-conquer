@@ -13,6 +13,7 @@ import { GameApp } from "./GameApp";
 import { applyStoredInterfacePreferences } from "./interface-preferences";
 import { installLoadoutClientBridge } from "./loadout-client-bridge";
 import { LoadoutManagerPortal } from "./LoadoutManagerPortal";
+import { LivingGameplayDirector } from "./LivingGameplayDirector";
 import {
   PWA_APPLY_UPDATE_EVENT,
   PWA_CHECK_UPDATE_EVENT,
@@ -43,6 +44,7 @@ import "./sprint-ui-11.css";
 import "./sprint-ui-12.css";
 import "./sprint-ui-13.css";
 import "./sprint-ui-13-interaction.css";
+import "./sprint-ui-14.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
@@ -124,6 +126,7 @@ createRoot(root).render(
   <StrictMode>
     <GameErrorBoundary>
       <BoardThemeRuntime />
+      <LivingGameplayDirector />
       {ui08QaRequested ? (
         <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
       ) : ui13QaRequested ? (
