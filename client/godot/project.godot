@@ -3,8 +3,11 @@ config_version=5
 
 [application]
 config/name="Hexa Octarina Conquer"
-config/version="0.11.2"
+config/version="0.12.0"
 run/main_scene="res://scenes/arena_3d.tscn"
+
+[autoload]
+AssetRuntime="*res://scripts/asset_runtime.gd"
 
 [display]
 window/size/viewport_width=1280
