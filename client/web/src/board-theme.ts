@@ -68,8 +68,13 @@ export function boardThemeFromSelectedMission(storage: Pick<Storage, "getItem">)
 
 export function applyBoardTheme(element: HTMLElement, themeId: BoardThemeId): void {
   const theme = BOARD_THEMES[themeId];
-  element.dataset.boardTheme = themeId;
-  element.dataset.boardRegion = theme.region;
-  element.style.setProperty("--board-theme-emblem", `"${theme.emblem}"`);
-  element.setAttribute("data-board-theme-label", theme.title);
+  const emblemValue = `"${theme.emblem}"`;
+  if (element.dataset.boardTheme !== themeId) element.dataset.boardTheme = themeId;
+  if (element.dataset.boardRegion !== theme.region) element.dataset.boardRegion = theme.region;
+  if (element.style.getPropertyValue("--board-theme-emblem") !== emblemValue) {
+    element.style.setProperty("--board-theme-emblem", emblemValue);
+  }
+  if (element.getAttribute("data-board-theme-label") !== theme.title) {
+    element.setAttribute("data-board-theme-label", theme.title);
+  }
 }
