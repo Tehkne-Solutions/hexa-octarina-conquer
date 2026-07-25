@@ -18,6 +18,11 @@ function targetId(node: HTMLElement, prefix: string): string {
 }
 function normalizedText(node: Element | null): string { return node?.textContent?.replace(/\s+/g, " ").trim() ?? ""; }
 
+export function isDefeatedHealthText(value: string): boolean {
+  const match = value.match(/(?:^|\bHP\s*)(\d+)\s*\/\s*(\d+)/i);
+  return match ? Number(match[1]) <= 0 : false;
+}
+
 export function runtimeEntityForUnit(node: HTMLElement): string {
   if (node.classList.contains("elite")) return "CHAMP_BERSERKER_01";
   if (node.classList.contains("role-archer")) return "HERO_RANGER_01";
@@ -73,8 +78,8 @@ function readCombatTarget(): CombatTarget | null {
     beat: stage.dataset.cinematicBeat ?? "selection",
     playerName,
     enemyName,
-    playerDefeated: normalizedText(stage.querySelector(".player-fighter > span")).startsWith("0/"),
-    enemyDefeated: normalizedText(stage.querySelector(".enemy-fighter > span")).startsWith("0/"),
+    playerDefeated: isDefeatedHealthText(normalizedText(stage.querySelector(".player-fighter > span"))),
+    enemyDefeated: isDefeatedHealthText(normalizedText(stage.querySelector(".enemy-fighter > span"))),
   };
 }
 

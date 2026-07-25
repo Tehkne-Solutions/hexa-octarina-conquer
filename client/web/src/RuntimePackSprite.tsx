@@ -46,6 +46,13 @@ export function animationAssetId(
   return `${entityId}_${state.toUpperCase()}_${direction}_01`;
 }
 
+export function runtimeSpriteAnimation(frames: number, fps: number, loop: boolean): string | undefined {
+  const safeFrames = Math.max(1, frames);
+  if (safeFrames === 1) return undefined;
+  const duration = safeFrames / Math.max(1, fps);
+  return `runtime-pack-frames ${duration}s steps(${safeFrames}, jump-none) ${loop ? "infinite" : "1"} forwards`;
+}
+
 export function RuntimeAnimatedSprite({
   entityId,
   state = "idle",
@@ -84,11 +91,10 @@ export function RuntimeAnimatedSprite({
   }, [assetId, onReady, state]);
 
   if (!runtime) return null;
-  const duration = runtime.frames / runtime.fps;
   const style = {
     backgroundImage: `url("${runtime.url}")`,
     backgroundSize: `${runtime.frames * 100}% 100%`,
-    animation: `runtime-pack-frames ${duration}s steps(${runtime.frames}) ${runtime.loop ? "infinite" : "1"} forwards`,
+    animation: runtimeSpriteAnimation(runtime.frames, runtime.fps, runtime.loop),
   } satisfies CSSProperties;
 
   return (
