@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Fortaleza Magitech</title><desc id="desc">Fortaleza rubra cercada por engrenagens e um núcleo octarino.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#351917"/><stop offset=".56" stop-color="#6a2d27"/><stop offset="1" stop-color="#1b1010"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7b6058"/><stop offset=".48" stop-color="#3f2c2a"/><stop offset="1" stop-color="#171111"/></linearGradient>
+    <radialGradient id="core"><stop stop-color="#fff3bd"/><stop offset=".35" stop-color="#ff9a5d"/><stop offset=".7" stop-color="#db4d3c"/><stop offset="1" stop-color="#6b1f1a"/></radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="1045" cy="142" r="74" fill="url(#core)" opacity=".72" filter="url(#glow)"/>
+  <path d="M0 368L146 252 312 340 470 188 632 344 808 224 972 338 1126 208 1280 324V530H0Z" fill="#3c2522"/>
+  <path d="M0 430L162 330 326 418 490 292 662 438 828 318 1000 428 1176 322 1280 390V560H0Z" fill="#271918"/>
+  <path d="M0 720V492c170-38 331-15 488 34 177 55 326 56 477 2 124-44 229-45 315-26v218Z" fill="#171111"/>
+  <g fill="url(#metal)" stroke="#bd7566" stroke-width="4">
+    <path d="M292 548V296l96-72 98 72v252z"/><path d="M496 548V226l144-110 148 110v322z"/><path d="M802 548V308l92-70 96 70v240z"/>
+    <path d="M226 548h824v62H226z"/>
+  </g>
+  <g fill="#221818" stroke="#e16f57" stroke-width="5"><path d="M338 548V386h98v162z"/><path d="M576 548V332h132v216z"/><path d="M846 548V396h98v152z"/></g>
+  <circle cx="642" cy="270" r="58" fill="url(#core)" filter="url(#glow)"/><path d="M642 190v-46m0 252v-48m-80-78h-48m256 0h-48M586 214l-34-34m180 180-34-34m0-112 34-34M552 360l34-34" stroke="#ffc099" stroke-width="10"/>
+  <g fill="none" stroke="#9f5c50" stroke-width="12" opacity=".78"><circle cx="204" cy="260" r="78" stroke-dasharray="34 18"/><circle cx="1080" cy="350" r="104" stroke-dasharray="42 20"/><circle cx="940" cy="182" r="44" stroke-dasharray="22 12"/></g>
+  <path d="M132 620c190-78 362-73 518-21 193 64 360 53 514-34" fill="none" stroke="#ef7d61" stroke-width="9" stroke-dasharray="20 16" filter="url(#glow)" opacity=".62"/>
+  <g fill="#ffc3a8" filter="url(#glow)"><path d="M266 492l18-28 18 28-18 30z"/><path d="M1002 482l18-28 18 28-18 30z"/></g>
+  <path d="M0 650c224-34 416-22 610 20 205 44 428 35 670-22v72H0Z" fill="#0d0909" opacity=".84"/>
+</svg>
