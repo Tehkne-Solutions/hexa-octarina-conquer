@@ -1,0 +1,39 @@
+@keyframes runtime-pack-frames { from { background-position: 0 0; } to { background-position: 100% 0; } }
+.runtime-pack-sprite { display:block; width:100%; aspect-ratio:1; background-repeat:no-repeat; background-position:0 0; filter:drop-shadow(0 10px 8px rgb(0 0 0 / 62%)); transform-origin:center bottom; }
+[data-runtime-asset^="UNIT_RECRUIT_01_"] { filter:hue-rotate(150deg) saturate(.72) brightness(.74) drop-shadow(0 10px 8px rgb(0 0 0 / 68%)); }
+[data-runtime-asset^="CHAMP_BERSERKER_01_"] { filter:hue-rotate(320deg) saturate(1.55) contrast(1.08) drop-shadow(0 10px 8px rgb(0 0 0 / 72%)); }
+.runtime-unit-overlay { position:absolute; z-index:7; inset:-8% -10% 0; pointer-events:none; }
+.runtime-map-unit { width:100%; height:100%; }
+.fantasy-unit-sprite.runtime-pack-ready .fantasy-unit-vector { opacity:0; visibility:hidden; }
+.fantasy-unit-sprite.state-selected .runtime-map-unit { filter:drop-shadow(0 0 12px rgb(121 234 255 / 72%)) drop-shadow(0 10px 8px rgb(0 0 0 / 68%)); }
+.fantasy-unit-sprite.state-wounded .runtime-map-unit { filter:saturate(.72) sepia(.15) drop-shadow(0 8px 7px rgb(71 14 12 / 68%)); }
+.fantasy-unit-sprite.state-captive .runtime-map-unit { filter:grayscale(.5) brightness(.64) drop-shadow(0 8px 7px rgb(0 0 0 / 62%)); }
+.runtime-node-overlay { position:absolute; z-index:3; left:50%; top:50%; width:clamp(56px,7vw,88px); height:clamp(56px,7vw,88px); translate:-50% -60%; pointer-events:none; }
+.runtime-node-pillar,.runtime-node-vfx { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.runtime-node-pillar { z-index:2; filter:drop-shadow(0 8px 5px rgb(0 0 0 / 58%)); }
+.runtime-node-vfx { z-index:1; scale:1.25; animation:runtime-node-pulse 1.35s ease-in-out infinite; }
+.go-node.runtime-node-ready .node-stone { opacity:.15; }
+.go-node.valid .runtime-node-vfx { filter:hue-rotate(85deg) saturate(1.35); }
+.go-node.objective-target .runtime-node-vfx { filter:hue-rotate(305deg) saturate(1.6) brightness(1.15); }
+@keyframes runtime-node-pulse { 50% { opacity:.62; transform:scale(1.08); } }
+.runtime-world-overlay { position:absolute; z-index:2; inset:0; overflow:hidden; pointer-events:none; }
+.runtime-terrain-mosaic { position:absolute; inset:6%; opacity:.28; background-image:var(--runtime-grass-tile); background-size:16% auto; background-repeat:repeat; mix-blend-mode:screen; filter:saturate(.88) brightness(.66); transform:rotate(-1deg) scale(1.06); }
+.runtime-land-tile { position:absolute; width:21%; height:auto; opacity:.52; filter:saturate(.9) brightness(.72) drop-shadow(0 8px 5px rgb(0 0 0 / 45%)); }
+.runtime-forest-tile { left:10%; top:17%; filter:hue-rotate(48deg) saturate(1.45) brightness(.58) drop-shadow(0 8px 5px rgb(0 0 0 / 45%)); }
+.runtime-water-tile { right:11%; bottom:19%; filter:hue-rotate(155deg) saturate(1.7) brightness(.78) drop-shadow(0 8px 5px rgb(0 0 0 / 45%)); }
+.runtime-board-edge { position:absolute; z-index:6; height:clamp(40px,6vw,70px); object-fit:fill; opacity:.9; transform-origin:center; filter:drop-shadow(0 6px 5px rgb(0 0 0 / 64%)); }
+.runtime-board-edge.owner-player { filter:hue-rotate(8deg) saturate(1.12) drop-shadow(0 0 8px rgb(96 218 255 / 46%)) drop-shadow(0 6px 5px rgb(0 0 0 / 64%)); }
+.runtime-board-edge.owner-enemy { filter:hue-rotate(145deg) saturate(1.35) drop-shadow(0 0 8px rgb(255 92 76 / 42%)) drop-shadow(0 6px 5px rgb(0 0 0 / 64%)); }
+.runtime-combatants { position:absolute; z-index:36; top:46px; left:0; right:0; height:clamp(112px,22vh,180px); pointer-events:none; }
+.runtime-combatant { position:absolute; bottom:-8px; width:clamp(150px,22vw,270px); height:clamp(150px,22vw,270px); transition:transform 180ms ease,filter 180ms ease; }
+.runtime-player-combatant { left:clamp(7%,13vw,19%); }
+.runtime-enemy-combatant { right:clamp(7%,13vw,19%); transform:scaleX(-1); }
+.runtime-combatants.beat-player-strike .runtime-player-combatant { transform:translateX(clamp(44px,8vw,120px)) scale(1.08); }
+.runtime-combatants.beat-player-strike .runtime-enemy-combatant { transform:translateX(12px) scaleX(-1) rotate(-2deg); filter:brightness(1.35) saturate(.7); }
+.runtime-combatants.beat-enemy-strike .runtime-enemy-combatant { transform:translateX(clamp(-120px,-8vw,-44px)) scaleX(-1) scale(1.08); }
+.runtime-combatants.beat-enemy-strike .runtime-player-combatant { transform:translateX(-12px) rotate(2deg); filter:brightness(1.35) saturate(.7); }
+.runtime-combat-vfx { position:absolute; z-index:5; left:50%; top:48%; width:clamp(170px,28vw,360px); translate:-50% -50%; object-fit:contain; filter:drop-shadow(0 0 24px rgb(255 255 255 / 50%)); animation:runtime-combat-vfx 360ms ease-out both; }
+@keyframes runtime-combat-vfx { from { opacity:0; transform:scale(.45) rotate(-12deg); } 42% { opacity:1; } to { opacity:0; transform:scale(1.28) rotate(6deg); } }
+@media (max-width:640px) { .runtime-node-overlay{width:58px;height:58px}.runtime-board-edge{height:45px}.runtime-combatants{top:42px}.runtime-combatant{width:clamp(120px,35vw,170px);height:clamp(120px,35vw,170px)}.runtime-player-combatant{left:2%}.runtime-enemy-combatant{right:2%} }
+html.hexa-reduced-motion .runtime-pack-sprite,html.hexa-low-effects .runtime-pack-sprite,html.hexa-reduced-motion .runtime-node-vfx,html.hexa-low-effects .runtime-node-vfx { animation:none!important; }
+@media (prefers-reduced-motion:reduce) { .runtime-pack-sprite,.runtime-node-vfx{animation:none!important}.runtime-combatant{transition:none!important} }
