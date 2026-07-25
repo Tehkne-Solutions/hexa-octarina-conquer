@@ -85,10 +85,11 @@ export function RuntimeAnimatedSprite({
 
   if (!runtime) return null;
   const duration = runtime.frames / runtime.fps;
+  const animationSteps = Math.max(1, runtime.frames - 1);
   const style = {
     backgroundImage: `url("${runtime.url}")`,
     backgroundSize: `${runtime.frames * 100}% 100%`,
-    animation: `runtime-pack-frames ${duration}s steps(${runtime.frames}) ${runtime.loop ? "infinite" : "1"} forwards`,
+    animation: `runtime-pack-frames ${duration}s steps(${animationSteps}, end) ${runtime.loop ? "infinite" : "1"} forwards`,
   } satisfies CSSProperties;
 
   return (
