@@ -17,7 +17,7 @@ concurrency:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: client/web
@@ -79,6 +79,12 @@ jobs:
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui13-prismatic-replay&board-theme=prismatic-ruins" visual-qa/ui13-prismatic-replay-mobile-390x844.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui13-ash-combat&board-theme=ash-fortress" visual-qa/ui13-ash-combat-notebook-1366x768.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui13-ash-combat&board-theme=ash-fortress" visual-qa/ui13-ash-combat-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=1600 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-gameplay&board-theme=orun-mill" visual-qa/ui14-gameplay-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=1600 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-gameplay&board-theme=orun-mill" visual-qa/ui14-gameplay-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=1600 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-combat-selection&board-theme=ash-fortress" visual-qa/ui14-combat-selection-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=1600 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-combat-selection&board-theme=ash-fortress" visual-qa/ui14-combat-selection-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=2500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-combat-impact&board-theme=ash-fortress" visual-qa/ui14-combat-impact-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=2500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui14-combat-impact&board-theme=ash-fortress" visual-qa/ui14-combat-impact-mobile-390x844.png
           printf '%s\n' \
             'Hexa Octarina Conquer — Visual QA Matrix' \
             'home desktop: 1440x900' \
@@ -99,6 +105,9 @@ jobs:
             'UI13 Orun Mill combat notebook/mobile' \
             'UI13 Prismatic Ruins replay notebook/mobile' \
             'UI13 Ash Fortress combat notebook/mobile' \
+            'UI14 clean gameplay HUD notebook/mobile' \
+            'UI14 combat selection notebook/mobile' \
+            'UI14 cinematic impact notebook/mobile' \
             'Tehkné Solutions' > visual-qa/manifest.txt
 
       - name: Upload visual QA artifact
