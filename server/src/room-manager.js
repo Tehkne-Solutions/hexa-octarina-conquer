@@ -2,9 +2,14 @@ import { randomUUID } from "node:crypto";
 
 import { runCampaignAI } from "./campaign-ai.js";
 import { getCampaignMission } from "./campaign-catalog.js";
+import { buildPlayerHand } from "./cards.js";
 import { GameRoom } from "./game-room.js";
 import { ProtocolError } from "./protocol.js";
 import { MemoryRoomStore } from "./room-store.js";
+
+function preparedHand(loadout) {
+  return buildPlayerHand(loadout);
+}
 
 export class RoomManager {
   constructor({ idFactory = randomUUID, clock = () => Date.now(), store = new MemoryRoomStore() } = {}) {
@@ -22,17 +27,20 @@ export class RoomManager {
     }
   }
 
-  createRoom({ playerName, boardSize, accountId = null, roomId = null }) {
+  createRoom({ playerName, boardSize, accountId = null, roomId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const resolvedRoomId = roomId ?? this.createRoomId();
     if (this.rooms.has(resolvedRoomId)) throw new ProtocolError("ROOM_EXISTS", "room already exists");
     const room = new GameRoom({ id: resolvedRoomId, boardSize, idFactory: this.idFactory, clock: this.clock });
-    this.rooms.set(resolvedRoomId, room);
     const joined = room.addPlayer(playerName, { accountId });
+    joined.player.hand = hand;
+    this.rooms.set(resolvedRoomId, room);
     this.persist(room);
     return { room, ...joined, followUpPatches: [] };
   }
 
-  createCampaignRoom({ playerName, accountId = null, missionId }) {
+  createCampaignRoom({ playerName, accountId = null, missionId, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const mission = getCampaignMission(missionId);
     const roomId = `C${mission.order.toString().padStart(2, "0")}${this.createRoomId().slice(0, 5)}`;
     const room = new GameRoom({
@@ -42,17 +50,20 @@ export class RoomManager {
       idFactory: this.idFactory,
       clock: this.clock,
     });
-    this.rooms.set(roomId, room);
     const human = room.addPlayer(playerName, { accountId }).player;
+    human.hand = hand;
     const bot = room.addBot(mission.aiName, { difficulty: mission.difficulty }).player;
     const patch = room.startCampaign({ missionId, humanPlayerId: human.id, botPlayerId: bot.id });
+    this.rooms.set(roomId, room);
     this.persist(room);
     return { room, player: human, patch, followUpPatches: [] };
   }
 
-  joinRoom({ roomId, playerName, accountId = null }) {
+  joinRoom({ roomId, playerName, accountId = null, loadout = undefined }) {
+    const hand = preparedHand(loadout);
     const room = this.getRoom(roomId);
     const joined = room.addPlayer(playerName, { accountId });
+    joined.player.hand = hand;
     this.persist(room);
     return { room, ...joined, followUpPatches: [] };
   }
@@ -85,11 +96,8 @@ export class RoomManager {
     const room = this.rooms.get(roomId);
     if (!room || room.status === "finished") return null;
     let patch;
-    if (room.status === "active" && room.players.length === 2) {
-      patch = room.forfeitPlayer(playerId, "abandonment", { disconnect: true });
-    } else {
-      patch = room.disconnect(playerId);
-    }
+    if (room.status === "active" && room.players.length === 2) patch = room.forfeitPlayer(playerId, "abandonment", { disconnect: true });
+    else patch = room.disconnect(playerId);
     if (patch) this.persist(room);
     return patch ? { room, patch } : null;
   }

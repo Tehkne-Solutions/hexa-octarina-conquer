@@ -38,9 +38,7 @@ function credentialsFromRequest(request, body = {}) {
 
 async function optionalAccount(identity, credentials) {
   if (!credentials.accountId && !credentials.accessToken) return null;
-  if (!credentials.accountId || !credentials.accessToken) {
-    throw new ProtocolError("INVALID_MESSAGE", "accountId and accessToken must be supplied together");
-  }
+  if (!credentials.accountId || !credentials.accessToken) throw new ProtocolError("INVALID_MESSAGE", "accountId and accessToken must be supplied together");
   return identity.authenticate(credentials.accountId, credentials.accessToken);
 }
 
@@ -99,6 +97,7 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
           missionId,
           playerName,
           accountId: account?.id ?? null,
+          loadout: body.loadout,
         });
         metrics?.inc?.("hexa_campaign_started_total", { mission: missionId });
         json(response, 201, {
@@ -124,16 +123,8 @@ export function startServer({ campaign = new MemoryCampaignStore(), ...options }
 
         const recorded = await campaign.recordResult(account.id, result);
         const xpReward = result.success
-          ? await identity.awardCampaignXp({
-            roomId: result.roomId,
-            accountId: account.id,
-            xp: result.rewardXp,
-          })
-          : {
-            recorded: false,
-            xpAwarded: 0,
-            profile: await identity.getProfile(account.id),
-          };
+          ? await identity.awardCampaignXp({ roomId: result.roomId, accountId: account.id, xp: result.rewardXp })
+          : { recorded: false, xpAwarded: 0, profile: await identity.getProfile(account.id) };
 
         metrics?.inc?.("hexa_campaign_completed_total", { mission: result.missionId, success: String(result.success) });
         if (xpReward.recorded) metrics?.inc?.("hexa_campaign_xp_awarded_total", { mission: result.missionId });
