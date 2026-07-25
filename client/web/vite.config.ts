@@ -39,7 +39,7 @@ export default defineConfig({
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/(?:campaign|ws)(?:\/|$)/],
         cleanupOutdatedCaches: true,
-        globPatterns: ["**/*.{js,css,html,svg,png,webp,woff2}"],
+        globPatterns: ["**/*.{js,css,html,json,svg,png,webp,woff2}"],
         runtimeCaching: [
           {
             urlPattern: ({ request, url }) => request.method === "GET"
