@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">A Ponte das Cinzas</title><desc id="desc">Vale escuro cortado por uma ponte rúnica sob lua dourada.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#202b31"/><stop offset=".62" stop-color="#41453b"/><stop offset="1" stop-color="#1a1c18"/></linearGradient>
+    <radialGradient id="moon"><stop stop-color="#fff1bd"/><stop offset=".58" stop-color="#e7c172"/><stop offset="1" stop-color="#b47b36"/></radialGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#15262c"/><stop offset=".5" stop-color="#335059"/><stop offset="1" stop-color="#111a1d"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="ash" width="84" height="84" patternUnits="userSpaceOnUse"><circle cx="8" cy="16" r="1.4" fill="#f2d79e" opacity=".32"/><circle cx="56" cy="38" r="1" fill="#fff" opacity=".2"/><circle cx="34" cy="72" r="1.2" fill="#ddb978" opacity=".28"/></pattern>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="980" cy="142" r="82" fill="url(#moon)" opacity=".88" filter="url(#glow)"/>
+  <path d="M0 356L148 210 288 338 442 164 610 350 772 224 934 348 1110 180 1280 322V520H0Z" fill="#242923"/>
+  <path d="M0 420L130 292 260 405 400 280 548 418 680 316 842 432 1000 288 1160 410 1280 344V560H0Z" fill="#171b17"/>
+  <path d="M0 720V492c170-46 326-31 470 20 158 57 285 58 413 5 143-59 274-67 397-24v227Z" fill="#101410"/>
+  <path d="M0 720V574c178-42 318-27 460 18 161 51 308 58 481 3 139-44 242-44 339-11v136Z" fill="url(#river)"/>
+  <path d="M214 454C408 382 662 378 1035 448L1014 492C678 430 435 430 235 500Z" fill="#302d25" stroke="#806335" stroke-width="8"/>
+  <path d="M258 452v-84m120 54v-94m126 64v-102m132 91v-108m142 130v-96m145 121v-80" stroke="#8d7347" stroke-width="10"/>
+  <path d="M278 432C470 378 702 380 985 435" fill="none" stroke="#d6a455" stroke-width="4" stroke-dasharray="18 16" filter="url(#glow)"/>
+  <g fill="#d9a657" filter="url(#glow)"><path d="M480 404l16-24 16 24-16 24z"/><path d="M716 411l16-24 16 24-16 24z"/><path d="M888 432l13-20 13 20-13 20z"/></g>
+  <g transform="translate(362 410)" fill="#0a0d0c"><circle cx="0" cy="-42" r="16"/><path d="M-17-24h34l12 82h-58z"/><path d="M-24 12l-36 58h18l35-42z"/><path d="M20 8l44 54-15 10-43-38z"/></g>
+  <g transform="translate(820 420)" fill="#11110f"><circle cx="0" cy="-38" r="14"/><path d="M-14-22h28l18 74h-61z"/><path d="M15-16l74-35 5 10-70 42z"/></g>
+  <rect width="1280" height="720" fill="url(#ash)"/>
+  <path d="M0 640c220-55 388-26 590 21 204 47 430 46 690-18v77H0Z" fill="#0a0d0b" opacity=".82"/>
+</svg>

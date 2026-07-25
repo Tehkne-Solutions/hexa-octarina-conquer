@@ -1,0 +1,548 @@
+.campaign-journey-screen,
+.campaign-briefing-screen {
+  --chapter-accent: #d9a657;
+  --chapter-accent-soft: #f4d69b;
+  --chapter-shadow: #171914;
+}
+
+.campaign-region-banner {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(240px, 0.7fr);
+  align-items: center;
+  gap: 16px;
+  margin: -6px 0 22px;
+  padding: 12px 18px;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent) 42%, transparent);
+  border-radius: var(--game-radius-md);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--chapter-accent) 16%, transparent), transparent 62%),
+    var(--game-bg-raised);
+  box-shadow: inset 4px 0 0 var(--chapter-accent), var(--game-shadow-soft);
+  animation: ui12-region-reveal 420ms ease both;
+}
+
+.campaign-region-banner::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 20%, color-mix(in srgb, var(--chapter-accent-soft) 12%, transparent) 48%, transparent 74%);
+  content: "";
+  transform: translateX(-100%);
+  animation: ui12-region-sheen 900ms 120ms ease-out both;
+  pointer-events: none;
+}
+
+.campaign-region-banner > span {
+  padding: 6px 9px;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent) 52%, transparent);
+  border-radius: 999px;
+  color: var(--chapter-accent-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.campaign-region-banner strong {
+  color: var(--game-parchment);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 17px;
+}
+
+.campaign-region-banner small {
+  color: var(--game-parchment-muted);
+  line-height: 1.4;
+  text-align: right;
+}
+
+.campaign-chapter {
+  border-color: color-mix(in srgb, var(--chapter-accent) 30%, var(--game-line));
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--chapter-accent) 7%, transparent), transparent 48%),
+    var(--game-panel);
+}
+
+.campaign-chapter::before {
+  z-index: 4;
+  background: var(--chapter-accent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--chapter-accent) 38%, transparent);
+}
+
+.campaign-chapter > header {
+  position: relative;
+  z-index: 2;
+  padding-top: 16px;
+}
+
+.chapter-region-name,
+.selected-region-label,
+.briefing-region-label {
+  color: var(--chapter-accent-soft);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.chapter-region-name {
+  display: inline-flex;
+  margin-top: 9px;
+}
+
+.campaign-mission-node {
+  border-color: color-mix(in srgb, var(--chapter-accent) 24%, rgba(224, 198, 137, 0.16));
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--chapter-accent) 8%, transparent), transparent 54%),
+    #20231c;
+}
+
+.campaign-mission-node:hover:not(:disabled),
+.campaign-mission-node.selected {
+  border-color: var(--chapter-accent);
+}
+
+.campaign-mission-node.selected {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--chapter-accent) 18%, transparent), 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+.mission-node-number,
+.mission-track-line {
+  border-color: var(--chapter-accent);
+  color: var(--chapter-accent-soft);
+}
+
+.mission-track-line {
+  background: var(--chapter-accent);
+}
+
+.campaign-selected-panel {
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--chapter-accent) 42%, transparent);
+  background:
+    linear-gradient(165deg, color-mix(in srgb, var(--chapter-accent) 7%, transparent), transparent 44%),
+    var(--game-panel);
+  animation: ui12-selected-reveal 280ms ease both;
+}
+
+.selected-region-label {
+  margin-top: -8px;
+}
+
+.selected-progress-bar i {
+  background: linear-gradient(90deg, var(--chapter-accent), var(--chapter-accent-soft));
+}
+
+.campaign-narrative-art {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent) 34%, rgba(224, 198, 137, 0.14));
+  background: var(--chapter-shadow);
+  color: var(--game-parchment);
+}
+
+.campaign-narrative-art img,
+.campaign-narrative-fallback,
+.narrative-vignette,
+.narrative-grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.campaign-narrative-art img {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center;
+  animation: ui12-art-enter 640ms ease both;
+}
+
+.campaign-narrative-fallback {
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 74% 20%, color-mix(in srgb, var(--chapter-accent-soft) 54%, transparent) 0 7%, transparent 8%),
+    linear-gradient(180deg, color-mix(in srgb, var(--chapter-accent) 24%, #182024), var(--chapter-shadow) 72%);
+}
+
+.narrative-orb {
+  position: absolute;
+  top: 14%;
+  right: 14%;
+  width: 72px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--chapter-accent-soft) 72%, transparent);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--chapter-accent) 45%, transparent);
+}
+
+.narrative-ridge {
+  position: absolute;
+  right: -8%;
+  bottom: 6%;
+  left: -8%;
+  height: 54%;
+  background: color-mix(in srgb, var(--chapter-shadow) 86%, #24302b);
+  clip-path: polygon(0 80%, 12% 34%, 27% 68%, 43% 12%, 60% 64%, 76% 25%, 100% 72%, 100% 100%, 0 100%);
+}
+
+.ridge-near {
+  bottom: -12%;
+  height: 50%;
+  opacity: 0.98;
+  transform: scaleX(1.08);
+}
+
+.ridge-far {
+  opacity: 0.5;
+  transform: translateY(-20%) scaleX(1.14);
+}
+
+.narrative-route {
+  position: absolute;
+  right: 12%;
+  bottom: 11%;
+  left: 12%;
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--chapter-accent), var(--chapter-accent-soft), transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--chapter-accent) 54%, transparent);
+  transform: rotate(-4deg);
+}
+
+.narrative-vignette {
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(8, 10, 8, 0.04), rgba(8, 10, 8, 0.72)),
+    radial-gradient(circle at center, transparent 38%, rgba(7, 8, 7, 0.58));
+  pointer-events: none;
+}
+
+.narrative-grain {
+  z-index: 3;
+  opacity: 0.16;
+  background-image:
+    radial-gradient(circle at 18% 26%, #fff 0 0.7px, transparent 0.9px),
+    radial-gradient(circle at 72% 58%, var(--chapter-accent-soft) 0 0.8px, transparent 1px);
+  background-size: 31px 31px, 43px 43px;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.narrative-mission-seal {
+  position: absolute;
+  z-index: 5;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  width: 50px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent-soft) 72%, transparent);
+  border-radius: 50%;
+  color: var(--chapter-accent-soft);
+  background: color-mix(in srgb, var(--chapter-shadow) 82%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--chapter-accent) 30%, transparent);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 22px;
+  backdrop-filter: blur(8px);
+}
+
+.campaign-narrative-art figcaption {
+  position: absolute;
+  z-index: 5;
+  right: 18px;
+  bottom: 16px;
+  left: 18px;
+  display: grid;
+  gap: 3px;
+  text-shadow: 0 2px 8px #000;
+}
+
+.campaign-narrative-art figcaption small {
+  color: var(--chapter-accent-soft);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.campaign-narrative-art figcaption strong {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 18px;
+}
+
+.campaign-narrative-art figcaption span {
+  max-width: 520px;
+  color: rgba(246, 237, 211, 0.82);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.narrative-chapter {
+  min-height: 148px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.narrative-chapter figcaption {
+  bottom: 14px;
+}
+
+.narrative-chapter figcaption span {
+  display: none;
+}
+
+.narrative-chapter .narrative-mission-seal {
+  top: 14px;
+  right: 18px;
+  width: 42px;
+  font-size: 18px;
+}
+
+.narrative-selected {
+  min-height: 190px;
+  border-radius: var(--game-radius-md);
+}
+
+.narrative-selected figcaption span {
+  display: none;
+}
+
+.campaign-briefing-screen {
+  background:
+    radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--chapter-accent) 8%, transparent), transparent 34%),
+    transparent;
+}
+
+.narrative-briefing {
+  min-height: 660px;
+  border-radius: var(--game-radius-lg) 0 0 var(--game-radius-lg);
+}
+
+.narrative-briefing figcaption {
+  right: clamp(24px, 4vw, 54px);
+  bottom: clamp(28px, 5vw, 62px);
+  left: clamp(24px, 4vw, 54px);
+}
+
+.narrative-briefing figcaption strong {
+  max-width: 680px;
+  font-size: clamp(28px, 4vw, 58px);
+  line-height: 1.02;
+}
+
+.narrative-briefing figcaption span {
+  max-width: 600px;
+  font-size: 13px;
+}
+
+.briefing-content {
+  border-color: color-mix(in srgb, var(--chapter-accent) 36%, var(--game-line));
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--chapter-accent) 7%, transparent), transparent 44%),
+    var(--game-panel);
+}
+
+.briefing-topline > div {
+  display: grid;
+  gap: 5px;
+}
+
+.briefing-atmosphere {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: -3px 0 18px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--chapter-accent);
+  color: var(--game-parchment-muted);
+  background: color-mix(in srgb, var(--chapter-accent) 6%, transparent);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.briefing-atmosphere span {
+  color: var(--chapter-accent-soft);
+}
+
+.briefing-objectives .primary {
+  border-color: color-mix(in srgb, var(--chapter-accent) 48%, transparent);
+  background: color-mix(in srgb, var(--chapter-accent) 8%, var(--game-bg-raised));
+}
+
+.briefing-objectives .primary > span {
+  color: var(--chapter-accent-soft);
+}
+
+.narrative-content-reveal {
+  animation: ui12-content-enter 420ms 90ms ease both;
+}
+
+.asset-fallback .narrative-grain {
+  opacity: 0.28;
+}
+
+.theme-runes .campaign-narrative-fallback {
+  background: radial-gradient(circle at 20% 18%, rgba(188, 229, 220, 0.42), transparent 12%), linear-gradient(180deg, #244c49, #111d1c 72%);
+}
+
+.theme-alchemy .campaign-narrative-fallback {
+  background: radial-gradient(circle at 78% 16%, rgba(234, 210, 255, 0.46), transparent 12%), linear-gradient(180deg, #4b315f, #1c1328 72%);
+}
+
+.theme-magitech .campaign-narrative-fallback {
+  background: radial-gradient(circle at 76% 18%, rgba(255, 195, 168, 0.5), transparent 12%), linear-gradient(180deg, #622b25, #271411 72%);
+}
+
+@keyframes ui12-region-reveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ui12-region-sheen {
+  to { transform: translateX(100%); }
+}
+
+@keyframes ui12-selected-reveal {
+  from { opacity: 0.72; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ui12-art-enter {
+  from { opacity: 0; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ui12-content-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+html.hexa-low-effects .campaign-narrative-art img,
+html.hexa-low-effects .narrative-content-reveal,
+html.hexa-low-effects .campaign-region-banner,
+html.hexa-low-effects .campaign-selected-panel {
+  animation: none;
+}
+
+html.hexa-low-effects .narrative-grain,
+html.hexa-high-contrast .narrative-grain {
+  display: none;
+}
+
+html.hexa-low-effects .narrative-mission-seal {
+  backdrop-filter: none;
+}
+
+html.hexa-high-contrast .campaign-narrative-art,
+html.hexa-high-contrast .campaign-region-banner,
+html.hexa-high-contrast .campaign-selected-panel {
+  border-width: 2px;
+  border-color: var(--chapter-accent-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-region-banner,
+  .campaign-region-banner::after,
+  .campaign-selected-panel,
+  .campaign-narrative-art img,
+  .narrative-content-reveal {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .campaign-region-banner {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .campaign-region-banner small {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .narrative-briefing {
+    min-height: 480px;
+    border-radius: var(--game-radius-lg) var(--game-radius-lg) 0 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .campaign-region-banner {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+
+  .campaign-region-banner > span {
+    width: fit-content;
+  }
+
+  .campaign-region-banner small {
+    display: none;
+  }
+
+  .narrative-chapter {
+    min-height: 126px;
+  }
+
+  .narrative-chapter figcaption strong {
+    font-size: 15px;
+  }
+
+  .narrative-selected {
+    min-height: 168px;
+  }
+
+  .narrative-briefing {
+    min-height: 390px;
+  }
+
+  .narrative-briefing figcaption {
+    right: 18px;
+    bottom: 22px;
+    left: 18px;
+  }
+
+  .narrative-briefing figcaption strong {
+    font-size: clamp(24px, 9vw, 38px);
+  }
+
+  .narrative-briefing figcaption span {
+    display: none;
+  }
+
+  .narrative-mission-seal {
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    font-size: 18px;
+  }
+
+  .briefing-region-label {
+    line-height: 1.4;
+  }
+}
+
+@media (max-height: 780px) and (min-width: 900px) {
+  .narrative-briefing {
+    min-height: 570px;
+  }
+
+  .narrative-briefing figcaption strong {
+    font-size: clamp(28px, 3.2vw, 46px);
+  }
+
+  .narrative-chapter {
+    min-height: 120px;
+  }
+
+  .campaign-region-banner {
+    margin-bottom: 14px;
+    padding-block: 9px;
+  }
+}

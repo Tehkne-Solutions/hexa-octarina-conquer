@@ -17,7 +17,7 @@ concurrency:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     defaults:
       run:
         working-directory: client/web
@@ -67,6 +67,12 @@ jobs:
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=loadout" visual-qa/ui10-loadout-mobile-390x844.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui11-account" visual-qa/ui11-account-notebook-1366x768.png
           npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=3500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=ui11-account" visual-qa/ui11-account-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-1" visual-qa/ui12-runes-map-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-1&briefing=1" visual-qa/ui12-runes-briefing-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-2&briefing=1" visual-qa/ui12-alchemy-briefing-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-2" visual-qa/ui12-alchemy-map-mobile-390x844.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="1366,768" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-3&briefing=1" visual-qa/ui12-magitech-briefing-notebook-1366x768.png
+          npx --yes playwright@1.54.2 screenshot --browser=chromium --viewport-size="390,844" --wait-for-timeout=5500 "http://127.0.0.1:4173/?qa=1&stable=1&screen=campaign&chapter=chapter-3&briefing=1" visual-qa/ui12-magitech-briefing-mobile-390x844.png
           printf '%s\n' \
             'Hexa Octarina Conquer — Visual QA Matrix' \
             'home desktop: 1440x900' \
@@ -81,6 +87,9 @@ jobs:
             'UI09 spectator replay notebook/mobile viewport' \
             'UI10 loadout editor notebook/mobile viewport' \
             'UI11 account onboarding notebook/mobile viewport' \
+            'UI12 runic map notebook and briefing mobile' \
+            'UI12 alchemy briefing notebook and map mobile' \
+            'UI12 magitech briefing notebook/mobile' \
             'Tehkné Solutions' > visual-qa/manifest.txt
 
       - name: Upload visual QA artifact

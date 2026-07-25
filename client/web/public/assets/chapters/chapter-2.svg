@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Delta Prismático</title><desc id="desc">Torres alquímicas e cristais violetas sobre canais luminosos.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#24183a"/><stop offset=".58" stop-color="#5a3d69"/><stop offset="1" stop-color="#181324"/></linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#261b44"/><stop offset=".5" stop-color="#6b4f88"/><stop offset="1" stop-color="#171226"/></linearGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e78a6"/><stop offset=".5" stop-color="#473854"/><stop offset="1" stop-color="#21192a"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="1010" cy="134" r="64" fill="#e9caff" opacity=".5" filter="url(#glow)"/>
+  <path d="M0 366L140 272 280 348 442 208 618 354 792 252 962 348 1112 236 1280 330V530H0Z" fill="#352645"/>
+  <path d="M0 430L176 338 318 422 486 310 672 438 844 328 1022 424 1180 340 1280 400V550H0Z" fill="#251c31"/>
+  <path d="M0 720V476c182-38 334-10 500 38 177 51 318 49 463-4 132-48 236-48 317-28v238Z" fill="url(#water)"/>
+  <g fill="url(#tower)" stroke="#bd96df" stroke-width="3">
+    <path d="M208 502l26-226 55-58 57 58 24 226z"/><path d="M550 516l28-292 66-72 70 72 25 292z"/><path d="M908 510l24-232 58-58 62 58 26 232z"/>
+  </g>
+  <g fill="#d7b4ff" filter="url(#glow)"><path d="M290 230l22 38-22 40-22-40z"/><path d="M645 164l28 48-28 50-28-50z"/><path d="M990 228l22 38-22 40-22-40z"/></g>
+  <g fill="#9c71cc" opacity=".85"><path d="M120 544l42-120 44 120z"/><path d="M412 572l55-154 58 154z"/><path d="M796 566l48-138 50 138z"/><path d="M1126 554l42-120 45 120z"/></g>
+  <path d="M96 608c166-84 328-83 488-24 184 68 346 61 576-42" fill="none" stroke="#d4a8ff" stroke-width="8" stroke-dasharray="22 16" opacity=".62" filter="url(#glow)"/>
+  <g fill="none" stroke="#efcfff" stroke-width="4" opacity=".72"><circle cx="288" cy="344" r="44"/><circle cx="644" cy="314" r="56"/><circle cx="990" cy="344" r="44"/><path d="M246 344h84M644 258v112M946 344h88"/></g>
+  <path d="M0 650c214-38 413-25 610 18 208 45 428 38 670-20v72H0Z" fill="#100c18" opacity=".8"/>
+</svg>

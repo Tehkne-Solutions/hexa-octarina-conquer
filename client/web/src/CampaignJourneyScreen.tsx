@@ -1,5 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
+import { CampaignNarrativeArt } from "./CampaignNarrativeArt";
+import {
+  campaignNarrativeTheme,
+  campaignThemeStyle,
+  visualQaCampaignCatalog,
+} from "./campaign-narrative";
 import {
   campaignTotals,
   createCampaignJourney,
@@ -32,6 +38,16 @@ function missionStatus(mission: CampaignJourneyMission): string {
   return "Disponível";
 }
 
+function visualQaRequest(): { chapterId: string | null; briefing: boolean; enabled: boolean } {
+  if (typeof window === "undefined") return { chapterId: null, briefing: false, enabled: false };
+  const params = new URL(window.location.href).searchParams;
+  return {
+    chapterId: params.get("chapter"),
+    briefing: params.get("briefing") === "1",
+    enabled: params.get("qa") === "1" && params.get("screen") === "campaign",
+  };
+}
+
 export function CampaignJourneyScreen({
   catalog,
   progress,
@@ -41,7 +57,9 @@ export function CampaignJourneyScreen({
   onStartLiving,
   onStartServer,
 }: CampaignJourneyScreenProps) {
-  const chapters = useMemo(() => createCampaignJourney(catalog, progress), [catalog, progress]);
+  const qaRequest = useMemo(visualQaRequest, []);
+  const effectiveCatalog = catalog ?? (qaRequest.enabled ? visualQaCampaignCatalog() : null);
+  const chapters = useMemo(() => createCampaignJourney(effectiveCatalog, progress), [effectiveCatalog, progress]);
   const missions = useMemo(() => flattenCampaignJourney(chapters), [chapters]);
   const recommended = useMemo(() => recommendedCampaignMission(chapters), [chapters]);
   const totals = useMemo(() => campaignTotals(chapters), [chapters]);
@@ -49,14 +67,24 @@ export function CampaignJourneyScreen({
   const [briefingOpen, setBriefingOpen] = useState(false);
 
   useEffect(() => {
+    const qaSelected = qaRequest.enabled && qaRequest.chapterId
+      ? missions.find((mission) => mission.chapterId === qaRequest.chapterId)
+      : null;
+    if (qaSelected) {
+      if (selectedId !== qaSelected.id) setSelectedId(qaSelected.id);
+      if (qaRequest.briefing && !briefingOpen) setBriefingOpen(true);
+      return;
+    }
     if (!missions.some((mission) => mission.id === selectedId)) {
       setSelectedId(recommended?.id ?? missions[0]?.id ?? "");
     }
-  }, [missions, recommended, selectedId]);
+  }, [briefingOpen, missions, qaRequest, recommended, selectedId]);
 
   const selected = missions.find((mission) => mission.id === selectedId) ?? recommended ?? null;
   const selectedNeedsNetwork = selected?.source === "server";
   const selectedCanStart = Boolean(selected?.unlocked && (!selectedNeedsNetwork || realmStatus === "online"));
+  const selectedTheme = campaignNarrativeTheme(selected?.chapterId ?? "living-prologue");
+  const selectedThemeStyle = campaignThemeStyle(selectedTheme) as CSSProperties;
 
   const startSelectedMission = () => {
     if (!selected || !selectedCanStart) return;
@@ -75,23 +103,31 @@ export function CampaignJourneyScreen({
           : "Iniciar missão";
 
     return (
-      <main className="campaign-briefing-screen">
+      <main
+        className={`campaign-briefing-screen narrative-theme-${selectedTheme.id}`}
+        data-chapter-theme={selectedTheme.id}
+        style={selectedThemeStyle}
+      >
         <button type="button" className="campaign-back-link" onClick={() => setBriefingOpen(false)}>← Mapa da campanha</button>
-        <section className="briefing-illustration" aria-hidden="true">
-          <span className="briefing-moon" />
-          <span className="briefing-ridge ridge-one" />
-          <span className="briefing-ridge ridge-two" />
-          <span className="briefing-path" />
-          <span className="briefing-sigil">{selected.source === "living" ? "✦" : "⬡"}</span>
-          <span className="briefing-hero">{selected.source === "living" ? "♜" : "◆"}</span>
-        </section>
-        <section className="briefing-content">
+        <CampaignNarrativeArt
+          key={`briefing-${selected.id}`}
+          theme={selectedTheme}
+          missionOrder={selected.order}
+          missionTitle={selected.title}
+          variant="briefing"
+          loading="eager"
+        />
+        <section className="briefing-content narrative-content-reveal">
           <div className="briefing-topline">
-            <p className="fantasy-eyebrow">{selected.chapterTitle} · Missão {selected.order}</p>
+            <div>
+              <p className="fantasy-eyebrow">{selected.chapterTitle} · Missão {selected.order}</p>
+              <span className="briefing-region-label">{selectedTheme.region}</span>
+            </div>
             <span className={`mission-difficulty difficulty-${selected.difficulty}`}>{difficultyLabel(selected.difficulty)}</span>
           </div>
           <h1>{selected.title}</h1>
           <p className="briefing-story">{selected.briefing}</p>
+          <p className="briefing-atmosphere"><span aria-hidden="true">✦</span>{selectedTheme.atmosphere}</p>
 
           <div className="briefing-facts">
             <article><small>Adversário</small><strong>{selected.aiName}</strong><span>Tabuleiro {selected.boardSize}×{selected.boardSize}</span></article>
@@ -107,7 +143,7 @@ export function CampaignJourneyScreen({
           </div>
 
           {selectedNeedsNetwork && realmStatus !== "online" ? (
-            <p className="briefing-offline-note" role="status">Esta missão usa o servidor autoritativo. O briefing permanece disponível, mas a batalha será liberada quando a conexão voltar.</p>
+            <p className="briefing-offline-note" role="status">Esta missão usa o servidor autoritativo. A arte e o briefing permanecem disponíveis offline; a batalha será liberada quando a conexão voltar.</p>
           ) : null}
 
           <div className="briefing-actions">
@@ -125,13 +161,17 @@ export function CampaignJourneyScreen({
   }
 
   return (
-    <main className="campaign-journey-screen">
+    <main
+      className={`campaign-journey-screen narrative-theme-${selectedTheme.id}`}
+      data-chapter-theme={selectedTheme.id}
+      style={selectedThemeStyle}
+    >
       <header className="campaign-journey-header">
         <div>
           <button type="button" className="campaign-back-link" onClick={onBack}>← Início</button>
           <p className="fantasy-eyebrow">As Crônicas de Orun</p>
           <h1>Mapa da campanha</h1>
-          <p>Escolha uma missão, leia o briefing e continue a reconquista sem sair do shell principal.</p>
+          <p>Escolha uma região, leia o briefing ilustrado e continue a reconquista sem sair do shell principal.</p>
         </div>
         <div className="campaign-account-summary">
           <span className={`realm-state state-${realmStatus}`}><i />{realmStatus === "online" ? "Sincronizada" : realmStatus === "loading" ? "Sincronizando" : "Modo local"}</span>
@@ -140,42 +180,80 @@ export function CampaignJourneyScreen({
         </div>
       </header>
 
+      <section className="campaign-region-banner" key={`region-${selectedTheme.id}`} aria-live="polite">
+        <span>{selectedTheme.shortRegion}</span>
+        <strong>{selected?.chapterTitle ?? "Prólogo Vivo"}</strong>
+        <small>{selectedTheme.atmosphere}</small>
+      </section>
+
       <section className="campaign-map-layout">
         <div className="campaign-chapter-list">
-          {chapters.map((chapter) => (
-            <article className={`campaign-chapter chapter-${chapter.id}`} key={chapter.id}>
-              <header>
-                <div><small>{chapter.order === 0 ? "PRÓLOGO" : `CAPÍTULO ${chapter.order}`}</small><h2>{chapter.title}</h2><p>{chapter.subtitle}</p></div>
-                <span><strong>{chapter.completed}/{chapter.missions.length}</strong><small>{chapter.stars} ★</small></span>
-              </header>
-              <div className="campaign-mission-track" role="list">
-                {chapter.missions.map((mission, index) => (
-                  <button
-                    type="button"
-                    role="listitem"
-                    key={mission.id}
-                    className={`campaign-mission-node ${selected?.id === mission.id ? "selected" : ""} ${mission.unlocked ? "unlocked" : "locked"} ${mission.completed ? "completed" : ""}`}
-                    disabled={!mission.unlocked}
-                    onClick={() => { setSelectedId(mission.id); setBriefingOpen(false); }}
-                    aria-current={selected?.id === mission.id ? "step" : undefined}
-                    aria-label={`${mission.title}: ${missionStatus(mission)}`}
-                  >
-                    <span className="mission-track-line" aria-hidden="true" />
-                    <span className="mission-node-number">{mission.completed ? "✓" : mission.unlocked ? index + 1 : "🔒"}</span>
-                    <strong>{mission.title}</strong>
-                    <small>{mission.unlocked ? starLine(mission.stars) : "Bloqueada"}</small>
-                  </button>
-                ))}
-              </div>
-            </article>
-          ))}
+          {chapters.map((chapter) => {
+            const chapterTheme = campaignNarrativeTheme(chapter.id);
+            const chapterThemeStyle = campaignThemeStyle(chapterTheme) as CSSProperties;
+            const featuredMission = chapter.missions.find((mission) => mission.unlocked) ?? chapter.missions[0];
+            return (
+              <article
+                className={`campaign-chapter chapter-${chapter.id} chapter-theme-${chapterTheme.id}`}
+                key={chapter.id}
+                data-chapter-id={chapter.id}
+                style={chapterThemeStyle}
+              >
+                <CampaignNarrativeArt
+                  theme={chapterTheme}
+                  missionOrder={featuredMission?.order ?? chapter.order}
+                  missionTitle={chapter.title}
+                  variant="chapter"
+                  decorative
+                />
+                <header>
+                  <div>
+                    <small>{chapter.order === 0 ? "PRÓLOGO" : `CAPÍTULO ${chapter.order}`}</small>
+                    <h2>{chapter.title}</h2>
+                    <p>{chapter.subtitle}</p>
+                    <span className="chapter-region-name">{chapterTheme.shortRegion}</span>
+                  </div>
+                  <span><strong>{chapter.completed}/{chapter.missions.length}</strong><small>{chapter.stars} ★</small></span>
+                </header>
+                <div className="campaign-mission-track" role="list">
+                  {chapter.missions.map((mission, index) => (
+                    <button
+                      type="button"
+                      role="listitem"
+                      key={mission.id}
+                      data-mission-id={mission.id}
+                      data-chapter-id={mission.chapterId}
+                      className={`campaign-mission-node ${selected?.id === mission.id ? "selected" : ""} ${mission.unlocked ? "unlocked" : "locked"} ${mission.completed ? "completed" : ""}`}
+                      disabled={!mission.unlocked}
+                      onClick={() => { setSelectedId(mission.id); setBriefingOpen(false); }}
+                      aria-current={selected?.id === mission.id ? "step" : undefined}
+                      aria-label={`${mission.title}: ${missionStatus(mission)}`}
+                    >
+                      <span className="mission-track-line" aria-hidden="true" />
+                      <span className="mission-node-number">{mission.completed ? "✓" : mission.unlocked ? index + 1 : "🔒"}</span>
+                      <strong>{mission.title}</strong>
+                      <small>{mission.unlocked ? starLine(mission.stars) : "Bloqueada"}</small>
+                    </button>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
         </div>
 
-        <aside className="campaign-selected-panel">
+        <aside className="campaign-selected-panel" key={`selected-${selected?.id ?? "none"}`}>
           {selected ? (
             <>
-              <div className="selected-mission-art" aria-hidden="true"><span>{selected.source === "living" ? "✦" : "⬡"}</span><i /><b /></div>
+              <CampaignNarrativeArt
+                theme={selectedTheme}
+                missionOrder={selected.order}
+                missionTitle={selected.title}
+                variant="selected"
+                decorative
+                loading="eager"
+              />
               <p className="fantasy-eyebrow">{selected.chapterTitle} · Missão {selected.order}</p>
+              <span className="selected-region-label">{selectedTheme.region}</span>
               <h2>{selected.title}</h2>
               <p>{selected.briefing}</p>
               <div className="selected-mission-meta">
