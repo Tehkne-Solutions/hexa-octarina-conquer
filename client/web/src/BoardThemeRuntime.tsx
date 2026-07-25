@@ -10,12 +10,13 @@ import {
 
 function authoritativeTheme(node: HTMLElement, override: BoardThemeId | null): BoardThemeId {
   if (override) return override;
+  if (node.closest(".spectator-replay-screen")) return "ash-fortress";
+
   const campaignRoot = node.closest<HTMLElement>("[data-campaign-mission], .campaign-client, .authoritative-client");
   const missionId = campaignRoot?.dataset.campaignMission
     ?? window.sessionStorage.getItem("hexa.campaign.selected-mission");
   const chapterId = campaignRoot?.dataset.campaignChapter ?? null;
-  const spectator = Boolean(node.closest(".spectator-replay-screen"));
-  return boardThemeForMission(missionId, chapterId, spectator ? "multiplayer" : "campaign");
+  return boardThemeForMission(missionId, chapterId, campaignRoot ? "campaign" : "multiplayer");
 }
 
 function synchronizeThemes(): void {
