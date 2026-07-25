@@ -4,7 +4,7 @@
 [data-runtime-asset^="CHAMP_BERSERKER_01_"] { filter:hue-rotate(320deg) saturate(1.55) contrast(1.08) drop-shadow(0 10px 8px rgb(0 0 0 / 72%)); }
 .runtime-unit-overlay { position:absolute; z-index:7; inset:-8% -10% 0; pointer-events:none; }
 .runtime-map-unit { width:100%; height:100%; }
-.fantasy-unit-sprite.runtime-pack-ready .fantasy-unit-vector { opacity:0; visibility:hidden; }
+.fantasy-unit-sprite.runtime-pack-ready > svg { opacity:0; visibility:hidden; }
 .fantasy-unit-sprite.state-selected .runtime-map-unit { filter:drop-shadow(0 0 12px rgb(121 234 255 / 72%)) drop-shadow(0 10px 8px rgb(0 0 0 / 68%)); }
 .fantasy-unit-sprite.state-wounded .runtime-map-unit { filter:saturate(.72) sepia(.15) drop-shadow(0 8px 7px rgb(71 14 12 / 68%)); }
 .fantasy-unit-sprite.state-captive .runtime-map-unit { filter:grayscale(.5) brightness(.64) drop-shadow(0 8px 7px rgb(0 0 0 / 62%)); }
