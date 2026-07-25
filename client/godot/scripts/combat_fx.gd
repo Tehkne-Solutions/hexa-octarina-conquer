@@ -1,6 +1,7 @@
 extends Node3D
 
 @export var audio_enabled := true
+@export var runtime_vfx_enabled := true
 
 var audio_player: AudioStreamPlayer
 var random := RandomNumberGenerator.new()
@@ -12,6 +13,7 @@ func _ready() -> void:
 	add_child(audio_player)
 
 func play_burst(world_position: Vector3, color: Color, tone_hz := 440.0, intensity := 1.0) -> void:
+	_play_runtime_vfx(world_position, tone_hz, intensity)
 	for index in range(int(10 * intensity)):
 		_spawn_shard(world_position, color, index, intensity)
 	_spawn_ring(world_position, color, intensity)
@@ -19,9 +21,43 @@ func play_burst(world_position: Vector3, color: Color, tone_hz := 440.0, intensi
 		_play_tone(tone_hz, 0.12 + intensity * 0.04, minf(0.75, 0.32 + intensity * 0.12))
 
 func play_duel_impact(world_position: Vector3, winner_color: Color) -> void:
+	var runtime: Node = get_node_or_null("/root/AssetRuntime")
+	if runtime_vfx_enabled and runtime != null and runtime.call("has_runtime"):
+		runtime.call(
+			"play_billboard_vfx",
+			self,
+			"VFX_COMBAT_HEAVY_STRIKE_01",
+			world_position,
+			1.45,
+			0.65
+		)
 	play_burst(world_position, winner_color, 690.0, 1.8)
 	var delayed := get_tree().create_timer(0.12)
 	delayed.timeout.connect(func(): play_burst(world_position + Vector3(0, 0.35, 0), Color("f8fafc"), 920.0, 0.8))
+
+func _play_runtime_vfx(world_position: Vector3, tone_hz: float, intensity: float) -> void:
+	if not runtime_vfx_enabled:
+		return
+	var runtime: Node = get_node_or_null("/root/AssetRuntime")
+	if runtime == null or not runtime.call("has_runtime"):
+		return
+
+	var asset_id := "VFX_COMBAT_SLASH_01"
+	if intensity >= 1.55:
+		asset_id = "VFX_COMBAT_HEAVY_STRIKE_01"
+	elif tone_hz >= 820.0:
+		asset_id = "IMPACT_ARCANE_01"
+	elif tone_hz <= 330.0:
+		asset_id = "VFX_TERRITORY_CONQUEST_01"
+
+	runtime.call(
+		"play_billboard_vfx",
+		self,
+		asset_id,
+		world_position,
+		0.75 + intensity * 0.28,
+		0.48 + intensity * 0.08
+	)
 
 func _spawn_shard(origin: Vector3, color: Color, index: int, intensity: float) -> void:
 	var shard := MeshInstance3D.new()
