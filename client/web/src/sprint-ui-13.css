@@ -1,0 +1,520 @@
+/* Sprint UI 13 — regional board themes */
+
+:root {
+  --ui13-owner-player: #7be8ff;
+  --ui13-owner-enemy: #ff786f;
+  --ui13-owner-contested: #f6d36d;
+}
+
+:is(.go-dots-board-shell, .board-shell)[data-board-theme] {
+  --board-floor-a: #263225;
+  --board-floor-b: #10170f;
+  --board-frame: #9d7b43;
+  --board-line: rgba(226, 204, 145, 0.36);
+  --board-line-strong: #dfc77c;
+  --board-node: #e8d8ad;
+  --board-node-edge: #6e5835;
+  --board-glow: rgba(216, 183, 99, 0.35);
+  --board-province: rgba(107, 156, 105, 0.22);
+  --board-haze: rgba(101, 148, 112, 0.18);
+  --board-accent: #d6b76d;
+  --board-accent-bright: #fff0b6;
+  --board-shadow: rgba(0, 0, 0, 0.58);
+  position: relative;
+  isolation: isolate;
+}
+
+:is(.go-dots-board-shell, .board-shell)[data-board-theme]::before {
+  position: absolute;
+  z-index: 12;
+  top: 12px;
+  right: 14px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--board-accent) 55%, transparent);
+  border-radius: 999px;
+  color: var(--board-accent-bright);
+  background: color-mix(in srgb, var(--board-floor-b) 86%, transparent);
+  box-shadow: 0 5px 18px var(--board-shadow);
+  content: var(--board-theme-emblem) "  " attr(data-board-theme-label);
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+/* Moinho de Orun */
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="orun-mill"] {
+  --board-floor-a: #354433;
+  --board-floor-b: #121b14;
+  --board-frame: #a8844e;
+  --board-line: rgba(224, 205, 145, 0.34);
+  --board-line-strong: #e0c77b;
+  --board-node: #e4d5aa;
+  --board-node-edge: #665033;
+  --board-glow: rgba(139, 211, 166, 0.3);
+  --board-province: rgba(100, 163, 110, 0.25);
+  --board-haze: rgba(112, 169, 130, 0.17);
+  --board-accent: #d2ad61;
+  --board-accent-bright: #fff0b0;
+}
+
+/* Ruínas Prismáticas */
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="prismatic-ruins"] {
+  --board-floor-a: #202745;
+  --board-floor-b: #0d1028;
+  --board-frame: #7761a8;
+  --board-line: rgba(118, 225, 239, 0.28);
+  --board-line-strong: #8ef1ff;
+  --board-node: #d8efff;
+  --board-node-edge: #5e66a7;
+  --board-glow: rgba(139, 93, 255, 0.46);
+  --board-province: rgba(142, 99, 226, 0.24);
+  --board-haze: rgba(71, 212, 226, 0.16);
+  --board-accent: #bda0ff;
+  --board-accent-bright: #e9ddff;
+}
+
+/* Fortaleza de Cinzas */
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="ash-fortress"] {
+  --board-floor-a: #372a28;
+  --board-floor-b: #130f10;
+  --board-frame: #8e5140;
+  --board-line: rgba(230, 145, 100, 0.27);
+  --board-line-strong: #ffad72;
+  --board-node: #d8c5b7;
+  --board-node-edge: #754333;
+  --board-glow: rgba(255, 89, 52, 0.35);
+  --board-province: rgba(151, 65, 48, 0.24);
+  --board-haze: rgba(174, 79, 49, 0.17);
+  --board-accent: #d77c52;
+  --board-accent-bright: #ffd1a9;
+}
+
+/* Shared living board surface */
+.go-dots-board-shell[data-board-theme] {
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--board-frame) 68%, transparent);
+  background:
+    radial-gradient(circle at 50% 20%, var(--board-haze), transparent 38%),
+    linear-gradient(150deg, color-mix(in srgb, var(--board-floor-a) 82%, #000), var(--board-floor-b));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--board-accent) 12%, transparent), 0 24px 65px var(--board-shadow);
+}
+
+.go-dots-board-shell[data-board-theme] .go-dots-world {
+  background:
+    radial-gradient(circle at 50% 35%, var(--board-haze), transparent 34%),
+    linear-gradient(165deg, var(--board-floor-a), var(--board-floor-b) 74%);
+}
+
+.go-dots-board-shell[data-board-theme] .go-dots-world::before,
+.go-dots-board-shell[data-board-theme] .go-dots-world::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.go-dots-board-shell[data-board-theme] .go-dots-world::before {
+  opacity: 0.62;
+  background-image:
+    linear-gradient(30deg, transparent 46%, color-mix(in srgb, var(--board-line) 35%, transparent) 48% 52%, transparent 54%),
+    linear-gradient(-30deg, transparent 46%, color-mix(in srgb, var(--board-line) 24%, transparent) 48% 52%, transparent 54%);
+  background-size: 74px 74px;
+  mask-image: radial-gradient(circle at center, #000, transparent 80%);
+}
+
+.go-dots-board-shell[data-board-theme] .go-dots-world::after {
+  box-shadow: inset 0 0 80px color-mix(in srgb, var(--board-floor-b) 82%, transparent);
+}
+
+.go-dots-board-shell[data-board-theme] .world-sky-glow {
+  background: radial-gradient(circle, var(--board-glow), transparent 67%);
+}
+
+.go-dots-board-shell[data-board-theme] .base-go-grid line {
+  stroke: var(--board-line);
+}
+
+.go-dots-board-shell[data-board-theme] .go-node .node-stone {
+  filter: drop-shadow(0 5px 6px var(--board-shadow));
+}
+
+.go-dots-board-shell[data-board-theme] .go-node .node-stone::before,
+.go-dots-board-shell[data-board-theme] .go-node .node-stone > i {
+  border-color: var(--board-node-edge);
+  background: linear-gradient(145deg, var(--board-node), color-mix(in srgb, var(--board-node) 48%, var(--board-floor-b)));
+}
+
+.go-dots-board-shell[data-board-theme] .go-node.valid .node-stone,
+.go-dots-board-shell[data-board-theme] .go-node.recommended .node-stone {
+  filter: drop-shadow(0 0 10px var(--board-glow));
+}
+
+.go-dots-board-shell[data-board-theme] .influence-edge .influence-foundation {
+  stroke: color-mix(in srgb, var(--board-floor-b) 88%, black);
+}
+
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-player .influence-wall,
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-player .influence-runes {
+  stroke: var(--ui13-owner-player);
+}
+
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-enemy .influence-wall,
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-enemy .influence-runes {
+  stroke: var(--ui13-owner-enemy);
+}
+
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-contested .influence-wall,
+.go-dots-board-shell[data-board-theme] .influence-edge.owner-contested .influence-runes {
+  stroke: var(--ui13-owner-contested);
+}
+
+.go-dots-board-shell[data-board-theme] .claimed-territory {
+  border: 2px solid rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 0 24px var(--board-province), 0 0 12px rgba(0, 0, 0, 0.24);
+  backdrop-filter: saturate(1.12);
+}
+
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .claimed-territory .territory-rune {
+  color: #d9c7ff;
+  text-shadow: 0 0 13px #61dcec;
+}
+
+.go-dots-board-shell[data-board-theme="ash-fortress"] .claimed-territory .territory-rune {
+  color: #ffc08e;
+  text-shadow: 0 0 12px #ef5b31;
+}
+
+/* Living landmarks by region */
+.go-dots-board-shell[data-board-theme="orun-mill"] .world-river {
+  filter: saturate(0.78) brightness(0.92);
+}
+
+.go-dots-board-shell[data-board-theme="orun-mill"] .landmark-mill {
+  filter: drop-shadow(0 0 13px rgba(230, 201, 121, 0.28));
+}
+
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .world-river {
+  filter: hue-rotate(55deg) saturate(1.45) brightness(1.18);
+}
+
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .landmark-ruins,
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .landmark-mill {
+  filter: hue-rotate(55deg) saturate(1.35) drop-shadow(0 0 12px rgba(120, 220, 255, 0.42));
+}
+
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .landmark-forest,
+.go-dots-board-shell[data-board-theme="prismatic-ruins"] .landmark-village {
+  opacity: 0.62;
+  filter: hue-rotate(55deg) saturate(0.72);
+}
+
+.go-dots-board-shell[data-board-theme="ash-fortress"] .world-river {
+  opacity: 0.42;
+  filter: sepia(1) hue-rotate(320deg) saturate(2.2) brightness(0.72);
+}
+
+.go-dots-board-shell[data-board-theme="ash-fortress"] .world-bridge {
+  filter: sepia(0.65) saturate(1.6) brightness(0.72);
+}
+
+.go-dots-board-shell[data-board-theme="ash-fortress"] .landmark-mountains,
+.go-dots-board-shell[data-board-theme="ash-fortress"] .landmark-ruins {
+  filter: sepia(0.7) hue-rotate(325deg) saturate(1.55) drop-shadow(0 0 12px rgba(230, 75, 43, 0.3));
+}
+
+.go-dots-board-shell[data-board-theme="ash-fortress"] .landmark-village,
+.go-dots-board-shell[data-board-theme="ash-fortress"] .landmark-forest {
+  opacity: 0.5;
+  filter: grayscale(0.8) sepia(0.4);
+}
+
+/* Authoritative / replay board */
+.board-shell[data-board-theme] {
+  overflow: hidden;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--board-frame) 64%, transparent);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 0%, var(--board-haze), transparent 46%),
+    linear-gradient(155deg, color-mix(in srgb, var(--board-floor-a) 65%, #080a11), var(--board-floor-b));
+  box-shadow: 0 22px 62px var(--board-shadow), inset 0 0 0 1px color-mix(in srgb, var(--board-accent) 10%, transparent);
+}
+
+.board-shell[data-board-theme] .board-guide {
+  border-color: color-mix(in srgb, var(--board-accent) 42%, transparent);
+  background: color-mix(in srgb, var(--board-floor-b) 76%, transparent);
+}
+
+.board-shell[data-board-theme] .board-guide strong {
+  color: var(--board-accent-bright);
+}
+
+.board-shell[data-board-theme] .board > rect:first-of-type {
+  fill: var(--board-floor-b) !important;
+  stroke: var(--board-frame) !important;
+}
+
+.board-shell[data-board-theme] .board {
+  overflow: visible;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 50% 44%, var(--board-haze), transparent 42%),
+    linear-gradient(145deg, var(--board-floor-a), var(--board-floor-b));
+  box-shadow: inset 0 0 70px color-mix(in srgb, var(--board-floor-b) 84%, transparent);
+}
+
+.board-shell[data-board-theme] .edge-option-visible {
+  stroke: color-mix(in srgb, var(--board-line-strong) 68%, transparent);
+}
+
+.board-shell[data-board-theme] .edge-option.suggested .edge-option-visible,
+.board-shell[data-board-theme] .edge-option.valid .edge-option-visible {
+  stroke: var(--board-line-strong);
+  filter: drop-shadow(0 0 5px var(--board-glow));
+}
+
+.board-shell[data-board-theme] .territory-tile {
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.38));
+}
+
+.board-shell[data-board-theme] .province-cell rect:first-child {
+  stroke-width: 3px;
+}
+
+.board-shell[data-board-theme] .board-point > circle:nth-of-type(2),
+.board-shell[data-board-theme] .board-point > circle:nth-of-type(3) {
+  filter: drop-shadow(0 0 4px var(--board-glow));
+}
+
+.board-shell[data-board-theme] .board-point > circle:last-of-type {
+  fill: var(--board-node) !important;
+  stroke: var(--board-node-edge) !important;
+}
+
+.board-shell[data-board-theme] .rune-wall {
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.46));
+}
+
+.board-shell[data-board-theme="prismatic-ruins"] .wall-rune-channel,
+.board-shell[data-board-theme="prismatic-ruins"] .entity-core {
+  filter: drop-shadow(0 0 6px #79e9ff);
+}
+
+.board-shell[data-board-theme="ash-fortress"] .wall-rune-channel,
+.board-shell[data-board-theme="ash-fortress"] .entity-core {
+  filter: drop-shadow(0 0 6px #ff6d42);
+}
+
+.board-shell[data-board-theme="orun-mill"] .wall-rune-channel,
+.board-shell[data-board-theme="orun-mill"] .entity-core {
+  filter: drop-shadow(0 0 5px #d6c477);
+}
+
+/* Decorative regional layer, never interactive */
+:is(.go-dots-board-shell, .board-shell)[data-board-theme]::after {
+  position: absolute;
+  z-index: 0;
+  inset: auto 0 0;
+  height: 24%;
+  content: "";
+  pointer-events: none;
+}
+
+.go-dots-board-shell[data-board-theme] > *,
+.board-shell[data-board-theme] > * {
+  position: relative;
+  z-index: 1;
+}
+
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="orun-mill"]::after {
+  opacity: 0.36;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(176, 137, 79, 0.18) 35px 37px),
+    linear-gradient(0deg, rgba(52, 78, 48, 0.52), transparent);
+  clip-path: polygon(0 74%, 13% 60%, 27% 72%, 42% 48%, 57% 68%, 75% 45%, 100% 70%, 100% 100%, 0 100%);
+}
+
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="prismatic-ruins"]::after {
+  opacity: 0.48;
+  background:
+    linear-gradient(120deg, transparent 28%, rgba(113, 222, 255, 0.26) 29% 31%, transparent 32%),
+    linear-gradient(65deg, transparent 54%, rgba(185, 122, 255, 0.28) 55% 58%, transparent 59%),
+    linear-gradient(0deg, rgba(53, 34, 96, 0.68), transparent);
+  clip-path: polygon(0 78%, 10% 40%, 18% 82%, 36% 55%, 49% 88%, 63% 32%, 74% 80%, 88% 47%, 100% 76%, 100% 100%, 0 100%);
+}
+
+:is(.go-dots-board-shell, .board-shell)[data-board-theme="ash-fortress"]::after {
+  opacity: 0.5;
+  background:
+    repeating-linear-gradient(90deg, rgba(24, 17, 18, 0.76) 0 48px, rgba(93, 49, 39, 0.72) 49px 53px),
+    linear-gradient(0deg, rgba(169, 52, 30, 0.28), transparent);
+  clip-path: polygon(0 66%, 8% 66%, 8% 45%, 18% 45%, 18% 70%, 35% 70%, 35% 36%, 46% 36%, 46% 68%, 66% 68%, 66% 48%, 78% 48%, 78% 72%, 91% 72%, 91% 42%, 100% 42%, 100% 100%, 0 100%);
+}
+
+/* Visual QA */
+.ui13-qa-scene {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 34px);
+  color: #f5ead2;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(114, 147, 172, 0.15), transparent 42%),
+    #0b0e12;
+}
+
+.ui13-qa-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ui13-qa-header small,
+.ui13-qa-header > span {
+  color: #d2b56e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ui13-qa-header h1 {
+  margin: 5px 0;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: clamp(28px, 4vw, 48px);
+}
+
+.ui13-qa-header p {
+  margin: 0;
+  color: #b7b09f;
+}
+
+.ui13-board-stage {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+.ui13-board-stage .go-dots-board-shell,
+.ui13-board-stage .board-shell {
+  width: min(980px, 100%);
+}
+
+.ui13-replay-frame {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+}
+
+.ui13-replay-meta {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid rgba(210, 181, 110, 0.28);
+  border-radius: 14px;
+  background: rgba(18, 21, 27, 0.88);
+}
+
+.ui13-replay-meta span,
+.ui13-replay-meta small {
+  color: #b9ad91;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.ui13-replay-meta strong {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 20px;
+}
+
+@media (max-width: 720px) {
+  :is(.go-dots-board-shell, .board-shell)[data-board-theme]::before {
+    top: 8px;
+    right: 8px;
+    max-width: calc(100% - 16px);
+    overflow: hidden;
+    font-size: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ui13-qa-scene {
+    gap: 12px;
+    padding: 14px 12px 28px;
+  }
+
+  .ui13-qa-header {
+    align-items: start;
+  }
+
+  .ui13-qa-header > span {
+    max-width: 92px;
+    text-align: right;
+  }
+
+  .ui13-qa-header p {
+    font-size: 12px;
+  }
+
+  .ui13-replay-frame {
+    grid-template-columns: 1fr;
+  }
+
+  .ui13-replay-meta {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    padding: 11px 13px;
+  }
+
+  .ui13-replay-meta small {
+    grid-column: 1 / -1;
+  }
+
+  .ui13-board-stage .board-shell {
+    padding: 8px;
+  }
+}
+
+.hexa-low-effects :is(.go-dots-board-shell, .board-shell)[data-board-theme]::after,
+.hexa-low-effects .go-dots-board-shell[data-board-theme] .go-dots-world::before {
+  display: none;
+}
+
+.hexa-low-effects .go-dots-board-shell[data-board-theme] *,
+.hexa-low-effects .board-shell[data-board-theme] *,
+.hexa-reduced-motion .go-dots-board-shell[data-board-theme] *,
+.hexa-reduced-motion .board-shell[data-board-theme] * {
+  animation: none !important;
+  transition-duration: 0.01ms !important;
+}
+
+.hexa-high-contrast :is(.go-dots-board-shell, .board-shell)[data-board-theme] {
+  --board-line: rgba(255, 255, 255, 0.58);
+  --board-line-strong: #ffffff;
+  --board-node: #ffffff;
+  --board-node-edge: #000000;
+  --board-accent-bright: #ffffff;
+}
+
+@media (forced-colors: active) {
+  :is(.go-dots-board-shell, .board-shell)[data-board-theme]::after,
+  .go-dots-board-shell[data-board-theme] .go-dots-world::before {
+    display: none;
+  }
+
+  :is(.go-dots-board-shell, .board-shell)[data-board-theme] {
+    border: 2px solid CanvasText;
+  }
+}
