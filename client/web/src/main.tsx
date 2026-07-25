@@ -2,6 +2,8 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
 
+import { AccountOnboardingPortal } from "./AccountOnboardingPortal";
+import { BoardThemeRuntime } from "./BoardThemeRuntime";
 import {
   installExperienceTelemetry,
   trackExperience,
@@ -18,7 +20,6 @@ import {
 } from "./pwa-lifecycle";
 import { RuntimeEnhancements } from "./RuntimeEnhancements";
 import { SpectatorReplayPortal } from "./SpectatorReplayPortal";
-import { AccountOnboardingPortal } from "./AccountOnboardingPortal";
 import "./styles.css";
 import "./first-play.css";
 import "./board-entities.css";
@@ -40,9 +41,11 @@ import "./sprint-ui-09-compact.css";
 import "./sprint-ui-10.css";
 import "./sprint-ui-11.css";
 import "./sprint-ui-12.css";
+import "./sprint-ui-13.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
+const SprintUi13BoardQa = lazy(() => import("./SprintUi13BoardQa").then((module) => ({ default: module.SprintUi13BoardQa })));
 
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
@@ -107,8 +110,10 @@ const pageUrl = new URL(window.location.href);
 const legacyRequested = pageUrl.searchParams.get("dev-client") === "legacy";
 const legacyAllowed = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LEGACY_CLIENT === "true";
 const requestedQaScene = pageUrl.searchParams.get("screen") ?? "";
-const ui08QaRequested = pageUrl.searchParams.get("qa") === "1" && requestedQaScene.startsWith("ui08-");
-if (ui08QaRequested) {
+const qaEnabled = pageUrl.searchParams.get("qa") === "1";
+const ui08QaRequested = qaEnabled && requestedQaScene.startsWith("ui08-");
+const ui13QaRequested = qaEnabled && requestedQaScene.startsWith("ui13-");
+if (ui08QaRequested || ui13QaRequested) {
   document.documentElement.dataset.visualQa = "true";
   document.documentElement.dataset.qaStable = pageUrl.searchParams.get("stable") === "1" ? "true" : "false";
   document.documentElement.dataset.qaScreen = requestedQaScene;
@@ -117,8 +122,11 @@ if (ui08QaRequested) {
 createRoot(root).render(
   <StrictMode>
     <GameErrorBoundary>
+      <BoardThemeRuntime />
       {ui08QaRequested ? (
         <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
+      ) : ui13QaRequested ? (
+        <Suspense fallback={<BootFallback />}><SprintUi13BoardQa scene={requestedQaScene} /></Suspense>
       ) : (
         <>
           <RuntimeEnhancements />
