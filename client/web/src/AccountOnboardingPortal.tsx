@@ -27,6 +27,12 @@ function shellState(): { battleActive: boolean; contextVisible: boolean; realmSt
   };
 }
 
+function bypassLegacyMultiplayerAuth(): void {
+  const authScreen = document.querySelector<HTMLElement>(".embedded-multiplayer .auth-screen");
+  const guestButton = authScreen?.querySelector<HTMLButtonElement>(".auth-card .ghost-button");
+  guestButton?.click();
+}
+
 export function AccountOnboardingPortal() {
   const query = useMemo(() => new URL(window.location.href).searchParams, []);
   const qaOpen = query.get("qa") === "1" && query.get("screen") === "ui11-account";
@@ -46,13 +52,22 @@ export function AccountOnboardingPortal() {
       setAccount(new HexaClient().accountSession);
       setDismissed(localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "true");
     };
+    const interceptLegacyAccount = (event: MouseEvent) => {
+      const target = event.target as Element | null;
+      if (!target?.closest(".embedded-multiplayer .profile-button")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(true);
+    };
     window.addEventListener(OPEN_ACCOUNT_ONBOARDING_EVENT, onOpen);
     window.addEventListener(ACCOUNT_SESSION_EVENT, onAccount);
     window.addEventListener("storage", onStorage);
+    document.addEventListener("click", interceptLegacyAccount, true);
     return () => {
       window.removeEventListener(OPEN_ACCOUNT_ONBOARDING_EVENT, onOpen);
       window.removeEventListener(ACCOUNT_SESSION_EVENT, onAccount);
       window.removeEventListener("storage", onStorage);
+      document.removeEventListener("click", interceptLegacyAccount, true);
     };
   }, []);
 
@@ -62,7 +77,10 @@ export function AccountOnboardingPortal() {
     let frame = 0;
     const update = () => {
       window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => setShell(shellState()));
+      frame = window.requestAnimationFrame(() => {
+        bypassLegacyMultiplayerAuth();
+        setShell(shellState());
+      });
     };
     const observer = new MutationObserver(update);
     observer.observe(document.documentElement, { attributes: true, childList: true, subtree: true });
