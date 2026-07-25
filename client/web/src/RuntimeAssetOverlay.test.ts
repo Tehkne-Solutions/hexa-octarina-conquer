@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { animationAssetId } from "./RuntimePackSprite";
-import { runtimeCombatState, runtimeEntityForCombatant } from "./RuntimeAssetOverlay";
+import { isDefeatedHealthText, runtimeCombatState, runtimeEntityForCombatant } from "./RuntimeAssetOverlay";
 
 describe("Sprint Runtime 02 asset mapping", () => {
   it("builds canonical PACK 99 animation IDs", () => {
@@ -13,6 +13,12 @@ describe("Sprint Runtime 02 asset mapping", () => {
     expect(runtimeEntityForCombatant("Lyra", "player")).toBe("HERO_RANGER_01");
     expect(runtimeEntityForCombatant("Brakk", "enemy")).toBe("CHAMP_BERSERKER_01");
     expect(runtimeEntityForCombatant("Varg", "enemy")).toBe("UNIT_RECRUIT_01");
+  });
+
+  it("detects zero HP with and without the rendered prefix", () => {
+    expect(isDefeatedHealthText("HP 0/18")).toBe(true);
+    expect(isDefeatedHealthText("0/12")).toBe(true);
+    expect(isDefeatedHealthText("HP 7/18")).toBe(false);
   });
 
   it("maps cinematic beats to attack, hit and defeat", () => {
