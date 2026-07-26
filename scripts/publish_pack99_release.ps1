@@ -26,7 +26,7 @@ function Invoke-Checked {
     Write-Host ("> " + $FilePath + " " + ($Arguments -join " "))
     & $FilePath @Arguments
     if ($LASTEXITCODE -ne 0) {
-        Fail "Comando terminou com código $LASTEXITCODE: $FilePath"
+        Fail "Comando terminou com código ${LASTEXITCODE}: $FilePath"
     }
 }
 
