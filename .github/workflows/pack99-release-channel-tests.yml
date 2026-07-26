@@ -1,0 +1,59 @@
+name: PACK 99 Release Channel Tests
+
+on:
+  pull_request:
+    paths:
+      - "PUBLICAR-PACK99-RELEASE.cmd"
+      - "RECONSTRUIR-PACK99-LOCAL.cmd"
+      - "scripts/publish_pack99_release.ps1"
+      - "scripts/audit_pack99_archive.py"
+      - "tests/test_audit_pack99_archive.py"
+      - ".github/workflows/pack99-release-promote.yml"
+      - ".github/workflows/pack99-release-channel-tests.yml"
+      - "docs/SPRINT_RUNTIME_10_PACK99_RELEASE_CHANNEL.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python-audit:
+    name: Archive audit contracts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Compile and test archive auditor
+        run: |
+          python -m py_compile scripts/audit_pack99_archive.py
+          python -m unittest tests/test_audit_pack99_archive.py -v
+
+  windows-publisher:
+    name: Windows publisher syntax
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Parse PowerShell publisher
+        shell: pwsh
+        run: |
+          $content = Get-Content -LiteralPath "scripts/publish_pack99_release.ps1" -Raw -Encoding UTF8
+          [void][scriptblock]::Create($content)
+      - name: Validate launchers and UTF-8 contract
+        shell: pwsh
+        run: |
+          $publish = Get-Content -LiteralPath "PUBLICAR-PACK99-RELEASE.cmd" -Raw -Encoding UTF8
+          $rebuild = Get-Content -LiteralPath "RECONSTRUIR-PACK99-LOCAL.cmd" -Raw -Encoding UTF8
+          if ($publish -notmatch "chcp 65001" -or $publish -notmatch "PYTHONUTF8") {
+            throw "O lançador de publicação não configura UTF-8."
+          }
+          if ($rebuild -notmatch "chcp 65001" -or $rebuild -notmatch "PYTHONUTF8") {
+            throw "O reconstrutor não configura UTF-8."
+          }
+          if ($publish -notmatch "Tehkné Solutions" -or $rebuild -notmatch "Tehkné Solutions") {
+            throw "Assinatura institucional ausente."
+          }
