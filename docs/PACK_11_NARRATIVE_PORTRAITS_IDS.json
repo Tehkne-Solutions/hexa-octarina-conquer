@@ -1,0 +1,47 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_11_NARRATIVE_PORTRAITS",
+  "version": "0.1.0",
+  "status": "pre-production-gated",
+  "characters": ["KAEL", "LYRA", "VARG", "BRAKK"],
+  "expressions": ["NEUTRAL", "FOCUSED", "ANGRY", "HURT", "VICTORIOUS", "DEFEATED"],
+  "masterIds": [
+    "PORTRAIT_KAEL_MASTER_01",
+    "PORTRAIT_LYRA_MASTER_01",
+    "PORTRAIT_VARG_MASTER_01",
+    "PORTRAIT_BRAKK_MASTER_01"
+  ],
+  "runtimeIds": [
+    "PORTRAIT_KAEL_NEUTRAL_01",
+    "PORTRAIT_KAEL_FOCUSED_01",
+    "PORTRAIT_KAEL_ANGRY_01",
+    "PORTRAIT_KAEL_HURT_01",
+    "PORTRAIT_KAEL_VICTORIOUS_01",
+    "PORTRAIT_KAEL_DEFEATED_01",
+    "PORTRAIT_LYRA_NEUTRAL_01",
+    "PORTRAIT_LYRA_FOCUSED_01",
+    "PORTRAIT_LYRA_ANGRY_01",
+    "PORTRAIT_LYRA_HURT_01",
+    "PORTRAIT_LYRA_VICTORIOUS_01",
+    "PORTRAIT_LYRA_DEFEATED_01",
+    "PORTRAIT_VARG_NEUTRAL_01",
+    "PORTRAIT_VARG_FOCUSED_01",
+    "PORTRAIT_VARG_ANGRY_01",
+    "PORTRAIT_VARG_HURT_01",
+    "PORTRAIT_VARG_VICTORIOUS_01",
+    "PORTRAIT_VARG_DEFEATED_01",
+    "PORTRAIT_BRAKK_NEUTRAL_01",
+    "PORTRAIT_BRAKK_FOCUSED_01",
+    "PORTRAIT_BRAKK_ANGRY_01",
+    "PORTRAIT_BRAKK_HURT_01",
+    "PORTRAIT_BRAKK_VICTORIOUS_01",
+    "PORTRAIT_BRAKK_DEFEATED_01"
+  ],
+  "summary": {
+    "masterPortraits": 4,
+    "runtimePortraits": 24,
+    "totalCanonicalIds": 28
+  },
+  "promotionGate": ".cache/pack99/promotion-report.json",
+  "signature": "Tehkné Solutions"
+}
