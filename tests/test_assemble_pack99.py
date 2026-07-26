@@ -69,22 +69,52 @@ class AssemblePack99Tests(unittest.TestCase):
                 {"assets": 1037, "entities": 46, "packs": 11},
             )
 
-    def test_apply_a01_overlay_merges_into_pack_01(self) -> None:
+    def test_apply_a01_overlay_merges_into_canonical_terrain_directory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source_dir = root / "sources"
             source_dir.mkdir()
-            overlay_archive = source_dir / "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+            overlay_archive = source_dir / assemble_pack99.A01_ARCHIVE
             with zipfile.ZipFile(overlay_archive, "w") as archive:
-                archive.writestr("manifest.grass-flat-premium.json", '{"terrain": {"id": "TERRAIN_GRASS_ANCESTRAL"}, "assets": []}')
-                archive.writestr("tiles/TILE_GRASS_FLAT_CENTER_A_01.png", b"png")
-                archive.writestr("masks/TILE_GRASS_FLAT_CENTER_A_01_MASK.png", b"mask")
+                archive.writestr(
+                    "premium/manifest.grass-flat-premium.json",
+                    '{"terrain": {"id": "TERRAIN_GRASS_ANCESTRAL"}, "assets": []}',
+                )
+                archive.writestr("premium/README.md", "A01")
+                archive.writestr("premium/autotile-rules.json", "{}")
+                archive.writestr("premium/manifest.terrain.json", "{}")
+                archive.writestr("premium/tiles/TILE_GRASS_FLAT_CENTER_A_01.png", b"png")
+                archive.writestr("premium/masks/TILE_GRASS_FLAT_CENTER_A_01_MASK.png", b"mask")
             package_root = root / "packages" / "PACK_01_TERRAIN_CORE"
             package_root.mkdir(parents=True)
+
             overlay_report = assemble_pack99.apply_a01_overlay(source_dir, package_root)
+            target = package_root / assemble_pack99.A01_DIRECTORY
+
             self.assertTrue(overlay_report["applied"])
-            self.assertTrue((package_root / "tiles" / "TILE_GRASS_FLAT_CENTER_A_01.png").is_file())
-            self.assertTrue((package_root / "masks" / "TILE_GRASS_FLAT_CENTER_A_01_MASK.png").is_file())
+            self.assertEqual(assemble_pack99.A01_DIRECTORY, overlay_report["targetDirectory"])
+            self.assertTrue((target / "README.md").is_file())
+            self.assertTrue((target / "autotile-rules.json").is_file())
+            self.assertTrue((target / "manifest.terrain.json").is_file())
+            self.assertTrue((target / "tiles" / "TILE_GRASS_FLAT_CENTER_A_01.png").is_file())
+            self.assertTrue((target / "masks" / "TILE_GRASS_FLAT_CENTER_A_01_MASK.png").is_file())
+            self.assertFalse((package_root / "tiles").exists())
+
+    def test_apply_a01_overlay_rejects_missing_runtime_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source_dir = root / "sources"
+            source_dir.mkdir()
+            with zipfile.ZipFile(source_dir / assemble_pack99.A01_ARCHIVE, "w") as archive:
+                archive.writestr(
+                    "manifest.grass-flat-premium.json",
+                    '{"terrain": {"id": "TERRAIN_GRASS_ANCESTRAL"}}',
+                )
+                archive.writestr("tiles/TILE_GRASS_FLAT_CENTER_A_01.png", b"png")
+            package_root = root / "packages" / "PACK_01_TERRAIN_CORE"
+            package_root.mkdir(parents=True)
+            with self.assertRaises(assemble_pack99.AssemblyError):
+                assemble_pack99.apply_a01_overlay(source_dir, package_root)
 
     def test_end_to_end_assembly_from_eleven_archives(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
