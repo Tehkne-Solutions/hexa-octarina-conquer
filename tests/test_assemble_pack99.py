@@ -69,6 +69,23 @@ class AssemblePack99Tests(unittest.TestCase):
                 {"assets": 1037, "entities": 46, "packs": 11},
             )
 
+    def test_apply_a01_overlay_merges_into_pack_01(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source_dir = root / "sources"
+            source_dir.mkdir()
+            overlay_archive = source_dir / "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+            with zipfile.ZipFile(overlay_archive, "w") as archive:
+                archive.writestr("manifest.grass-flat-premium.json", '{"terrain": {"id": "TERRAIN_GRASS_ANCESTRAL"}, "assets": []}')
+                archive.writestr("tiles/TILE_GRASS_FLAT_CENTER_A_01.png", b"png")
+                archive.writestr("masks/TILE_GRASS_FLAT_CENTER_A_01_MASK.png", b"mask")
+            package_root = root / "packages" / "PACK_01_TERRAIN_CORE"
+            package_root.mkdir(parents=True)
+            overlay_report = assemble_pack99.apply_a01_overlay(source_dir, package_root)
+            self.assertTrue(overlay_report["applied"])
+            self.assertTrue((package_root / "tiles" / "TILE_GRASS_FLAT_CENTER_A_01.png").is_file())
+            self.assertTrue((package_root / "masks" / "TILE_GRASS_FLAT_CENTER_A_01_MASK.png").is_file())
+
     def test_end_to_end_assembly_from_eleven_archives(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -100,6 +100,45 @@ def safe_extract(archive_path: Path, destination: Path) -> None:
         archive.extractall(destination)
 
 
+def apply_a01_overlay(source_dir: Path, package_root: Path) -> dict[str, Any]:
+    """Apply the A01 grass-flat premium overlay to PACK 01 without creating an extra pack."""
+    overlay_archive = source_dir / "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+    if not overlay_archive.is_file():
+        return {"applied": False, "reason": "overlay-archive-missing"}
+
+    with zipfile.ZipFile(overlay_archive) as archive:
+        manifest_name = None
+        for member_name in archive.namelist():
+            if member_name.endswith("manifest.grass-flat-premium.json"):
+                manifest_name = member_name
+                break
+        if manifest_name is None:
+            raise AssemblyError("Manifesto do overlay A01 não encontrado.")
+
+        overlay_manifest = json.loads(archive.read(manifest_name).decode("utf-8"))
+        terrain_id = overlay_manifest.get("terrain", {}).get("id")
+        if not terrain_id:
+            raise AssemblyError("Overlay A01 não possui terrain.id válido.")
+
+        entries: list[dict[str, str]] = []
+        for member_name in archive.namelist():
+            if member_name.endswith("/"):
+                continue
+            if member_name.startswith(("tiles/", "masks/", "validation/")):
+                target = package_root / member_name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with archive.open(member_name) as source_handle, target.open("wb") as dest_handle:
+                    shutil.copyfileobj(source_handle, dest_handle)
+                entries.append({"path": member_name, "terrainId": terrain_id})
+
+    return {
+        "applied": True,
+        "overlayArchive": overlay_archive.name,
+        "terrainId": terrain_id,
+        "entries": entries,
+    }
+
+
 def copy_metadata(metadata_dir: Path, assembly_root: Path) -> None:
     if not metadata_dir.is_dir():
         raise AssemblyError(f"Diretório global do PACK 99 não encontrado: {metadata_dir}")
@@ -239,6 +278,7 @@ def assemble(
                 raise AssemblyError(f"ZIP obrigatório ausente: {archive_path}")
             safe_extract(archive_path, packages_root / package_name)
 
+        overlay_report = apply_a01_overlay(source_dir, packages_root / "PACK_01_TERRAIN_CORE")
         license_hash = restore_license(root, license_source)
         update_license_checksum(root, license_hash)
         counts = validate_contracts(root)
@@ -254,6 +294,7 @@ def assemble(
             **counts,
             "passed": True,
             "signature": SIGNATURE,
+            "a01Overlay": overlay_report,
         }
         report_path = output.with_suffix(output.suffix + ".report.json")
         report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
