@@ -69,6 +69,30 @@ if ($promotion.passed -ne $true -or $promotion.expectedAssetIds -ne 1037 -or $pr
     Fail "O relatório local de promoção não está integralmente aprovado."
 }
 
+$python = $null
+if (Get-Command py -ErrorAction SilentlyContinue) {
+    $python = "py"
+    $pythonPrefix = @("-3")
+} elseif (Get-Command python -ErrorAction SilentlyContinue) {
+    $python = "python"
+    $pythonPrefix = @()
+} else {
+    Fail "Python 3 não foi encontrado no PATH."
+}
+
+$integrityReport = Join-Path $AssetsRoot "PACK99-REPORTS\PACK99_ARCHIVE_INTEGRITY_REPORT.json"
+$integrityArgs = $pythonPrefix + @(
+    (Join-Path $RepoRoot "scripts\audit_pack99_archive.py"),
+    $archive,
+    "--report", $integrityReport,
+    "--summary-only"
+)
+Invoke-Checked -FilePath $python -Arguments $integrityArgs
+$integrity = Get-Content -LiteralPath $integrityReport -Raw -Encoding UTF8 | ConvertFrom-Json
+if ($integrity.passed -ne $true -or $integrity.assets -ne 1037 -or $integrity.unresolvedRuntimeReferences -ne 0 -or $integrity.hashedFiles -ne $integrity.fileCount) {
+    Fail "A auditoria integral do ZIP não foi aprovada."
+}
+
 $repoSlug = (& git -C $RepoRoot remote get-url origin)
 if ($LASTEXITCODE -ne 0) { Fail "Não foi possível ler o remote origin." }
 if ($repoSlug -match "github\.com[:/](.+?)(?:\.git)?$") {
@@ -101,7 +125,7 @@ if (-not $releaseExists) {
     )
 }
 
-$uploadFiles = @($archive, $hashPath, $promotionReport)
+$uploadFiles = @($archive, $hashPath, $promotionReport, $integrityReport)
 if (Test-Path -LiteralPath $reportPath -PathType Leaf) {
     $uploadFiles += $reportPath
 }
@@ -118,6 +142,7 @@ Write-Host ""
 Write-Host "Release asset publicado: $downloadUrl"
 Write-Host "SHA-256: $actualHash"
 Write-Host "Bytes: $archiveBytes"
+Write-Host "Arquivos auditados: $($integrity.hashedFiles)"
 
 if (-not $SkipWorkflow) {
     Invoke-Checked -FilePath "gh" -Arguments @(
@@ -139,6 +164,7 @@ Write-Host "TAG=$Tag"
 Write-Host "ASSET=$ArchiveName"
 Write-Host "SHA256=$actualHash"
 Write-Host "BYTES=$archiveBytes"
+Write-Host "HASHED_FILES=$($integrity.hashedFiles)"
 Write-Host "URL=$downloadUrl"
 Write-Host "WORKFLOW_DISPATCHED=$(-not $SkipWorkflow)"
 Write-Host "Tehkné Solutions"
