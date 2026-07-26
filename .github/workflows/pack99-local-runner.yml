@@ -1,0 +1,56 @@
+name: PACK 99 Local Runner
+
+on:
+  pull_request:
+    paths:
+      - "RECONSTRUIR-PACK99-LOCAL.cmd"
+      - "scripts/rebuild_pack99_local.py"
+      - "scripts/assemble_pack99.py"
+      - "scripts/install_pack99.py"
+      - "scripts/sync_pack99.py"
+      - "scripts/validate_pack99_promotion.py"
+      - "tests/test_rebuild_pack99_local.py"
+      - ".github/workflows/pack99-local-runner.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-runner:
+    name: windows-one-command
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Compile runtime scripts
+        shell: pwsh
+        run: >-
+          python -m py_compile
+          scripts/assemble_pack99.py
+          scripts/install_pack99.py
+          scripts/sync_pack99.py
+          scripts/validate_pack99_promotion.py
+          scripts/rebuild_pack99_local.py
+
+      - name: Test local runner and runtime contracts
+        shell: pwsh
+        run: >-
+          python -m unittest
+          tests/test_assemble_pack99.py
+          tests/test_install_pack99.py
+          tests/test_sync_pack99.py
+          tests/test_validate_pack99_promotion.py
+          tests/test_rebuild_pack99_local.py
+          -v
+
+      - name: Validate one-command launcher
+        shell: cmd
+        run: RECONSTRUIR-PACK99-LOCAL.cmd --help
