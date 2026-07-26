@@ -1,0 +1,118 @@
+name: PACK 99 Runtime Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Perfil de instalação
+        required: true
+        default: core
+        type: choice
+        options:
+          - core
+          - full
+      target:
+        description: Cliente de destino
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - web
+          - godot
+      force_download:
+        description: Ignorar o ZIP validado em cache
+        required: true
+        default: false
+        type: boolean
+      publish_artifacts:
+        description: Publicar runtimes instalados como artefatos temporários
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pack99-runtime-${{ github.ref }}-${{ inputs.profile }}-${{ inputs.target }}
+  cancel-in-progress: false
+
+jobs:
+  synchronize:
+    name: Validate and install PACK 99
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PACK99_URL: ${{ secrets.PACK99_URL }}
+      PACK99_SHA256: d749943cdb8c8e8afa6bbe21f2c6558e3816371fc44e7cb2dbedb63157185575
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Restore validated PACK 99 cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/pack99/HOC_PACK_99_FINAL_RUNTIME.zip
+          key: hoc-pack99-${{ env.PACK99_SHA256 }}
+
+      - name: Test installer and synchronizer
+        run: |
+          python -m unittest tests/test_install_pack99.py tests/test_sync_pack99.py -v
+          python -m py_compile scripts/install_pack99.py scripts/sync_pack99.py
+
+      - name: Require private distribution URL
+        shell: bash
+        run: |
+          if [[ -z "${PACK99_URL}" ]]; then
+            echo "Configure o secret PACK99_URL com uma URL HTTPS do HOC_PACK_99_FINAL_RUNTIME.zip." >&2
+            exit 2
+          fi
+
+      - name: Download, validate and install
+        shell: bash
+        run: |
+          FLAGS=()
+          if [[ "${{ inputs.force_download }}" == "true" ]]; then
+            FLAGS+=(--force-download)
+          fi
+          python scripts/sync_pack99.py \
+            --target "${{ inputs.target }}" \
+            --profile "${{ inputs.profile }}" \
+            --clean \
+            "${FLAGS[@]}"
+
+      - name: Upload synchronization report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-pack99-sync-report-${{ inputs.profile }}-${{ inputs.target }}
+          path: .cache/pack99/sync-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload Web runtime
+        if: ${{ success() && inputs.publish_artifacts && (inputs.target == 'web' || inputs.target == 'all') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-pack99-web-${{ inputs.profile }}
+          path: client/web/public/assets/runtime
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload Godot runtime
+        if: ${{ success() && inputs.publish_artifacts && (inputs.target == 'godot' || inputs.target == 'all') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-pack99-godot-${{ inputs.profile }}
+          path: client/godot/assets/runtime
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
