@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 import tempfile
 import unittest
 import zipfile
@@ -15,6 +16,7 @@ SPEC = importlib.util.spec_from_file_location(
 )
 assert SPEC and SPEC.loader
 runner = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = runner
 SPEC.loader.exec_module(runner)
 
 
