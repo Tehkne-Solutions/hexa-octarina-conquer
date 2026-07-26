@@ -54,9 +54,9 @@ class InstallPack99Tests(unittest.TestCase):
                         {
                             "id": "EDGE_STONE_BUILT_NE_SW_01",
                             "category": "board-edge",
-                            "file": "stone/EDGE_STONE_BUILT_NE_SW_01.png",
+                            "file": "P02_EDGES/stone/EDGE_STONE_BUILT_NE_SW_01.png",
                             "_provenance": {
-                                "packageRoot": "packages/PACK_02_BOARD_SYSTEM"
+                                "packageRoot": "packages/HOC_PACK_02_BOARD_SYSTEM_FINAL"
                             },
                         }
                     ],
@@ -74,6 +74,14 @@ class InstallPack99Tests(unittest.TestCase):
         )
         return pack
 
+    def test_normalizes_original_package_root_names(self) -> None:
+        self.assertEqual(
+            "packages/PACK_02_BOARD_SYSTEM",
+            install_pack99.normalize_package_root_value(
+                "packages/HOC_PACK_02_BOARD_SYSTEM_FINAL"
+            ),
+        )
+
     def test_normalizes_nested_asset_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -81,7 +89,10 @@ class InstallPack99Tests(unittest.TestCase):
             repo = root / "repo"
             (repo / "client" / "godot").mkdir(parents=True)
 
-            manifest, _validation, registry = install_pack99.validate_pack(pack)
+            manifest, _validation, registry = install_pack99.validate_pack(
+                pack,
+                require_canonical_count=False,
+            )
             destination = repo / "client" / "godot" / "assets" / "runtime"
             result = install_pack99.install_target(
                 pack,
@@ -91,9 +102,11 @@ class InstallPack99Tests(unittest.TestCase):
                 profile="core",
                 clean=True,
                 dry_run=False,
+                enforce_canonical_counts=False,
             )
 
             self.assertEqual(1, result["assetCount"])
+            self.assertEqual(0, result["unresolvedReferences"])
             runtime_registry = json.loads(
                 (
                     destination
@@ -109,6 +122,38 @@ class InstallPack99Tests(unittest.TestCase):
             )
             self.assertTrue((destination / asset["_runtimeFile"]).is_file())
 
+    def test_unresolved_plan_does_not_delete_existing_runtime(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            pack = self.make_fake_pack(root)
+            registry_path = pack / "registry" / "assets-global.json"
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            registry["assets"][0]["file"] = "missing/DOES_NOT_EXIST.png"
+            registry_path.write_text(json.dumps(registry), encoding="utf-8")
+
+            manifest, _validation, registry = install_pack99.validate_pack(
+                pack,
+                require_canonical_count=False,
+            )
+            destination = root / "repo" / "client" / "web" / "public" / "assets" / "runtime"
+            destination.mkdir(parents=True)
+            sentinel = destination / "bootstrap-safe.txt"
+            sentinel.write_text("preserve", encoding="utf-8")
+
+            with self.assertRaises(install_pack99.InstallError):
+                install_pack99.install_target(
+                    pack,
+                    destination,
+                    registry,
+                    manifest,
+                    profile="core",
+                    clean=True,
+                    dry_run=False,
+                    enforce_canonical_counts=False,
+                )
+
+            self.assertEqual("preserve", sentinel.read_text(encoding="utf-8"))
+
     def test_rejects_failed_validation(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -118,7 +163,10 @@ class InstallPack99Tests(unittest.TestCase):
                 encoding="utf-8",
             )
             with self.assertRaises(install_pack99.InstallError):
-                install_pack99.validate_pack(pack)
+                install_pack99.validate_pack(
+                    pack,
+                    require_canonical_count=False,
+                )
 
 
 if __name__ == "__main__":

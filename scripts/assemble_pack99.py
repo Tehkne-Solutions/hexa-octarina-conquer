@@ -26,6 +26,15 @@ EXPECTED_ASSETS = 1037
 EXPECTED_ENTITIES = 46
 EXPECTED_PACKS = 11
 CHUNK_SIZE = 1024 * 1024
+A01_ARCHIVE = "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+A01_DIRECTORY = "A01_GRASS_ANCESTRAL"
+A01_ALLOWED_ROOT_FILES = {
+    "README.md",
+    "autotile-rules.json",
+    "manifest.terrain.json",
+    "manifest.grass-flat-premium.json",
+}
+A01_ALLOWED_DIRECTORIES = {"tiles", "masks", "validation"}
 
 PACK_ARCHIVES = {
     "HOC_PACK_00_FOUNDATION_FINAL.zip": "PACK_00_FOUNDATION",
@@ -100,42 +109,94 @@ def safe_extract(archive_path: Path, destination: Path) -> None:
         archive.extractall(destination)
 
 
+def _a01_relative_path(member_name: str) -> PurePosixPath | None:
+    """Return the canonical A01 path for a safe overlay archive member."""
+    member = PurePosixPath(member_name)
+    if member.is_absolute() or ".." in member.parts or not member.parts:
+        raise AssemblyError(f"Entrada insegura no overlay A01: {member_name}")
+
+    parts = list(member.parts)
+    if A01_DIRECTORY in parts:
+        parts = parts[parts.index(A01_DIRECTORY) + 1 :]
+    else:
+        while len(parts) > 1 and parts[0] not in A01_ALLOWED_DIRECTORIES:
+            if parts[0] in A01_ALLOWED_ROOT_FILES:
+                break
+            parts.pop(0)
+
+    if not parts:
+        return None
+
+    first = parts[0]
+    if first not in A01_ALLOWED_DIRECTORIES and first not in A01_ALLOWED_ROOT_FILES:
+        return None
+    return PurePosixPath(A01_DIRECTORY, *parts)
+
+
 def apply_a01_overlay(source_dir: Path, package_root: Path) -> dict[str, Any]:
-    """Apply the A01 grass-flat premium overlay to PACK 01 without creating an extra pack."""
-    overlay_archive = source_dir / "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+    """Apply the premium grass overlay under PACK 01/A01_GRASS_ANCESTRAL."""
+    overlay_archive = source_dir / A01_ARCHIVE
     if not overlay_archive.is_file():
         return {"applied": False, "reason": "overlay-archive-missing"}
 
+    entries: list[dict[str, str]] = []
+    skipped: list[str] = []
     with zipfile.ZipFile(overlay_archive) as archive:
-        manifest_name = None
-        for member_name in archive.namelist():
-            if member_name.endswith("manifest.grass-flat-premium.json"):
-                manifest_name = member_name
-                break
+        manifest_name = next(
+            (
+                name
+                for name in archive.namelist()
+                if name.endswith("manifest.grass-flat-premium.json")
+            ),
+            None,
+        )
         if manifest_name is None:
             raise AssemblyError("Manifesto do overlay A01 não encontrado.")
 
-        overlay_manifest = json.loads(archive.read(manifest_name).decode("utf-8"))
+        try:
+            overlay_manifest = json.loads(archive.read(manifest_name).decode("utf-8"))
+        except json.JSONDecodeError as error:
+            raise AssemblyError(f"Manifesto do overlay A01 inválido: {error}") from error
+
         terrain_id = overlay_manifest.get("terrain", {}).get("id")
-        if not terrain_id:
+        if not isinstance(terrain_id, str) or not terrain_id:
             raise AssemblyError("Overlay A01 não possui terrain.id válido.")
 
-        entries: list[dict[str, str]] = []
-        for member_name in archive.namelist():
-            if member_name.endswith("/"):
+        for info in archive.infolist():
+            if info.is_dir():
                 continue
-            if member_name.startswith(("tiles/", "masks/", "validation/")):
-                target = package_root / member_name
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with archive.open(member_name) as source_handle, target.open("wb") as dest_handle:
-                    shutil.copyfileobj(source_handle, dest_handle)
-                entries.append({"path": member_name, "terrainId": terrain_id})
+            relative = _a01_relative_path(info.filename)
+            if relative is None:
+                skipped.append(info.filename)
+                continue
+
+            target = package_root / Path(*relative.parts)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(info) as source_handle, target.open("wb") as destination_handle:
+                shutil.copyfileobj(source_handle, destination_handle)
+            entries.append(
+                {
+                    "source": info.filename,
+                    "path": relative.as_posix(),
+                    "terrainId": terrain_id,
+                    "sha256": file_sha256(target),
+                }
+            )
+
+    required = package_root / A01_DIRECTORY / "manifest.terrain.json"
+    if not required.is_file():
+        raise AssemblyError(
+            "Overlay A01 não instalou A01_GRASS_ANCESTRAL/manifest.terrain.json."
+        )
 
     return {
         "applied": True,
         "overlayArchive": overlay_archive.name,
         "terrainId": terrain_id,
+        "targetDirectory": A01_DIRECTORY,
+        "entryCount": len(entries),
         "entries": entries,
+        "skipped": skipped,
     }
 
 
