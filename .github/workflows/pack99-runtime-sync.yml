@@ -3,16 +3,17 @@ name: PACK 99 Runtime Sync
 on:
   workflow_dispatch:
     inputs:
-      profile:
-        description: Perfil de instalação
+      operation:
+        description: Operação de instalação
         required: true
-        default: core
+        default: promote
         type: choice
         options:
+          - promote
           - core
           - full
       target:
-        description: Cliente de destino
+        description: Cliente de destino para operação isolada
         required: true
         default: all
         type: choice
@@ -35,17 +36,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: pack99-runtime-${{ github.ref }}-${{ inputs.profile }}-${{ inputs.target }}
+  group: pack99-runtime-${{ github.ref }}-${{ inputs.operation }}-${{ inputs.target }}
   cancel-in-progress: false
 
 jobs:
   synchronize:
-    name: Validate and install PACK 99
+    name: Validate, install and promote PACK 99
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     env:
       PACK99_URL: ${{ secrets.PACK99_URL }}
-      PACK99_SHA256: d749943cdb8c8e8afa6bbe21f2c6558e3816371fc44e7cb2dbedb63157185575
+      PACK99_SHA256: e0a00bc450c0c80b4d9433f476b8377353433b0eb90318c9589b331923296c6d
 
     steps:
       - name: Checkout
@@ -56,63 +57,93 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Restore validated PACK 99 cache
+      - name: Restore validated recovered PACK 99 cache
         uses: actions/cache@v4
         with:
           path: .cache/pack99/HOC_PACK_99_FINAL_RUNTIME.zip
-          key: hoc-pack99-${{ env.PACK99_SHA256 }}
+          key: hoc-pack99-recovered-${{ env.PACK99_SHA256 }}
 
-      - name: Test installer and synchronizer
+      - name: Test installer, synchronizer and promotion gate
         run: |
-          python -m unittest tests/test_install_pack99.py tests/test_sync_pack99.py -v
-          python -m py_compile scripts/install_pack99.py scripts/sync_pack99.py
+          python -m unittest \
+            tests/test_install_pack99.py \
+            tests/test_sync_pack99.py \
+            tests/test_validate_pack99_promotion.py -v
+          python -m py_compile \
+            scripts/install_pack99.py \
+            scripts/sync_pack99.py \
+            scripts/validate_pack99_promotion.py
 
-      - name: Require private distribution URL
+      - name: Require HTTPS distribution URL
         shell: bash
         run: |
           if [[ -z "${PACK99_URL}" ]]; then
-            echo "Configure o secret PACK99_URL com uma URL HTTPS do HOC_PACK_99_FINAL_RUNTIME.zip." >&2
+            echo "Configure o secret PACK99_URL com uma URL HTTPS do HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.1.zip." >&2
+            exit 2
+          fi
+          if [[ "${{ inputs.operation }}" == "promote" && "${{ inputs.target }}" != "all" ]]; then
+            echo "A promoção exige target=all para validar Web e Godot juntos." >&2
             exit 2
           fi
 
-      - name: Download, validate and install
+      - name: Synchronize requested operation
         shell: bash
         run: |
           FLAGS=()
           if [[ "${{ inputs.force_download }}" == "true" ]]; then
             FLAGS+=(--force-download)
           fi
-          python scripts/sync_pack99.py \
-            --target "${{ inputs.target }}" \
-            --profile "${{ inputs.profile }}" \
-            --clean \
-            "${FLAGS[@]}"
 
-      - name: Upload synchronization report
+          if [[ "${{ inputs.operation }}" == "promote" ]]; then
+            python scripts/sync_pack99.py \
+              --target all \
+              --profile core \
+              --clean \
+              --report .cache/pack99/sync-core-report.json \
+              "${FLAGS[@]}"
+
+            python scripts/sync_pack99.py \
+              --target all \
+              --profile full \
+              --clean \
+              --report .cache/pack99/sync-full-report.json
+
+            python scripts/validate_pack99_promotion.py \
+              --report .cache/pack99/promotion-report.json
+          else
+            python scripts/sync_pack99.py \
+              --target "${{ inputs.target }}" \
+              --profile "${{ inputs.operation }}" \
+              --clean \
+              --report ".cache/pack99/sync-${{ inputs.operation }}-report.json" \
+              "${FLAGS[@]}"
+          fi
+
+      - name: Upload synchronization and promotion reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hoc-pack99-sync-report-${{ inputs.profile }}-${{ inputs.target }}
-          path: .cache/pack99/sync-report.json
+          name: hoc-pack99-reports-${{ inputs.operation }}-${{ inputs.target }}
+          path: .cache/pack99/*report.json
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 90
 
       - name: Upload Web runtime
         if: ${{ success() && inputs.publish_artifacts && (inputs.target == 'web' || inputs.target == 'all') }}
         uses: actions/upload-artifact@v4
         with:
-          name: hoc-pack99-web-${{ inputs.profile }}
+          name: hoc-pack99-web-${{ inputs.operation }}
           path: client/web/public/assets/runtime
           if-no-files-found: error
           compression-level: 0
-          retention-days: 7
+          retention-days: 30
 
       - name: Upload Godot runtime
         if: ${{ success() && inputs.publish_artifacts && (inputs.target == 'godot' || inputs.target == 'all') }}
         uses: actions/upload-artifact@v4
         with:
-          name: hoc-pack99-godot-${{ inputs.profile }}
+          name: hoc-pack99-godot-${{ inputs.operation }}
           path: client/godot/assets/runtime
           if-no-files-found: error
           compression-level: 0
-          retention-days: 7
+          retention-days: 30

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tehkne.solutions/schemas/hoc-pack11-narrative-portrait.schema.json",
+  "title": "HOC PACK 11 Narrative Portrait",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "character",
+    "expression",
+    "masterFile",
+    "runtimeFile",
+    "canvas",
+    "safeArea",
+    "eyeFocus",
+    "orientation",
+    "version",
+    "sha256",
+    "signature"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^PORTRAIT_(KAEL|LYRA|VARG|BRAKK)_(NEUTRAL|FOCUSED|ANGRY|HURT|VICTORIOUS|DEFEATED)_01$"
+    },
+    "character": {
+      "enum": ["KAEL", "LYRA", "VARG", "BRAKK"]
+    },
+    "expression": {
+      "enum": ["NEUTRAL", "FOCUSED", "ANGRY", "HURT", "VICTORIOUS", "DEFEATED"]
+    },
+    "masterFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runtimeFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "safeArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {"type": "integer", "minimum": 0},
+        "y": {"type": "integer", "minimum": 0},
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "eyeFocus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {"type": "number", "minimum": 0, "maximum": 1},
+        "y": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "orientation": {
+      "enum": ["LEFT", "RIGHT", "FRONT"]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signature": {
+      "const": "Tehkné Solutions"
+    }
+  }
+}
