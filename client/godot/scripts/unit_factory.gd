@@ -1,6 +1,7 @@
 class_name UnitFactory
 extends RefCounted
 
+const PROCEDURAL_FALLBACK_ENV := "HOC_ALLOW_PROCEDURAL_FALLBACK"
 const ELEMENT_COLORS := {
 	"fire": Color("fb7185"),
 	"water": Color("60a5fa"),
@@ -24,9 +25,19 @@ static func build_unit(parent: Node3D, owner_color: Color, unit: Dictionary, pos
 		if runtime_unit is Node3D:
 			return runtime_unit
 
+	if not _allow_procedural_fallback():
+		push_error("PACK 99 integral é obrigatório; unidade não renderizada: %s" % node_name)
+		var missing := Node3D.new()
+		missing.name = node_name
+		missing.position = position
+		missing.set_meta("runtime_pack99_missing", true)
+		parent.add_child(missing)
+		return missing
+
 	var root := Node3D.new()
 	root.name = node_name
 	root.position = position
+	root.set_meta("runtime_procedural_fallback", true)
 	parent.add_child(root)
 	var level: int = unit.get("level", 1)
 	var kind: String = unit.get("kind", "recruit")
@@ -37,6 +48,9 @@ static func build_unit(parent: Node3D, owner_color: Color, unit: Dictionary, pos
 	else:
 		_build_recruit(root, owner_color, accent, level)
 	return root
+
+static func _allow_procedural_fallback() -> bool:
+	return OS.has_feature("editor") and OS.get_environment(PROCEDURAL_FALLBACK_ENV) == "1"
 
 static func _build_recruit(root: Node3D, owner_color: Color, accent: Color, level: int) -> void:
 	var scale_factor := 1.0 + float(level - 1) * 0.09
