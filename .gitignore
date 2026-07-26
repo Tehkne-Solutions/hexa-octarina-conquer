@@ -32,6 +32,10 @@ client/godot/assets/runtime/*
 !client/godot/assets/runtime/README.md
 client/web/public/assets/runtime/*
 !client/web/public/assets/runtime/README.md
+HOC_PACK_99_FINAL_RUNTIME*.zip
+HOC_PACK_99_FINAL_RUNTIME*.zip.sha256
+HOC_PACK_99_FINAL_RUNTIME*.zip.report.json
+.hoc-pack99-assembly/
 
 # Local environment
 .env
