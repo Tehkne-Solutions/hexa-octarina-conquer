@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   promote:
-    name: Download, install and validate full runtime
+    name: Download, audit, install and validate full runtime
     runs-on: ubuntu-latest
     timeout-minutes: 150
 
@@ -64,11 +64,13 @@ jobs:
           python -m unittest \
             tests/test_install_pack99.py \
             tests/test_sync_pack99.py \
-            tests/test_validate_pack99_promotion.py -v
+            tests/test_validate_pack99_promotion.py \
+            tests/test_audit_pack99_archive.py -v
           python -m py_compile \
             scripts/install_pack99.py \
             scripts/sync_pack99.py \
-            scripts/validate_pack99_promotion.py
+            scripts/validate_pack99_promotion.py \
+            scripts/audit_pack99_archive.py
 
       - name: Download runtime from GitHub Release
         shell: bash
@@ -98,6 +100,17 @@ jobs:
             exit 2
           fi
           echo "Checksum validado: ${ACTUAL_SHA256}"
+
+      - name: Audit every file and canonical runtime reference
+        shell: bash
+        env:
+          ASSET_NAME: ${{ inputs.asset_name }}
+        run: |
+          set -euo pipefail
+          python scripts/audit_pack99_archive.py \
+            ".cache/pack99/${ASSET_NAME}" \
+            --report .cache/pack99/archive-integrity-report.json \
+            --summary-only
 
       - name: Install full runtime in Web and Godot
         shell: bash
@@ -132,6 +145,8 @@ jobs:
           - tag: ${TAG}
           - asset: ${ASSET_NAME}
           - sha256: ${EXPECTED_SHA256}
+          - arquivo completo: auditado individualmente por SHA-256
+          - referências canônicas: zero pendências
           - Web: 1.037 IDs, zero pendências
           - Godot: 1.037 IDs, zero pendências
           - bootstrap: ausente no runtime promovido
