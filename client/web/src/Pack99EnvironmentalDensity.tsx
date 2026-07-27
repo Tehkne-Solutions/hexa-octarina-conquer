@@ -46,7 +46,7 @@ function propsForTile(tile: LivingTile): DensityProp[] {
   } else if (tile.terrain === "ruins") {
     push("ruin", 0, -2, -4, 1.2);
     push("rock", 1, 7, 6, 0.72);
-  } else if (tile.terrain === "water") {
+  } else if (tile.terrain === "river") {
     push("water", 0, 0, 2, 1.3);
   } else if (tile.terrain === "village") {
     push("camp", 0, 1, -4, 1.05);
