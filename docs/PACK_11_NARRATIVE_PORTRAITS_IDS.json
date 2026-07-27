@@ -1,8 +1,8 @@
 {
   "project": "Hexa Octarina Conquer",
   "packId": "HOC_PACK_11_NARRATIVE_PORTRAITS",
-  "version": "0.2.0",
-  "status": "ready-for-master-production",
+  "version": "0.1.0",
+  "status": "pre-production-gated",
   "characters": ["KAEL", "LYRA", "VARG", "BRAKK"],
   "expressions": ["NEUTRAL", "FOCUSED", "ANGRY", "HURT", "VICTORIOUS", "DEFEATED"],
   "masterIds": [
@@ -42,18 +42,6 @@
     "runtimePortraits": 24,
     "totalCanonicalIds": 28
   },
-  "promotionGate": {
-    "report": ".cache/pack99/promotion-release-report.json",
-    "expectedAssetIds": 1037,
-    "bootstrapAssetIds": 0,
-    "bootstrapAliases": 0,
-    "proceduralFallbackMode": false,
-    "required": true
-  },
-  "runtimeRelease": {
-    "tag": "pack99-runtime-v1.0.1",
-    "asset": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.1.zip",
-    "sha256": "f72cce299fd28c8bb8520320871d90057884bb0ec19dd449f1c3d07e56a71bbe"
-  },
+  "promotionGate": ".cache/pack99/promotion-report.json",
   "signature": "Tehkné Solutions"
 }

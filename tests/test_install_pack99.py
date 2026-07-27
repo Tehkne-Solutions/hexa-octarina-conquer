@@ -154,56 +154,6 @@ class InstallPack99Tests(unittest.TestCase):
 
             self.assertEqual("preserve", sentinel.read_text(encoding="utf-8"))
 
-    def test_normalizes_installed_runtime_layout(self) -> None:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            (root / "runtime-install.json").write_text(
-                json.dumps(
-                    {
-                        "packId": install_pack99.PACK_ID,
-                        "version": "1.0.0",
-                        "profile": "core",
-                        "assetCount": 1,
-                        "copiedFiles": 1,
-                        "unresolvedReferences": 0,
-                        "signature": install_pack99.SIGNATURE,
-                    }
-                ),
-                encoding="utf-8",
-            )
-            registry_dir = root / "registry"
-            registry_dir.mkdir(parents=True, exist_ok=True)
-            (registry_dir / "assets-runtime.json").write_text(
-                json.dumps(
-                    {
-                        "project": "demo",
-                        "packId": install_pack99.PACK_ID,
-                        "version": "1.0.0",
-                        "profile": "core",
-                        "assetCount": 1,
-                        "assets": [{"id": "asset-1", "file": "packages/demo.bin"}],
-                        "signature": install_pack99.SIGNATURE,
-                    }
-                ),
-                encoding="utf-8",
-            )
-            (root / "packages").mkdir(parents=True, exist_ok=True)
-            (root / "packages" / "demo.bin").write_bytes(b"demo")
-
-            compat_root = install_pack99.normalize_extracted_root(root)
-
-            self.assertTrue((compat_root / "pack-manifest.json").is_file())
-            self.assertTrue((compat_root / "registry" / "assets-global.json").is_file())
-            self.assertTrue((compat_root / "packages" / "demo.bin").is_file())
-
-            manifest = json.loads((compat_root / "pack-manifest.json").read_text(encoding="utf-8"))
-            self.assertEqual(manifest["packId"], install_pack99.PACK_ID)
-            self.assertEqual(manifest["profile"], "core")
-
-            registry = json.loads((compat_root / "registry" / "assets-global.json").read_text(encoding="utf-8"))
-            self.assertEqual(registry["assetCount"], 1)
-            self.assertEqual(registry["assets"][0]["id"], "asset-1")
-
     def test_rejects_failed_validation(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
