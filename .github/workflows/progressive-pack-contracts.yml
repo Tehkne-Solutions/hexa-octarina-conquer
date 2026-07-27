@@ -4,8 +4,17 @@ on:
   pull_request:
     paths:
       - "scripts/audit_progressive_pack.py"
+      - "scripts/install_progressive_pack.py"
       - "tests/test_audit_progressive_pack.py"
+      - "tests/test_install_progressive_pack.py"
       - "runtime/packs/**"
+      - "client/web/src/progressive-terrain*"
+      - "client/web/src/ProgressiveTerrainLayer.tsx"
+      - "client/web/src/GoDotsBoard.tsx"
+      - "client/web/src/main.tsx"
+      - "client/godot/scripts/progressive_terrain_runtime.gd"
+      - "client/godot/scripts/runtime_board_decorator.gd"
+      - "client/godot/project.godot"
       - "docs/SPRINT_ASSETS_PROGRESSIVE_*.md"
       - ".github/workflows/progressive-pack-contracts.yml"
   workflow_dispatch:
@@ -15,7 +24,7 @@ permissions:
 
 jobs:
   pack-contracts:
-    name: PACK 00 progressive contracts
+    name: PACK 00–01 progressive contracts (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,20 +36,40 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Compile progressive auditor
-        run: python -m py_compile scripts/audit_progressive_pack.py
+      - name: Compile progressive tools
+        run: |
+          python -m py_compile scripts/audit_progressive_pack.py
+          python -m py_compile scripts/install_progressive_pack.py
       - name: Run progressive pack tests
-        run: python -m unittest tests/test_audit_progressive_pack.py -v
-      - name: Validate PACK 00 lock
+        run: |
+          python -m unittest \
+            tests/test_audit_progressive_pack.py \
+            tests/test_install_progressive_pack.py \
+            -v
+      - name: Validate progressive locks
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          lock = json.loads(Path("runtime/packs/PACK_00_FOUNDATION/pack-lock.json").read_text(encoding="utf-8"))
-          assert lock["packId"] == "HOC_PACK_00_FOUNDATION"
-          assert lock["version"] == "1.1.0"
-          assert lock["candidate"]["runtimeAssets"] == 0
-          assert lock["candidate"]["referenceAssets"] == 1
-          assert lock["candidate"]["unresolvedReferences"] == 0
-          assert lock["signature"] == "Tehkné Solutions"
+
+          pack00 = json.loads(Path("runtime/packs/PACK_00_FOUNDATION/pack-lock.json").read_text(encoding="utf-8"))
+          assert pack00["packId"] == "HOC_PACK_00_FOUNDATION"
+          assert pack00["version"] == "1.1.0"
+          assert pack00["candidate"]["runtimeAssets"] == 0
+          assert pack00["candidate"]["referenceAssets"] == 1
+          assert pack00["candidate"]["unresolvedReferences"] == 0
+          assert pack00["signature"] == "Tehkné Solutions"
+
+          pack01 = json.loads(Path("runtime/packs/PACK_01_TERRAIN_CORE/pack-lock.json").read_text(encoding="utf-8"))
+          assert pack01["packId"] == "HOC_PACK_01_TERRAIN_CORE_FINAL"
+          assert pack01["version"] == "1.1.0"
+          assert pack01["requires"]["HOC_PACK_00_FOUNDATION"] == "1.1.0"
+          assert pack01["candidate"]["runtimeAssets"] == 103
+          assert pack01["candidate"]["uniqueIds"] == 103
+          assert pack01["candidate"]["unresolvedReferences"] == 0
+          assert pack01["candidate"]["edgeBleedPx"] == 8
+          assert pack01["candidate"]["runtimeGridStepPx"] == [252, 124]
+          assert pack01["overlayA01"]["changedTiles"] == 10
+          assert pack01["overlayA01"]["changedMasks"] == 0
+          assert pack01["signature"] == "Tehkné Solutions"
           PY
