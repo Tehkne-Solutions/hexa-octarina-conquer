@@ -46,6 +46,7 @@ import "./pack99-unit-sprite.css";
 import "./pack99-unit-motion.css";
 import "./pack99-living-world.css";
 import "./pack99-world-vfx.css";
+import "./pack99-premium-campaign.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
