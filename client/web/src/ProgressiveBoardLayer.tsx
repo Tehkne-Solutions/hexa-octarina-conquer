@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type SyntheticEvent } from "react";
 
 import type { ClaimedCell, InfluenceEdge } from "./go-dots-logic";
 import { tileId, type LivingTile, type LivingUnit } from "./living-board-data";
@@ -41,7 +41,7 @@ function BoardAssetSprite({ assetId, className, style }: BoardAssetSpriteProps) 
     "--board-anchor-x": String(asset.anchor[0]),
     "--board-anchor-y": String(asset.anchor[1]),
   } as CSSProperties;
-  const hideBroken = (event: React.SyntheticEvent<HTMLImageElement>) => { event.currentTarget.hidden = true; };
+  const hideBroken = (event: SyntheticEvent<HTMLImageElement>) => { event.currentTarget.hidden = true; };
   return (
     <span className={`progressive-board-asset ${className}`} style={shared} data-asset-id={assetId}>
       {shadow && <img src={shadow} alt="" className="progressive-board-channel is-shadow" draggable={false} onError={hideBroken} />}
