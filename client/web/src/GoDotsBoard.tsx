@@ -13,6 +13,7 @@ import {
   type LivingTile,
   type LivingUnit,
 } from "./living-board-data";
+import { ProgressiveTerrainLayer } from "./ProgressiveTerrainLayer";
 
 interface GoDotsBoardProps {
   tiles: LivingTile[];
@@ -98,6 +99,7 @@ export function GoDotsBoard({
     <section className="go-dots-board-shell">
       <div className="go-dots-world">
         <div className="world-sky-glow" />
+        <ProgressiveTerrainLayer tiles={tiles} />
         <div className="world-river"><span /><i /><b /></div>
         <div className="world-bridge"><span /><i /><b /></div>
         <WorldLandmarks building={building} />
