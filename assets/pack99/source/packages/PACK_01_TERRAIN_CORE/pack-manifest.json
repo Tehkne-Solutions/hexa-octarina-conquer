@@ -1,0 +1,79 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+  "version": "1.0.0",
+  "status": "final",
+  "subpacks": [
+    {
+      "subpack": "A01_GRASS_ANCESTRAL",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "name": "Planície Ancestral",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A01_GRASS_ANCESTRAL"
+    },
+    {
+      "subpack": "A02_RUNIC_STONE",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "name": "Pedra Rúnica",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A02_RUNIC_STONE"
+    },
+    {
+      "subpack": "A03_FOREST",
+      "terrainId": "TERRAIN_FOREST",
+      "name": "Floresta",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A03_FOREST"
+    },
+    {
+      "subpack": "A04_CORRUPTED",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "name": "Terra Corrompida",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A04_CORRUPTED"
+    },
+    {
+      "subpack": "A05_SHALLOW_WATER",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "name": "Água Rasa",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A05_SHALLOW_WATER"
+    },
+    {
+      "subpack": "A06_LAVA",
+      "terrainId": "TERRAIN_LAVA",
+      "name": "Lava",
+      "status": "runtime-ready",
+      "assets": 16,
+      "path": "A06_LAVA"
+    },
+    {
+      "subpack": "A07_SUPPORT_MODULES",
+      "terrainId": "TERRAIN_SUPPORT",
+      "name": "Support Modules",
+      "status": "runtime-ready",
+      "assets": 7,
+      "path": "A07_SUPPORT_MODULES"
+    }
+  ],
+  "summary": {
+    "terrainFamilies": 6,
+    "supportModules": 1,
+    "terrainAssets": 103,
+    "masterCanvasPx": [
+      1024,
+      512
+    ],
+    "runtimeCanvasPx": [
+      512,
+      256
+    ],
+    "system": "flat premium 2.5D with base + overlay transitions"
+  },
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,2931 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+  "generatedBy": "Tehkné Solutions",
+  "assets": [
+    {
+      "id": "TILE_GRASS_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_GRASS_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_GRASS_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_GRASS_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_GRASS_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_GRASS_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_GRASS_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_GRASS_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_GRASS_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_GRASS_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_GRASS_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_GRASS_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_GRASS_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_GRASS_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_GRASS_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_GRASS_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_GRASS_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_GRASS_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_RUNIC_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_RUNIC_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_RUNIC_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_RUNIC_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_RUNIC_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_RUNIC_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_RUNIC_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_RUNIC_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_RUNIC_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_RUNIC_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_RUNIC_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_RUNIC_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_RUNIC_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_RUNIC_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_RUNIC_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_RUNIC_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_RUNIC_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_RUNIC_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_FOREST_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_FOREST_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_FOREST_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_FOREST_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_FOREST_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_FOREST_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_FOREST_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_FOREST_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_FOREST_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_FOREST_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_FOREST_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_FOREST_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_FOREST_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_FOREST_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_FOREST_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_FOREST_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_FOREST_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_FOREST",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_CORRUPTED_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_CORRUPTED_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_CORRUPTED_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_CORRUPTED",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "TILE_WATER_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_WATER_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_WATER_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_WATER_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_WATER_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_WATER_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_WATER_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_WATER_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_WATER_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_WATER_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_WATER_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_WATER_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_WATER_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_WATER_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_WATER_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_WATER_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_WATER_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_WATER_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_WATER_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_WATER_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_WATER_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_WATER_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_WATER_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_WATER_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_WATER_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_WATER_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_WATER_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_WATER_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_WATER_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_WATER_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_WATER_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_WATER_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_WATER_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_WATER_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_WATER_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_WATER_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_WATER_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_WATER_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_WATER_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_WATER_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_WATER_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_WATER_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_WATER_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_WATER_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_WATER_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_WATER_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_WATER_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_WATER_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_SHALLOW_WATER",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_CENTER_A_01",
+      "file": "tiles/TILE_LAVA_FLAT_CENTER_A_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_CENTER_A_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "center",
+      "variation": "A",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation A"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_CENTER_B_01",
+      "file": "tiles/TILE_LAVA_FLAT_CENTER_B_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_CENTER_B_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "center",
+      "variation": "B",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation B"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_CENTER_C_01",
+      "file": "tiles/TILE_LAVA_FLAT_CENTER_C_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_CENTER_C_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "center",
+      "variation": "C",
+      "layerRole": "base",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Base tile variation C"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_EDGE_N_01",
+      "file": "tiles/TILE_LAVA_FLAT_EDGE_N_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_EDGE_N_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "North transition overlay"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_EDGE_E_01",
+      "file": "tiles/TILE_LAVA_FLAT_EDGE_E_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_EDGE_E_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "edge",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "East transition overlay"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_EDGE_S_01",
+      "file": "tiles/TILE_LAVA_FLAT_EDGE_S_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_EDGE_S_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "edge",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "South transition overlay"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_EDGE_W_01",
+      "file": "tiles/TILE_LAVA_FLAT_EDGE_W_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_EDGE_W_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "edge",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "West transition overlay"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_OUTER_NE_01",
+      "file": "tiles/TILE_LAVA_FLAT_OUTER_NE_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_OUTER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NE corner"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_OUTER_NW_01",
+      "file": "tiles/TILE_LAVA_FLAT_OUTER_NW_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_OUTER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "outer-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies NW corner"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_OUTER_SE_01",
+      "file": "tiles/TILE_LAVA_FLAT_OUTER_SE_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_OUTER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "outer-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SE corner"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_OUTER_SW_01",
+      "file": "tiles/TILE_LAVA_FLAT_OUTER_SW_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_OUTER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "outer-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain occupies SW corner"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_INNER_NE_01",
+      "file": "tiles/TILE_LAVA_FLAT_INNER_NE_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_INNER_NE_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NE concave cut"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_INNER_NW_01",
+      "file": "tiles/TILE_LAVA_FLAT_INNER_NW_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_INNER_NW_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "inner-corner",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with NW concave cut"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_INNER_SE_01",
+      "file": "tiles/TILE_LAVA_FLAT_INNER_SE_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_INNER_SE_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "inner-corner",
+      "variation": "B",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SE concave cut"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_INNER_SW_01",
+      "file": "tiles/TILE_LAVA_FLAT_INNER_SW_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_INNER_SW_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "inner-corner",
+      "variation": "C",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Full terrain with SW concave cut"
+    },
+    {
+      "id": "TILE_LAVA_FLAT_ISOLATED_01",
+      "file": "tiles/TILE_LAVA_FLAT_ISOLATED_01.png",
+      "mask": "masks/TILE_LAVA_FLAT_ISOLATED_01_MASK.png",
+      "terrainId": "TERRAIN_LAVA",
+      "topology": "isolated",
+      "variation": "A",
+      "layerRole": "transition-overlay",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "gridOrigin": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "hasVerticalCliff": false,
+      "castsShadow": false,
+      "description": "Terrain island surrounded by another terrain"
+    },
+    {
+      "id": "PATH_DIRT_STRAIGHT_NS_01",
+      "file": "tiles/PATH_DIRT_STRAIGHT_NS_01.png",
+      "role": "path",
+      "shape": "NS",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_STRAIGHT_EW_01",
+      "file": "tiles/PATH_DIRT_STRAIGHT_EW_01.png",
+      "role": "path",
+      "shape": "EW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_NE_01",
+      "file": "tiles/PATH_DIRT_BEND_NE_01.png",
+      "role": "path",
+      "shape": "NE",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_NW_01",
+      "file": "tiles/PATH_DIRT_BEND_NW_01.png",
+      "role": "path",
+      "shape": "NW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_SE_01",
+      "file": "tiles/PATH_DIRT_BEND_SE_01.png",
+      "role": "path",
+      "shape": "SE",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_SW_01",
+      "file": "tiles/PATH_DIRT_BEND_SW_01.png",
+      "role": "path",
+      "shape": "SW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_CROSS_01",
+      "file": "tiles/PATH_DIRT_CROSS_01.png",
+      "role": "path",
+      "shape": "CROSS",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    }
+  ]
+}

@@ -1,0 +1,6038 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_07_HERO_ROSTER_FINAL",
+  "version": "1.0.0",
+  "assets": [
+    {
+      "id": "HERO_ASSASSIN_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "assassin/master/HERO_ASSASSIN_01_MASTER_FRONT_01.png",
+      "shadow": "assassin/master/HERO_ASSASSIN_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "assassin/master/HERO_ASSASSIN_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NE_01.png",
+      "shadow": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NW_01.png",
+      "shadow": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SE_01.png",
+      "shadow": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SW_01.png",
+      "shadow": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "assassin/directions/HERO_ASSASSIN_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_ASSASSIN_DUAL_DAGGERS_01",
+      "category": "weapon-equipment",
+      "file": "assassin/weapons/WEAPON_ASSASSIN_DUAL_DAGGERS_01.png",
+      "shadow": "assassin/weapons/WEAPON_ASSASSIN_DUAL_DAGGERS_01_SHADOW.png",
+      "emissive": "assassin/weapons/WEAPON_ASSASSIN_DUAL_DAGGERS_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_ASSASSIN_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "assassin/portraits/PORTRAIT_ASSASSIN_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_ASSASSIN_BATTLE_512_01",
+      "category": "portrait",
+      "file": "assassin/portraits/PORTRAIT_ASSASSIN_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_ASSASSIN_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "assassin/portraits/PORTRAIT_ASSASSIN_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_ASSASSIN_BATTLE_256_01",
+      "category": "portrait",
+      "file": "assassin/portraits/PORTRAIT_ASSASSIN_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_ASSASSIN_01",
+      "category": "hud-icon",
+      "file": "assassin/ui/ICON_HUD_HERO_ASSASSIN_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_ASSASSIN_01",
+      "category": "card-art",
+      "file": "assassin/ui/CARD_ART_HERO_ASSASSIN_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_ASSASSIN_STEALTH_01",
+      "category": "ability-vfx",
+      "file": "assassin/vfx/VFX_ASSASSIN_STEALTH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_ASSASSIN_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "assassin/vfx/VFX_ASSASSIN_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_ASSASSIN_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "assassin/vfx/VFX_ASSASSIN_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_NE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_NE_01.json",
+      "framesDirectory": "assassin/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_NW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_NW_01.json",
+      "framesDirectory": "assassin/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_SE_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_SE_01.json",
+      "framesDirectory": "assassin/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_IDLE_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_WALK_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_ATTACK_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_CAST_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_HIT_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_DEFEAT_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_ASSASSIN_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_SW_01.png",
+      "atlas": "assassin/animations/spritesheets/HERO_ASSASSIN_01_VICTORY_SW_01.json",
+      "framesDirectory": "assassin/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "guardian/master/HERO_GUARDIAN_01_MASTER_FRONT_01.png",
+      "shadow": "guardian/master/HERO_GUARDIAN_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "guardian/master/HERO_GUARDIAN_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NE_01.png",
+      "shadow": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NW_01.png",
+      "shadow": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SE_01.png",
+      "shadow": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+      "shadow": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_GUARDIAN_SHIELD_HAMMER_01",
+      "category": "weapon-equipment",
+      "file": "guardian/weapons/WEAPON_GUARDIAN_SHIELD_HAMMER_01.png",
+      "shadow": "guardian/weapons/WEAPON_GUARDIAN_SHIELD_HAMMER_01_SHADOW.png",
+      "emissive": "guardian/weapons/WEAPON_GUARDIAN_SHIELD_HAMMER_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_GUARDIAN_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "guardian/portraits/PORTRAIT_GUARDIAN_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_GUARDIAN_BATTLE_512_01",
+      "category": "portrait",
+      "file": "guardian/portraits/PORTRAIT_GUARDIAN_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_GUARDIAN_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "guardian/portraits/PORTRAIT_GUARDIAN_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_GUARDIAN_BATTLE_256_01",
+      "category": "portrait",
+      "file": "guardian/portraits/PORTRAIT_GUARDIAN_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_GUARDIAN_01",
+      "category": "hud-icon",
+      "file": "guardian/ui/ICON_HUD_HERO_GUARDIAN_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_GUARDIAN_01",
+      "category": "card-art",
+      "file": "guardian/ui/CARD_ART_HERO_GUARDIAN_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_GUARDIAN_SHIELD_01",
+      "category": "ability-vfx",
+      "file": "guardian/vfx/VFX_GUARDIAN_SHIELD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_GUARDIAN_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "guardian/vfx/VFX_GUARDIAN_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_GUARDIAN_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "guardian/vfx/VFX_GUARDIAN_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_NE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_NE_01.json",
+      "framesDirectory": "guardian/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_NW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_NW_01.json",
+      "framesDirectory": "guardian/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_SE_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_SE_01.json",
+      "framesDirectory": "guardian/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_IDLE_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_WALK_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_ATTACK_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_CAST_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_HIT_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_DEFEAT_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_GUARDIAN_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_SW_01.png",
+      "atlas": "guardian/animations/spritesheets/HERO_GUARDIAN_01_VICTORY_SW_01.json",
+      "framesDirectory": "guardian/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "necromancer/master/HERO_NECROMANCER_01_MASTER_FRONT_01.png",
+      "shadow": "necromancer/master/HERO_NECROMANCER_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "necromancer/master/HERO_NECROMANCER_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NE_01.png",
+      "shadow": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NW_01.png",
+      "shadow": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SE_01.png",
+      "shadow": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SW_01.png",
+      "shadow": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "necromancer/directions/HERO_NECROMANCER_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_NECROMANCER_BONE_STAFF_01",
+      "category": "weapon-equipment",
+      "file": "necromancer/weapons/WEAPON_NECROMANCER_BONE_STAFF_01.png",
+      "shadow": "necromancer/weapons/WEAPON_NECROMANCER_BONE_STAFF_01_SHADOW.png",
+      "emissive": "necromancer/weapons/WEAPON_NECROMANCER_BONE_STAFF_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_NECROMANCER_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "necromancer/portraits/PORTRAIT_NECROMANCER_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_NECROMANCER_BATTLE_512_01",
+      "category": "portrait",
+      "file": "necromancer/portraits/PORTRAIT_NECROMANCER_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_NECROMANCER_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "necromancer/portraits/PORTRAIT_NECROMANCER_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_NECROMANCER_BATTLE_256_01",
+      "category": "portrait",
+      "file": "necromancer/portraits/PORTRAIT_NECROMANCER_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_NECROMANCER_01",
+      "category": "hud-icon",
+      "file": "necromancer/ui/ICON_HUD_HERO_NECROMANCER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_NECROMANCER_01",
+      "category": "card-art",
+      "file": "necromancer/ui/CARD_ART_HERO_NECROMANCER_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_NECROMANCER_SOUL_01",
+      "category": "ability-vfx",
+      "file": "necromancer/vfx/VFX_NECROMANCER_SOUL_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_NECROMANCER_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "necromancer/vfx/VFX_NECROMANCER_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_NECROMANCER_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "necromancer/vfx/VFX_NECROMANCER_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_NE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_NE_01.json",
+      "framesDirectory": "necromancer/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_NW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_NW_01.json",
+      "framesDirectory": "necromancer/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_SE_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_SE_01.json",
+      "framesDirectory": "necromancer/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_IDLE_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_WALK_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_ATTACK_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_CAST_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_HIT_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_DEFEAT_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_NECROMANCER_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_SW_01.png",
+      "atlas": "necromancer/animations/spritesheets/HERO_NECROMANCER_01_VICTORY_SW_01.json",
+      "framesDirectory": "necromancer/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01.png",
+      "shadow": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_RANGER_LONGBOW_01",
+      "category": "weapon-equipment",
+      "file": "ranger/weapons/WEAPON_RANGER_LONGBOW_01.png",
+      "shadow": "ranger/weapons/WEAPON_RANGER_LONGBOW_01_SHADOW.png",
+      "emissive": "ranger/weapons/WEAPON_RANGER_LONGBOW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_BATTLE_512_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_BATTLE_256_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_RANGER_01",
+      "category": "hud-icon",
+      "file": "ranger/ui/ICON_HUD_HERO_RANGER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_RANGER_01",
+      "category": "card-art",
+      "file": "ranger/ui/CARD_ART_HERO_RANGER_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_RANGER_ARROW_01",
+      "category": "ability-vfx",
+      "file": "ranger/vfx/VFX_RANGER_ARROW_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RANGER_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "ranger/vfx/VFX_RANGER_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RANGER_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "ranger/vfx/VFX_RANGER_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "warrior/master/HERO_WARRIOR_01_MASTER_FRONT_01.png",
+      "shadow": "warrior/master/HERO_WARRIOR_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "warrior/master/HERO_WARRIOR_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NE_01.png",
+      "shadow": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NW_01.png",
+      "shadow": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SE_01.png",
+      "shadow": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SW_01.png",
+      "shadow": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "warrior/directions/HERO_WARRIOR_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_WARRIOR_GREATSWORD_01",
+      "category": "weapon-equipment",
+      "file": "warrior/weapons/WEAPON_WARRIOR_GREATSWORD_01.png",
+      "shadow": "warrior/weapons/WEAPON_WARRIOR_GREATSWORD_01_SHADOW.png",
+      "emissive": "warrior/weapons/WEAPON_WARRIOR_GREATSWORD_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_WARRIOR_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "warrior/portraits/PORTRAIT_WARRIOR_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_WARRIOR_BATTLE_512_01",
+      "category": "portrait",
+      "file": "warrior/portraits/PORTRAIT_WARRIOR_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_WARRIOR_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "warrior/portraits/PORTRAIT_WARRIOR_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_WARRIOR_BATTLE_256_01",
+      "category": "portrait",
+      "file": "warrior/portraits/PORTRAIT_WARRIOR_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_WARRIOR_01",
+      "category": "hud-icon",
+      "file": "warrior/ui/ICON_HUD_HERO_WARRIOR_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_WARRIOR_01",
+      "category": "card-art",
+      "file": "warrior/ui/CARD_ART_HERO_WARRIOR_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_WARRIOR_SLASH_01",
+      "category": "ability-vfx",
+      "file": "warrior/vfx/VFX_WARRIOR_SLASH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_WARRIOR_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "warrior/vfx/VFX_WARRIOR_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_WARRIOR_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "warrior/vfx/VFX_WARRIOR_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_NE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_NE_01.json",
+      "framesDirectory": "warrior/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_NW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_NW_01.json",
+      "framesDirectory": "warrior/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_SE_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_SE_01.json",
+      "framesDirectory": "warrior/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_IDLE_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_WALK_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_ATTACK_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_CAST_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_HIT_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_DEFEAT_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_WARRIOR_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_SW_01.png",
+      "atlas": "warrior/animations/spritesheets/HERO_WARRIOR_01_VICTORY_SW_01.json",
+      "framesDirectory": "warrior/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

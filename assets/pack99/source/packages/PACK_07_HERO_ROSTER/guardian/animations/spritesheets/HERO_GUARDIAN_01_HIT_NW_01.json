@@ -1,0 +1,59 @@
+{
+  "frames": {
+    "frame_00": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 70
+    },
+    "frame_01": {
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 90
+    },
+    "frame_02": {
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 130
+    }
+  },
+  "meta": {
+    "image": "HERO_GUARDIAN_01_HIT_NW_01.png",
+    "size": {
+      "w": 768,
+      "h": 256
+    },
+    "direction": "NW",
+    "animation": "hit",
+    "loop": false,
+    "events": [
+      {
+        "frame": 0,
+        "event": "hit_flash"
+      }
+    ]
+  }
+}

@@ -1,0 +1,495 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "mapId": "MAP_TUTORIAL_5X5_01",
+  "name": "Arena do Primeiro Selo",
+  "version": "1.0.0",
+  "seed": 50101,
+  "preset": "tutorial",
+  "dependencies": [
+    "HOC_PACK_01_TERRAIN_CORE_FINAL@1.0.0",
+    "HOC_PACK_02_BOARD_SYSTEM_FINAL@1.0.0",
+    "HOC_PACK_03_RESOURCES_FINAL@1.0.0",
+    "HOC_PACK_04_PROPS_OBSTACLES_FINAL@1.0.0"
+  ],
+  "grid": {
+    "type": "isometric-diamond",
+    "width": 5,
+    "height": 5,
+    "tileMasterPx": [
+      1024,
+      512
+    ],
+    "tileRuntimePx": [
+      512,
+      256
+    ],
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "render": {
+    "positionFormula": {
+      "x": "originX + (column - row) * tileWidth / 2",
+      "y": "originY + (column + row) * tileHeight / 2"
+    },
+    "zSort": "column + row + localZOffset",
+    "layers": {
+      "terrain": 100,
+      "edges": 200,
+      "resources": 300,
+      "props": 400,
+      "territory": 500,
+      "pillars": 600,
+      "actors": 700,
+      "vfx": 800,
+      "ui": 900
+    }
+  },
+  "cells": [
+    {
+      "x": 0,
+      "y": 0,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0110",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_NW_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 0
+    },
+    {
+      "x": 1,
+      "y": 0,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0101",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 1
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0111",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_N_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 2
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0111",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_N_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 3
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "0011",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_NE_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 4
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1010",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 1
+    },
+    {
+      "x": 1,
+      "y": 1,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_C_01",
+      "autotileMask": "0010",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 2
+    },
+    {
+      "x": 2,
+      "y": 1,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1100",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_SW_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 3
+    },
+    {
+      "x": 3,
+      "y": 1,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_C_01",
+      "autotileMask": "1101",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_S_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 4
+    },
+    {
+      "x": 4,
+      "y": 1,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1011",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_E_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 5
+    },
+    {
+      "x": 0,
+      "y": 2,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1010",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 2
+    },
+    {
+      "x": 1,
+      "y": 2,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_A_01",
+      "autotileMask": "1100",
+      "transitionOverlayId": "TILE_RUNIC_FLAT_OUTER_SW_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 3
+    },
+    {
+      "x": 2,
+      "y": 2,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_C_01",
+      "autotileMask": "0111",
+      "transitionOverlayId": "TILE_RUNIC_FLAT_EDGE_N_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 4
+    },
+    {
+      "x": 3,
+      "y": 2,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_A_01",
+      "autotileMask": "0011",
+      "transitionOverlayId": "TILE_RUNIC_FLAT_OUTER_NE_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 5
+    },
+    {
+      "x": 4,
+      "y": 2,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1010",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 6
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1110",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_W_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 3
+    },
+    {
+      "x": 1,
+      "y": 3,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0011",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_NE_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 4
+    },
+    {
+      "x": 2,
+      "y": 3,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_C_01",
+      "autotileMask": "1100",
+      "transitionOverlayId": "TILE_RUNIC_FLAT_OUTER_SW_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 5
+    },
+    {
+      "x": 3,
+      "y": 3,
+      "terrainId": "TERRAIN_RUNIC_STONE",
+      "baseTileId": "TILE_RUNIC_FLAT_CENTER_B_01",
+      "autotileMask": "1001",
+      "transitionOverlayId": "TILE_RUNIC_FLAT_OUTER_SE_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 6
+    },
+    {
+      "x": 4,
+      "y": 3,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_C_01",
+      "autotileMask": "1010",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 7
+    },
+    {
+      "x": 0,
+      "y": 4,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "1100",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_SW_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 4
+    },
+    {
+      "x": 1,
+      "y": 4,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_B_01",
+      "autotileMask": "1101",
+      "transitionOverlayId": "TILE_GRASS_FLAT_EDGE_S_01",
+      "walkable": false,
+      "movementCost": 99,
+      "hazard": false,
+      "zBase": 5
+    },
+    {
+      "x": 2,
+      "y": 4,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_C_01",
+      "autotileMask": "0101",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 6
+    },
+    {
+      "x": 3,
+      "y": 4,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_A_01",
+      "autotileMask": "0101",
+      "transitionOverlayId": null,
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 7
+    },
+    {
+      "x": 4,
+      "y": 4,
+      "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+      "baseTileId": "TILE_GRASS_FLAT_CENTER_C_01",
+      "autotileMask": "1001",
+      "transitionOverlayId": "TILE_GRASS_FLAT_OUTER_SE_01",
+      "walkable": true,
+      "movementCost": 1,
+      "hazard": false,
+      "zBase": 8
+    }
+  ],
+  "spawns": [
+    {
+      "id": "SPAWN_RESOURCES_000",
+      "kind": "resource",
+      "assetId": "RES_WOOD_MEDIUM_01",
+      "x": 4,
+      "y": 2,
+      "blocking": false,
+      "zOffset": 0.2
+    },
+    {
+      "id": "SPAWN_PROPS_001",
+      "kind": "prop",
+      "assetId": "PROP_ROCK_A_01",
+      "x": 4,
+      "y": 0,
+      "blocking": true,
+      "zOffset": 0.3
+    },
+    {
+      "id": "SPAWN_PROPS_002",
+      "kind": "prop",
+      "assetId": "PROP_ROCK_A_01",
+      "x": 1,
+      "y": 4,
+      "blocking": true,
+      "zOffset": 0.3
+    },
+    {
+      "id": "SPAWN_PROPS_003",
+      "kind": "prop",
+      "assetId": "PROP_ROCK_A_01",
+      "x": 3,
+      "y": 3,
+      "blocking": true,
+      "zOffset": 0.3
+    },
+    {
+      "id": "SPAWN_PROPS_004",
+      "kind": "prop",
+      "assetId": "PROP_TREE_GREEN_A_01",
+      "x": 0,
+      "y": 4,
+      "blocking": true,
+      "zOffset": 0.3
+    },
+    {
+      "id": "SPAWN_PROPS_005",
+      "kind": "prop",
+      "assetId": "PROP_TREE_GREEN_A_01",
+      "x": 0,
+      "y": 0,
+      "blocking": true,
+      "zOffset": 0.3
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "LANDMARK_CENTER",
+      "kind": "territory",
+      "assetId": "TERR_SIGIL_NEUTRAL_01",
+      "x": 2,
+      "y": 2,
+      "footprint": [
+        2,
+        2
+      ],
+      "blocking": true,
+      "zOffset": 0.4
+    }
+  ],
+  "pillars": [
+    {
+      "id": "NODE_A",
+      "assetId": "PILLAR_BLUE_01",
+      "gx": 1,
+      "gy": 1
+    },
+    {
+      "id": "NODE_B",
+      "assetId": "PILLAR_BLUE_01",
+      "gx": 3,
+      "gy": 1
+    },
+    {
+      "id": "NODE_C",
+      "assetId": "PILLAR_ENERGIZED_01",
+      "gx": 3,
+      "gy": 3
+    },
+    {
+      "id": "NODE_D",
+      "assetId": "PILLAR_NEUTRAL_01",
+      "gx": 1,
+      "gy": 3
+    }
+  ],
+  "edges": [
+    {
+      "id": "EDGE_A_B",
+      "assetId": "EDGE_WOOD_BUILT_NE_SW_01",
+      "from": "NODE_A",
+      "to": "NODE_B"
+    },
+    {
+      "id": "EDGE_B_C",
+      "assetId": "EDGE_STONE_BUILT_NW_SE_01",
+      "from": "NODE_B",
+      "to": "NODE_C"
+    },
+    {
+      "id": "EDGE_C_D",
+      "assetId": "EDGE_ARCANE_BUILT_NE_SW_01",
+      "from": "NODE_C",
+      "to": "NODE_D"
+    },
+    {
+      "id": "EDGE_D_A",
+      "assetId": "EDGE_WOOD_BUILT_NW_SE_01",
+      "from": "NODE_D",
+      "to": "NODE_A"
+    }
+  ],
+  "starts": [
+    {
+      "player": 1,
+      "x": 0,
+      "y": 4
+    },
+    {
+      "player": 2,
+      "x": 4,
+      "y": 0
+    }
+  ],
+  "objectives": [
+    {
+      "id": "OBJ_CONTROL_CENTER",
+      "type": "control",
+      "x": 2,
+      "y": 2
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

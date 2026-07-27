@@ -1,0 +1,63 @@
+{
+  "unitId": "UNIT_RECRUIT_01",
+  "initialState": "idle",
+  "states": {
+    "idle": {
+      "animationPattern": "UNIT_RECRUIT_01_IDLE_{direction}_01",
+      "loop": true,
+      "events": []
+    },
+    "walk": {
+      "animationPattern": "UNIT_RECRUIT_01_WALK_{direction}_01",
+      "loop": true,
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ]
+    },
+    "attack": {
+      "animationPattern": "UNIT_RECRUIT_01_ATTACK_{direction}_01",
+      "loop": false,
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ]
+    },
+    "hit": {
+      "animationPattern": "UNIT_RECRUIT_01_HIT_{direction}_01",
+      "loop": false,
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ]
+    },
+    "defeat": {
+      "animationPattern": "UNIT_RECRUIT_01_DEFEAT_{direction}_01",
+      "loop": false,
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ]
+    }
+  }
+}

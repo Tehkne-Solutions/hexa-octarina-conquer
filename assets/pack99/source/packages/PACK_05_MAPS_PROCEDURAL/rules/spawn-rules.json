@@ -1,0 +1,123 @@
+{
+  "resources": [
+    {
+      "assetId": "RES_WOOD_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_GRASS_ANCESTRAL",
+        "TERRAIN_FOREST"
+      ],
+      "weight": 1.0,
+      "minSpacing": 2
+    },
+    {
+      "assetId": "RES_STONE_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_LAVA"
+      ],
+      "weight": 0.85,
+      "minSpacing": 2
+    },
+    {
+      "assetId": "RES_GOLD_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_CORRUPTED"
+      ],
+      "weight": 0.45,
+      "minSpacing": 3
+    },
+    {
+      "assetId": "RES_MANA_BLUE_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_SHALLOW_WATER"
+      ],
+      "weight": 0.4,
+      "minSpacing": 3
+    },
+    {
+      "assetId": "RES_FOOD_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_GRASS_ANCESTRAL",
+        "TERRAIN_FOREST"
+      ],
+      "weight": 0.8,
+      "minSpacing": 2
+    },
+    {
+      "assetId": "RES_KNOWLEDGE_MEDIUM_01",
+      "terrain": [
+        "TERRAIN_RUNIC_STONE"
+      ],
+      "weight": 0.25,
+      "minSpacing": 4
+    },
+    {
+      "assetId": "RES_OCTARINE_CRYSTAL_SMALL_01",
+      "terrain": [
+        "TERRAIN_CORRUPTED",
+        "TERRAIN_RUNIC_STONE"
+      ],
+      "weight": 0.18,
+      "minSpacing": 4
+    },
+    {
+      "assetId": "RES_SOUL_FRAGMENT_SMALL_01",
+      "terrain": [
+        "TERRAIN_CORRUPTED"
+      ],
+      "weight": 0.24,
+      "minSpacing": 4
+    }
+  ],
+  "props": [
+    {
+      "assetId": "PROP_TREE_GREEN_A_01",
+      "terrain": [
+        "TERRAIN_FOREST",
+        "TERRAIN_GRASS_ANCESTRAL"
+      ],
+      "weight": 1.0,
+      "minSpacing": 1,
+      "blocking": true
+    },
+    {
+      "assetId": "PROP_TREE_GREEN_B_01",
+      "terrain": [
+        "TERRAIN_FOREST"
+      ],
+      "weight": 0.75,
+      "minSpacing": 1,
+      "blocking": true
+    },
+    {
+      "assetId": "PROP_ROCK_A_01",
+      "terrain": [
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_GRASS_ANCESTRAL"
+      ],
+      "weight": 0.65,
+      "minSpacing": 2,
+      "blocking": true
+    },
+    {
+      "assetId": "PROP_TREE_CORRUPTED_01",
+      "terrain": [
+        "TERRAIN_CORRUPTED"
+      ],
+      "weight": 0.7,
+      "minSpacing": 2,
+      "blocking": true
+    },
+    {
+      "assetId": "PROP_LAVA_FISSURE_ACTIVE_01",
+      "terrain": [
+        "TERRAIN_LAVA"
+      ],
+      "weight": 0.42,
+      "minSpacing": 2,
+      "blocking": true
+    }
+  ]
+}

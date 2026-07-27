@@ -1,0 +1,6 @@
+1751aca1e67b4d71932563da071034e95edd5ca28484be954c43649a3f2b563e  ./pack-manifest.json
+8710695cfbe35f9946f98c62de23f000a2f1191ddc02598195cc90f777b48719  ./validation/validation-report.json
+4f02399291f930612874dea58d55dc08a485fbc63c229534d798793796ba838d  ./registry/assets-global.json
+038e0b2c6c3628d3fdfdcfed7c297dfee27f0019de8ae66164c6d5e2cf184307  ./registry/entities-global.json
+5e8815bc1e52e514e7e10766fec946ef780282cb90ad98cc4c4cb96b1786aba1  ./registry/packs-global.json
+ab637f50ba48dbe987879df0df8f6700521e52966e016e286d7e467a0437cddb  ./license/LICENSE-ASSETS.md

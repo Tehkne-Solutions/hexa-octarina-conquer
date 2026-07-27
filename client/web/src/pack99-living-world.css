@@ -1,0 +1,177 @@
+.pack99-world-active .legacy-world-fallback,
+.pack99-world-active .legacy-board-fallback {
+  display: none !important;
+}
+
+.pack99-living-world {
+  position: absolute;
+  inset: -8% -10% -12%;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateZ(0);
+  z-index: 2;
+}
+
+.pack99-living-world::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 28% 30%, rgba(83, 160, 101, .18), transparent 28%),
+    radial-gradient(circle at 72% 58%, rgba(45, 111, 124, .16), transparent 30%),
+    linear-gradient(145deg, rgba(8, 20, 15, .08), rgba(4, 10, 9, .52));
+  z-index: 100;
+  mix-blend-mode: soft-light;
+}
+
+.pack99-world-cell {
+  position: absolute;
+  width: 28%;
+  aspect-ratio: 2 / 1;
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 68%;
+  transition: filter .25s ease, transform .25s ease;
+}
+
+.pack99-world-terrain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: saturate(.92) brightness(.82) contrast(1.08);
+  transform: scale(1.18);
+  transform-origin: center;
+}
+
+.pack99-world-cell.terrain-river .pack99-world-terrain {
+  filter: saturate(1.15) brightness(.78) contrast(1.1);
+  animation: pack99-water-breathe 4.5s ease-in-out infinite alternate;
+}
+
+.pack99-world-cell.terrain-forest .pack99-world-terrain,
+.pack99-world-cell.terrain-mountain .pack99-world-terrain,
+.pack99-world-cell.terrain-ruins .pack99-world-terrain,
+.pack99-world-cell.terrain-mill .pack99-world-terrain,
+.pack99-world-cell.terrain-village .pack99-world-terrain,
+.pack99-world-cell.terrain-bridge .pack99-world-terrain {
+  transform: scale(1.34) translateY(-7%);
+  filter: saturate(.96) brightness(.88) contrast(1.12) drop-shadow(0 18px 18px rgba(0,0,0,.38));
+}
+
+.pack99-world-resource {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  width: 28%;
+  max-height: 62%;
+  object-fit: contain;
+  transform: translate(-50%, 18%);
+  filter: drop-shadow(0 12px 10px rgba(0,0,0,.55));
+  animation: pack99-resource-alive 2.8s ease-in-out infinite;
+  z-index: 8;
+}
+
+.pack99-world-resource.resource-crystal {
+  filter: drop-shadow(0 0 10px rgba(91, 240, 230, .65)) drop-shadow(0 12px 10px rgba(0,0,0,.55));
+}
+
+.pack99-world-landmark-label {
+  position: absolute;
+  left: 50%;
+  top: 79%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: rgba(245, 239, 211, .9);
+  background: rgba(4, 10, 10, .72);
+  border: 1px solid rgba(220, 183, 97, .22);
+  font-size: clamp(7px, .72vw, 11px);
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-shadow: 0 1px 2px #000;
+  z-index: 12;
+}
+
+.pack99-world-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 120;
+  overflow: hidden;
+}
+
+.pack99-world-atmosphere i,
+.pack99-world-atmosphere b {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(153, 226, 183, .42);
+  box-shadow: 0 0 12px rgba(104, 238, 185, .35);
+  animation: pack99-mote 9s linear infinite;
+}
+.pack99-world-atmosphere i:nth-child(1) { left: 12%; top: 72%; animation-delay: -2s; }
+.pack99-world-atmosphere i:nth-child(2) { left: 46%; top: 20%; animation-delay: -6s; }
+.pack99-world-atmosphere i:nth-child(3) { left: 82%; top: 66%; animation-delay: -4s; }
+.pack99-world-atmosphere b:nth-child(4) { left: 64%; top: 86%; animation-delay: -8s; }
+.pack99-world-atmosphere b:nth-child(5) { left: 28%; top: 48%; animation-delay: -1s; }
+
+.pack99-world-active .base-go-grid {
+  opacity: 0;
+  transition: opacity .22s ease;
+}
+
+.pack99-world-active.is-interacting .base-go-grid {
+  opacity: .08;
+}
+
+.pack99-world-active .go-node:not(.occupied):not(.valid):not(.recommended):not(.objective-target) .node-stone {
+  opacity: 0;
+  transform: scale(.45);
+}
+
+.pack99-world-active .go-node.valid .node-stone,
+.pack99-world-active .go-node.recommended .node-stone,
+.pack99-world-active .go-node.objective-target .node-stone {
+  opacity: .72;
+  transform: scale(.58);
+  filter: drop-shadow(0 0 10px rgba(199, 178, 88, .65));
+}
+
+.pack99-world-active .go-node.occupied .node-stone {
+  opacity: .16;
+  transform: scale(.5);
+}
+
+.pack99-world-active .go-dots-legend {
+  opacity: .45;
+  transform: scale(.9);
+  transform-origin: center top;
+}
+
+.pack99-world-active .go-dots-world {
+  background: radial-gradient(circle at 50% 40%, rgba(28, 55, 38, .24), rgba(3, 11, 8, .9));
+}
+
+@keyframes pack99-water-breathe {
+  from { filter: saturate(1.05) brightness(.72) contrast(1.08); }
+  to { filter: saturate(1.3) brightness(.88) contrast(1.12); }
+}
+
+@keyframes pack99-resource-alive {
+  0%, 100% { transform: translate(-50%, 18%) scale(.96); }
+  50% { transform: translate(-50%, 12%) scale(1.04); }
+}
+
+@keyframes pack99-mote {
+  0% { transform: translate3d(0, 30px, 0) scale(.7); opacity: 0; }
+  18% { opacity: .7; }
+  80% { opacity: .4; }
+  100% { transform: translate3d(35px, -120px, 0) scale(1.15); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack99-world-resource,
+  .pack99-world-cell.terrain-river .pack99-world-terrain,
+  .pack99-world-atmosphere i,
+  .pack99-world-atmosphere b { animation: none !important; }
+}

@@ -1,0 +1,19 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_06_HERO_MAGE_FINAL",
+  "version": "1.0.0",
+  "checks": {
+    "masters": 2,
+    "directions": 4,
+    "animationSets": 28,
+    "expectedAnimationSets": 28,
+    "allPngHaveAlpha": true,
+    "badAlphaFiles": []
+  },
+  "statistics": {
+    "pngFiles": 218,
+    "registeredAssets": 46
+  },
+  "passed": true,
+  "signature": "Tehkné Solutions"
+}

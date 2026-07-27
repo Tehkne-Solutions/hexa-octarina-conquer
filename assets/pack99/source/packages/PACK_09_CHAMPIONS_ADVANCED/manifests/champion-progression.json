@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "rules": {
+    "minimumHeroLevel": 10,
+    "requiresTerritoryStage": 3,
+    "requiresChampionToken": 1,
+    "championLimitPerArmy": 1
+  },
+  "paths": [
+    {
+      "fromUnitId": "UNIT_GUARDIAN_01",
+      "toChampionId": "CHAMP_PALADIN_01",
+      "theme": "holy-protection",
+      "resourceCosts": {
+        "RES_GOLD": 320,
+        "RES_KNOWLEDGE": 4,
+        "RES_MANA_BLUE": 3
+      }
+    },
+    {
+      "fromUnitId": "UNIT_ARCANE_APPRENTICE_01",
+      "toChampionId": "CHAMP_SORCERESS_01",
+      "theme": "arcane-mastery",
+      "resourceCosts": {
+        "RES_GOLD": 300,
+        "RES_KNOWLEDGE": 6,
+        "RES_OCTARINE_CRYSTAL": 2
+      }
+    },
+    {
+      "fromUnitId": "UNIT_RECRUIT_01",
+      "toChampionId": "CHAMP_BERSERKER_01",
+      "theme": "rage-and-physical-power",
+      "resourceCosts": {
+        "RES_GOLD": 280,
+        "RES_FOOD": 7,
+        "RES_STONE": 4
+      }
+    },
+    {
+      "fromUnitId": "UNIT_SKELETON_01",
+      "toChampionId": "CHAMP_UNDEAD_KNIGHT_01",
+      "theme": "undead-ascension",
+      "resourceCosts": {
+        "RES_GOLD": 260,
+        "RES_SOUL_FRAGMENT": 6,
+        "RES_OCTARINE_CRYSTAL": 1
+      }
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

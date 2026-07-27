@@ -1,0 +1,21 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "assets": [
+    "VFX_CELL_SELECTED_01",
+    "VFX_CELL_VALID_01",
+    "VFX_CELL_INVALID_01",
+    "VFX_CELL_OBJECTIVE_01",
+    "VFX_MAP_PATH_01",
+    "VFX_TERRITORY_CONQUEST_01",
+    "VFX_CONSTRUCTION_01",
+    "VFX_UPGRADE_01",
+    "VFX_STRUCTURE_DAMAGE_01",
+    "VFX_EDGE_DESTRUCTION_01",
+    "VFX_RESOURCE_COLLECT_01",
+    "VFX_TELEPORT_01",
+    "VFX_CORRUPTION_01",
+    "VFX_HEAL_01",
+    "VFX_RESURRECTION_01"
+  ],
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,910 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_04_PROPS_OBSTACLES_FINAL",
+  "version": "1.0.0",
+  "groups": [
+    {
+      "id": "P01_NATURAL",
+      "assets": [
+        "PROP_TREE_GREEN_A_01",
+        "PROP_TREE_GREEN_B_01",
+        "PROP_TREE_GREEN_C_01",
+        "PROP_TREE_DEAD_01",
+        "PROP_TREE_CORRUPTED_01",
+        "PROP_ROCK_A_01",
+        "PROP_ROCK_B_01",
+        "PROP_ROCK_C_01"
+      ]
+    },
+    {
+      "id": "P02_RUINS_STRUCTURES",
+      "assets": [
+        "PROP_RUIN_SMALL_01",
+        "PROP_RUIN_MEDIUM_01",
+        "PROP_RUIN_LARGE_01",
+        "PROP_TOWER_NEUTRAL_01",
+        "PROP_TOWER_BLUE_01",
+        "PROP_TOWER_RED_01",
+        "PROP_TOWER_DAMAGED_01"
+      ]
+    },
+    {
+      "id": "P03_DEFENSES",
+      "assets": [
+        "PROP_BARRICADE_BUILT_NE_SW_01",
+        "PROP_BARRICADE_DAMAGED_NE_SW_01",
+        "PROP_BARRICADE_DESTROYED_NE_SW_01",
+        "PROP_BARRICADE_BUILT_NW_SE_01",
+        "PROP_BARRICADE_DAMAGED_NW_SE_01",
+        "PROP_BARRICADE_DESTROYED_NW_SE_01"
+      ]
+    },
+    {
+      "id": "P04_PORTALS",
+      "assets": [
+        "PROP_PORTAL_ACTIVE_01",
+        "PROP_PORTAL_INACTIVE_01",
+        "PROP_PORTAL_CORRUPTED_01"
+      ]
+    },
+    {
+      "id": "P05_BRIDGES",
+      "assets": [
+        "PROP_STONE_BRIDGE_BUILT_NE_SW_01",
+        "PROP_STONE_BRIDGE_DAMAGED_NE_SW_01",
+        "PROP_STONE_BRIDGE_DESTROYED_NE_SW_01",
+        "PROP_STONE_BRIDGE_BUILT_NW_SE_01",
+        "PROP_STONE_BRIDGE_DAMAGED_NW_SE_01",
+        "PROP_STONE_BRIDGE_DESTROYED_NW_SE_01"
+      ]
+    },
+    {
+      "id": "P06_HAZARDS",
+      "assets": [
+        "PROP_LAVA_FISSURE_ACTIVE_01",
+        "PROP_LAVA_FISSURE_DORMANT_01",
+        "PROP_LAVA_FISSURE_CORRUPTED_01"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "PROP_TREE_GREEN_A_01",
+      "family": "tree",
+      "variant": "green-a",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_TREE_GREEN_A_01.png",
+      "shadow": "P01_NATURAL/PROP_TREE_GREEN_A_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TREE_GREEN_B_01",
+      "family": "tree",
+      "variant": "green-b",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_TREE_GREEN_B_01.png",
+      "shadow": "P01_NATURAL/PROP_TREE_GREEN_B_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TREE_GREEN_C_01",
+      "family": "tree",
+      "variant": "green-c",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_TREE_GREEN_C_01.png",
+      "shadow": "P01_NATURAL/PROP_TREE_GREEN_C_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TREE_DEAD_01",
+      "family": "tree",
+      "variant": "dead",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_TREE_DEAD_01.png",
+      "shadow": "P01_NATURAL/PROP_TREE_DEAD_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TREE_CORRUPTED_01",
+      "family": "tree",
+      "variant": "corrupted",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_TREE_CORRUPTED_01.png",
+      "shadow": "P01_NATURAL/PROP_TREE_CORRUPTED_01_SHADOW.png",
+      "emissive": "P01_NATURAL/PROP_TREE_CORRUPTED_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_ROCK_A_01",
+      "family": "rock",
+      "variant": "a",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_ROCK_A_01.png",
+      "shadow": "P01_NATURAL/PROP_ROCK_A_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_ROCK_B_01",
+      "family": "rock",
+      "variant": "b",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_ROCK_B_01.png",
+      "shadow": "P01_NATURAL/PROP_ROCK_B_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_ROCK_C_01",
+      "family": "rock",
+      "variant": "c",
+      "category": "natural-obstacle",
+      "file": "P01_NATURAL/PROP_ROCK_C_01.png",
+      "shadow": "P01_NATURAL/PROP_ROCK_C_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "blocksMovement": true,
+      "blocksLineOfSight": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_TREE_01",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_TREE_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_ROCK_01",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_ROCK_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    },
+    {
+      "id": "PROP_RUIN_SMALL_01",
+      "family": "ruin",
+      "variant": "small",
+      "category": "ruin",
+      "file": "P02_RUINS_STRUCTURES/PROP_RUIN_SMALL_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_RUIN_SMALL_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "partial",
+      "capturable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_RUIN_MEDIUM_01",
+      "family": "ruin",
+      "variant": "medium",
+      "category": "ruin",
+      "file": "P02_RUINS_STRUCTURES/PROP_RUIN_MEDIUM_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_RUIN_MEDIUM_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "partial",
+      "capturable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_RUIN_LARGE_01",
+      "family": "ruin",
+      "variant": "large",
+      "category": "ruin",
+      "file": "P02_RUINS_STRUCTURES/PROP_RUIN_LARGE_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_RUIN_LARGE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "solid",
+      "capturable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TOWER_NEUTRAL_01",
+      "family": "tower",
+      "state": "neutral",
+      "category": "capturable-structure",
+      "file": "P02_RUINS_STRUCTURES/PROP_TOWER_NEUTRAL_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_TOWER_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "solid",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TOWER_BLUE_01",
+      "family": "tower",
+      "state": "blue",
+      "category": "capturable-structure",
+      "file": "P02_RUINS_STRUCTURES/PROP_TOWER_BLUE_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_TOWER_BLUE_01_SHADOW.png",
+      "emissive": "P02_RUINS_STRUCTURES/PROP_TOWER_BLUE_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "solid",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TOWER_RED_01",
+      "family": "tower",
+      "state": "red",
+      "category": "capturable-structure",
+      "file": "P02_RUINS_STRUCTURES/PROP_TOWER_RED_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_TOWER_RED_01_SHADOW.png",
+      "emissive": "P02_RUINS_STRUCTURES/PROP_TOWER_RED_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "solid",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_TOWER_DAMAGED_01",
+      "family": "tower",
+      "state": "damaged",
+      "category": "capturable-structure",
+      "file": "P02_RUINS_STRUCTURES/PROP_TOWER_DAMAGED_01.png",
+      "shadow": "P02_RUINS_STRUCTURES/PROP_TOWER_DAMAGED_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "solid",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_BUILT_NE_SW_01",
+      "family": "barricade",
+      "state": "built",
+      "orientation": "NE_SW",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_BUILT_NE_SW_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_BUILT_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_DAMAGED_NE_SW_01",
+      "family": "barricade",
+      "state": "damaged",
+      "orientation": "NE_SW",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_DAMAGED_NE_SW_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_DAMAGED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_DESTROYED_NE_SW_01",
+      "family": "barricade",
+      "state": "destroyed",
+      "orientation": "NE_SW",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_DESTROYED_NE_SW_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_DESTROYED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_BUILT_NW_SE_01",
+      "family": "barricade",
+      "state": "built",
+      "orientation": "NW_SE",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_BUILT_NW_SE_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_BUILT_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_DAMAGED_NW_SE_01",
+      "family": "barricade",
+      "state": "damaged",
+      "orientation": "NW_SE",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_DAMAGED_NW_SE_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_DAMAGED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_BARRICADE_DESTROYED_NW_SE_01",
+      "family": "barricade",
+      "state": "destroyed",
+      "orientation": "NW_SE",
+      "category": "defensive-obstacle",
+      "file": "P03_DEFENSES/PROP_BARRICADE_DESTROYED_NW_SE_01.png",
+      "shadow": "P03_DEFENSES/PROP_BARRICADE_DESTROYED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_PORTAL_ACTIVE_01",
+      "family": "portal",
+      "state": "active",
+      "category": "interactive-prop",
+      "file": "P04_PORTALS/PROP_PORTAL_ACTIVE_01.png",
+      "shadow": "P04_PORTALS/PROP_PORTAL_ACTIVE_01_SHADOW.png",
+      "emissive": "P04_PORTALS/PROP_PORTAL_ACTIVE_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "interactive",
+      "teleportable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_PORTAL_INACTIVE_01",
+      "family": "portal",
+      "state": "inactive",
+      "category": "interactive-prop",
+      "file": "P04_PORTALS/PROP_PORTAL_INACTIVE_01.png",
+      "shadow": "P04_PORTALS/PROP_PORTAL_INACTIVE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "interactive",
+      "teleportable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_PORTAL_CORRUPTED_01",
+      "family": "portal",
+      "state": "corrupted",
+      "category": "interactive-prop",
+      "file": "P04_PORTALS/PROP_PORTAL_CORRUPTED_01.png",
+      "shadow": "P04_PORTALS/PROP_PORTAL_CORRUPTED_01_SHADOW.png",
+      "emissive": "P04_PORTALS/PROP_PORTAL_CORRUPTED_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "interactive",
+      "teleportable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_PORTAL_01",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_PORTAL_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_BUILT_NE_SW_01",
+      "family": "stone-bridge",
+      "state": "built",
+      "orientation": "NE_SW",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_BUILT_NE_SW_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_BUILT_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "walkable",
+      "walkable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_DAMAGED_NE_SW_01",
+      "family": "stone-bridge",
+      "state": "damaged",
+      "orientation": "NE_SW",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_DAMAGED_NE_SW_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_DAMAGED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "walkable",
+      "walkable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_DESTROYED_NE_SW_01",
+      "family": "stone-bridge",
+      "state": "destroyed",
+      "orientation": "NE_SW",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_DESTROYED_NE_SW_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_DESTROYED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "gap",
+      "walkable": false,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_BUILT_NW_SE_01",
+      "family": "stone-bridge",
+      "state": "built",
+      "orientation": "NW_SE",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_BUILT_NW_SE_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_BUILT_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "walkable",
+      "walkable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_DAMAGED_NW_SE_01",
+      "family": "stone-bridge",
+      "state": "damaged",
+      "orientation": "NW_SE",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_DAMAGED_NW_SE_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_DAMAGED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "walkable",
+      "walkable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_STONE_BRIDGE_DESTROYED_NW_SE_01",
+      "family": "stone-bridge",
+      "state": "destroyed",
+      "orientation": "NW_SE",
+      "category": "traversal-prop",
+      "file": "P05_BRIDGES/PROP_STONE_BRIDGE_DESTROYED_NW_SE_01.png",
+      "shadow": "P05_BRIDGES/PROP_STONE_BRIDGE_DESTROYED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        2,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.76
+      ],
+      "collision": "gap",
+      "walkable": false,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_BRIDGE_01",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_BRIDGE_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    },
+    {
+      "id": "PROP_LAVA_FISSURE_ACTIVE_01",
+      "family": "fissure",
+      "state": "active",
+      "category": "hazard",
+      "file": "P06_HAZARDS/PROP_LAVA_FISSURE_ACTIVE_01.png",
+      "shadow": "P06_HAZARDS/PROP_LAVA_FISSURE_ACTIVE_01_SHADOW.png",
+      "emissive": "P06_HAZARDS/PROP_LAVA_FISSURE_ACTIVE_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.77
+      ],
+      "collision": "hazard",
+      "damagePerTurn": 10,
+      "walkable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_LAVA_FISSURE_DORMANT_01",
+      "family": "fissure",
+      "state": "dormant",
+      "category": "hazard",
+      "file": "P06_HAZARDS/PROP_LAVA_FISSURE_DORMANT_01.png",
+      "shadow": "P06_HAZARDS/PROP_LAVA_FISSURE_DORMANT_01_SHADOW.png",
+      "emissive": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.77
+      ],
+      "collision": "rough",
+      "damagePerTurn": 0,
+      "walkable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PROP_LAVA_FISSURE_CORRUPTED_01",
+      "family": "fissure",
+      "state": "corrupted",
+      "category": "hazard",
+      "file": "P06_HAZARDS/PROP_LAVA_FISSURE_CORRUPTED_01.png",
+      "shadow": "P06_HAZARDS/PROP_LAVA_FISSURE_CORRUPTED_01_SHADOW.png",
+      "emissive": "P06_HAZARDS/PROP_LAVA_FISSURE_CORRUPTED_01_EMISSIVE.png",
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.77
+      ],
+      "collision": "hazard",
+      "damagePerTurn": 14,
+      "walkable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_HAZARD_01",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_HAZARD_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

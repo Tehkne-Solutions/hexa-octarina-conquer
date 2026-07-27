@@ -1,0 +1,154 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "pack": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "subpack": "P01_PILLARS",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "assets": [
+    {
+      "id": "PILLAR_NEUTRAL_01",
+      "name": "Pillar Neutral 01",
+      "state": "neutral",
+      "file": "assets/PILLAR_NEUTRAL_01.png",
+      "shadow": "assets/PILLAR_NEUTRAL_01_SHADOW.png",
+      "emissive": "assets/PILLAR_NEUTRAL_01_EMISSIVE.png",
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "none",
+      "selectable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PILLAR_BLUE_01",
+      "name": "Pillar Blue 01",
+      "state": "blue",
+      "file": "assets/PILLAR_BLUE_01.png",
+      "shadow": "assets/PILLAR_BLUE_01_SHADOW.png",
+      "emissive": "assets/PILLAR_BLUE_01_EMISSIVE.png",
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "none",
+      "selectable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PILLAR_RED_01",
+      "name": "Pillar Red 01",
+      "state": "red",
+      "file": "assets/PILLAR_RED_01.png",
+      "shadow": "assets/PILLAR_RED_01_SHADOW.png",
+      "emissive": "assets/PILLAR_RED_01_EMISSIVE.png",
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "none",
+      "selectable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PILLAR_ENERGIZED_01",
+      "name": "Pillar Energized 01",
+      "state": "energized",
+      "file": "assets/PILLAR_ENERGIZED_01.png",
+      "shadow": "assets/PILLAR_ENERGIZED_01_SHADOW.png",
+      "emissive": "assets/PILLAR_ENERGIZED_01_EMISSIVE.png",
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "none",
+      "selectable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PILLAR_BLOCKED_01",
+      "name": "Pilar Bloqueado",
+      "state": "blocked",
+      "file": "assets/PILLAR_BLOCKED_01.png",
+      "shadow": "assets/PILLAR_BLOCKED_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "blocked-node",
+      "selectable": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PILLAR_SELECTED_01",
+      "name": "Pilar Selecionado",
+      "state": "selected",
+      "file": "assets/PILLAR_SELECTED_01.png",
+      "shadow": "assets/PILLAR_SELECTED_01_SHADOW.png",
+      "emissive": "assets/PILLAR_SELECTED_01_EMISSIVE.png",
+      "category": "board-node",
+      "footprint": [
+        0,
+        0
+      ],
+      "gridRole": "intersection",
+      "anchor": [
+        0.5,
+        0.92
+      ],
+      "collision": "none",
+      "selectable": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

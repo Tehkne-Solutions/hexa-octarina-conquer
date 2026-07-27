@@ -1,0 +1,20 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "assets": [
+    "VFX_COMBAT_SLASH_01",
+    "VFX_COMBAT_HEAVY_STRIKE_01",
+    "VFX_COMBAT_SHIELD_01",
+    "VFX_COMBAT_NECROMANCY_01",
+    "VFX_COMBAT_STEALTH_01",
+    "VFX_COMBAT_POISON_01",
+    "VFX_COMBAT_DEATH_01",
+    "VFX_COMBAT_VICTORY_01",
+    "VFX_STATUS_BURN_01",
+    "VFX_STATUS_FREEZE_01",
+    "VFX_STATUS_STUN_01",
+    "VFX_STATUS_BUFF_01",
+    "VFX_STATUS_DEBUFF_01",
+    "VFX_COMBAT_DODGE_01"
+  ],
+  "signature": "Tehkné Solutions"
+}

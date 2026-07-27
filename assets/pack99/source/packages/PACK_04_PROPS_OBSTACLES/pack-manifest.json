@@ -1,0 +1,30 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_04_PROPS_OBSTACLES_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "summary": {
+    "subpacks": 6,
+    "registeredAssets": 38,
+    "naturalAssets": 8,
+    "ruinsStructures": 7,
+    "defenses": 6,
+    "portals": 3,
+    "bridges": 6,
+    "hazards": 3,
+    "minimapIcons": 5
+  },
+  "technical": {
+    "masterCanvasPx": [
+      1024,
+      1024
+    ],
+    "background": "transparent",
+    "lighting": "top-left",
+    "defaultAnchor": [
+      0.5,
+      0.9
+    ]
+  },
+  "signature": "Tehkné Solutions"
+}

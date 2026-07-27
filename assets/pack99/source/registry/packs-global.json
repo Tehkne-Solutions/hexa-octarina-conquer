@@ -1,0 +1,61 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "packs": [
+    {
+      "id": "HOC_PACK_00_FOUNDATION_FINAL",
+      "packId": "HOC_PACK_00_FOUNDATION_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+      "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+      "packId": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_03_RESOURCES_FINAL",
+      "packId": "HOC_PACK_03_RESOURCES_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_04_PROPS_OBSTACLES_FINAL",
+      "packId": "HOC_PACK_04_PROPS_OBSTACLES_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+      "packId": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_06_HERO_MAGE_FINAL",
+      "packId": "HOC_PACK_06_HERO_MAGE_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_07_HERO_ROSTER_FINAL",
+      "packId": "HOC_PACK_07_HERO_ROSTER_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_08_BASIC_UNITS_FINAL",
+      "packId": "HOC_PACK_08_BASIC_UNITS_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_09_CHAMPIONS_ADVANCED_FINAL",
+      "packId": "HOC_PACK_09_CHAMPIONS_ADVANCED_FINAL",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "HOC_PACK_10_VFX_UI_TCG_FINAL",
+      "packId": "HOC_PACK_10_VFX_UI_TCG_FINAL",
+      "signature": "Tehkné Solutions"
+    }
+  ]
+}

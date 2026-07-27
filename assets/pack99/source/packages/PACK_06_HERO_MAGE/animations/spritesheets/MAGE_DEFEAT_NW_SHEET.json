@@ -1,0 +1,103 @@
+{
+  "frames": {
+    "MAGE_DEFEAT_NW_00": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 120
+    },
+    "MAGE_DEFEAT_NW_01": {
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 120
+    },
+    "MAGE_DEFEAT_NW_02": {
+      "frame": {
+        "x": 1024,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 130
+    },
+    "MAGE_DEFEAT_NW_03": {
+      "frame": {
+        "x": 1536,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 140
+    },
+    "MAGE_DEFEAT_NW_04": {
+      "frame": {
+        "x": 2048,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 180
+    },
+    "MAGE_DEFEAT_NW_05": {
+      "frame": {
+        "x": 2560,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 260
+    }
+  },
+  "meta": {
+    "image": "MAGE_DEFEAT_NW_SHEET.png",
+    "size": {
+      "w": 3072,
+      "h": 512
+    },
+    "scale": 1,
+    "direction": "NW",
+    "animation": "defeat",
+    "loop": false,
+    "events": [
+      {
+        "frame": 3,
+        "event": "body_fall"
+      },
+      {
+        "frame": 5,
+        "event": "defeat_complete"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+  "maps": [
+    {
+      "mapId": "MAP_TUTORIAL_5X5_01",
+      "name": "Arena do Primeiro Selo",
+      "size": [
+        5,
+        5
+      ],
+      "seed": 50101,
+      "preset": "tutorial",
+      "map": "maps/MAP_TUTORIAL_5X5_01.json",
+      "collision": "collision/MAP_TUTORIAL_5X5_01.collision.json",
+      "seedFile": "seeds/MAP_TUTORIAL_5X5_01.seed.json",
+      "preview": "previews/MAP_TUTORIAL_5X5_01.png",
+      "validationPassed": true
+    },
+    {
+      "mapId": "MAP_FOREST_FRONTIER_8X8_01",
+      "name": "Fronteira Verde",
+      "size": [
+        8,
+        8
+      ],
+      "seed": 87231,
+      "preset": "forest_frontier",
+      "map": "maps/MAP_FOREST_FRONTIER_8X8_01.json",
+      "collision": "collision/MAP_FOREST_FRONTIER_8X8_01.collision.json",
+      "seedFile": "seeds/MAP_FOREST_FRONTIER_8X8_01.seed.json",
+      "preview": "previews/MAP_FOREST_FRONTIER_8X8_01.png",
+      "validationPassed": true
+    },
+    {
+      "mapId": "MAP_OCTARINE_CONVERGENCE_12X12_01",
+      "name": "Convergência Octarina",
+      "size": [
+        12,
+        12
+      ],
+      "seed": 442901,
+      "preset": "convergence",
+      "map": "maps/MAP_OCTARINE_CONVERGENCE_12X12_01.json",
+      "collision": "collision/MAP_OCTARINE_CONVERGENCE_12X12_01.collision.json",
+      "seedFile": "seeds/MAP_OCTARINE_CONVERGENCE_12X12_01.seed.json",
+      "preview": "previews/MAP_OCTARINE_CONVERGENCE_12X12_01.png",
+      "validationPassed": true
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

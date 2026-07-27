@@ -1,0 +1,102 @@
+{
+  "frames": {
+    "frame_00": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_01": {
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_02": {
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_03": {
+      "frame": {
+        "x": 768,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_04": {
+      "frame": {
+        "x": 1024,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_05": {
+      "frame": {
+        "x": 1280,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    }
+  },
+  "meta": {
+    "image": "UNIT_GUARDIAN_01_WALK_SE_01.png",
+    "size": {
+      "w": 1536,
+      "h": 256
+    },
+    "direction": "SE",
+    "animation": "walk",
+    "loop": true,
+    "events": [
+      {
+        "frame": 1,
+        "event": "footstep"
+      },
+      {
+        "frame": 4,
+        "event": "footstep"
+      }
+    ]
+  }
+}

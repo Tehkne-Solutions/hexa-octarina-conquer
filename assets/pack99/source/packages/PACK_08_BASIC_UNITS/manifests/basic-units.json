@@ -1,0 +1,48 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_08_BASIC_UNITS_FINAL",
+  "version": "1.0.0",
+  "units": [
+    {
+      "unitId": "UNIT_RECRUIT_01",
+      "manifest": "recruit/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_ARCHER_01",
+      "manifest": "archer/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_GUARDIAN_01",
+      "manifest": "unit_guardian/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_ARCANE_APPRENTICE_01",
+      "manifest": "arcane_apprentice/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_COLLECTOR_01",
+      "manifest": "collector/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_SCOUT_01",
+      "manifest": "scout/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_SKELETON_01",
+      "manifest": "skeleton/manifest.json",
+      "animationSets": 20
+    },
+    {
+      "unitId": "UNIT_STONE_GOLEM_01",
+      "manifest": "stone_golem/manifest.json",
+      "animationSets": 20
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

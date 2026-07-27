@@ -1,0 +1,62 @@
+{
+  "version": "1.0.0",
+  "champions": {
+    "CHAMP_PALADIN_01": [
+      {
+        "id": "ABILITY_PALADIN_RADIANT_GUARD_01",
+        "type": "defense-area",
+        "vfxId": "VFX_PALADIN_SHIELD_01",
+        "cooldownTurns": 3
+      },
+      {
+        "id": "ABILITY_PALADIN_JUDGMENT_01",
+        "type": "holy-strike",
+        "vfxId": "VFX_PALADIN_IMPACT_01",
+        "cooldownTurns": 2
+      }
+    ],
+    "CHAMP_SORCERESS_01": [
+      {
+        "id": "ABILITY_SORCERESS_ARCANE_STORM_01",
+        "type": "area-magic",
+        "vfxId": "VFX_SORCERESS_SOUL_01",
+        "cooldownTurns": 3
+      },
+      {
+        "id": "ABILITY_SORCERESS_PHASE_SHIFT_01",
+        "type": "mobility",
+        "vfxId": "VFX_SORCERESS_SELECTION_RING_01",
+        "cooldownTurns": 2
+      }
+    ],
+    "CHAMP_BERSERKER_01": [
+      {
+        "id": "ABILITY_BERSERKER_RAGE_01",
+        "type": "self-buff",
+        "vfxId": "VFX_BERSERKER_SLASH_01",
+        "cooldownTurns": 3
+      },
+      {
+        "id": "ABILITY_BERSERKER_CLEAVE_01",
+        "type": "melee-area",
+        "vfxId": "VFX_BERSERKER_IMPACT_01",
+        "cooldownTurns": 2
+      }
+    ],
+    "CHAMP_UNDEAD_KNIGHT_01": [
+      {
+        "id": "ABILITY_UNDEAD_KNIGHT_SOUL_DRAIN_01",
+        "type": "damage-heal",
+        "vfxId": "VFX_UNDEAD_KNIGHT_SOUL_01",
+        "cooldownTurns": 3
+      },
+      {
+        "id": "ABILITY_UNDEAD_KNIGHT_DREAD_AURA_01",
+        "type": "debuff-area",
+        "vfxId": "VFX_UNDEAD_KNIGHT_IMPACT_01",
+        "cooldownTurns": 2
+      }
+    ]
+  },
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,34 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "summary": {
+    "maps": 3,
+    "sizes": [
+      [
+        5,
+        5
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        12,
+        12
+      ]
+    ],
+    "presets": [
+      "tutorial",
+      "forest_frontier",
+      "convergence"
+    ],
+    "schemas": 1,
+    "typescriptModules": 3,
+    "dependencies": 4,
+    "validationPassed": true
+  },
+  "assetPackaging": "references official asset packs; does not duplicate image assets",
+  "signature": "Tehkné Solutions"
+}

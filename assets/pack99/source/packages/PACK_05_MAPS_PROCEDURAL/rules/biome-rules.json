@@ -1,0 +1,139 @@
+{
+  "version": "1.0.0",
+  "presets": {
+    "tutorial": {
+      "description": "Mapa seguro para aprendizado, sem lava obrigatória.",
+      "terrainFamilies": [
+        "TERRAIN_GRASS_ANCESTRAL",
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_FOREST",
+        "TERRAIN_SHALLOW_WATER"
+      ],
+      "recommendedSizes": [
+        [
+          5,
+          5
+        ],
+        [
+          6,
+          6
+        ]
+      ]
+    },
+    "forest_frontier": {
+      "description": "Floresta, grama, água e ruínas com densidade intermediária.",
+      "terrainFamilies": [
+        "TERRAIN_GRASS_ANCESTRAL",
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_FOREST",
+        "TERRAIN_SHALLOW_WATER",
+        "TERRAIN_CORRUPTED"
+      ],
+      "recommendedSizes": [
+        [
+          8,
+          8
+        ],
+        [
+          10,
+          10
+        ]
+      ]
+    },
+    "convergence": {
+      "description": "Todos os biomas, incluindo corrupção e lava.",
+      "terrainFamilies": [
+        "TERRAIN_GRASS_ANCESTRAL",
+        "TERRAIN_RUNIC_STONE",
+        "TERRAIN_FOREST",
+        "TERRAIN_CORRUPTED",
+        "TERRAIN_SHALLOW_WATER",
+        "TERRAIN_LAVA"
+      ],
+      "recommendedSizes": [
+        [
+          12,
+          12
+        ],
+        [
+          16,
+          16
+        ]
+      ]
+    }
+  },
+  "terrainProperties": {
+    "TERRAIN_GRASS_ANCESTRAL": {
+      "slug": "GRASS",
+      "centers": [
+        "TILE_GRASS_FLAT_CENTER_A_01",
+        "TILE_GRASS_FLAT_CENTER_B_01",
+        "TILE_GRASS_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 1,
+      "walkable": true,
+      "hazard": false,
+      "priority": 10
+    },
+    "TERRAIN_RUNIC_STONE": {
+      "slug": "RUNIC",
+      "centers": [
+        "TILE_RUNIC_FLAT_CENTER_A_01",
+        "TILE_RUNIC_FLAT_CENTER_B_01",
+        "TILE_RUNIC_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 1,
+      "walkable": true,
+      "hazard": false,
+      "priority": 20
+    },
+    "TERRAIN_FOREST": {
+      "slug": "FOREST",
+      "centers": [
+        "TILE_FOREST_FLAT_CENTER_A_01",
+        "TILE_FOREST_FLAT_CENTER_B_01",
+        "TILE_FOREST_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 2,
+      "walkable": true,
+      "hazard": false,
+      "priority": 30
+    },
+    "TERRAIN_CORRUPTED": {
+      "slug": "CORRUPTED",
+      "centers": [
+        "TILE_CORRUPTED_FLAT_CENTER_A_01",
+        "TILE_CORRUPTED_FLAT_CENTER_B_01",
+        "TILE_CORRUPTED_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 2,
+      "walkable": true,
+      "hazard": true,
+      "priority": 40
+    },
+    "TERRAIN_SHALLOW_WATER": {
+      "slug": "WATER",
+      "centers": [
+        "TILE_WATER_FLAT_CENTER_A_01",
+        "TILE_WATER_FLAT_CENTER_B_01",
+        "TILE_WATER_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 3,
+      "walkable": true,
+      "hazard": false,
+      "priority": 5
+    },
+    "TERRAIN_LAVA": {
+      "slug": "LAVA",
+      "centers": [
+        "TILE_LAVA_FLAT_CENTER_A_01",
+        "TILE_LAVA_FLAT_CENTER_B_01",
+        "TILE_LAVA_FLAT_CENTER_C_01"
+      ],
+      "movementCost": 99,
+      "walkable": false,
+      "hazard": true,
+      "priority": 50
+    }
+  }
+}

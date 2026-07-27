@@ -1,0 +1,1215 @@
+{
+  "characterId": "HERO_RANGER_01",
+  "manifest": "ranger/manifest.json",
+  "assets": [
+    {
+      "id": "HERO_RANGER_01_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01.png",
+      "shadow": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "ranger/master/HERO_RANGER_01_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01.png",
+      "shadow": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "ranger/directions/HERO_RANGER_01_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "WEAPON_RANGER_LONGBOW_01",
+      "category": "weapon-equipment",
+      "file": "ranger/weapons/WEAPON_RANGER_LONGBOW_01.png",
+      "shadow": "ranger/weapons/WEAPON_RANGER_LONGBOW_01_SHADOW.png",
+      "emissive": "ranger/weapons/WEAPON_RANGER_LONGBOW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_BATTLE_512_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_RANGER_BATTLE_256_01",
+      "category": "portrait",
+      "file": "ranger/portraits/PORTRAIT_RANGER_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_HERO_RANGER_01",
+      "category": "hud-icon",
+      "file": "ranger/ui/ICON_HUD_HERO_RANGER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_RANGER_01",
+      "category": "card-art",
+      "file": "ranger/ui/CARD_ART_HERO_RANGER_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "VFX_RANGER_ARROW_01",
+      "category": "ability-vfx",
+      "file": "ranger/vfx/VFX_RANGER_ARROW_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RANGER_SELECTION_RING_01",
+      "category": "selection-vfx",
+      "file": "ranger/vfx/VFX_RANGER_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RANGER_IMPACT_01",
+      "category": "impact-vfx",
+      "file": "ranger/vfx/VFX_RANGER_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_NE_01",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_NE_01",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NE_01.json",
+      "framesDirectory": "ranger/animations/frames/NE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_NW_01",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_NW_01",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_NW_01.json",
+      "framesDirectory": "ranger/animations/frames/NW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_SE_01",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_SE_01",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SE_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SE_01.json",
+      "framesDirectory": "ranger/animations/frames/SE/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_IDLE_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_WALK_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_ATTACK_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_CAST_SW_01",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "skill_charge"
+        },
+        {
+          "frame": 5,
+          "event": "skill_release"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_CAST_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/cast",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_HIT_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_DEFEAT_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_RANGER_01_VICTORY_SW_01",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SW_01.png",
+      "atlas": "ranger/animations/spritesheets/HERO_RANGER_01_VICTORY_SW_01.json",
+      "framesDirectory": "ranger/animations/frames/SW/victory",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 160,
+      "zOffset": 0.35
+    }
+  ],
+  "animationSets": 28,
+  "frames": 156,
+  "passed": true
+}

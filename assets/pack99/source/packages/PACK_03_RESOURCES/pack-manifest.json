@@ -1,0 +1,44 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_03_RESOURCES_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "summary": {
+    "resourceTypes": 8,
+    "nodeStatesPerResource": 4,
+    "resourceNodes": 32,
+    "hudIcons": 8,
+    "minimapIcons": 8,
+    "collectionVfx": 8,
+    "sharedVfx": 2,
+    "registeredAssets": 58
+  },
+  "technical": {
+    "nodeCanvasPx": [
+      1024,
+      1024
+    ],
+    "hudIconCanvasPx": [
+      256,
+      256
+    ],
+    "minimapIconCanvasPx": [
+      64,
+      64
+    ],
+    "vfxCanvasPx": [
+      512,
+      512
+    ],
+    "background": "transparent",
+    "nodeAnchor": [
+      0.5,
+      0.9
+    ],
+    "footprint": [
+      1,
+      1
+    ]
+  },
+  "signature": "Tehkné Solutions"
+}

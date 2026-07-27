@@ -1,0 +1,1308 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_03_RESOURCES_FINAL",
+  "version": "1.0.0",
+  "assets": [
+    {
+      "id": "RES_WOOD_SMALL_01",
+      "resourceId": "RES_WOOD",
+      "name": "Madeira — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_WOOD_SMALL_01.png",
+      "emissive": null,
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_WOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_WOOD_MEDIUM_01",
+      "resourceId": "RES_WOOD",
+      "name": "Madeira — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_WOOD_MEDIUM_01.png",
+      "emissive": null,
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_WOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_WOOD_ABUNDANT_01",
+      "resourceId": "RES_WOOD",
+      "name": "Madeira — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_WOOD_ABUNDANT_01.png",
+      "emissive": null,
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_WOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_WOOD_DEPLETED_01",
+      "resourceId": "RES_WOOD",
+      "name": "Madeira — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_WOOD_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_WOOD_01",
+      "resourceId": "RES_WOOD",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_WOOD_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_WOOD_01",
+      "resourceId": "RES_WOOD",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_WOOD_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_WOOD_01",
+      "resourceId": "RES_WOOD",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_WOOD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_STONE_SMALL_01",
+      "resourceId": "RES_STONE",
+      "name": "Pedra — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_STONE_SMALL_01.png",
+      "emissive": null,
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_STONE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_STONE_MEDIUM_01",
+      "resourceId": "RES_STONE",
+      "name": "Pedra — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_STONE_MEDIUM_01.png",
+      "emissive": null,
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_STONE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_STONE_ABUNDANT_01",
+      "resourceId": "RES_STONE",
+      "name": "Pedra — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_STONE_ABUNDANT_01.png",
+      "emissive": null,
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_STONE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_STONE_DEPLETED_01",
+      "resourceId": "RES_STONE",
+      "name": "Pedra — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_STONE_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_STONE_01",
+      "resourceId": "RES_STONE",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_STONE_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_STONE_01",
+      "resourceId": "RES_STONE",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_STONE_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_STONE_01",
+      "resourceId": "RES_STONE",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_STONE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_GOLD_SMALL_01",
+      "resourceId": "RES_GOLD",
+      "name": "Ouro — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_GOLD_SMALL_01.png",
+      "emissive": null,
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_GOLD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_GOLD_MEDIUM_01",
+      "resourceId": "RES_GOLD",
+      "name": "Ouro — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_GOLD_MEDIUM_01.png",
+      "emissive": null,
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_GOLD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_GOLD_ABUNDANT_01",
+      "resourceId": "RES_GOLD",
+      "name": "Ouro — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_GOLD_ABUNDANT_01.png",
+      "emissive": null,
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_GOLD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_GOLD_DEPLETED_01",
+      "resourceId": "RES_GOLD",
+      "name": "Ouro — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_GOLD_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_GOLD_01",
+      "resourceId": "RES_GOLD",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_GOLD_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_GOLD_01",
+      "resourceId": "RES_GOLD",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_GOLD_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_GOLD_01",
+      "resourceId": "RES_GOLD",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_GOLD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_MANA_BLUE_SMALL_01",
+      "resourceId": "RES_MANA_BLUE",
+      "name": "Mana Azul — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_MANA_BLUE_SMALL_01.png",
+      "emissive": "emissives/RES_MANA_BLUE_SMALL_01_EMISSIVE.png",
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_MANA_BLUE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_MANA_BLUE_MEDIUM_01",
+      "resourceId": "RES_MANA_BLUE",
+      "name": "Mana Azul — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_MANA_BLUE_MEDIUM_01.png",
+      "emissive": "emissives/RES_MANA_BLUE_MEDIUM_01_EMISSIVE.png",
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_MANA_BLUE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_MANA_BLUE_ABUNDANT_01",
+      "resourceId": "RES_MANA_BLUE",
+      "name": "Mana Azul — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_MANA_BLUE_ABUNDANT_01.png",
+      "emissive": "emissives/RES_MANA_BLUE_ABUNDANT_01_EMISSIVE.png",
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_MANA_BLUE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_MANA_BLUE_DEPLETED_01",
+      "resourceId": "RES_MANA_BLUE",
+      "name": "Mana Azul — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_MANA_BLUE_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_MANA_BLUE_01",
+      "resourceId": "RES_MANA_BLUE",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_MANA_BLUE_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_MANA_BLUE_01",
+      "resourceId": "RES_MANA_BLUE",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_MANA_BLUE_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_MANA_BLUE_01",
+      "resourceId": "RES_MANA_BLUE",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_MANA_BLUE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_FOOD_SMALL_01",
+      "resourceId": "RES_FOOD",
+      "name": "Alimento — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_FOOD_SMALL_01.png",
+      "emissive": null,
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_FOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_FOOD_MEDIUM_01",
+      "resourceId": "RES_FOOD",
+      "name": "Alimento — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_FOOD_MEDIUM_01.png",
+      "emissive": null,
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_FOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_FOOD_ABUNDANT_01",
+      "resourceId": "RES_FOOD",
+      "name": "Alimento — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_FOOD_ABUNDANT_01.png",
+      "emissive": null,
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_FOOD_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_FOOD_DEPLETED_01",
+      "resourceId": "RES_FOOD",
+      "name": "Alimento — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_FOOD_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_FOOD_01",
+      "resourceId": "RES_FOOD",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_FOOD_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_FOOD_01",
+      "resourceId": "RES_FOOD",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_FOOD_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_FOOD_01",
+      "resourceId": "RES_FOOD",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_FOOD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_KNOWLEDGE_SMALL_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "name": "Conhecimento — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_KNOWLEDGE_SMALL_01.png",
+      "emissive": "emissives/RES_KNOWLEDGE_SMALL_01_EMISSIVE.png",
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_KNOWLEDGE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_KNOWLEDGE_MEDIUM_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "name": "Conhecimento — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_KNOWLEDGE_MEDIUM_01.png",
+      "emissive": "emissives/RES_KNOWLEDGE_MEDIUM_01_EMISSIVE.png",
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_KNOWLEDGE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_KNOWLEDGE_ABUNDANT_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "name": "Conhecimento — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_KNOWLEDGE_ABUNDANT_01.png",
+      "emissive": "emissives/RES_KNOWLEDGE_ABUNDANT_01_EMISSIVE.png",
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_KNOWLEDGE_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_KNOWLEDGE_DEPLETED_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "name": "Conhecimento — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_KNOWLEDGE_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_KNOWLEDGE_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_KNOWLEDGE_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_KNOWLEDGE_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_KNOWLEDGE_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_KNOWLEDGE_01",
+      "resourceId": "RES_KNOWLEDGE",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_KNOWLEDGE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_OCTARINE_CRYSTAL_SMALL_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "name": "Cristal Octarino — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_OCTARINE_CRYSTAL_SMALL_01.png",
+      "emissive": "emissives/RES_OCTARINE_CRYSTAL_SMALL_01_EMISSIVE.png",
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_OCTARINE_CRYSTAL_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_OCTARINE_CRYSTAL_MEDIUM_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "name": "Cristal Octarino — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_OCTARINE_CRYSTAL_MEDIUM_01.png",
+      "emissive": "emissives/RES_OCTARINE_CRYSTAL_MEDIUM_01_EMISSIVE.png",
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_OCTARINE_CRYSTAL_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_OCTARINE_CRYSTAL_ABUNDANT_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "name": "Cristal Octarino — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_OCTARINE_CRYSTAL_ABUNDANT_01.png",
+      "emissive": "emissives/RES_OCTARINE_CRYSTAL_ABUNDANT_01_EMISSIVE.png",
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_OCTARINE_CRYSTAL_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_OCTARINE_CRYSTAL_DEPLETED_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "name": "Cristal Octarino — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_OCTARINE_CRYSTAL_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_OCTARINE_CRYSTAL_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_OCTARINE_CRYSTAL_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_OCTARINE_CRYSTAL_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_OCTARINE_CRYSTAL_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_OCTARINE_CRYSTAL_01",
+      "resourceId": "RES_OCTARINE_CRYSTAL",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_OCTARINE_CRYSTAL_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "RES_SOUL_FRAGMENT_SMALL_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "name": "Fragmento de Alma — Small",
+      "state": "small",
+      "category": "resource-node",
+      "file": "nodes/RES_SOUL_FRAGMENT_SMALL_01.png",
+      "emissive": "emissives/RES_SOUL_FRAGMENT_SMALL_01_EMISSIVE.png",
+      "yieldRange": [
+        1,
+        2
+      ],
+      "rarityWeight": 1.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_SOUL_FRAGMENT_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_SOUL_FRAGMENT_MEDIUM_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "name": "Fragmento de Alma — Medium",
+      "state": "medium",
+      "category": "resource-node",
+      "file": "nodes/RES_SOUL_FRAGMENT_MEDIUM_01.png",
+      "emissive": "emissives/RES_SOUL_FRAGMENT_MEDIUM_01_EMISSIVE.png",
+      "yieldRange": [
+        3,
+        5
+      ],
+      "rarityWeight": 0.62,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_SOUL_FRAGMENT_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_SOUL_FRAGMENT_ABUNDANT_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "name": "Fragmento de Alma — Abundant",
+      "state": "abundant",
+      "category": "resource-node",
+      "file": "nodes/RES_SOUL_FRAGMENT_ABUNDANT_01.png",
+      "emissive": "emissives/RES_SOUL_FRAGMENT_ABUNDANT_01_EMISSIVE.png",
+      "yieldRange": [
+        6,
+        10
+      ],
+      "rarityWeight": 0.28,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": true,
+      "depletesTo": "RES_SOUL_FRAGMENT_DEPLETED_01",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "RES_SOUL_FRAGMENT_DEPLETED_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "name": "Fragmento de Alma — Depleted",
+      "state": "depleted",
+      "category": "resource-node",
+      "file": "nodes/RES_SOUL_FRAGMENT_DEPLETED_01.png",
+      "emissive": null,
+      "yieldRange": [
+        0,
+        0
+      ],
+      "rarityWeight": 0.0,
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.9
+      ],
+      "collision": "resource-node",
+      "collectable": false,
+      "depletesTo": null,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "ICON_HUD_RES_SOUL_FRAGMENT_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "category": "hud-icon",
+      "file": "icons/hud/ICON_HUD_RES_SOUL_FRAGMENT_01.png",
+      "canvasPx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_RES_SOUL_FRAGMENT_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "category": "minimap-icon",
+      "file": "icons/minimap/ICON_MINIMAP_RES_SOUL_FRAGMENT_01.png",
+      "canvasPx": [
+        64,
+        64
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COLLECT_RES_SOUL_FRAGMENT_01",
+      "resourceId": "RES_SOUL_FRAGMENT",
+      "category": "collection-vfx",
+      "file": "vfx/VFX_COLLECT_RES_SOUL_FRAGMENT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.55
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RESOURCE_SELECTED_01",
+      "category": "selection-vfx",
+      "file": "vfx/VFX_RESOURCE_SELECTED_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.75
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_RESOURCE_INVALID_01",
+      "category": "selection-vfx",
+      "file": "vfx/VFX_RESOURCE_INVALID_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.75
+      ],
+      "blendMode": "additive"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

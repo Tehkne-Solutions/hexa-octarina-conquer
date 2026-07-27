@@ -1,0 +1,18 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_00_FOUNDATION_FINAL",
+  "version": "1.0.0",
+  "status": "final-foundation",
+  "contains": [
+    "style-lock reference",
+    "asset packs registry",
+    "production roadmap",
+    "naming conventions",
+    "terrain core linkage"
+  ],
+  "links": {
+    "nextPack": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+    "currentProductionPoint": "A02_RUNIC_STONE"
+  },
+  "signature": "Tehkné Solutions"
+}

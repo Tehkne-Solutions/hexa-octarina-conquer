@@ -1,0 +1,11 @@
+{
+  "mapId": "MAP_FOREST_FRONTIER_8X8_01",
+  "seed": 87231,
+  "preset": "forest_frontier",
+  "size": [
+    8,
+    8
+  ],
+  "spawnDensity": 0.18,
+  "generatorVersion": "1.0.0"
+}

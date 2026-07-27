@@ -1,0 +1,1346 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "character": {
+    "id": "HERO_MAGE_01",
+    "name": "Mago Octarino",
+    "class": "mage",
+    "race": "human",
+    "role": [
+      "ranged",
+      "magic",
+      "control"
+    ],
+    "weaponId": "WEAPON_MAGE_STAFF_01",
+    "palette": [
+      "blue-violet",
+      "silver",
+      "cyan-emissive"
+    ],
+    "footprint": [
+      1,
+      1
+    ],
+    "anchor": [
+      0.5,
+      0.91
+    ],
+    "recommendedDisplayHeightPx": 176,
+    "zOffset": 0.35
+  },
+  "masters": [
+    {
+      "id": "HERO_MAGE_MASTER_FRONT_01",
+      "category": "character-master",
+      "file": "master/HERO_MAGE_MASTER_FRONT_01.png",
+      "shadow": "master/HERO_MAGE_MASTER_FRONT_01_SHADOW.png",
+      "emissive": "master/HERO_MAGE_MASTER_FRONT_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "HERO_MAGE_MASTER_ISO_NE_01",
+      "category": "character-master",
+      "file": "master/HERO_MAGE_MASTER_ISO_NE_01.png",
+      "shadow": "master/HERO_MAGE_MASTER_ISO_NE_01_SHADOW.png",
+      "emissive": "master/HERO_MAGE_MASTER_ISO_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "directions": [
+    {
+      "id": "HERO_MAGE_IDLE_BASE_NE_01",
+      "legacyId": "MAGE_MAP_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "directions/HERO_MAGE_IDLE_BASE_NE_01.png",
+      "shadow": "directions/HERO_MAGE_IDLE_BASE_NE_01_SHADOW.png",
+      "emissive": "directions/HERO_MAGE_IDLE_BASE_NE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_BASE_NW_01",
+      "legacyId": "MAGE_MAP_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "directions/HERO_MAGE_IDLE_BASE_NW_01.png",
+      "shadow": "directions/HERO_MAGE_IDLE_BASE_NW_01_SHADOW.png",
+      "emissive": "directions/HERO_MAGE_IDLE_BASE_NW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_BASE_SE_01",
+      "legacyId": "MAGE_MAP_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "directions/HERO_MAGE_IDLE_BASE_SE_01.png",
+      "shadow": "directions/HERO_MAGE_IDLE_BASE_SE_01_SHADOW.png",
+      "emissive": "directions/HERO_MAGE_IDLE_BASE_SE_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_BASE_SW_01",
+      "legacyId": "MAGE_MAP_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "directions/HERO_MAGE_IDLE_BASE_SW_01.png",
+      "shadow": "directions/HERO_MAGE_IDLE_BASE_SW_01_SHADOW.png",
+      "emissive": "directions/HERO_MAGE_IDLE_BASE_SW_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    }
+  ],
+  "animations": [
+    {
+      "id": "HERO_MAGE_IDLE_NE_01",
+      "legacyId": "MAGE_IDLE_NE_SHEET",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "animations/spritesheets/MAGE_IDLE_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_IDLE_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_IDLE_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/idle",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_WALK_NE_01",
+      "legacyId": "MAGE_WALK_NE_SHEET",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_WALK_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_WALK_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_WALK_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/walk",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_ATTACK_NE_01",
+      "legacyId": "MAGE_ATTACK_NE_SHEET",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_ATTACK_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_ATTACK_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_ATTACK_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/attack",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_CAST_NE_01",
+      "legacyId": "MAGE_CAST_NE_SHEET",
+      "direction": "NE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "mana_charge"
+        },
+        {
+          "frame": 5,
+          "event": "spell_release"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_CAST_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_CAST_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_CAST_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/cast",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_HIT_NE_01",
+      "legacyId": "MAGE_HIT_NE_SHEET",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_HIT_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_HIT_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_HIT_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/hit",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_DEFEAT_NE_01",
+      "legacyId": "MAGE_DEFEAT_NE_SHEET",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_DEFEAT_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_DEFEAT_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_DEFEAT_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/defeat",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_VICTORY_NE_01",
+      "legacyId": "MAGE_VICTORY_NE_SHEET",
+      "direction": "NE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_VICTORY_NE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_VICTORY_NE_SHEET.json",
+      "preview": "animations/previews/MAGE_VICTORY_NE_SHEET.gif",
+      "framesDirectory": "animations/frames/NE/victory",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_NW_01",
+      "legacyId": "MAGE_IDLE_NW_SHEET",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "animations/spritesheets/MAGE_IDLE_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_IDLE_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_IDLE_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/idle",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_WALK_NW_01",
+      "legacyId": "MAGE_WALK_NW_SHEET",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_WALK_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_WALK_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_WALK_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/walk",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_ATTACK_NW_01",
+      "legacyId": "MAGE_ATTACK_NW_SHEET",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_ATTACK_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_ATTACK_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_ATTACK_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/attack",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_CAST_NW_01",
+      "legacyId": "MAGE_CAST_NW_SHEET",
+      "direction": "NW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "mana_charge"
+        },
+        {
+          "frame": 5,
+          "event": "spell_release"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_CAST_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_CAST_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_CAST_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/cast",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_HIT_NW_01",
+      "legacyId": "MAGE_HIT_NW_SHEET",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_HIT_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_HIT_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_HIT_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/hit",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_DEFEAT_NW_01",
+      "legacyId": "MAGE_DEFEAT_NW_SHEET",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_DEFEAT_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_DEFEAT_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_DEFEAT_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/defeat",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_VICTORY_NW_01",
+      "legacyId": "MAGE_VICTORY_NW_SHEET",
+      "direction": "NW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_VICTORY_NW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_VICTORY_NW_SHEET.json",
+      "preview": "animations/previews/MAGE_VICTORY_NW_SHEET.gif",
+      "framesDirectory": "animations/frames/NW/victory",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_SE_01",
+      "legacyId": "MAGE_IDLE_SE_SHEET",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "animations/spritesheets/MAGE_IDLE_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_IDLE_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_IDLE_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/idle",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_WALK_SE_01",
+      "legacyId": "MAGE_WALK_SE_SHEET",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_WALK_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_WALK_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_WALK_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/walk",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_ATTACK_SE_01",
+      "legacyId": "MAGE_ATTACK_SE_SHEET",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_ATTACK_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_ATTACK_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_ATTACK_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/attack",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_CAST_SE_01",
+      "legacyId": "MAGE_CAST_SE_SHEET",
+      "direction": "SE",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "mana_charge"
+        },
+        {
+          "frame": 5,
+          "event": "spell_release"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_CAST_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_CAST_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_CAST_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/cast",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_HIT_SE_01",
+      "legacyId": "MAGE_HIT_SE_SHEET",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_HIT_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_HIT_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_HIT_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/hit",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_DEFEAT_SE_01",
+      "legacyId": "MAGE_DEFEAT_SE_SHEET",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_DEFEAT_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_DEFEAT_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_DEFEAT_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/defeat",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_VICTORY_SE_01",
+      "legacyId": "MAGE_VICTORY_SE_SHEET",
+      "direction": "SE",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_VICTORY_SE_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_VICTORY_SE_SHEET.json",
+      "preview": "animations/previews/MAGE_VICTORY_SE_SHEET.gif",
+      "framesDirectory": "animations/frames/SE/victory",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_IDLE_SW_01",
+      "legacyId": "MAGE_IDLE_SW_SHEET",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "animations/spritesheets/MAGE_IDLE_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_IDLE_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_IDLE_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/idle",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_WALK_SW_01",
+      "legacyId": "MAGE_WALK_SW_SHEET",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_WALK_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_WALK_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_WALK_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/walk",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_ATTACK_SW_01",
+      "legacyId": "MAGE_ATTACK_SW_SHEET",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_ATTACK_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_ATTACK_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_ATTACK_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/attack",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_CAST_SW_01",
+      "legacyId": "MAGE_CAST_SW_SHEET",
+      "direction": "SW",
+      "state": "cast",
+      "frames": 8,
+      "fps": 10,
+      "loop": false,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        90,
+        90,
+        110,
+        150
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "mana_charge"
+        },
+        {
+          "frame": 5,
+          "event": "spell_release"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_CAST_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_CAST_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_CAST_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/cast",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_HIT_SW_01",
+      "legacyId": "MAGE_HIT_SW_SHEET",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_HIT_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_HIT_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_HIT_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/hit",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_DEFEAT_SW_01",
+      "legacyId": "MAGE_DEFEAT_SW_SHEET",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_DEFEAT_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_DEFEAT_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_DEFEAT_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/defeat",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    },
+    {
+      "id": "HERO_MAGE_VICTORY_SW_01",
+      "legacyId": "MAGE_VICTORY_SW_SHEET",
+      "direction": "SW",
+      "state": "victory",
+      "frames": 6,
+      "fps": 8,
+      "loop": true,
+      "durationsMs": [
+        130,
+        110,
+        110,
+        130,
+        140,
+        140
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "victory_flare"
+        }
+      ],
+      "spritesheet": "animations/spritesheets/MAGE_VICTORY_SW_SHEET.png",
+      "atlas": "animations/spritesheets/MAGE_VICTORY_SW_SHEET.json",
+      "preview": "animations/previews/MAGE_VICTORY_SW_SHEET.gif",
+      "framesDirectory": "animations/frames/SW/victory",
+      "frameSizePx": [
+        512,
+        512
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 176,
+      "zOffset": 0.35
+    }
+  ],
+  "portraits": [
+    {
+      "id": "PORTRAIT_MAGE_NEUTRAL_512_01",
+      "category": "portrait",
+      "file": "portraits/PORTRAIT_MAGE_NEUTRAL_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_MAGE_BATTLE_512_01",
+      "category": "portrait",
+      "file": "portraits/PORTRAIT_MAGE_BATTLE_512_01.png",
+      "canvasPx": [
+        512,
+        512
+      ]
+    },
+    {
+      "id": "PORTRAIT_MAGE_NEUTRAL_256_01",
+      "category": "portrait",
+      "file": "portraits/PORTRAIT_MAGE_NEUTRAL_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "PORTRAIT_MAGE_BATTLE_256_01",
+      "category": "portrait",
+      "file": "portraits/PORTRAIT_MAGE_BATTLE_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    }
+  ],
+  "weapons": [
+    {
+      "id": "WEAPON_MAGE_STAFF_01",
+      "category": "weapon",
+      "file": "weapons/WEAPON_MAGE_STAFF_01.png",
+      "shadow": "weapons/WEAPON_MAGE_STAFF_01_SHADOW.png",
+      "emissive": "weapons/WEAPON_MAGE_STAFF_01_EMISSIVE.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "anchor": [
+        0.5,
+        0.94
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "id": "ICON_HUD_HERO_MAGE_01",
+      "category": "hud-icon",
+      "file": "ui/ICON_HUD_HERO_MAGE_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "CARD_ART_HERO_MAGE_01",
+      "category": "card-art",
+      "file": "ui/CARD_ART_HERO_MAGE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    }
+  ],
+  "vfx": [
+    {
+      "id": "VFX_MAGE_SPELL_ORB_01",
+      "category": "vfx",
+      "file": "vfx/VFX_MAGE_SPELL_ORB_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_MAGE_CAST_CIRCLE_01",
+      "category": "vfx",
+      "file": "vfx/VFX_MAGE_CAST_CIRCLE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_MAGE_PROJECTILE_01",
+      "category": "vfx",
+      "file": "vfx/VFX_MAGE_PROJECTILE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_MAGE_IMPACT_01",
+      "category": "vfx",
+      "file": "vfx/VFX_MAGE_IMPACT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_MAGE_SELECTION_RING_01",
+      "category": "vfx",
+      "file": "vfx/VFX_MAGE_SELECTION_RING_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}
