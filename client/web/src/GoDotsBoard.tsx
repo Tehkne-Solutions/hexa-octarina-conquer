@@ -12,6 +12,7 @@ import {
   type LivingTile,
   type LivingUnit,
 } from "./living-board-data";
+import { Pack99EnvironmentalDensity } from "./Pack99EnvironmentalDensity";
 import { Pack99LivingWorldLayer } from "./Pack99LivingWorldLayer";
 import { Pack99StrategicStructures } from "./Pack99StrategicStructures";
 import { Pack99UnitSprite } from "./Pack99UnitSprite";
@@ -104,6 +105,7 @@ export function GoDotsBoard({
       <div className="go-dots-world">
         <div className="world-sky-glow" />
         <Pack99LivingWorldLayer tiles={tiles} collectedTileIds={collected} />
+        <Pack99EnvironmentalDensity tiles={tiles} />
         <Pack99StrategicStructures influenceEdges={influenceEdges} claimedCells={claimedCells} building={building} />
         <div className="legacy-world-fallback"><ProgressiveTerrainLayer tiles={tiles} onAvailabilityChange={setTerrainReady} /></div>
         <div className="world-river legacy-world-fallback"><span /><i /><b /></div>
