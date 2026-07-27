@@ -23,7 +23,6 @@ import "./living-board-playtest.css";
 import "./go-dots-living-board.css";
 import "./progressive-terrain.css";
 import "./progressive-board.css";
-import "./pack99-world.css";
 import "./unified-game.css";
 import "./sprint-ui-02.css";
 import "./sprint-ui-03.css";
@@ -43,6 +42,8 @@ import "./sprint-ui-13.css";
 import "./sprint-ui-13-interaction.css";
 import "./sprint-ui-14.css";
 import "./sprint-runtime-02.css";
+import "./pack99-unit-sprite.css";
+import "./pack99-living-world.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
