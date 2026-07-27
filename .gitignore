@@ -37,6 +37,14 @@ HOC_PACK_99_FINAL_RUNTIME*.zip.sha256
 HOC_PACK_99_FINAL_RUNTIME*.zip.report.json
 .hoc-pack99-assembly/
 
+# Progressive asset packs generated locally
+client/godot/assets/progressive/*
+!client/godot/assets/progressive/README.md
+client/web/public/assets/progressive/*
+!client/web/public/assets/progressive/README.md
+HOC_PACK_*_VALIDATED_*.zip
+.progressive-pack-staging/
+
 # Local environment
 .env
 .env.*
