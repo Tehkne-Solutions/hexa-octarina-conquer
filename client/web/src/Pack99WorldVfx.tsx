@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { pack99PublicUrl, resolvePack99Asset } from "./pack99-runtime";
@@ -98,7 +98,7 @@ export function Pack99WorldVfx({ rootRef }: { rootRef: RefObject<HTMLDivElement 
     <div key={event.token} className={`pack99-world-vfx vfx-${event.type}`} aria-hidden="true" data-vfx-event={event.type}>
       <span className="pack99-vfx-glow" />
       <span className="pack99-vfx-ring" />
-      <span className="pack99-vfx-particles">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--particle": index } as React.CSSProperties} />)}</span>
+      <span className="pack99-vfx-particles">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--particle": index } as CSSProperties} />)}</span>
       {source ? <img className="pack99-vfx-asset" src={source} alt="" draggable={false} /> : null}
       <b>{event.type === "collect" ? "+ RECURSO" : event.type === "capture" ? "TERRITÓRIO" : event.type === "build" ? "CONSTRUÇÃO" : event.type === "victory" ? "VITÓRIA" : event.type === "defeat" ? "DERROTA" : ""}</b>
     </div>,
