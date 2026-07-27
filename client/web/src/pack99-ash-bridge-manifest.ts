@@ -86,25 +86,25 @@ export const ASH_BRIDGE_UNITS: Record<LivingUnit["id"], Pack99MissionAssetRef> =
   kael: {
     id: "unit.kael",
     sourceSuffixes: ["HERO_WARRIOR_01_IDLE_BASE_SW_01.png"],
-    required: ["hero", "warrior", "idle"],
-    preferred: ["base", "sw", "01"],
+    required: ["hero", "guardian", "idle"],
+    preferred: ["base", "sw", "se", "01"],
   },
   lyra: {
     id: "unit.lyra",
     sourceSuffixes: ["HERO_RANGER_01_IDLE_BASE_NE_01.png"],
     required: ["hero", "ranger", "idle"],
-    preferred: ["base", "ne", "01"],
+    preferred: ["base", "ne", "se", "01"],
   },
   "raider-bridge": {
     id: "unit.varg",
     sourceSuffixes: ["UNIT_SKELETON_01_IDLE_BASE_NW_01.png"],
-    required: ["unit", "skeleton", "idle"],
-    preferred: ["base", "nw", "01"],
+    required: ["unit", "recruit", "idle"],
+    preferred: ["base", "nw", "se", "01"],
   },
   "raider-mill": {
     id: "unit.brakk",
     sourceSuffixes: ["UNIT_SKELETON_01_IDLE_BASE_NW_01.png"],
-    required: ["unit", "skeleton", "idle"],
-    preferred: ["base", "nw", "01"],
+    required: ["champ", "berserker", "idle"],
+    preferred: ["base", "nw", "se", "01"],
   },
 };
