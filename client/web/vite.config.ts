@@ -66,6 +66,16 @@ export default defineConfig({
             },
           },
           {
+            urlPattern: ({ request, url }) => request.method === "GET"
+              && url.pathname.startsWith("/assets/progressive/PACK_02_BOARD_SYSTEM/"),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "hexa-pack02-board",
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 180, maxAgeSeconds: 60 * 60 * 24 * 90 },
+            },
+          },
+          {
             urlPattern: ({ request }) => request.destination === "image",
             handler: "CacheFirst",
             options: {
