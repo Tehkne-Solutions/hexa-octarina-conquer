@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "idPattern": "^[A-Z0-9]+(?:_[A-Z0-9]+)*_[0-9]{2}$",
+  "filePattern": "^[A-Z0-9]+(?:_[A-Z0-9]+)*_[0-9]{2}\\.(png|webp|json)$",
+  "rules": [
+    "IDs are uppercase ASCII with underscores.",
+    "Every runtime asset has a numeric two-digit variant suffix.",
+    "State and direction precede the variant suffix.",
+    "Concept sheets use REF_ or remain outside runtime registries.",
+    "Runtime files contain no embedded text or decorative frame."
+  ],
+  "directions": ["NE", "NW", "SE", "SW"],
+  "states": ["IDLE", "WALK", "ATTACK", "HIT", "DEFEAT"],
+  "signature": "Tehkné Solutions"
+}
