@@ -1,0 +1,28 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "version": "1.1.0",
+  "namespace": "PACK_02_BOARD_SYSTEM",
+  "registry": {
+    "web": "/assets/progressive/PACK_02_BOARD_SYSTEM/registry/board-runtime.json",
+    "godot": "res://assets/progressive/PACK_02_BOARD_SYSTEM/registry/board-runtime.json"
+  },
+  "pathFields": ["_runtimeFile", "_runtimeShadow", "_runtimeEmissive"],
+  "comparisonFields": [
+    "id",
+    "category",
+    "state",
+    "material",
+    "orientation",
+    "stage",
+    "anchor",
+    "renderLayer",
+    "_runtimeFile",
+    "_runtimeShadow",
+    "_runtimeEmissive"
+  ],
+  "expectedAssetIds": 55,
+  "expectedPhysicalReferences": 138,
+  "zeroUnresolvedReferences": true,
+  "signature": "Tehkné Solutions"
+}
