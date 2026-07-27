@@ -11,6 +11,7 @@ import { applyStoredInterfacePreferences } from "./interface-preferences";
 import { installLoadoutClientBridge } from "./loadout-client-bridge";
 import { LoadoutManagerPortal } from "./LoadoutManagerPortal";
 import { LivingGameplayDirector } from "./LivingGameplayDirector";
+import { Pack99PremiumHudRuntime } from "./Pack99PremiumHudRuntime";
 import { PWA_APPLY_UPDATE_EVENT, PWA_CHECK_UPDATE_EVENT, emitPwaRuntimePatch } from "./pwa-lifecycle";
 import { RuntimeAssetOverlay } from "./RuntimeAssetOverlay";
 import { RuntimeEnhancements } from "./RuntimeEnhancements";
@@ -47,6 +48,7 @@ import "./pack99-unit-motion.css";
 import "./pack99-living-world.css";
 import "./pack99-world-vfx.css";
 import "./pack99-premium-campaign.css";
+import "./pack99-premium-hud.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
@@ -91,7 +93,7 @@ if (ui08QaRequested || ui13QaRequested || ui14QaRequested || pack99QaRequested) 
 }
 
 createRoot(root).render(
-  <StrictMode><GameErrorBoundary><BoardThemeRuntime /><LivingGameplayDirector /><RuntimeAssetOverlay />
+  <StrictMode><GameErrorBoundary><BoardThemeRuntime /><LivingGameplayDirector /><RuntimeAssetOverlay /><Pack99PremiumHudRuntime />
     {ui08QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
       : ui13QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi13BoardQa scene={requestedQaScene} /></Suspense>
       : ui14QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi14GameplayQa scene={requestedQaScene} /></Suspense>
