@@ -1,0 +1,180 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "resources": [
+    {
+      "id": "RES_WOOD",
+      "name": "Madeira",
+      "category": "construction",
+      "function": "Construções e estruturas básicas",
+      "magical": false,
+      "color": [
+        154,
+        97,
+        48
+      ],
+      "nodes": [
+        "RES_WOOD_SMALL_01",
+        "RES_WOOD_MEDIUM_01",
+        "RES_WOOD_ABUNDANT_01",
+        "RES_WOOD_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_WOOD_01",
+      "minimapIcon": "ICON_MINIMAP_RES_WOOD_01",
+      "collectVfx": "VFX_COLLECT_RES_WOOD_01"
+    },
+    {
+      "id": "RES_STONE",
+      "name": "Pedra",
+      "category": "fortification",
+      "function": "Fortificações, muralhas e melhorias",
+      "magical": false,
+      "color": [
+        135,
+        142,
+        150
+      ],
+      "nodes": [
+        "RES_STONE_SMALL_01",
+        "RES_STONE_MEDIUM_01",
+        "RES_STONE_ABUNDANT_01",
+        "RES_STONE_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_STONE_01",
+      "minimapIcon": "ICON_MINIMAP_RES_STONE_01",
+      "collectVfx": "VFX_COLLECT_RES_STONE_01"
+    },
+    {
+      "id": "RES_GOLD",
+      "name": "Ouro",
+      "category": "economy",
+      "function": "Economia, recrutamento e comércio",
+      "magical": false,
+      "color": [
+        239,
+        183,
+        54
+      ],
+      "nodes": [
+        "RES_GOLD_SMALL_01",
+        "RES_GOLD_MEDIUM_01",
+        "RES_GOLD_ABUNDANT_01",
+        "RES_GOLD_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_GOLD_01",
+      "minimapIcon": "ICON_MINIMAP_RES_GOLD_01",
+      "collectVfx": "VFX_COLLECT_RES_GOLD_01"
+    },
+    {
+      "id": "RES_MANA_BLUE",
+      "name": "Mana Azul",
+      "category": "magic",
+      "function": "Habilidades, feitiços e ativações mágicas",
+      "magical": true,
+      "color": [
+        59,
+        171,
+        255
+      ],
+      "nodes": [
+        "RES_MANA_BLUE_SMALL_01",
+        "RES_MANA_BLUE_MEDIUM_01",
+        "RES_MANA_BLUE_ABUNDANT_01",
+        "RES_MANA_BLUE_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_MANA_BLUE_01",
+      "minimapIcon": "ICON_MINIMAP_RES_MANA_BLUE_01",
+      "collectVfx": "VFX_COLLECT_RES_MANA_BLUE_01"
+    },
+    {
+      "id": "RES_FOOD",
+      "name": "Alimento",
+      "category": "population",
+      "function": "Sustento, população e expansão",
+      "magical": false,
+      "color": [
+        204,
+        112,
+        57
+      ],
+      "nodes": [
+        "RES_FOOD_SMALL_01",
+        "RES_FOOD_MEDIUM_01",
+        "RES_FOOD_ABUNDANT_01",
+        "RES_FOOD_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_FOOD_01",
+      "minimapIcon": "ICON_MINIMAP_RES_FOOD_01",
+      "collectVfx": "VFX_COLLECT_RES_FOOD_01"
+    },
+    {
+      "id": "RES_KNOWLEDGE",
+      "name": "Conhecimento",
+      "category": "research",
+      "function": "Pesquisa, desbloqueios e evolução",
+      "magical": true,
+      "color": [
+        95,
+        176,
+        255
+      ],
+      "nodes": [
+        "RES_KNOWLEDGE_SMALL_01",
+        "RES_KNOWLEDGE_MEDIUM_01",
+        "RES_KNOWLEDGE_ABUNDANT_01",
+        "RES_KNOWLEDGE_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_KNOWLEDGE_01",
+      "minimapIcon": "ICON_MINIMAP_RES_KNOWLEDGE_01",
+      "collectVfx": "VFX_COLLECT_RES_KNOWLEDGE_01"
+    },
+    {
+      "id": "RES_OCTARINE_CRYSTAL",
+      "name": "Cristal Octarino",
+      "category": "rare-magic",
+      "function": "Recurso raro de alta magia",
+      "magical": true,
+      "color": [
+        186,
+        82,
+        255
+      ],
+      "nodes": [
+        "RES_OCTARINE_CRYSTAL_SMALL_01",
+        "RES_OCTARINE_CRYSTAL_MEDIUM_01",
+        "RES_OCTARINE_CRYSTAL_ABUNDANT_01",
+        "RES_OCTARINE_CRYSTAL_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_OCTARINE_CRYSTAL_01",
+      "minimapIcon": "ICON_MINIMAP_RES_OCTARINE_CRYSTAL_01",
+      "collectVfx": "VFX_COLLECT_RES_OCTARINE_CRYSTAL_01"
+    },
+    {
+      "id": "RES_SOUL_FRAGMENT",
+      "name": "Fragmento de Alma",
+      "category": "necromancy",
+      "function": "Necromancia, ressurreição e efeitos espirituais",
+      "magical": true,
+      "color": [
+        61,
+        231,
+        156
+      ],
+      "nodes": [
+        "RES_SOUL_FRAGMENT_SMALL_01",
+        "RES_SOUL_FRAGMENT_MEDIUM_01",
+        "RES_SOUL_FRAGMENT_ABUNDANT_01",
+        "RES_SOUL_FRAGMENT_DEPLETED_01"
+      ],
+      "hudIcon": "ICON_HUD_RES_SOUL_FRAGMENT_01",
+      "minimapIcon": "ICON_MINIMAP_RES_SOUL_FRAGMENT_01",
+      "collectVfx": "VFX_COLLECT_RES_SOUL_FRAGMENT_01"
+    }
+  ],
+  "stateOrder": [
+    "small",
+    "medium",
+    "abundant",
+    "depleted"
+  ],
+  "signature": "Tehkné Solutions"
+}

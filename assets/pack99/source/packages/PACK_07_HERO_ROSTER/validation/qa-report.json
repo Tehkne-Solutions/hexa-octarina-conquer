@@ -1,0 +1,50 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_07_HERO_ROSTER_FINAL",
+  "version": "1.0.0",
+  "heroes": [
+    {
+      "characterId": "HERO_WARRIOR_01",
+      "manifest": "warrior/manifest.json",
+      "animationSets": 28,
+      "frames": 156,
+      "passed": true
+    },
+    {
+      "characterId": "HERO_NECROMANCER_01",
+      "manifest": "necromancer/manifest.json",
+      "animationSets": 28,
+      "frames": 156,
+      "passed": true
+    },
+    {
+      "characterId": "HERO_RANGER_01",
+      "manifest": "ranger/manifest.json",
+      "animationSets": 28,
+      "frames": 156,
+      "passed": true
+    },
+    {
+      "characterId": "HERO_ASSASSIN_01",
+      "manifest": "assassin/manifest.json",
+      "animationSets": 28,
+      "frames": 156,
+      "passed": true
+    },
+    {
+      "characterId": "HERO_GUARDIAN_01",
+      "manifest": "guardian/manifest.json",
+      "animationSets": 28,
+      "frames": 156,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "heroCount": 5,
+    "totalAnimationSets": 140,
+    "totalFrames": 780,
+    "registeredAssets": 215,
+    "passed": true
+  },
+  "signature": "Tehkné Solutions"
+}

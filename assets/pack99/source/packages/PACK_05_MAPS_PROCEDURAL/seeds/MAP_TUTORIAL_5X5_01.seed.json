@@ -1,0 +1,11 @@
+{
+  "mapId": "MAP_TUTORIAL_5X5_01",
+  "seed": 50101,
+  "preset": "tutorial",
+  "size": [
+    5,
+    5
+  ],
+  "spawnDensity": 0.22,
+  "generatorVersion": "1.0.0"
+}

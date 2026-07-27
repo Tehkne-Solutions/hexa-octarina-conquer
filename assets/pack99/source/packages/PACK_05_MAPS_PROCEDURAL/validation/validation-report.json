@@ -1,0 +1,81 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+  "version": "1.0.0",
+  "passed": true,
+  "maps": [
+    {
+      "mapId": "MAP_TUTORIAL_5X5_01",
+      "checks": {
+        "assetReferencesExist": true,
+        "missingAssetIds": [],
+        "cellCountMatchesSize": true,
+        "collisionRowsMatchHeight": true,
+        "collisionColumnsMatchWidth": true,
+        "hasWalkableCells": true,
+        "hasTwoPlayerStarts": true,
+        "duplicateSpawnCells": false
+      },
+      "statistics": {
+        "cells": 25,
+        "walkableCells": 19,
+        "blockedCells": 6,
+        "spawns": 6,
+        "landmarks": 1,
+        "pillars": 4,
+        "edges": 4,
+        "referencedAssets": 29
+      },
+      "passed": true
+    },
+    {
+      "mapId": "MAP_FOREST_FRONTIER_8X8_01",
+      "checks": {
+        "assetReferencesExist": true,
+        "missingAssetIds": [],
+        "cellCountMatchesSize": true,
+        "collisionRowsMatchHeight": true,
+        "collisionColumnsMatchWidth": true,
+        "hasWalkableCells": true,
+        "hasTwoPlayerStarts": true,
+        "duplicateSpawnCells": false
+      },
+      "statistics": {
+        "cells": 64,
+        "walkableCells": 54,
+        "blockedCells": 10,
+        "spawns": 12,
+        "landmarks": 2,
+        "pillars": 9,
+        "edges": 12,
+        "referencedAssets": 38
+      },
+      "passed": true
+    },
+    {
+      "mapId": "MAP_OCTARINE_CONVERGENCE_12X12_01",
+      "checks": {
+        "assetReferencesExist": true,
+        "missingAssetIds": [],
+        "cellCountMatchesSize": true,
+        "collisionRowsMatchHeight": true,
+        "collisionColumnsMatchWidth": true,
+        "hasWalkableCells": true,
+        "hasTwoPlayerStarts": true,
+        "duplicateSpawnCells": false
+      },
+      "statistics": {
+        "cells": 144,
+        "walkableCells": 126,
+        "blockedCells": 18,
+        "spawns": 15,
+        "landmarks": 4,
+        "pillars": 4,
+        "edges": 4,
+        "referencedAssets": 57
+      },
+      "passed": true
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,507 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "cards": [
+    {
+      "id": "TCG_CARD_CHAMP_BERSERKER_01_01",
+      "entityId": "CHAMP_BERSERKER_01",
+      "name": "Berserker",
+      "entityType": "champion",
+      "class": "berserker",
+      "rarity": "legendary",
+      "cost": 7,
+      "attack": 11,
+      "health": 8,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_BERSERKER_01_01.png",
+      "frameId": "TCG_FRAME_LEGENDARY_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_CHAMP_PALADIN_01_01",
+      "entityId": "CHAMP_PALADIN_01",
+      "name": "Paladino",
+      "entityType": "champion",
+      "class": "paladin",
+      "rarity": "legendary",
+      "cost": 7,
+      "attack": 7,
+      "health": 12,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_PALADIN_01_01.png",
+      "frameId": "TCG_FRAME_LEGENDARY_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_CHAMP_SORCERESS_01_01",
+      "entityId": "CHAMP_SORCERESS_01",
+      "name": "Feiticeira",
+      "entityType": "champion",
+      "class": "sorceress",
+      "rarity": "legendary",
+      "cost": 7,
+      "attack": 10,
+      "health": 7,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_SORCERESS_01_01.png",
+      "frameId": "TCG_FRAME_LEGENDARY_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_CHAMP_UNDEAD_KNIGHT_01_01",
+      "entityId": "CHAMP_UNDEAD_KNIGHT_01",
+      "name": "Cavaleiro Morto-Vivo",
+      "entityType": "champion",
+      "class": "undead",
+      "rarity": "legendary",
+      "cost": 8,
+      "attack": 8,
+      "health": 13,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_UNDEAD_KNIGHT_01_01.png",
+      "frameId": "TCG_FRAME_LEGENDARY_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_ASSASSIN_01_01",
+      "entityId": "HERO_ASSASSIN_01",
+      "name": "Sicário",
+      "entityType": "hero",
+      "class": "assassin",
+      "rarity": "epic",
+      "cost": 4,
+      "attack": 7,
+      "health": 4,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_ASSASSIN_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_GUARDIAN_01_01",
+      "entityId": "HERO_GUARDIAN_01",
+      "name": "Guardião",
+      "entityType": "hero",
+      "class": "guardian",
+      "rarity": "epic",
+      "cost": 5,
+      "attack": 4,
+      "health": 10,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_GUARDIAN_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_MAGE_01_01",
+      "entityId": "HERO_MAGE_01",
+      "name": "Mago Octarino",
+      "entityType": "hero",
+      "class": "mage",
+      "rarity": "epic",
+      "cost": 5,
+      "attack": 7,
+      "health": 5,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_MAGE_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_NECROMANCER_01_01",
+      "entityId": "HERO_NECROMANCER_01",
+      "name": "Necromante",
+      "entityType": "hero",
+      "class": "necromancer",
+      "rarity": "epic",
+      "cost": 5,
+      "attack": 5,
+      "health": 6,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_NECROMANCER_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_RANGER_01_01",
+      "entityId": "HERO_RANGER_01",
+      "name": "Ranger",
+      "entityType": "hero",
+      "class": "ranger",
+      "rarity": "epic",
+      "cost": 4,
+      "attack": 6,
+      "health": 5,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_RANGER_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_HERO_WARRIOR_01_01",
+      "entityId": "HERO_WARRIOR_01",
+      "name": "Guerreiro",
+      "entityType": "hero",
+      "class": "warrior",
+      "rarity": "epic",
+      "cost": 5,
+      "attack": 7,
+      "health": 8,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_WARRIOR_01_01.png",
+      "frameId": "TCG_FRAME_EPIC_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_ARCANE_APPRENTICE_01_01",
+      "entityId": "UNIT_ARCANE_APPRENTICE_01",
+      "name": "Aprendiz Arcano",
+      "entityType": "unit",
+      "class": "mage",
+      "rarity": "uncommon",
+      "cost": 2,
+      "attack": 3,
+      "health": 2,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_ARCANE_APPRENTICE_01_01.png",
+      "frameId": "TCG_FRAME_UNCOMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_ARCHER_01_01",
+      "entityId": "UNIT_ARCHER_01",
+      "name": "Arqueiro",
+      "entityType": "unit",
+      "class": "ranger",
+      "rarity": "common",
+      "cost": 2,
+      "attack": 3,
+      "health": 2,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_ARCHER_01_01.png",
+      "frameId": "TCG_FRAME_COMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_COLLECTOR_01_01",
+      "entityId": "UNIT_COLLECTOR_01",
+      "name": "Coletor",
+      "entityType": "unit",
+      "class": "worker",
+      "rarity": "common",
+      "cost": 1,
+      "attack": 1,
+      "health": 3,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_COLLECTOR_01_01.png",
+      "frameId": "TCG_FRAME_COMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_GUARDIAN_01_01",
+      "entityId": "UNIT_GUARDIAN_01",
+      "name": "Guardião",
+      "entityType": "unit",
+      "class": "guardian",
+      "rarity": "uncommon",
+      "cost": 2,
+      "attack": 1,
+      "health": 5,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_GUARDIAN_01_01.png",
+      "frameId": "TCG_FRAME_UNCOMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_RECRUIT_01_01",
+      "entityId": "UNIT_RECRUIT_01",
+      "name": "Recruta",
+      "entityType": "unit",
+      "class": "warrior",
+      "rarity": "common",
+      "cost": 1,
+      "attack": 2,
+      "health": 3,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_RECRUIT_01_01.png",
+      "frameId": "TCG_FRAME_COMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_SCOUT_01_01",
+      "entityId": "UNIT_SCOUT_01",
+      "name": "Batedor",
+      "entityType": "unit",
+      "class": "ranger",
+      "rarity": "common",
+      "cost": 2,
+      "attack": 2,
+      "health": 2,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_SCOUT_01_01.png",
+      "frameId": "TCG_FRAME_COMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_SKELETON_01_01",
+      "entityId": "UNIT_SKELETON_01",
+      "name": "Esqueleto",
+      "entityType": "unit",
+      "class": "undead",
+      "rarity": "common",
+      "cost": 1,
+      "attack": 2,
+      "health": 2,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_SKELETON_01_01.png",
+      "frameId": "TCG_FRAME_COMMON_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    },
+    {
+      "id": "TCG_CARD_UNIT_STONE_GOLEM_01_01",
+      "entityId": "UNIT_STONE_GOLEM_01",
+      "name": "Golem de Pedra",
+      "entityType": "unit",
+      "class": "construct",
+      "rarity": "rare",
+      "cost": 4,
+      "attack": 4,
+      "health": 8,
+      "balanceStatus": "runtime-default-tunable",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_STONE_GOLEM_01_01.png",
+      "frameId": "TCG_FRAME_RARE_01",
+      "cardBackId": "TCG_BACK_OCTARINE_01",
+      "canvasPx": [
+        768,
+        1024
+      ],
+      "textRendering": "runtime-dynamic"
+    }
+  ],
+  "rarities": {
+    "common": {
+      "color": [
+        155,
+        165,
+        175
+      ],
+      "glow": [
+        90,
+        100,
+        115
+      ]
+    },
+    "uncommon": {
+      "color": [
+        70,
+        190,
+        105
+      ],
+      "glow": [
+        45,
+        125,
+        75
+      ]
+    },
+    "rare": {
+      "color": [
+        65,
+        145,
+        245
+      ],
+      "glow": [
+        45,
+        95,
+        175
+      ]
+    },
+    "epic": {
+      "color": [
+        175,
+        80,
+        245
+      ],
+      "glow": [
+        115,
+        45,
+        175
+      ]
+    },
+    "legendary": {
+      "color": [
+        245,
+        165,
+        45
+      ],
+      "glow": [
+        175,
+        100,
+        30
+      ]
+    },
+    "octarine": {
+      "color": [
+        95,
+        235,
+        205
+      ],
+      "glow": [
+        70,
+        135,
+        235
+      ]
+    }
+  },
+  "frameAssets": [
+    {
+      "id": "TCG_FRAME_COMMON_01",
+      "category": "tcg-frame",
+      "rarity": "common",
+      "file": "V05_TCG/frames/TCG_FRAME_COMMON_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_UNCOMMON_01",
+      "category": "tcg-frame",
+      "rarity": "uncommon",
+      "file": "V05_TCG/frames/TCG_FRAME_UNCOMMON_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_RARE_01",
+      "category": "tcg-frame",
+      "rarity": "rare",
+      "file": "V05_TCG/frames/TCG_FRAME_RARE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_EPIC_01",
+      "category": "tcg-frame",
+      "rarity": "epic",
+      "file": "V05_TCG/frames/TCG_FRAME_EPIC_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_LEGENDARY_01",
+      "category": "tcg-frame",
+      "rarity": "legendary",
+      "file": "V05_TCG/frames/TCG_FRAME_LEGENDARY_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_OCTARINE_01",
+      "category": "tcg-frame",
+      "rarity": "octarine",
+      "file": "V05_TCG/frames/TCG_FRAME_OCTARINE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    }
+  ],
+  "cardBacks": [
+    "TCG_BACK_OCTARINE_01",
+    "TCG_BACK_ORDER_01",
+    "TCG_BACK_CORRUPTION_01"
+  ],
+  "signature": "Tehkné Solutions"
+}

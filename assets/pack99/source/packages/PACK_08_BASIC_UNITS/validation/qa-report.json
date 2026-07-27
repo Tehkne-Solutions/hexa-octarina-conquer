@@ -1,0 +1,79 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_08_BASIC_UNITS_FINAL",
+  "version": "1.0.0",
+  "units": [
+    {
+      "unitId": "UNIT_RECRUIT_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_ARCHER_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_GUARDIAN_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_ARCANE_APPRENTICE_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_COLLECTOR_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_SCOUT_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_SKELETON_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    },
+    {
+      "unitId": "UNIT_STONE_GOLEM_01",
+      "directions": 4,
+      "animationSets": 20,
+      "expectedAnimationSets": 20,
+      "pngFiles": 140,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "unitCount": 8,
+    "totalAnimationSets": 160,
+    "totalAnimationFrames": 800,
+    "registeredAssets": 232,
+    "passed": true
+  },
+  "signature": "Tehkné Solutions"
+}

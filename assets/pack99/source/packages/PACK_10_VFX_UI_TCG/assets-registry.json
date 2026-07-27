@@ -1,0 +1,1333 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_10_VFX_UI_TCG_FINAL",
+  "version": "1.0.0",
+  "assets": [
+    {
+      "id": "VFX_CELL_SELECTED_01",
+      "category": "map-selection-vfx",
+      "file": "V01_MAP_VFX/VFX_CELL_SELECTED_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.75
+      ]
+    },
+    {
+      "id": "VFX_CELL_VALID_01",
+      "category": "map-selection-vfx",
+      "file": "V01_MAP_VFX/VFX_CELL_VALID_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.75
+      ]
+    },
+    {
+      "id": "VFX_CELL_INVALID_01",
+      "category": "map-selection-vfx",
+      "file": "V01_MAP_VFX/VFX_CELL_INVALID_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.75
+      ]
+    },
+    {
+      "id": "VFX_CELL_OBJECTIVE_01",
+      "category": "map-selection-vfx",
+      "file": "V01_MAP_VFX/VFX_CELL_OBJECTIVE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.75
+      ]
+    },
+    {
+      "id": "VFX_MAP_PATH_01",
+      "category": "map-path-vfx",
+      "file": "V01_MAP_VFX/VFX_MAP_PATH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    },
+    {
+      "id": "VFX_TERRITORY_CONQUEST_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_TERRITORY_CONQUEST_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_CONSTRUCTION_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_CONSTRUCTION_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_UPGRADE_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_UPGRADE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_STRUCTURE_DAMAGE_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_STRUCTURE_DAMAGE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_EDGE_DESTRUCTION_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_EDGE_DESTRUCTION_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_RESOURCE_COLLECT_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_RESOURCE_COLLECT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_TELEPORT_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_TELEPORT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_CORRUPTION_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_CORRUPTION_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_HEAL_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_HEAL_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_RESURRECTION_01",
+      "category": "map-event-vfx",
+      "file": "V01_MAP_VFX/VFX_RESURRECTION_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.6
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_SLASH_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_SLASH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_HEAVY_STRIKE_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_HEAVY_STRIKE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_SHIELD_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_SHIELD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_NECROMANCY_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_NECROMANCY_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_STEALTH_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_STEALTH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_POISON_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_POISON_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_DEATH_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_DEATH_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_VICTORY_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_VICTORY_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_STATUS_BURN_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_STATUS_BURN_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_STATUS_FREEZE_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_STATUS_FREEZE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_STATUS_STUN_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_STATUS_STUN_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_STATUS_BUFF_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_STATUS_BUFF_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_STATUS_DEBUFF_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_STATUS_DEBUFF_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "VFX_COMBAT_DODGE_01",
+      "category": "combat-vfx",
+      "file": "V02_COMBAT_VFX/VFX_COMBAT_DODGE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_ARROW_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_ARROW_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_ARROW_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_ARROW_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_ARCANE_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_ARCANE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_ARCANE_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_ARCANE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_FIREBALL_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_FIREBALL_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_FIREBALL_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_FIREBALL_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_ICE_SHARD_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_ICE_SHARD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_ICE_SHARD_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_ICE_SHARD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_SOUL_BOLT_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_SOUL_BOLT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_SOUL_BOLT_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_SOUL_BOLT_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_POISON_GLOB_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_POISON_GLOB_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_POISON_GLOB_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_POISON_GLOB_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_HOLY_LANCE_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_HOLY_LANCE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_HOLY_LANCE_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_HOLY_LANCE_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "PROJECTILE_STONE_SHARD_01",
+      "category": "projectile",
+      "file": "V03_PROJECTILES_IMPACTS/projectiles/PROJECTILE_STONE_SHARD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "normal",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "IMPACT_STONE_SHARD_01",
+      "category": "impact-vfx",
+      "file": "V03_PROJECTILES_IMPACTS/impacts/IMPACT_STONE_SHARD_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive",
+      "anchor": [
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "id": "ICON_CLASS_MAGE_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_MAGE_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_WARRIOR_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_WARRIOR_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_NECROMANCER_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_NECROMANCER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_RANGER_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_RANGER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_ASSASSIN_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_ASSASSIN_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_GUARDIAN_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_GUARDIAN_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_PALADIN_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_PALADIN_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_SORCERESS_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_SORCERESS_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_BERSERKER_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_BERSERKER_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_CLASS_UNDEAD_KNIGHT_01",
+      "category": "class-icon",
+      "file": "V04_UI/icons/classes/ICON_CLASS_UNDEAD_KNIGHT_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_STATUS_POISON_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_POISON_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_STUN_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_STUN_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_BURN_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_BURN_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_FREEZE_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_FREEZE_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_SHIELD_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_SHIELD_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_HASTE_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_HASTE_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_SLOW_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_SLOW_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_REGEN_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_REGEN_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_CORRUPTION_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_CORRUPTION_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_STEALTH_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_STEALTH_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_MARKED_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_MARKED_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_STATUS_SILENCE_01",
+      "category": "status-icon",
+      "file": "V04_UI/icons/status/ICON_STATUS_SILENCE_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_CONTROL_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_CONTROL_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_CAPTURE_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_CAPTURE_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_DEFEND_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_DEFEND_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_ATTACK_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_ATTACK_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_GATHER_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_GATHER_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_PORTAL_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_PORTAL_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_VICTORY_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_VICTORY_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "ICON_OBJECTIVE_WARNING_01",
+      "category": "objective-icon",
+      "file": "V04_UI/icons/objectives/ICON_OBJECTIVE_WARNING_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "HUD_BAR_HEALTH_FRAME_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_HEALTH_FRAME_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "HUD_BAR_HEALTH_FILL_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_HEALTH_FILL_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "HUD_BAR_MANA_FRAME_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_MANA_FRAME_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "HUD_BAR_MANA_FILL_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_MANA_FILL_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "HUD_BAR_ARMOR_FRAME_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_ARMOR_FRAME_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "HUD_BAR_ARMOR_FILL_01",
+      "category": "hud-bar",
+      "file": "V04_UI/hud/HUD_BAR_ARMOR_FILL_01.png",
+      "canvasPx": [
+        512,
+        96
+      ]
+    },
+    {
+      "id": "CURSOR_DEFAULT_01",
+      "category": "cursor",
+      "file": "V04_UI/cursors/CURSOR_DEFAULT_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "CURSOR_ATTACK_01",
+      "category": "cursor",
+      "file": "V04_UI/cursors/CURSOR_ATTACK_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "CURSOR_MOVE_01",
+      "category": "cursor",
+      "file": "V04_UI/cursors/CURSOR_MOVE_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "CURSOR_INTERACT_01",
+      "category": "cursor",
+      "file": "V04_UI/cursors/CURSOR_INTERACT_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_FRAME_COMMON_01",
+      "category": "tcg-frame",
+      "rarity": "common",
+      "file": "V05_TCG/frames/TCG_FRAME_COMMON_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_UNCOMMON_01",
+      "category": "tcg-frame",
+      "rarity": "uncommon",
+      "file": "V05_TCG/frames/TCG_FRAME_UNCOMMON_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_RARE_01",
+      "category": "tcg-frame",
+      "rarity": "rare",
+      "file": "V05_TCG/frames/TCG_FRAME_RARE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_EPIC_01",
+      "category": "tcg-frame",
+      "rarity": "epic",
+      "file": "V05_TCG/frames/TCG_FRAME_EPIC_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_LEGENDARY_01",
+      "category": "tcg-frame",
+      "rarity": "legendary",
+      "file": "V05_TCG/frames/TCG_FRAME_LEGENDARY_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_FRAME_OCTARINE_01",
+      "category": "tcg-frame",
+      "rarity": "octarine",
+      "file": "V05_TCG/frames/TCG_FRAME_OCTARINE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_BACK_OCTARINE_01",
+      "category": "tcg-card-back",
+      "file": "V05_TCG/backs/TCG_BACK_OCTARINE_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_BACK_ORDER_01",
+      "category": "tcg-card-back",
+      "file": "V05_TCG/backs/TCG_BACK_ORDER_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_BACK_CORRUPTION_01",
+      "category": "tcg-card-back",
+      "file": "V05_TCG/backs/TCG_BACK_CORRUPTION_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_CHAMP_BERSERKER_01_01",
+      "category": "tcg-card",
+      "entityId": "CHAMP_BERSERKER_01",
+      "rarity": "legendary",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_BERSERKER_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_CHAMP_PALADIN_01_01",
+      "category": "tcg-card",
+      "entityId": "CHAMP_PALADIN_01",
+      "rarity": "legendary",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_PALADIN_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_CHAMP_SORCERESS_01_01",
+      "category": "tcg-card",
+      "entityId": "CHAMP_SORCERESS_01",
+      "rarity": "legendary",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_SORCERESS_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_CHAMP_UNDEAD_KNIGHT_01_01",
+      "category": "tcg-card",
+      "entityId": "CHAMP_UNDEAD_KNIGHT_01",
+      "rarity": "legendary",
+      "file": "V05_TCG/cards/TCG_CARD_CHAMP_UNDEAD_KNIGHT_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_ASSASSIN_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_ASSASSIN_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_ASSASSIN_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_GUARDIAN_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_GUARDIAN_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_GUARDIAN_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_MAGE_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_MAGE_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_MAGE_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_NECROMANCER_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_NECROMANCER_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_NECROMANCER_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_RANGER_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_RANGER_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_RANGER_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_HERO_WARRIOR_01_01",
+      "category": "tcg-card",
+      "entityId": "HERO_WARRIOR_01",
+      "rarity": "epic",
+      "file": "V05_TCG/cards/TCG_CARD_HERO_WARRIOR_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_ARCANE_APPRENTICE_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_ARCANE_APPRENTICE_01",
+      "rarity": "uncommon",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_ARCANE_APPRENTICE_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_ARCHER_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_ARCHER_01",
+      "rarity": "common",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_ARCHER_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_COLLECTOR_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_COLLECTOR_01",
+      "rarity": "common",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_COLLECTOR_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_GUARDIAN_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_GUARDIAN_01",
+      "rarity": "uncommon",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_GUARDIAN_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_RECRUIT_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_RECRUIT_01",
+      "rarity": "common",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_RECRUIT_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_SCOUT_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_SCOUT_01",
+      "rarity": "common",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_SCOUT_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_SKELETON_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_SKELETON_01",
+      "rarity": "common",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_SKELETON_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_CARD_UNIT_STONE_GOLEM_01_01",
+      "category": "tcg-card",
+      "entityId": "UNIT_STONE_GOLEM_01",
+      "rarity": "rare",
+      "file": "V05_TCG/cards/TCG_CARD_UNIT_STONE_GOLEM_01_01.png",
+      "canvasPx": [
+        768,
+        1024
+      ]
+    },
+    {
+      "id": "TCG_ICON_COST_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_COST_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_ICON_ATTACK_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_ATTACK_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_ICON_HEALTH_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_HEALTH_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_ICON_ARMOR_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_ARMOR_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_ICON_MAGIC_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_MAGIC_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    },
+    {
+      "id": "TCG_ICON_RARITY_01",
+      "category": "tcg-icon",
+      "file": "V05_TCG/icons/TCG_ICON_RARITY_01.png",
+      "canvasPx": [
+        128,
+        128
+      ]
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

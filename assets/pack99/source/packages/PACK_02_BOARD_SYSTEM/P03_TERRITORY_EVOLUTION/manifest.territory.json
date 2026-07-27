@@ -1,0 +1,667 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "pack": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "subpack": "P03_TERRITORY_EVOLUTION",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "lineage": [
+    "TERR_SIGIL",
+    "TERR_CAMP",
+    "TERR_OUTPOST",
+    "TERR_FORT",
+    "TERR_CITADEL"
+  ],
+  "assets": [
+    {
+      "id": "TERR_SIGIL_NEUTRAL_01",
+      "baseId": "TERR_SIGIL_01",
+      "name": "Selo Territorial",
+      "stage": 1,
+      "state": "neutral",
+      "file": "stage_1/TERR_SIGIL_NEUTRAL_01.png",
+      "shadow": "stage_1/TERR_SIGIL_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_SIGIL_BLUE_01",
+      "baseId": "TERR_SIGIL_01",
+      "name": "Selo Territorial",
+      "stage": 1,
+      "state": "blue",
+      "file": "stage_1/TERR_SIGIL_BLUE_01.png",
+      "shadow": "stage_1/TERR_SIGIL_BLUE_01_SHADOW.png",
+      "emissive": "stage_1/TERR_SIGIL_BLUE_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_SIGIL_RED_01",
+      "baseId": "TERR_SIGIL_01",
+      "name": "Selo Territorial",
+      "stage": 1,
+      "state": "red",
+      "file": "stage_1/TERR_SIGIL_RED_01.png",
+      "shadow": "stage_1/TERR_SIGIL_RED_01_SHADOW.png",
+      "emissive": "stage_1/TERR_SIGIL_RED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_SIGIL_CONSTRUCTION_01",
+      "baseId": "TERR_SIGIL_01",
+      "name": "Selo Territorial",
+      "stage": 1,
+      "state": "construction",
+      "file": "stage_1/TERR_SIGIL_CONSTRUCTION_01.png",
+      "shadow": "stage_1/TERR_SIGIL_CONSTRUCTION_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_SIGIL_DAMAGED_01",
+      "baseId": "TERR_SIGIL_01",
+      "name": "Selo Territorial",
+      "stage": 1,
+      "state": "damaged",
+      "file": "stage_1/TERR_SIGIL_DAMAGED_01.png",
+      "shadow": "stage_1/TERR_SIGIL_DAMAGED_01_SHADOW.png",
+      "emissive": "stage_1/TERR_SIGIL_DAMAGED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CAMP_NEUTRAL_01",
+      "baseId": "TERR_CAMP_01",
+      "name": "Acampamento",
+      "stage": 2,
+      "state": "neutral",
+      "file": "stage_2/TERR_CAMP_NEUTRAL_01.png",
+      "shadow": "stage_2/TERR_CAMP_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CAMP_BLUE_01",
+      "baseId": "TERR_CAMP_01",
+      "name": "Acampamento",
+      "stage": 2,
+      "state": "blue",
+      "file": "stage_2/TERR_CAMP_BLUE_01.png",
+      "shadow": "stage_2/TERR_CAMP_BLUE_01_SHADOW.png",
+      "emissive": "stage_2/TERR_CAMP_BLUE_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CAMP_RED_01",
+      "baseId": "TERR_CAMP_01",
+      "name": "Acampamento",
+      "stage": 2,
+      "state": "red",
+      "file": "stage_2/TERR_CAMP_RED_01.png",
+      "shadow": "stage_2/TERR_CAMP_RED_01_SHADOW.png",
+      "emissive": "stage_2/TERR_CAMP_RED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CAMP_CONSTRUCTION_01",
+      "baseId": "TERR_CAMP_01",
+      "name": "Acampamento",
+      "stage": 2,
+      "state": "construction",
+      "file": "stage_2/TERR_CAMP_CONSTRUCTION_01.png",
+      "shadow": "stage_2/TERR_CAMP_CONSTRUCTION_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CAMP_DAMAGED_01",
+      "baseId": "TERR_CAMP_01",
+      "name": "Acampamento",
+      "stage": 2,
+      "state": "damaged",
+      "file": "stage_2/TERR_CAMP_DAMAGED_01.png",
+      "shadow": "stage_2/TERR_CAMP_DAMAGED_01_SHADOW.png",
+      "emissive": "stage_2/TERR_CAMP_DAMAGED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_OUTPOST_NEUTRAL_01",
+      "baseId": "TERR_OUTPOST_01",
+      "name": "Posto Avançado",
+      "stage": 3,
+      "state": "neutral",
+      "file": "stage_3/TERR_OUTPOST_NEUTRAL_01.png",
+      "shadow": "stage_3/TERR_OUTPOST_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_OUTPOST_BLUE_01",
+      "baseId": "TERR_OUTPOST_01",
+      "name": "Posto Avançado",
+      "stage": 3,
+      "state": "blue",
+      "file": "stage_3/TERR_OUTPOST_BLUE_01.png",
+      "shadow": "stage_3/TERR_OUTPOST_BLUE_01_SHADOW.png",
+      "emissive": "stage_3/TERR_OUTPOST_BLUE_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_OUTPOST_RED_01",
+      "baseId": "TERR_OUTPOST_01",
+      "name": "Posto Avançado",
+      "stage": 3,
+      "state": "red",
+      "file": "stage_3/TERR_OUTPOST_RED_01.png",
+      "shadow": "stage_3/TERR_OUTPOST_RED_01_SHADOW.png",
+      "emissive": "stage_3/TERR_OUTPOST_RED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_OUTPOST_CONSTRUCTION_01",
+      "baseId": "TERR_OUTPOST_01",
+      "name": "Posto Avançado",
+      "stage": 3,
+      "state": "construction",
+      "file": "stage_3/TERR_OUTPOST_CONSTRUCTION_01.png",
+      "shadow": "stage_3/TERR_OUTPOST_CONSTRUCTION_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_OUTPOST_DAMAGED_01",
+      "baseId": "TERR_OUTPOST_01",
+      "name": "Posto Avançado",
+      "stage": 3,
+      "state": "damaged",
+      "file": "stage_3/TERR_OUTPOST_DAMAGED_01.png",
+      "shadow": "stage_3/TERR_OUTPOST_DAMAGED_01_SHADOW.png",
+      "emissive": "stage_3/TERR_OUTPOST_DAMAGED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_FORT_NEUTRAL_01",
+      "baseId": "TERR_FORT_01",
+      "name": "Forte",
+      "stage": 4,
+      "state": "neutral",
+      "file": "stage_4/TERR_FORT_NEUTRAL_01.png",
+      "shadow": "stage_4/TERR_FORT_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_FORT_BLUE_01",
+      "baseId": "TERR_FORT_01",
+      "name": "Forte",
+      "stage": 4,
+      "state": "blue",
+      "file": "stage_4/TERR_FORT_BLUE_01.png",
+      "shadow": "stage_4/TERR_FORT_BLUE_01_SHADOW.png",
+      "emissive": "stage_4/TERR_FORT_BLUE_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_FORT_RED_01",
+      "baseId": "TERR_FORT_01",
+      "name": "Forte",
+      "stage": 4,
+      "state": "red",
+      "file": "stage_4/TERR_FORT_RED_01.png",
+      "shadow": "stage_4/TERR_FORT_RED_01_SHADOW.png",
+      "emissive": "stage_4/TERR_FORT_RED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_FORT_CONSTRUCTION_01",
+      "baseId": "TERR_FORT_01",
+      "name": "Forte",
+      "stage": 4,
+      "state": "construction",
+      "file": "stage_4/TERR_FORT_CONSTRUCTION_01.png",
+      "shadow": "stage_4/TERR_FORT_CONSTRUCTION_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_FORT_DAMAGED_01",
+      "baseId": "TERR_FORT_01",
+      "name": "Forte",
+      "stage": 4,
+      "state": "damaged",
+      "file": "stage_4/TERR_FORT_DAMAGED_01.png",
+      "shadow": "stage_4/TERR_FORT_DAMAGED_01_SHADOW.png",
+      "emissive": "stage_4/TERR_FORT_DAMAGED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        2,
+        2
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CITADEL_NEUTRAL_01",
+      "baseId": "TERR_CITADEL_01",
+      "name": "Cidadela",
+      "stage": 5,
+      "state": "neutral",
+      "file": "stage_5/TERR_CITADEL_NEUTRAL_01.png",
+      "shadow": "stage_5/TERR_CITADEL_NEUTRAL_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CITADEL_BLUE_01",
+      "baseId": "TERR_CITADEL_01",
+      "name": "Cidadela",
+      "stage": 5,
+      "state": "blue",
+      "file": "stage_5/TERR_CITADEL_BLUE_01.png",
+      "shadow": "stage_5/TERR_CITADEL_BLUE_01_SHADOW.png",
+      "emissive": "stage_5/TERR_CITADEL_BLUE_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CITADEL_RED_01",
+      "baseId": "TERR_CITADEL_01",
+      "name": "Cidadela",
+      "stage": 5,
+      "state": "red",
+      "file": "stage_5/TERR_CITADEL_RED_01.png",
+      "shadow": "stage_5/TERR_CITADEL_RED_01_SHADOW.png",
+      "emissive": "stage_5/TERR_CITADEL_RED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CITADEL_CONSTRUCTION_01",
+      "baseId": "TERR_CITADEL_01",
+      "name": "Cidadela",
+      "stage": 5,
+      "state": "construction",
+      "file": "stage_5/TERR_CITADEL_CONSTRUCTION_01.png",
+      "shadow": "stage_5/TERR_CITADEL_CONSTRUCTION_01_SHADOW.png",
+      "emissive": null,
+      "category": "territory-structure",
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "TERR_CITADEL_DAMAGED_01",
+      "baseId": "TERR_CITADEL_01",
+      "name": "Cidadela",
+      "stage": 5,
+      "state": "damaged",
+      "file": "stage_5/TERR_CITADEL_DAMAGED_01.png",
+      "shadow": "stage_5/TERR_CITADEL_DAMAGED_01_SHADOW.png",
+      "emissive": "stage_5/TERR_CITADEL_DAMAGED_01_EMISSIVE.png",
+      "category": "territory-structure",
+      "footprint": [
+        3,
+        3
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "collision": "structure",
+      "capturable": true,
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

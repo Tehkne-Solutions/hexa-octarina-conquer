@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "packId": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED",
+  "namespace": "PACK_99_RECOVERED",
+  "version": "1.0.1",
+  "status": "mapped-ready-for-runtime-integration",
+  "canonicalRoot": "assets/pack99/source",
+  "generatedTargets": {
+    "web": "client/web/public/assets/runtime/pack99",
+    "godot": "client/godot/assets/runtime/pack99"
+  },
+  "rules": {
+    "singleCanonicalCopy": true,
+    "generatedTargetsAreIgnored": true,
+    "preserveRelativePaths": true,
+    "deduplicateBySha256": "hardlink-preserving-paths",
+    "hardlinkFallback": "copy",
+    "requireManifestLookup": true,
+    "fallbackRequired": true
+  },
+  "signature": "Tehkné Solutions"
+}

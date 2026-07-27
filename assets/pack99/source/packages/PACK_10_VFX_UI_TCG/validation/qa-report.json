@@ -1,0 +1,27 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_10_VFX_UI_TCG_FINAL",
+  "version": "1.0.0",
+  "checks": {
+    "mapVfx": 15,
+    "combatVfx": 14,
+    "projectiles": 8,
+    "impacts": 8,
+    "uiAssets": 40,
+    "tcgAssets": 33,
+    "tcgCards": 18,
+    "allPngHaveAlpha": true,
+    "alphaFailures": []
+  },
+  "statistics": {
+    "registeredAssets": 118,
+    "pngFiles": 123,
+    "classIcons": 10,
+    "statusIcons": 12,
+    "objectiveIcons": 8,
+    "rarityFrames": 6,
+    "cardBacks": 3
+  },
+  "passed": true,
+  "signature": "Tehkné Solutions"
+}

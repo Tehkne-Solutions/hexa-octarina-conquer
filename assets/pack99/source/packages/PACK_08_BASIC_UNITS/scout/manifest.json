@@ -1,0 +1,873 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "unit": {
+    "id": "UNIT_SCOUT_01",
+    "name": "Batedor",
+    "class": "scout",
+    "role": [
+      "ranged",
+      "recon"
+    ],
+    "tier": 1,
+    "combatType": "ranged",
+    "footprint": [
+      1,
+      1
+    ],
+    "anchor": [
+      0.5,
+      0.91
+    ],
+    "recommendedDisplayHeightPx": 142,
+    "zOffset": 0.32
+  },
+  "assets": [
+    {
+      "id": "UNIT_SCOUT_01_MASTER_01",
+      "category": "unit-master",
+      "file": "scout/master/UNIT_SCOUT_01_MASTER_01.png",
+      "shadow": "scout/master/UNIT_SCOUT_01_MASTER_01_SHADOW.png",
+      "emissive": "scout/master/UNIT_SCOUT_01_MASTER_01_EMISSIVE.png",
+      "factionMask": "scout/masks/MASK_FACTION_SCOUT_01.png",
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_BASE_NE_01",
+      "direction": "NE",
+      "state": "idle-base",
+      "file": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_NE_01.png",
+      "shadow": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_NE_01_SHADOW.png",
+      "factionMask": "scout/masks/MASK_FACTION_SCOUT_NE_01.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_BASE_NW_01",
+      "direction": "NW",
+      "state": "idle-base",
+      "file": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_NW_01.png",
+      "shadow": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_NW_01_SHADOW.png",
+      "factionMask": "scout/masks/MASK_FACTION_SCOUT_NW_01.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_BASE_SE_01",
+      "direction": "SE",
+      "state": "idle-base",
+      "file": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_SE_01.png",
+      "shadow": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_SE_01_SHADOW.png",
+      "factionMask": "scout/masks/MASK_FACTION_SCOUT_SE_01.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_BASE_SW_01",
+      "direction": "SW",
+      "state": "idle-base",
+      "file": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_SW_01.png",
+      "shadow": "scout/directions/UNIT_SCOUT_01_IDLE_BASE_SW_01_SHADOW.png",
+      "factionMask": "scout/masks/MASK_FACTION_SCOUT_SW_01.png",
+      "canvasPx": [
+        1024,
+        1024
+      ],
+      "footprint": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_NE_01",
+      "direction": "NE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_NE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_NE_01.json",
+      "framesDirectory": "scout/animations/frames/NE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_WALK_NE_01",
+      "direction": "NE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_NE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_NE_01.json",
+      "framesDirectory": "scout/animations/frames/NE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_ATTACK_NE_01",
+      "direction": "NE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_NE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_NE_01.json",
+      "framesDirectory": "scout/animations/frames/NE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_HIT_NE_01",
+      "direction": "NE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_NE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_NE_01.json",
+      "framesDirectory": "scout/animations/frames/NE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_DEFEAT_NE_01",
+      "direction": "NE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_NE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_NE_01.json",
+      "framesDirectory": "scout/animations/frames/NE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_NW_01",
+      "direction": "NW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_NW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_NW_01.json",
+      "framesDirectory": "scout/animations/frames/NW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_WALK_NW_01",
+      "direction": "NW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_NW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_NW_01.json",
+      "framesDirectory": "scout/animations/frames/NW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_ATTACK_NW_01",
+      "direction": "NW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_NW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_NW_01.json",
+      "framesDirectory": "scout/animations/frames/NW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_HIT_NW_01",
+      "direction": "NW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_NW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_NW_01.json",
+      "framesDirectory": "scout/animations/frames/NW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_DEFEAT_NW_01",
+      "direction": "NW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_NW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_NW_01.json",
+      "framesDirectory": "scout/animations/frames/NW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_SE_01",
+      "direction": "SE",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_SE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_SE_01.json",
+      "framesDirectory": "scout/animations/frames/SE/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_WALK_SE_01",
+      "direction": "SE",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_SE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_SE_01.json",
+      "framesDirectory": "scout/animations/frames/SE/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_ATTACK_SE_01",
+      "direction": "SE",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_SE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_SE_01.json",
+      "framesDirectory": "scout/animations/frames/SE/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_HIT_SE_01",
+      "direction": "SE",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_SE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_SE_01.json",
+      "framesDirectory": "scout/animations/frames/SE/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_DEFEAT_SE_01",
+      "direction": "SE",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_SE_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_SE_01.json",
+      "framesDirectory": "scout/animations/frames/SE/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_IDLE_SW_01",
+      "direction": "SW",
+      "state": "idle",
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "durationsMs": [
+        180,
+        160,
+        180,
+        160
+      ],
+      "events": [],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_SW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_IDLE_SW_01.json",
+      "framesDirectory": "scout/animations/frames/SW/idle",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_WALK_SW_01",
+      "direction": "SW",
+      "state": "walk",
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "durationsMs": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ],
+      "events": [
+        {
+          "frame": 1,
+          "event": "footstep"
+        },
+        {
+          "frame": 4,
+          "event": "footstep"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_SW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_WALK_SW_01.json",
+      "framesDirectory": "scout/animations/frames/SW/walk",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_ATTACK_SW_01",
+      "direction": "SW",
+      "state": "attack",
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        90,
+        80,
+        75,
+        75,
+        90,
+        120
+      ],
+      "events": [
+        {
+          "frame": 2,
+          "event": "attack_commit"
+        },
+        {
+          "frame": 3,
+          "event": "damage_window"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_SW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_ATTACK_SW_01.json",
+      "framesDirectory": "scout/animations/frames/SW/attack",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_HIT_SW_01",
+      "direction": "SW",
+      "state": "hit",
+      "frames": 3,
+      "fps": 12,
+      "loop": false,
+      "durationsMs": [
+        70,
+        90,
+        130
+      ],
+      "events": [
+        {
+          "frame": 0,
+          "event": "hit_flash"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_SW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_HIT_SW_01.json",
+      "framesDirectory": "scout/animations/frames/SW/hit",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "UNIT_SCOUT_01_DEFEAT_SW_01",
+      "direction": "SW",
+      "state": "defeat",
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "durationsMs": [
+        120,
+        120,
+        130,
+        140,
+        180,
+        260
+      ],
+      "events": [
+        {
+          "frame": 3,
+          "event": "body_fall"
+        },
+        {
+          "frame": 5,
+          "event": "defeat_complete"
+        }
+      ],
+      "spritesheet": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_SW_01.png",
+      "atlas": "scout/animations/spritesheets/UNIT_SCOUT_01_DEFEAT_SW_01.json",
+      "framesDirectory": "scout/animations/frames/SW/defeat",
+      "frameSizePx": [
+        256,
+        256
+      ],
+      "anchor": [
+        0.5,
+        0.91
+      ],
+      "recommendedDisplayHeightPx": 142,
+      "zOffset": 0.32
+    },
+    {
+      "id": "PORTRAIT_SCOUT_256_01",
+      "category": "portrait",
+      "file": "scout/portraits/PORTRAIT_SCOUT_256_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_HUD_UNIT_SCOUT_01",
+      "category": "hud-icon",
+      "file": "scout/ui/ICON_HUD_UNIT_SCOUT_01.png",
+      "canvasPx": [
+        256,
+        256
+      ]
+    },
+    {
+      "id": "ICON_MINIMAP_UNIT_SCOUT_01",
+      "category": "minimap-icon",
+      "file": "scout/ui/ICON_MINIMAP_UNIT_SCOUT_01.png",
+      "canvasPx": [
+        64,
+        64
+      ]
+    },
+    {
+      "id": "VFX_SCOUT_ATTACK_01",
+      "category": "attack-vfx",
+      "file": "scout/vfx/VFX_SCOUT_ATTACK_01.png",
+      "canvasPx": [
+        512,
+        512
+      ],
+      "blendMode": "additive"
+    }
+  ],
+  "stateMachine": "scout/state-machine.json",
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,22 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "summary": {
+    "pillars": 6,
+    "edges": 24,
+    "territoryStructures": 25,
+    "totalAssets": 55,
+    "subpacks": 3
+  },
+  "renderOrder": {
+    "terrain": 100,
+    "edges": 200,
+    "territory": 500,
+    "pillars": 600,
+    "actors": 700,
+    "vfx": 800
+  },
+  "signature": "Tehkné Solutions"
+}

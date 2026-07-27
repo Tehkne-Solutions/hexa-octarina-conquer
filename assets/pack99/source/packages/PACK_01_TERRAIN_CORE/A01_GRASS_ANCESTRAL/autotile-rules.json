@@ -1,0 +1,40 @@
+{
+  "terrainId": "TERRAIN_GRASS_ANCESTRAL",
+  "system": "16-piece-flat-transition",
+  "bitOrder": [
+    "N",
+    "E",
+    "S",
+    "W"
+  ],
+  "rules": {
+    "1111": "TILE_GRASS_FLAT_CENTER_A_01",
+    "0111": "TILE_GRASS_FLAT_EDGE_N_01",
+    "1011": "TILE_GRASS_FLAT_EDGE_E_01",
+    "1101": "TILE_GRASS_FLAT_EDGE_S_01",
+    "1110": "TILE_GRASS_FLAT_EDGE_W_01",
+    "0011": "TILE_GRASS_FLAT_OUTER_NE_01",
+    "1001": "TILE_GRASS_FLAT_OUTER_SE_01",
+    "1100": "TILE_GRASS_FLAT_OUTER_SW_01",
+    "0110": "TILE_GRASS_FLAT_OUTER_NW_01",
+    "0000": "TILE_GRASS_FLAT_ISOLATED_01"
+  },
+  "innerCornerOverlays": {
+    "NE": "TILE_GRASS_FLAT_INNER_NE_01",
+    "NW": "TILE_GRASS_FLAT_INNER_NW_01",
+    "SE": "TILE_GRASS_FLAT_INNER_SE_01",
+    "SW": "TILE_GRASS_FLAT_INNER_SW_01"
+  },
+  "centerVariants": [
+    "TILE_GRASS_FLAT_CENTER_A_01",
+    "TILE_GRASS_FLAT_CENTER_B_01",
+    "TILE_GRASS_FLAT_CENTER_C_01"
+  ],
+  "usage": [
+    "Render a base terrain tile in every logical cell.",
+    "Render grass center tiles when all neighbors belong to grass.",
+    "Render transition overlays over the underlying neighboring terrain.",
+    "Use inner-corner overlays as a second transition pass for diagonal gaps.",
+    "Do not add per-tile drop shadows or vertical cliff geometry."
+  ]
+}

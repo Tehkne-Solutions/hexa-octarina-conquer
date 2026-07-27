@@ -1,0 +1,30 @@
+{
+  "packId": "HOC_PACK_05_MAPS_PROCEDURAL_FINAL",
+  "dependencies": [
+    {
+      "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+      "version": "1.0.0",
+      "required": true,
+      "role": "terrain"
+    },
+    {
+      "packId": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+      "version": "1.0.0",
+      "required": true,
+      "role": "board-nodes-edges-territory"
+    },
+    {
+      "packId": "HOC_PACK_03_RESOURCES_FINAL",
+      "version": "1.0.0",
+      "required": true,
+      "role": "resources"
+    },
+    {
+      "packId": "HOC_PACK_04_PROPS_OBSTACLES_FINAL",
+      "version": "1.0.0",
+      "required": true,
+      "role": "props-obstacles"
+    }
+  ],
+  "assetPackaging": "referenced-not-duplicated"
+}

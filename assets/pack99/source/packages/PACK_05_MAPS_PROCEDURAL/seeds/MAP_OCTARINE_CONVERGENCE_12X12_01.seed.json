@@ -1,0 +1,11 @@
+{
+  "mapId": "MAP_OCTARINE_CONVERGENCE_12X12_01",
+  "seed": 442901,
+  "preset": "convergence",
+  "size": [
+    12,
+    12
+  ],
+  "spawnDensity": 0.13,
+  "generatorVersion": "1.0.0"
+}

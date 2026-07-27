@@ -1,0 +1,53 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_09_CHAMPIONS_ADVANCED_FINAL",
+  "version": "1.0.0",
+  "champions": [
+    {
+      "championId": "CHAMP_PALADIN_01",
+      "directions": 4,
+      "animationSets": 28,
+      "expectedAnimationSets": 28,
+      "pngFiles": 211,
+      "jsonFiles": 30,
+      "passed": true
+    },
+    {
+      "championId": "CHAMP_SORCERESS_01",
+      "directions": 4,
+      "animationSets": 28,
+      "expectedAnimationSets": 28,
+      "pngFiles": 211,
+      "jsonFiles": 30,
+      "passed": true
+    },
+    {
+      "championId": "CHAMP_BERSERKER_01",
+      "directions": 4,
+      "animationSets": 28,
+      "expectedAnimationSets": 28,
+      "pngFiles": 211,
+      "jsonFiles": 30,
+      "passed": true
+    },
+    {
+      "championId": "CHAMP_UNDEAD_KNIGHT_01",
+      "directions": 4,
+      "animationSets": 28,
+      "expectedAnimationSets": 28,
+      "pngFiles": 211,
+      "jsonFiles": 30,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "championCount": 4,
+    "totalAnimationSets": 112,
+    "totalAnimationFrames": 624,
+    "registeredAssets": 172,
+    "progressionPaths": 4,
+    "abilities": 8,
+    "passed": true
+  },
+  "signature": "Tehkné Solutions"
+}

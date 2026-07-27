@@ -1,0 +1,149 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packageId": "HOC_A07_SUPPORT_MODULES",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "contains": [
+    {
+      "id": "PATH_DIRT_STRAIGHT_NS_01",
+      "file": "tiles/PATH_DIRT_STRAIGHT_NS_01.png",
+      "role": "path",
+      "shape": "NS",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_STRAIGHT_EW_01",
+      "file": "tiles/PATH_DIRT_STRAIGHT_EW_01.png",
+      "role": "path",
+      "shape": "EW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_NE_01",
+      "file": "tiles/PATH_DIRT_BEND_NE_01.png",
+      "role": "path",
+      "shape": "NE",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_NW_01",
+      "file": "tiles/PATH_DIRT_BEND_NW_01.png",
+      "role": "path",
+      "shape": "NW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_SE_01",
+      "file": "tiles/PATH_DIRT_BEND_SE_01.png",
+      "role": "path",
+      "shape": "SE",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_BEND_SW_01",
+      "file": "tiles/PATH_DIRT_BEND_SW_01.png",
+      "role": "path",
+      "shape": "SW",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    },
+    {
+      "id": "PATH_DIRT_CROSS_01",
+      "file": "tiles/PATH_DIRT_CROSS_01.png",
+      "role": "path",
+      "shape": "CROSS",
+      "canvasPx": [
+        1024,
+        512
+      ],
+      "logicalSize": [
+        1,
+        1
+      ],
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "flatEdges": true,
+      "description": "Support module for roads/paths in the terrain core"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

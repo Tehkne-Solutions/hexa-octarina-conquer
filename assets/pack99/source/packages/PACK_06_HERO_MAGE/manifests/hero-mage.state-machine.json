@@ -1,0 +1,69 @@
+{
+  "characterId": "HERO_MAGE_01",
+  "initialState": "idle",
+  "states": {
+    "idle": {
+      "animationPattern": "HERO_MAGE_IDLE_{direction}_01",
+      "loop": true,
+      "transitions": [
+        "walk",
+        "attack",
+        "cast",
+        "hit",
+        "defeat",
+        "victory"
+      ]
+    },
+    "walk": {
+      "animationPattern": "HERO_MAGE_WALK_{direction}_01",
+      "loop": true,
+      "events": [
+        "footstep"
+      ],
+      "transitions": [
+        "idle",
+        "attack",
+        "cast",
+        "hit",
+        "defeat"
+      ]
+    },
+    "attack": {
+      "animationPattern": "HERO_MAGE_ATTACK_{direction}_01",
+      "loop": false,
+      "events": [
+        "attack_commit",
+        "damage_window"
+      ],
+      "returnsTo": "idle"
+    },
+    "cast": {
+      "animationPattern": "HERO_MAGE_CAST_{direction}_01",
+      "loop": false,
+      "events": [
+        "mana_charge",
+        "spell_release"
+      ],
+      "projectileId": "VFX_MAGE_PROJECTILE_01",
+      "impactId": "VFX_MAGE_IMPACT_01",
+      "returnsTo": "idle"
+    },
+    "hit": {
+      "animationPattern": "HERO_MAGE_HIT_{direction}_01",
+      "loop": false,
+      "events": [
+        "hit_flash"
+      ],
+      "returnsTo": "idle"
+    },
+    "defeat": {
+      "animationPattern": "HERO_MAGE_DEFEAT_{direction}_01",
+      "loop": false,
+      "terminal": true
+    },
+    "victory": {
+      "animationPattern": "HERO_MAGE_VICTORY_{direction}_01",
+      "loop": true
+    }
+  }
+}

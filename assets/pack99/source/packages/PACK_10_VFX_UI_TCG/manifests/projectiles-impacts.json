@@ -1,0 +1,58 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "projectiles": [
+    "PROJECTILE_ARROW_01",
+    "PROJECTILE_ARCANE_01",
+    "PROJECTILE_FIREBALL_01",
+    "PROJECTILE_ICE_SHARD_01",
+    "PROJECTILE_SOUL_BOLT_01",
+    "PROJECTILE_POISON_GLOB_01",
+    "PROJECTILE_HOLY_LANCE_01",
+    "PROJECTILE_STONE_SHARD_01"
+  ],
+  "impacts": [
+    "IMPACT_ARROW_01",
+    "IMPACT_ARCANE_01",
+    "IMPACT_FIREBALL_01",
+    "IMPACT_ICE_SHARD_01",
+    "IMPACT_SOUL_BOLT_01",
+    "IMPACT_POISON_GLOB_01",
+    "IMPACT_HOLY_LANCE_01",
+    "IMPACT_STONE_SHARD_01"
+  ],
+  "pairs": [
+    {
+      "projectileId": "PROJECTILE_ARROW_01",
+      "impactId": "IMPACT_ARROW_01"
+    },
+    {
+      "projectileId": "PROJECTILE_ARCANE_01",
+      "impactId": "IMPACT_ARCANE_01"
+    },
+    {
+      "projectileId": "PROJECTILE_FIREBALL_01",
+      "impactId": "IMPACT_FIREBALL_01"
+    },
+    {
+      "projectileId": "PROJECTILE_ICE_SHARD_01",
+      "impactId": "IMPACT_ICE_SHARD_01"
+    },
+    {
+      "projectileId": "PROJECTILE_SOUL_BOLT_01",
+      "impactId": "IMPACT_SOUL_BOLT_01"
+    },
+    {
+      "projectileId": "PROJECTILE_POISON_GLOB_01",
+      "impactId": "IMPACT_POISON_GLOB_01"
+    },
+    {
+      "projectileId": "PROJECTILE_HOLY_LANCE_01",
+      "impactId": "IMPACT_HOLY_LANCE_01"
+    },
+    {
+      "projectileId": "PROJECTILE_STONE_SHARD_01",
+      "impactId": "IMPACT_STONE_SHARD_01"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

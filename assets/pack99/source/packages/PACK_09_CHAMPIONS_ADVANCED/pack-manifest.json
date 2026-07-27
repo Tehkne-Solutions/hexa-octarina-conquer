@@ -1,0 +1,51 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_09_CHAMPIONS_ADVANCED_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready-v1",
+  "champions": [
+    "CHAMP_PALADIN_01",
+    "CHAMP_SORCERESS_01",
+    "CHAMP_BERSERKER_01",
+    "CHAMP_UNDEAD_KNIGHT_01"
+  ],
+  "dependencies": [
+    "HOC_PACK_03_RESOURCES_FINAL@1.0.0",
+    "HOC_PACK_08_BASIC_UNITS_FINAL@1.0.0"
+  ],
+  "summary": {
+    "championCount": 4,
+    "directionsPerChampion": 4,
+    "statesPerChampion": 7,
+    "animationSetsPerChampion": 28,
+    "totalAnimationSets": 112,
+    "totalAnimationFrames": 624,
+    "progressionPaths": 4,
+    "abilities": 8,
+    "registeredAssets": 172,
+    "qaPassed": true
+  },
+  "technical": {
+    "frameCanvasPx": [
+      256,
+      256
+    ],
+    "directionCanvasPx": [
+      1024,
+      1024
+    ],
+    "footprint": [
+      1,
+      1
+    ],
+    "anchor": [
+      0.5,
+      0.91
+    ],
+    "recommendedDisplayHeightPx": 160,
+    "zOffset": 0.35,
+    "background": "transparent"
+  },
+  "note": "Runtime-ready v1 derived from the approved champion concept sheet. Canonical IDs, progression data and atlas files allow future replacement by redrawn art without gameplay code changes.",
+  "signature": "Tehkné Solutions"
+}

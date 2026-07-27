@@ -1,0 +1,103 @@
+{
+  "frames": {
+    "MAGE_ATTACK_SE_00": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 90
+    },
+    "MAGE_ATTACK_SE_01": {
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 80
+    },
+    "MAGE_ATTACK_SE_02": {
+      "frame": {
+        "x": 1024,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 75
+    },
+    "MAGE_ATTACK_SE_03": {
+      "frame": {
+        "x": 1536,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 75
+    },
+    "MAGE_ATTACK_SE_04": {
+      "frame": {
+        "x": 2048,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 90
+    },
+    "MAGE_ATTACK_SE_05": {
+      "frame": {
+        "x": 2560,
+        "y": 0,
+        "w": 512,
+        "h": 512
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 120
+    }
+  },
+  "meta": {
+    "image": "MAGE_ATTACK_SE_SHEET.png",
+    "size": {
+      "w": 3072,
+      "h": 512
+    },
+    "scale": 1,
+    "direction": "SE",
+    "animation": "attack",
+    "loop": false,
+    "events": [
+      {
+        "frame": 2,
+        "event": "attack_commit"
+      },
+      {
+        "frame": 3,
+        "event": "damage_window"
+      }
+    ]
+  }
+}

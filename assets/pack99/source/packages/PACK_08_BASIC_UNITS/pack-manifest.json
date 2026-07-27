@@ -1,0 +1,58 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_08_BASIC_UNITS_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready-v1",
+  "units": [
+    "UNIT_RECRUIT_01",
+    "UNIT_ARCHER_01",
+    "UNIT_GUARDIAN_01",
+    "UNIT_ARCANE_APPRENTICE_01",
+    "UNIT_COLLECTOR_01",
+    "UNIT_SCOUT_01",
+    "UNIT_SKELETON_01",
+    "UNIT_STONE_GOLEM_01"
+  ],
+  "summary": {
+    "unitCount": 8,
+    "directionsPerUnit": 4,
+    "statesPerUnit": 5,
+    "animationSetsPerUnit": 20,
+    "totalAnimationSets": 160,
+    "totalAnimationFrames": 800,
+    "registeredAssets": 232,
+    "qaPassed": true
+  },
+  "technical": {
+    "frameCanvasPx": [
+      256,
+      256
+    ],
+    "directionCanvasPx": [
+      1024,
+      1024
+    ],
+    "portraitCanvasPx": [
+      256,
+      256
+    ],
+    "minimapCanvasPx": [
+      64,
+      64
+    ],
+    "footprint": [
+      1,
+      1
+    ],
+    "anchor": [
+      0.5,
+      0.91
+    ],
+    "recommendedDisplayHeightPx": 142,
+    "zOffset": 0.32,
+    "background": "transparent",
+    "factionMasks": true
+  },
+  "note": "Runtime-ready v1 derived from approved concept sheets. Canonical IDs, faction masks and atlas files allow future replacement by hand-redrawn art without gameplay code changes.",
+  "signature": "Tehkné Solutions"
+}

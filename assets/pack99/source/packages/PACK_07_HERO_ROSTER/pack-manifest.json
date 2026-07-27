@@ -1,0 +1,46 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_07_HERO_ROSTER_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready-v1",
+  "heroes": [
+    "HERO_WARRIOR_01",
+    "HERO_NECROMANCER_01",
+    "HERO_RANGER_01",
+    "HERO_ASSASSIN_01",
+    "HERO_GUARDIAN_01"
+  ],
+  "summary": {
+    "heroCount": 5,
+    "directionsPerHero": 4,
+    "statesPerHero": 7,
+    "animationSetsPerHero": 28,
+    "totalAnimationSets": 140,
+    "totalAnimationFrames": 780,
+    "registeredAssets": 215,
+    "qaPassed": true
+  },
+  "technical": {
+    "frameCanvasPx": [
+      256,
+      256
+    ],
+    "directionCanvasPx": [
+      1024,
+      1024
+    ],
+    "footprint": [
+      1,
+      1
+    ],
+    "anchor": [
+      0.5,
+      0.91
+    ],
+    "recommendedDisplayHeightPx": 160,
+    "zOffset": 0.35,
+    "background": "transparent"
+  },
+  "note": "Runtime-ready v1 derived from approved concept sheets. Canonical IDs and atlas files allow later replacement by hand-redrawn animation frames without gameplay code changes.",
+  "signature": "Tehkné Solutions"
+}

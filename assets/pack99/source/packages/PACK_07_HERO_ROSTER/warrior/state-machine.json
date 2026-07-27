@@ -1,0 +1,34 @@
+{
+  "characterId": "HERO_WARRIOR_01",
+  "initialState": "idle",
+  "states": {
+    "idle": {
+      "animationPattern": "HERO_WARRIOR_01_IDLE_{direction}_01",
+      "loop": true
+    },
+    "walk": {
+      "animationPattern": "HERO_WARRIOR_01_WALK_{direction}_01",
+      "loop": true
+    },
+    "attack": {
+      "animationPattern": "HERO_WARRIOR_01_ATTACK_{direction}_01",
+      "loop": false
+    },
+    "cast": {
+      "animationPattern": "HERO_WARRIOR_01_CAST_{direction}_01",
+      "loop": false
+    },
+    "hit": {
+      "animationPattern": "HERO_WARRIOR_01_HIT_{direction}_01",
+      "loop": false
+    },
+    "defeat": {
+      "animationPattern": "HERO_WARRIOR_01_DEFEAT_{direction}_01",
+      "loop": false
+    },
+    "victory": {
+      "animationPattern": "HERO_WARRIOR_01_VICTORY_{direction}_01",
+      "loop": true
+    }
+  }
+}

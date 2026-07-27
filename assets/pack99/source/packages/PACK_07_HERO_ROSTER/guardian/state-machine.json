@@ -1,0 +1,34 @@
+{
+  "characterId": "HERO_GUARDIAN_01",
+  "initialState": "idle",
+  "states": {
+    "idle": {
+      "animationPattern": "HERO_GUARDIAN_01_IDLE_{direction}_01",
+      "loop": true
+    },
+    "walk": {
+      "animationPattern": "HERO_GUARDIAN_01_WALK_{direction}_01",
+      "loop": true
+    },
+    "attack": {
+      "animationPattern": "HERO_GUARDIAN_01_ATTACK_{direction}_01",
+      "loop": false
+    },
+    "cast": {
+      "animationPattern": "HERO_GUARDIAN_01_CAST_{direction}_01",
+      "loop": false
+    },
+    "hit": {
+      "animationPattern": "HERO_GUARDIAN_01_HIT_{direction}_01",
+      "loop": false
+    },
+    "defeat": {
+      "animationPattern": "HERO_GUARDIAN_01_DEFEAT_{direction}_01",
+      "loop": false
+    },
+    "victory": {
+      "animationPattern": "HERO_GUARDIAN_01_VICTORY_{direction}_01",
+      "loop": true
+    }
+  }
+}

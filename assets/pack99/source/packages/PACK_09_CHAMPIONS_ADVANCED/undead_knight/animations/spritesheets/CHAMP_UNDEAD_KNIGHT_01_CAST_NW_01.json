@@ -1,0 +1,128 @@
+{
+  "frames": {
+    "frame_00": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_01": {
+      "frame": {
+        "x": 256,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_02": {
+      "frame": {
+        "x": 512,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_03": {
+      "frame": {
+        "x": 768,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 100
+    },
+    "frame_04": {
+      "frame": {
+        "x": 1024,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 90
+    },
+    "frame_05": {
+      "frame": {
+        "x": 1280,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 90
+    },
+    "frame_06": {
+      "frame": {
+        "x": 1536,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 110
+    },
+    "frame_07": {
+      "frame": {
+        "x": 1792,
+        "y": 0,
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.91
+      },
+      "duration": 150
+    }
+  },
+  "meta": {
+    "image": "CHAMP_UNDEAD_KNIGHT_01_CAST_NW_01.png",
+    "size": {
+      "w": 2048,
+      "h": 256
+    },
+    "direction": "NW",
+    "animation": "cast",
+    "loop": false,
+    "events": [
+      {
+        "frame": 3,
+        "event": "skill_charge"
+      },
+      {
+        "frame": 5,
+        "event": "skill_release"
+      }
+    ]
+  }
+}

@@ -1,0 +1,275 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "signature": "Tehkné Solutions",
+  "version": "0.1.0",
+  "currentProductionPoint": "HOC_PACK_01_TERRAIN_CORE / A02 Pedra Rúnica Flat Premium 2.5D",
+  "statusLegend": {
+    "runtime_ready": "pronto para uso",
+    "runtime_candidate": "utilizável após QA final",
+    "prototype": "serve para lógica e integração provisória",
+    "concept_only": "referência visual, não entra no build",
+    "not_started": "não iniciado",
+    "future": "consolidação futura"
+  },
+  "packs": [
+    {
+      "packId": "HOC_PACK_00_FOUNDATION",
+      "name": "Fundação, Art Bible e Registro",
+      "status": "partial",
+      "contains": [
+        "Style Lock 2.5D",
+        "câmera e iluminação",
+        "escala e âncoras",
+        "convenções de IDs",
+        "índice global de assets",
+        "changelog e versões"
+      ],
+      "existing": [],
+      "nextTasks": [
+        "consolidar Art Bible final",
+        "criar assets-registry.json global",
+        "congelar escalas oficiais"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_01_TERRAIN_CORE",
+      "name": "Terrenos Flat Premium 2.5D",
+      "status": "in_progress",
+      "contains": [
+        "A01 Planície Ancestral",
+        "A02 Pedra Rúnica",
+        "A03 Floresta",
+        "A04 Terra Corrompida",
+        "A05 Água Rasa",
+        "A06 Lava",
+        "A07 Transições, caminhos e elevações separadas"
+      ],
+      "existing": [
+        "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip"
+      ],
+      "nextTasks": [
+        "A02 Pedra Rúnica Flat Premium",
+        "A03 Floresta Flat Premium",
+        "A04 Terra Corrompida Flat Premium",
+        "A05 Água Rasa Flat Premium",
+        "A06 Lava Flat Premium",
+        "A07 transições entre biomas"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_02_BOARD_SYSTEM",
+      "name": "Sistema do Tabuleiro",
+      "status": "prototype",
+      "contains": [
+        "pilares e estados",
+        "arestas de madeira, pedra e arcana",
+        "estruturas territoriais",
+        "regras de autotile e conexões",
+        "colisão, footprints e profundidade"
+      ],
+      "existing": [
+        "pilares conceituais",
+        "arestas conceituais",
+        "evolução territorial conceitual"
+      ],
+      "nextTasks": [
+        "normalizar pilares",
+        "normalizar arestas por direção",
+        "separar emissivos e sombras",
+        "gerar estruturas territoriais runtime-ready"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_03_RESOURCES",
+      "name": "Recursos Estratégicos",
+      "status": "runtime_candidate",
+      "contains": [
+        "madeira",
+        "pedra",
+        "ouro",
+        "mana azul",
+        "alimento",
+        "conhecimento",
+        "cristal octarino",
+        "fragmento de alma"
+      ],
+      "existing": [
+        "HOC_GROUP05_RESOURCES.zip"
+      ],
+      "nextTasks": [
+        "criar variações pequeno/médio/abundante/esgotado",
+        "separar emissivos",
+        "criar ícones HUD e minimapa"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_04_PROPS_OBSTACLES",
+      "name": "Props, Obstáculos e Pontos de Interesse",
+      "status": "runtime_candidate_needs_visual_upgrade",
+      "contains": [
+        "árvore",
+        "rocha",
+        "ruína",
+        "barricada",
+        "portal",
+        "torre",
+        "fenda de lava",
+        "ponte"
+      ],
+      "existing": [
+        "HOC_GROUP06_OBSTACLES_PROPS.zip"
+      ],
+      "nextTasks": [
+        "refazer no acabamento premium",
+        "criar variações e estados",
+        "criar pontes nas duas orientações"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_05_MAP_VALIDATION",
+      "name": "Mapas, Validação e Geração Procedural",
+      "status": "prototype",
+      "contains": [
+        "mapa 5x5",
+        "JSON de células",
+        "matriz de colisão",
+        "custos de movimento",
+        "camadas",
+        "sementes e regras de geração"
+      ],
+      "existing": [
+        "HOC_GROUP07_MAP_VALIDATION_5X5.zip"
+      ],
+      "nextTasks": [
+        "refazer mapa após finalizar terrains",
+        "criar 8x8 e 12x12",
+        "criar gerador procedural"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_06_HERO_MAGE",
+      "name": "Herói Mago",
+      "status": "prototype",
+      "contains": [
+        "master",
+        "direções",
+        "animações",
+        "retrato",
+        "arma",
+        "emissivos e VFX"
+      ],
+      "existing": [
+        "HOC_GROUP09_MAGE_DIRECTIONS.zip",
+        "HOC_GROUP10_MAGE_ANIMATIONS.zip"
+      ],
+      "nextTasks": [
+        "refazer master definitivo",
+        "redesenhar direções reais",
+        "substituir deformações por poses quadro a quadro"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_07_HERO_ROSTER",
+      "name": "Demais Heróis",
+      "status": "concept_only",
+      "contains": [
+        "Guerreiro",
+        "Necromante",
+        "Ranger",
+        "Sicário",
+        "Guardião"
+      ],
+      "existing": [
+        "pranchas conceituais"
+      ],
+      "nextTasks": [
+        "gerar master individual de cada herói",
+        "direções",
+        "animações",
+        "retratos",
+        "armas isoladas"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_08_BASIC_UNITS",
+      "name": "Unidades Básicas",
+      "status": "not_started_final",
+      "contains": [
+        "Recruta",
+        "Arqueiro",
+        "Guardião",
+        "Aprendiz Arcano",
+        "Coletor",
+        "Batedor",
+        "Esqueleto",
+        "Golem de Pedra"
+      ],
+      "existing": [
+        "pranchas conceituais inconsistentes"
+      ],
+      "nextTasks": [
+        "produzir masters individuais",
+        "direções",
+        "animações",
+        "ícones e máscaras de facção"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_09_CHAMPIONS_ADVANCED",
+      "name": "Campeões e Unidades Avançadas",
+      "status": "concept_only",
+      "contains": [
+        "Paladino",
+        "Feiticeira",
+        "Berserker",
+        "Cavaleiro Morto-Vivo",
+        "unidades avançadas futuras"
+      ],
+      "existing": [
+        "prancha conceitual"
+      ],
+      "nextTasks": [
+        "produzir assets individuais",
+        "habilidades especiais",
+        "VFX exclusivos"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_10_VFX_UI",
+      "name": "VFX, Interface e Cartas",
+      "status": "not_started",
+      "contains": [
+        "VFX de mapa",
+        "VFX de personagens",
+        "projéteis e impactos",
+        "ícones",
+        "retratos",
+        "cartas TCG",
+        "molduras e raridades"
+      ],
+      "existing": [],
+      "nextTasks": [
+        "criar biblioteca de VFX",
+        "criar ícones e retratos",
+        "criar cartas TCG"
+      ]
+    },
+    {
+      "packId": "HOC_PACK_99_FINAL_RUNTIME",
+      "name": "Build Final Runtime",
+      "status": "future",
+      "contains": [
+        "somente assets aprovados",
+        "atlas",
+        "manifests globais",
+        "prefabs/configurações",
+        "relatório final",
+        "licença e changelog"
+      ],
+      "existing": [],
+      "nextTasks": [
+        "consolidar após aprovação de todos os packs"
+      ]
+    }
+  ]
+}

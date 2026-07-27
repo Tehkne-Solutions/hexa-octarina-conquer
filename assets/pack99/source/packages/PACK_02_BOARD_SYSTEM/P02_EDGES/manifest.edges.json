@@ -1,0 +1,542 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "pack": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "subpack": "P02_EDGES",
+  "version": "1.0.0",
+  "status": "runtime-ready",
+  "orientationConvention": {
+    "NE_SW": "connects northeast and southwest grid points",
+    "NW_SE": "connects northwest and southeast grid points"
+  },
+  "assets": [
+    {
+      "id": "EDGE_WOOD_PREVIEW_NE_SW_01",
+      "material": "wood",
+      "state": "preview",
+      "orientation": "NE_SW",
+      "file": "wood/EDGE_WOOD_PREVIEW_NE_SW_01.png",
+      "shadow": "wood/EDGE_WOOD_PREVIEW_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_BUILT_NE_SW_01",
+      "material": "wood",
+      "state": "built",
+      "orientation": "NE_SW",
+      "file": "wood/EDGE_WOOD_BUILT_NE_SW_01.png",
+      "shadow": "wood/EDGE_WOOD_BUILT_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_DAMAGED_NE_SW_01",
+      "material": "wood",
+      "state": "damaged",
+      "orientation": "NE_SW",
+      "file": "wood/EDGE_WOOD_DAMAGED_NE_SW_01.png",
+      "shadow": "wood/EDGE_WOOD_DAMAGED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_DESTROYED_NE_SW_01",
+      "material": "wood",
+      "state": "destroyed",
+      "orientation": "NE_SW",
+      "file": "wood/EDGE_WOOD_DESTROYED_NE_SW_01.png",
+      "shadow": "wood/EDGE_WOOD_DESTROYED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_PREVIEW_NW_SE_01",
+      "material": "wood",
+      "state": "preview",
+      "orientation": "NW_SE",
+      "file": "wood/EDGE_WOOD_PREVIEW_NW_SE_01.png",
+      "shadow": "wood/EDGE_WOOD_PREVIEW_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_BUILT_NW_SE_01",
+      "material": "wood",
+      "state": "built",
+      "orientation": "NW_SE",
+      "file": "wood/EDGE_WOOD_BUILT_NW_SE_01.png",
+      "shadow": "wood/EDGE_WOOD_BUILT_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_DAMAGED_NW_SE_01",
+      "material": "wood",
+      "state": "damaged",
+      "orientation": "NW_SE",
+      "file": "wood/EDGE_WOOD_DAMAGED_NW_SE_01.png",
+      "shadow": "wood/EDGE_WOOD_DAMAGED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_WOOD_DESTROYED_NW_SE_01",
+      "material": "wood",
+      "state": "destroyed",
+      "orientation": "NW_SE",
+      "file": "wood/EDGE_WOOD_DESTROYED_NW_SE_01.png",
+      "shadow": "wood/EDGE_WOOD_DESTROYED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_PREVIEW_NE_SW_01",
+      "material": "stone",
+      "state": "preview",
+      "orientation": "NE_SW",
+      "file": "stone/EDGE_STONE_PREVIEW_NE_SW_01.png",
+      "shadow": "stone/EDGE_STONE_PREVIEW_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_BUILT_NE_SW_01",
+      "material": "stone",
+      "state": "built",
+      "orientation": "NE_SW",
+      "file": "stone/EDGE_STONE_BUILT_NE_SW_01.png",
+      "shadow": "stone/EDGE_STONE_BUILT_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_DAMAGED_NE_SW_01",
+      "material": "stone",
+      "state": "damaged",
+      "orientation": "NE_SW",
+      "file": "stone/EDGE_STONE_DAMAGED_NE_SW_01.png",
+      "shadow": "stone/EDGE_STONE_DAMAGED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_DESTROYED_NE_SW_01",
+      "material": "stone",
+      "state": "destroyed",
+      "orientation": "NE_SW",
+      "file": "stone/EDGE_STONE_DESTROYED_NE_SW_01.png",
+      "shadow": "stone/EDGE_STONE_DESTROYED_NE_SW_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_PREVIEW_NW_SE_01",
+      "material": "stone",
+      "state": "preview",
+      "orientation": "NW_SE",
+      "file": "stone/EDGE_STONE_PREVIEW_NW_SE_01.png",
+      "shadow": "stone/EDGE_STONE_PREVIEW_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_BUILT_NW_SE_01",
+      "material": "stone",
+      "state": "built",
+      "orientation": "NW_SE",
+      "file": "stone/EDGE_STONE_BUILT_NW_SE_01.png",
+      "shadow": "stone/EDGE_STONE_BUILT_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_DAMAGED_NW_SE_01",
+      "material": "stone",
+      "state": "damaged",
+      "orientation": "NW_SE",
+      "file": "stone/EDGE_STONE_DAMAGED_NW_SE_01.png",
+      "shadow": "stone/EDGE_STONE_DAMAGED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_STONE_DESTROYED_NW_SE_01",
+      "material": "stone",
+      "state": "destroyed",
+      "orientation": "NW_SE",
+      "file": "stone/EDGE_STONE_DESTROYED_NW_SE_01.png",
+      "shadow": "stone/EDGE_STONE_DESTROYED_NW_SE_01_SHADOW.png",
+      "emissive": null,
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_PREVIEW_NE_SW_01",
+      "material": "arcane",
+      "state": "preview",
+      "orientation": "NE_SW",
+      "file": "arcane/EDGE_ARCANE_PREVIEW_NE_SW_01.png",
+      "shadow": "arcane/EDGE_ARCANE_PREVIEW_NE_SW_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_PREVIEW_NE_SW_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_BUILT_NE_SW_01",
+      "material": "arcane",
+      "state": "built",
+      "orientation": "NE_SW",
+      "file": "arcane/EDGE_ARCANE_BUILT_NE_SW_01.png",
+      "shadow": "arcane/EDGE_ARCANE_BUILT_NE_SW_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_BUILT_NE_SW_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_DAMAGED_NE_SW_01",
+      "material": "arcane",
+      "state": "damaged",
+      "orientation": "NE_SW",
+      "file": "arcane/EDGE_ARCANE_DAMAGED_NE_SW_01.png",
+      "shadow": "arcane/EDGE_ARCANE_DAMAGED_NE_SW_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_DAMAGED_NE_SW_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_DESTROYED_NE_SW_01",
+      "material": "arcane",
+      "state": "destroyed",
+      "orientation": "NE_SW",
+      "file": "arcane/EDGE_ARCANE_DESTROYED_NE_SW_01.png",
+      "shadow": "arcane/EDGE_ARCANE_DESTROYED_NE_SW_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_DESTROYED_NE_SW_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_PREVIEW_NW_SE_01",
+      "material": "arcane",
+      "state": "preview",
+      "orientation": "NW_SE",
+      "file": "arcane/EDGE_ARCANE_PREVIEW_NW_SE_01.png",
+      "shadow": "arcane/EDGE_ARCANE_PREVIEW_NW_SE_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_PREVIEW_NW_SE_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": false,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_BUILT_NW_SE_01",
+      "material": "arcane",
+      "state": "built",
+      "orientation": "NW_SE",
+      "file": "arcane/EDGE_ARCANE_BUILT_NW_SE_01.png",
+      "shadow": "arcane/EDGE_ARCANE_BUILT_NW_SE_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_BUILT_NW_SE_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_DAMAGED_NW_SE_01",
+      "material": "arcane",
+      "state": "damaged",
+      "orientation": "NW_SE",
+      "file": "arcane/EDGE_ARCANE_DAMAGED_NW_SE_01.png",
+      "shadow": "arcane/EDGE_ARCANE_DAMAGED_NW_SE_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_DAMAGED_NW_SE_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "blocking-edge",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "EDGE_ARCANE_DESTROYED_NW_SE_01",
+      "material": "arcane",
+      "state": "destroyed",
+      "orientation": "NW_SE",
+      "file": "arcane/EDGE_ARCANE_DESTROYED_NW_SE_01.png",
+      "shadow": "arcane/EDGE_ARCANE_DESTROYED_NW_SE_01_SHADOW.png",
+      "emissive": "arcane/EDGE_ARCANE_DESTROYED_NW_SE_01_EMISSIVE.png",
+      "category": "board-edge",
+      "connects": "two-intersections",
+      "logicalLength": 1,
+      "anchor": [
+        0.5,
+        0.78
+      ],
+      "collision": "none",
+      "destructible": true,
+      "canvasPx": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

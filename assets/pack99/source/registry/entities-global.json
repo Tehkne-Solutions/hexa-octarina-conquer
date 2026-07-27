@@ -1,0 +1,190 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "entities": [
+    {
+      "id": "ENTITY_01",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_02",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_03",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_04",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_05",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_06",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_07",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_08",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_09",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_10",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_11",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_12",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_13",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_14",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_15",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_16",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_17",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_18",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_19",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_20",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_21",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_22",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_23",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_24",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_25",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_26",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_27",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_28",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_29",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_30",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_31",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_32",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_33",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_34",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_35",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_36",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_37",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_38",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_39",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_40",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_41",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_42",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_43",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_44",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_45",
+      "signature": "Tehkné Solutions"
+    },
+    {
+      "id": "ENTITY_46",
+      "signature": "Tehkné Solutions"
+    }
+  ]
+}

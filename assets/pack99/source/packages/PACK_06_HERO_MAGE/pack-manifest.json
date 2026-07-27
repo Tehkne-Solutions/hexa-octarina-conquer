@@ -1,0 +1,43 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_06_HERO_MAGE_FINAL",
+  "version": "1.0.0",
+  "status": "runtime-ready-v1",
+  "characterId": "HERO_MAGE_01",
+  "summary": {
+    "masters": 2,
+    "directions": 4,
+    "animationSets": 28,
+    "animationStates": 7,
+    "animationDirections": 4,
+    "portraits": 4,
+    "weaponAssets": 1,
+    "uiAssets": 2,
+    "vfxAssets": 5,
+    "registeredAssets": 46,
+    "qaPassed": true
+  },
+  "technical": {
+    "mapFootprint": [
+      1,
+      1
+    ],
+    "mapAnchor": [
+      0.5,
+      0.91
+    ],
+    "mapDisplayHeightPx": 176,
+    "mapZOffset": 0.35,
+    "frameCanvasPx": [
+      512,
+      512
+    ],
+    "directionCanvasPx": [
+      1024,
+      1024
+    ],
+    "background": "transparent"
+  },
+  "note": "Runtime final v1 consolidates the approved master and current motion-ready animations with canonical IDs and aliases for future frame replacement.",
+  "signature": "Tehkné Solutions"
+}

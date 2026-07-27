@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tehkne.solutions/schemas/hoc-map.schema.json",
+  "title": "Hexa Octarina Conquer Map",
+  "type": "object",
+  "required": [
+    "mapId",
+    "version",
+    "seed",
+    "grid",
+    "cells",
+    "starts"
+  ],
+  "properties": {
+    "mapId": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "preset": {
+      "type": "string"
+    },
+    "grid": {
+      "type": "object",
+      "required": [
+        "type",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "type": {
+          "const": "isometric-diamond"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "cells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "terrainId",
+          "baseTileId",
+          "autotileMask",
+          "walkable",
+          "movementCost"
+        ],
+        "properties": {
+          "x": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "y": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "terrainId": {
+            "type": "string"
+          },
+          "baseTileId": {
+            "type": "string"
+          },
+          "autotileMask": {
+            "type": "string",
+            "pattern": "^[01]{4}$"
+          },
+          "transitionOverlayId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "walkable": {
+            "type": "boolean"
+          },
+          "movementCost": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "starts": {
+      "type": "array",
+      "minItems": 2
+    }
+  }
+}

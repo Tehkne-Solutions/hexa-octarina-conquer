@@ -1,0 +1,35 @@
+{
+  "mode": "hardlink",
+  "catalogAssetCount": 4530,
+  "runtimeCandidateCount": 4488,
+  "materializedAssetCount": 4487,
+  "excludedAssetCount": 1,
+  "targetFileCount": 8974,
+  "results": {
+    "godot:linked": 4487,
+    "web:linked": 4487
+  },
+  "categoryCounts": {
+    "board": 191,
+    "champions": 975,
+    "heroes": 1507,
+    "manifest": 2,
+    "maps": 31,
+    "props": 88,
+    "registry": 4,
+    "resources": 40,
+    "terrain": 268,
+    "units": 1309,
+    "vfx": 72
+  },
+  "excluded": [
+    {
+      "id": "STYLE_LOCK_01",
+      "sourcePath": "packages/PACK_00_FOUNDATION/STYLE_LOCK_01.png",
+      "category": "reference",
+      "reason": "runtime-policy"
+    }
+  ],
+  "policy": "runtime/packs/PACK_99_RECOVERED/runtime-policy.json",
+  "signature": "Tehkné Solutions"
+}
