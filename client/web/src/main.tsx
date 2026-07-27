@@ -47,6 +47,7 @@ const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
 const SprintUi13BoardQa = lazy(() => import("./SprintUi13BoardQa").then((module) => ({ default: module.SprintUi13BoardQa })));
 const SprintUi14GameplayQa = lazy(() => import("./SprintUi14GameplayQa").then((module) => ({ default: module.SprintUi14GameplayQa })));
+const Pack99ValidationArena = lazy(() => import("./Pack99ValidationArena").then((module) => ({ default: module.Pack99ValidationArena })));
 
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
@@ -77,7 +78,8 @@ const qaEnabled = pageUrl.searchParams.get("qa") === "1";
 const ui08QaRequested = qaEnabled && requestedQaScene.startsWith("ui08-");
 const ui13QaRequested = qaEnabled && requestedQaScene.startsWith("ui13-");
 const ui14QaRequested = qaEnabled && requestedQaScene.startsWith("ui14-");
-if (ui08QaRequested || ui13QaRequested || ui14QaRequested) {
+const pack99QaRequested = qaEnabled && requestedQaScene === "pack99-arena";
+if (ui08QaRequested || ui13QaRequested || ui14QaRequested || pack99QaRequested) {
   document.documentElement.dataset.visualQa = "true";
   document.documentElement.dataset.qaStable = pageUrl.searchParams.get("stable") === "1" ? "true" : "false";
   document.documentElement.dataset.qaScreen = requestedQaScene;
@@ -88,6 +90,7 @@ createRoot(root).render(
     {ui08QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
       : ui13QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi13BoardQa scene={requestedQaScene} /></Suspense>
       : ui14QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi14GameplayQa scene={requestedQaScene} /></Suspense>
+      : pack99QaRequested ? <Suspense fallback={<BootFallback />}><Pack99ValidationArena /></Suspense>
       : <><RuntimeEnhancements /><SpectatorReplayPortal /><LoadoutManagerPortal /><AccountOnboardingPortal /><Suspense fallback={<BootFallback />}>{legacyRequested && legacyAllowed ? <LegacyApp /> : <GameApp />}</Suspense></>}
   </GameErrorBoundary></StrictMode>,
 );
