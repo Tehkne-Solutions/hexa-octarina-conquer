@@ -30,6 +30,16 @@ if not exist "%REPO%\scripts\import_pack99_canonical.py" (
   echo %REPO%\scripts\import_pack99_canonical.py
   exit /b 2
 )
+if not exist "%REPO%\scripts\materialize_pack99_runtime.py" (
+  echo ERRO: materializador com politica de runtime nao encontrado em:
+  echo %REPO%\scripts\materialize_pack99_runtime.py
+  exit /b 2
+)
+if not exist "%REPO%\runtime\packs\PACK_99_RECOVERED\runtime-policy.json" (
+  echo ERRO: politica de runtime nao encontrada em:
+  echo %REPO%\runtime\packs\PACK_99_RECOVERED\runtime-policy.json
+  exit /b 2
+)
 where py >nul 2>nul
 if errorlevel 1 (
   echo ERRO: Python Launcher ^(py^) nao encontrado.
@@ -38,7 +48,7 @@ if errorlevel 1 (
 
 if /I "%COMMAND%"=="audit" goto run_mapper
 if /I "%COMMAND%"=="status" goto run_mapper
-if /I "%COMMAND%"=="materialize" goto run_mapper
+if /I "%COMMAND%"=="materialize" goto run_materialize
 if /I "%COMMAND%"=="import" goto run_import
 if /I "%COMMAND%"=="all" goto run_all
 
@@ -75,6 +85,13 @@ py -3 "%REPO%\scripts\import_pack99_canonical.py" ^
 set "EXIT_CODE=%ERRORLEVEL%"
 goto done
 
+:run_materialize
+call :header
+py -3 "%REPO%\scripts\materialize_pack99_runtime.py" ^
+  --repo "%REPO%" %EXTRA_ARGS%
+set "EXIT_CODE=%ERRORLEVEL%"
+goto done
+
 :run_all
 call :header
 echo [1/3] Auditoria e catalogo
@@ -95,12 +112,9 @@ py -3 "%REPO%\scripts\import_pack99_canonical.py" ^
 if errorlevel 1 goto capture_failure
 
 echo.
-echo [3/3] Materializacao Web e Godot
-py -3 "%REPO%\scripts\map_pack99_recovered.py" materialize ^
-  --source "%SOURCE%" ^
-  --repo "%REPO%" ^
-  --sha-file "%SHA_FILE%" ^
-  --recovery-report "%REPORT_FILE%" %EXTRA_ARGS%
+echo [3/3] Materializacao Web e Godot com politica oficial
+py -3 "%REPO%\scripts\materialize_pack99_runtime.py" ^
+  --repo "%REPO%" %EXTRA_ARGS%
 set "EXIT_CODE=%ERRORLEVEL%"
 goto done
 
