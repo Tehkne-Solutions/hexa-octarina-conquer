@@ -95,6 +95,6 @@ export function progressiveTerrainCenterAssetId(
   x: number,
   y: number,
 ): string {
-  const variation = ["A", "B", "C"][Math.abs(x * 3 + y * 5) % 3];
+  const variation = ["A", "B", "C"][Math.abs(x + y * 2) % 3];
   return `TILE_${terrainPrefix(theme, terrain)}_FLAT_CENTER_${variation}_01`;
 }
