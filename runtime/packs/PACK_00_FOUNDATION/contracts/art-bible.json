@@ -1,0 +1,57 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "version": "1.0.0",
+  "visualStyle": {
+    "genre": "fantasia épica tática",
+    "projection": "isométrico 2,5D",
+    "camera": {
+      "mode": "fixed-isometric",
+      "rotation": "locked",
+      "referenceCell": {
+        "widthPx": 256,
+        "heightPx": 256
+      }
+    },
+    "lighting": {
+      "keyDirection": "top-left",
+      "shadows": "soft",
+      "depth": "overlap-and-shadow"
+    },
+    "readability": {
+      "priority": "gameplay silhouettes and states",
+      "textInsideRuntimeAssets": false,
+      "framesInsideRuntimeAssets": false
+    }
+  },
+  "scale": {
+    "referenceHumanMeters": 1.8,
+    "referenceCellPixels": "256x256",
+    "anchorConvention": "bottom-center"
+  },
+  "palette": {
+    "source": "STYLE_LOCK_01.png",
+    "colors": [
+      "#425223",
+      "#12636B",
+      "#3C2E24",
+      "#9A6B4E",
+      "#484665",
+      "#1C6BC5",
+      "#797E81",
+      "#37245E",
+      "#583086",
+      "#9F8757",
+      "#876C3F",
+      "#AB7D50",
+      "#711F1C"
+    ]
+  },
+  "materials": [
+    "stone",
+    "wood",
+    "metal",
+    "crystal",
+    "energy"
+  ],
+  "signature": "Tehkné Solutions"
+}
