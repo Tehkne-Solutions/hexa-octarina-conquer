@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { FantasyUnitSprite } from "./FantasyUnitSprite";
+import { ASH_BRIDGE_UNITS } from "./pack99-ash-bridge-manifest";
 import type { LivingUnit } from "./living-board-data";
-import { resolvePack99Layer } from "./pack99-runtime";
+import {
+  pack99PublicUrl,
+  resolvePack99MissionAsset,
+  resolvePack99SiblingLayer,
+} from "./pack99-runtime";
 
 interface Pack99UnitSpriteProps {
   unit: LivingUnit;
@@ -16,34 +21,34 @@ interface UnitLayers {
   emissive: string | null;
 }
 
-function unitSearch(unit: LivingUnit): { required: string[]; preferred: string[] } {
-  if (unit.id === "kael") return { required: ["hero", "warrior"], preferred: ["idle", "se", "base"] };
-  if (unit.id === "lyra") return { required: ["hero", "ranger"], preferred: ["idle", "ne", "base"] };
-  if (unit.id === "raider-mill") return { required: ["unit", "skeleton"], preferred: ["idle", "nw", "base", "elite"] };
-  return { required: ["unit", "skeleton"], preferred: ["idle", "nw", "base"] };
-}
-
 export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pack99UnitSpriteProps) {
-  const search = useMemo(() => unitSearch(unit), [unit.id]);
+  const reference = useMemo(() => ASH_BRIDGE_UNITS[unit.id] ?? ASH_BRIDGE_UNITS["raider-bridge"], [unit.id]);
   const [layers, setLayers] = useState<UnitLayers>({ base: null, shadow: null, emissive: null });
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
     setFailed(false);
-    Promise.all([
-      resolvePack99Layer(search.required, "base", search.preferred),
-      resolvePack99Layer(search.required, "shadow", search.preferred),
-      resolvePack99Layer(search.required, "emissive", search.preferred),
-    ]).then(([base, shadow, emissive]) => {
-      if (!active) return;
-      setLayers({ base, shadow, emissive });
-      setFailed(!base);
-    }).catch(() => {
-      if (active) setFailed(true);
-    });
+    void resolvePack99MissionAsset(reference)
+      .then(async (baseAsset) => {
+        const [shadowAsset, emissiveAsset] = await Promise.all([
+          resolvePack99SiblingLayer(baseAsset, "shadow"),
+          resolvePack99SiblingLayer(baseAsset, "emissive"),
+        ]);
+        if (!active) return;
+        const next = {
+          base: pack99PublicUrl(baseAsset),
+          shadow: pack99PublicUrl(shadowAsset),
+          emissive: pack99PublicUrl(emissiveAsset),
+        };
+        setLayers(next);
+        setFailed(!next.base);
+      })
+      .catch(() => {
+        if (active) setFailed(true);
+      });
     return () => { active = false; };
-  }, [search]);
+  }, [reference]);
 
   if (failed || !layers.base) {
     return <FantasyUnitSprite unit={unit} selected={selected} compact={compact} />;
@@ -56,6 +61,7 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
     <div
       className={`pack99-unit-sprite faction-${unit.faction} role-${unit.role} state-${visualState} ${compact ? "compact" : ""}`}
       data-pack99-unit={unit.id}
+      data-pack99-asset={reference.id}
     >
       <span className="pack99-unit-ring" aria-hidden="true" />
       <span className="pack99-unit-aura" aria-hidden="true" />
