@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { isBoardThemeId, type BoardThemeId } from "./board-theme";
 import type { LivingTile } from "./living-board-data";
+import { progressiveBoardPosition } from "./progressive-board-projection";
 import {
   loadProgressiveTerrainRegistry,
   progressiveTerrainAssetUrl,
@@ -10,6 +11,7 @@ import {
 
 interface ProgressiveTerrainLayerProps {
   tiles: LivingTile[];
+  onAvailabilityChange?: (available: boolean) => void;
 }
 
 function readTheme(element: HTMLElement | null): BoardThemeId {
@@ -17,7 +19,7 @@ function readTheme(element: HTMLElement | null): BoardThemeId {
   return isBoardThemeId(value) ? value : "orun-mill";
 }
 
-export function ProgressiveTerrainLayer({ tiles }: ProgressiveTerrainLayerProps) {
+export function ProgressiveTerrainLayer({ tiles, onAvailabilityChange }: ProgressiveTerrainLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const [available, setAvailable] = useState(false);
   const [theme, setTheme] = useState<BoardThemeId>("orun-mill");
@@ -25,10 +27,13 @@ export function ProgressiveTerrainLayer({ tiles }: ProgressiveTerrainLayerProps)
   useEffect(() => {
     let active = true;
     void loadProgressiveTerrainRegistry().then((registry) => {
-      if (active) setAvailable(Boolean(registry));
+      if (!active) return;
+      const ready = Boolean(registry);
+      setAvailable(ready);
+      onAvailabilityChange?.(ready);
     });
     return () => { active = false; };
-  }, []);
+  }, [onAvailabilityChange]);
 
   useEffect(() => {
     const shell = layerRef.current?.closest<HTMLElement>(".go-dots-board-shell") ?? null;
@@ -42,12 +47,13 @@ export function ProgressiveTerrainLayer({ tiles }: ProgressiveTerrainLayerProps)
 
   const renderedTiles = useMemo(() => tiles.map((tile) => {
     const assetId = progressiveTerrainCenterAssetId(theme, tile.terrain, tile.x, tile.y);
+    const position = progressiveBoardPosition(tile.x, tile.y);
     return {
       ...tile,
       assetId,
       source: progressiveTerrainAssetUrl(assetId),
-      left: 50 + (tile.x - tile.y) * 7.1,
-      top: 15 + (tile.x + tile.y) * 5.35,
+      left: position.left,
+      top: position.top,
       depth: tile.x + tile.y,
     };
   }), [theme, tiles, available]);

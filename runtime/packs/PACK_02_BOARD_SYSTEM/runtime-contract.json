@@ -1,0 +1,32 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_02_BOARD_SYSTEM_FINAL",
+  "version": "1.1.0",
+  "requirements": {
+    "assetCount": 55,
+    "pillars": 6,
+    "edges": 24,
+    "territoryStructures": 25,
+    "masterCanvasPx": [1024, 1024],
+    "colorMode": "RGBA",
+    "anchors": {
+      "board-node": [0.5, 0.92],
+      "board-edge": [0.5, 0.78],
+      "territory-structure": [0.5, 0.91]
+    },
+    "edgeOrientations": ["NE_SW", "NW_SE"],
+    "zeroUnresolvedReferences": true,
+    "canonicalIdsIdentical": true,
+    "webGodotPathParity": true,
+    "bootstrapIsolation": true
+  },
+  "renderOrder": {
+    "terrain": 100,
+    "edges": 200,
+    "territory": 500,
+    "pillars": 600,
+    "actors": 700,
+    "vfx": 800
+  },
+  "signature": "Tehkné Solutions"
+}

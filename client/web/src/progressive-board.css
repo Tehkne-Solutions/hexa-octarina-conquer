@@ -1,0 +1,138 @@
+/* PACK 02 — progressive board system */
+
+.progressive-board-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.progressive-board-layer.is-ready {
+  opacity: 1;
+}
+
+.progressive-board-asset {
+  --board-anchor-x: 0.5;
+  --board-anchor-y: 0.5;
+  position: absolute;
+  display: block;
+  transform: translate(
+    calc(var(--board-anchor-x) * -100%),
+    calc(var(--board-anchor-y) * -100%)
+  );
+  transform-origin: calc(var(--board-anchor-x) * 100%) calc(var(--board-anchor-y) * 100%);
+  isolation: isolate;
+}
+
+.progressive-board-channel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.progressive-board-channel.is-shadow {
+  z-index: 0;
+  opacity: 0.92;
+}
+
+.progressive-board-channel.is-base {
+  z-index: 1;
+}
+
+.progressive-board-channel.is-emissive {
+  z-index: 2;
+  mix-blend-mode: screen;
+  filter: brightness(1.12) saturate(1.12);
+}
+
+.progressive-board-asset.is-edge {
+  width: clamp(140px, 23%, 240px);
+  aspect-ratio: 1;
+}
+
+.progressive-board-asset.is-pillar {
+  width: clamp(94px, 15%, 164px);
+  aspect-ratio: 1;
+}
+
+.progressive-board-asset.is-territory {
+  width: clamp(120px, 19%, 220px);
+  aspect-ratio: 1;
+}
+
+.progressive-board-asset.is-territory.stage-4,
+.progressive-board-asset.is-territory.stage-5 {
+  width: clamp(146px, 23%, 260px);
+}
+
+.go-dots-board-shell.has-progressive-board .base-go-grid,
+.go-dots-board-shell.has-progressive-board .influence-paths {
+  opacity: 0.12;
+}
+
+.go-dots-board-shell.has-progressive-board .go-node .node-stone {
+  opacity: 0;
+}
+
+.go-dots-board-shell.has-progressive-board .claimed-territory {
+  opacity: 0.12;
+}
+
+.go-dots-board-shell.has-progressive-projection .go-world-landmarks {
+  opacity: 0.54;
+  filter: saturate(0.82);
+}
+
+.go-dots-board-shell.has-progressive-projection .world-river,
+.go-dots-board-shell.has-progressive-projection .world-bridge {
+  opacity: 0.34;
+}
+
+.go-dots-board-shell.has-progressive-board .go-node.selected,
+.go-dots-board-shell.has-progressive-board .go-node.recommended,
+.go-dots-board-shell.has-progressive-board .go-node.valid {
+  z-index: 30;
+}
+
+html[data-effects="light"] .progressive-board-channel.is-emissive,
+html[data-reduced-motion="true"] .progressive-board-channel.is-emissive {
+  filter: none;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .progressive-board-asset.is-edge {
+    width: clamp(104px, 25%, 174px);
+  }
+
+  .progressive-board-asset.is-pillar {
+    width: clamp(72px, 17%, 120px);
+  }
+
+  .progressive-board-asset.is-territory {
+    width: clamp(92px, 21%, 150px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-board-layer {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .progressive-board-layer {
+    display: none;
+  }
+
+  .go-dots-board-shell.has-progressive-board .go-node .node-stone {
+    opacity: 1;
+  }
+}

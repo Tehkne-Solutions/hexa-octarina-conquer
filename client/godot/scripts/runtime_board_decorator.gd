@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 	_refresh_scene()
 
 func _refresh_scene() -> void:
-	if not AssetRuntime.has_runtime() and not ProgressiveTerrainRuntime.has_runtime():
+	if not AssetRuntime.has_runtime() and not ProgressiveTerrainRuntime.has_runtime() and not ProgressiveBoardRuntime.has_runtime():
 		return
 	var scene := get_tree().current_scene
 	if scene == null:
@@ -91,6 +91,15 @@ func _add_pillar(root: Node3D) -> void:
 	var selected := false
 	if root is MeshInstance3D and (root as MeshInstance3D).mesh is CylinderMesh:
 		selected = ((root as MeshInstance3D).mesh as CylinderMesh).height > 0.9
+	var faction: String = root.get_meta("owner", root.get_meta("faction", ""))
+	if ProgressiveBoardRuntime.has_runtime():
+		var progressive_id := ProgressiveBoardRuntime.pillar_asset_id(selected, false, faction)
+		var progressive := ProgressiveBoardRuntime.create_board_asset(progressive_id, 0.0031)
+		if progressive != null:
+			progressive.name = "ProgressivePillar"
+			progressive.position.y = 0.44
+			root.add_child(progressive)
+			return
 	var sprite := AssetRuntime.create_billboard("PILLAR_SELECTED_01" if selected else "PILLAR_NEUTRAL_01", 0.0019)
 	if sprite == null:
 		return
@@ -100,11 +109,20 @@ func _add_pillar(root: Node3D) -> void:
 	root.add_child(sprite)
 
 func _add_edge(root: Node3D) -> void:
-	var asset_id := "EDGE_ARCANE_BUILT_NE_SW_01"
+	var vertical := false
 	if root is MeshInstance3D and (root as MeshInstance3D).mesh is BoxMesh:
 		var size := ((root as MeshInstance3D).mesh as BoxMesh).size
-		if size.z > size.x:
-			asset_id = "EDGE_ARCANE_BUILT_NW_SE_01"
+		vertical = size.z > size.x
+	var owner: String = root.get_meta("owner", root.get_meta("faction", ""))
+	if ProgressiveBoardRuntime.has_runtime():
+		var progressive_id := ProgressiveBoardRuntime.edge_asset_id(owner, vertical)
+		var progressive := ProgressiveBoardRuntime.create_board_asset(progressive_id, 0.0033)
+		if progressive != null:
+			progressive.name = "ProgressiveEdge"
+			progressive.position.y = 0.33
+			root.add_child(progressive)
+			return
+	var asset_id := "EDGE_ARCANE_BUILT_NE_SW_01" if vertical else "EDGE_ARCANE_BUILT_NW_SE_01"
 	var sprite := AssetRuntime.create_billboard(asset_id, 0.0019)
 	if sprite == null:
 		return
