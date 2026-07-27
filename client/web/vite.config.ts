@@ -40,6 +40,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/(?:campaign|ws)(?:\/|$)/],
         cleanupOutdatedCaches: true,
         globPatterns: ["**/*.{js,css,html,json,svg,png,webp,woff2}"],
+        globIgnores: ["assets/progressive/**/*"],
         runtimeCaching: [
           {
             urlPattern: ({ request, url }) => request.method === "GET"
@@ -52,6 +53,16 @@ export default defineConfig({
               networkTimeoutSeconds: 4,
               cacheableResponse: { statuses: [0, 200] },
               expiration: { maxEntries: 4, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            },
+          },
+          {
+            urlPattern: ({ request, url }) => request.method === "GET"
+              && url.pathname.startsWith("/assets/progressive/PACK_01_TERRAIN_CORE/"),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "hexa-pack01-terrain",
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: { maxEntries: 160, maxAgeSeconds: 60 * 60 * 24 * 90 },
             },
           },
           {
