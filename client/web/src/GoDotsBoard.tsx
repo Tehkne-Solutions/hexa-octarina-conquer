@@ -91,7 +91,7 @@ export function GoDotsBoard({
         }
         if (y < LIVING_BOARD_SIZE - 1) {
           const start = progressiveProjection ? progressiveBoardSvgPosition(x, y) : { x: squareSvgCoordinate(x), y: squareSvgCoordinate(y) };
-          const end = progressiveProjection ? progressiveBoardSvgPosition(x, y + 1) : { x: squareSvgCoordinate(x, y + 1), y: squareSvgCoordinate(y + 1) };
+          const end = progressiveProjection ? progressiveBoardSvgPosition(x, y + 1) : { x: squareSvgCoordinate(x), y: squareSvgCoordinate(y + 1) };
           lines.push({ id: `v-${x}-${y}`, x1: start.x, y1: start.y, x2: end.x, y2: end.y });
         }
       }
