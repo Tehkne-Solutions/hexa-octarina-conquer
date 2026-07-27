@@ -236,13 +236,22 @@ func _entity_tint(entity_id: String) -> Color:
 	return Color.WHITE
 
 func _build_static_structure(parent: Node3D, asset_id: String, owner_color: Color, world_position: Vector3, node_name: String, level: int) -> Node3D:
-	var sprite := create_billboard(asset_id, 0.0032)
-	if sprite == null:
-		return null
 	var root := Node3D.new()
 	root.name = node_name
 	root.position = world_position
 	parent.add_child(root)
+	if ProgressiveBoardRuntime.has_runtime() and ProgressiveBoardRuntime.has_asset(asset_id):
+		var progressive := ProgressiveBoardRuntime.create_board_asset(asset_id, 0.0035)
+		if progressive != null:
+			progressive.name = "ProgressiveTerritory"
+			progressive.position.y = 0.76
+			root.add_child(progressive)
+			_add_owner_marker(root, owner_color, level)
+			return root
+	var sprite := create_billboard(asset_id, 0.0032)
+	if sprite == null:
+		root.queue_free()
+		return null
 	sprite.position.y = 0.76
 	root.add_child(sprite)
 	_add_owner_marker(root, owner_color, level)
