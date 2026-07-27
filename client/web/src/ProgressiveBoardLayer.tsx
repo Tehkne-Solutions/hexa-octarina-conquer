@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type SyntheticEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type SyntheticEvent } from "react";
 
 import type { ClaimedCell, InfluenceEdge } from "./go-dots-logic";
 import { tileId, type LivingTile, type LivingUnit } from "./living-board-data";
@@ -28,25 +28,34 @@ interface BoardAssetSpriteProps {
   assetId: string;
   className: string;
   style: CSSProperties;
+  onAssetError: () => void;
 }
 
-function BoardAssetSprite({ assetId, className, style }: BoardAssetSpriteProps) {
+function BoardAssetSprite({ assetId, className, style, onAssetError }: BoardAssetSpriteProps) {
   const asset = progressiveBoardAsset(assetId);
   const file = progressiveBoardAssetUrl(assetId, "file");
   const shadow = progressiveBoardAssetUrl(assetId, "shadow");
   const emissive = progressiveBoardAssetUrl(assetId, "emissive");
+
+  useEffect(() => {
+    if (!asset || !file) onAssetError();
+  }, [asset, file, onAssetError]);
+
   if (!asset || !file) return null;
   const shared = {
     ...style,
     "--board-anchor-x": String(asset.anchor[0]),
     "--board-anchor-y": String(asset.anchor[1]),
   } as CSSProperties;
-  const hideBroken = (event: SyntheticEvent<HTMLImageElement>) => { event.currentTarget.hidden = true; };
+  const handleBroken = (event: SyntheticEvent<HTMLImageElement>) => {
+    event.currentTarget.hidden = true;
+    onAssetError();
+  };
   return (
     <span className={`progressive-board-asset ${className}`} style={shared} data-asset-id={assetId}>
-      {shadow && <img src={shadow} alt="" className="progressive-board-channel is-shadow" draggable={false} onError={hideBroken} />}
-      <img src={file} alt="" className="progressive-board-channel is-base" draggable={false} onError={hideBroken} />
-      {emissive && <img src={emissive} alt="" className="progressive-board-channel is-emissive" draggable={false} onError={hideBroken} />}
+      {shadow && <img src={shadow} alt="" className="progressive-board-channel is-shadow" draggable={false} onError={handleBroken} />}
+      <img src={file} alt="" className="progressive-board-channel is-base" draggable={false} onError={handleBroken} />
+      {emissive && <img src={emissive} alt="" className="progressive-board-channel is-emissive" draggable={false} onError={handleBroken} />}
     </span>
   );
 }
@@ -76,6 +85,11 @@ export function ProgressiveBoardLayer({
     return () => { active = false; };
   }, [onAvailabilityChange]);
 
+  const failRuntime = useCallback(() => {
+    setAvailable(false);
+    onAvailabilityChange?.(false);
+  }, [onAvailabilityChange]);
+
   const occupied = useMemo(() => new Map(units.map((unit) => [tileId(unit.x, unit.y), unit])), [units]);
   const claimedByOwner = useMemo(() => claimedCells.reduce<Record<"player" | "enemy", number>>((counts, cell) => {
     counts[cell.owner] += 1;
@@ -97,6 +111,7 @@ export function ProgressiveBoardLayer({
             assetId={assetId}
             className={`is-edge owner-${edge.owner}`}
             style={{ left: `${position.left}%`, top: `${position.top}%`, zIndex: 200 + Math.round(position.top) }}
+            onAssetError={failRuntime}
           />
         );
       })}
@@ -111,6 +126,7 @@ export function ProgressiveBoardLayer({
             assetId={assetId}
             className={`is-territory owner-${cell.owner} stage-${stage}`}
             style={{ left: `${position.left}%`, top: `${position.top}%`, zIndex: 500 + Math.round(position.top) }}
+            onAssetError={failRuntime}
           />
         );
       })}
@@ -132,6 +148,7 @@ export function ProgressiveBoardLayer({
             assetId={assetId}
             className={`is-pillar ${selected ? "is-selected" : ""}`}
             style={{ left: `${position.left}%`, top: `${position.top}%`, zIndex: 600 + tile.x + tile.y }}
+            onAssetError={failRuntime}
           />
         );
       })}
