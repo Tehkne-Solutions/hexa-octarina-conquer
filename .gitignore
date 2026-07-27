@@ -49,3 +49,10 @@ HOC_PACK_*_VALIDATED_*.zip
 .env
 .env.*
 !.env.example
+
+# BEGIN TEHKNE PACK99 GENERATED
+.cache/pack99-map/
+.cache/pack99/
+client/web/public/assets/runtime/pack99/
+client/godot/assets/runtime/pack99/
+# END TEHKNE PACK99 GENERATED
