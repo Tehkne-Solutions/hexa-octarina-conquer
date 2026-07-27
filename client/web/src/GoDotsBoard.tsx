@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 
 import { FantasyBuildingSprite } from "./FantasyBuildingSprite";
-import { FantasyUnitSprite } from "./FantasyUnitSprite";
 import {
   gridPercent,
   type ClaimedCell,
@@ -13,6 +12,7 @@ import {
   type LivingTile,
   type LivingUnit,
 } from "./living-board-data";
+import { Pack99UnitSprite } from "./Pack99UnitSprite";
 import { ProgressiveBoardLayer } from "./ProgressiveBoardLayer";
 import { progressiveBoardPosition, progressiveBoardSvgPosition } from "./progressive-board-projection";
 import { ProgressiveTerrainLayer } from "./ProgressiveTerrainLayer";
@@ -206,7 +206,7 @@ export function GoDotsBoard({
                 <span className="node-stone"><i /><b /></span>
                 {recommended && <span className="node-callout">PRÓXIMO</span>}
                 {target && !recommended && <span className="node-target-ring" />}
-                {unit && <FantasyUnitSprite unit={unit} selected={selected} />}
+                {unit && <Pack99UnitSprite unit={unit} selected={selected} />}
               </button>
             );
           })}
