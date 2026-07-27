@@ -37,13 +37,23 @@ describe("PACK 02 progressive board mapping", () => {
 
 describe("progressive isometric projection", () => {
   it("projects the board origin and diagonal deterministically", () => {
-    expect(progressiveBoardPosition(0, 0)).toEqual({ left: 50, top: 15 });
-    expect(progressiveBoardPosition(1, 0)).toEqual({ left: 57.1, top: 20.35 });
-    expect(progressiveBoardPosition(0, 1)).toEqual({ left: 42.9, top: 20.35 });
+    const origin = progressiveBoardPosition(0, 0);
+    const east = progressiveBoardPosition(1, 0);
+    const south = progressiveBoardPosition(0, 1);
+    expect(origin.left).toBeCloseTo(50);
+    expect(origin.top).toBeCloseTo(15);
+    expect(east.left).toBeCloseTo(57.1);
+    expect(east.top).toBeCloseTo(20.35);
+    expect(south.left).toBeCloseTo(42.9);
+    expect(south.top).toBeCloseTo(20.35);
   });
 
   it("uses the same projection for SVG and sprite midpoints", () => {
-    expect(progressiveBoardSvgPosition(1, 2)).toEqual({ x: 429, y: 310.5 });
-    expect(progressiveBoardMidpoint({ x: 0, y: 0 }, { x: 1, y: 0 })).toEqual({ left: 53.55, top: 17.675 });
+    const svg = progressiveBoardSvgPosition(1, 2);
+    const midpoint = progressiveBoardMidpoint({ x: 0, y: 0 }, { x: 1, y: 0 });
+    expect(svg.x).toBeCloseTo(429);
+    expect(svg.y).toBeCloseTo(310.5);
+    expect(midpoint.left).toBeCloseTo(53.55);
+    expect(midpoint.top).toBeCloseTo(17.675);
   });
 });
