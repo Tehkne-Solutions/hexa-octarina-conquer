@@ -13,6 +13,7 @@ import {
   type LivingUnit,
 } from "./living-board-data";
 import { Pack99LivingWorldLayer } from "./Pack99LivingWorldLayer";
+import { Pack99StrategicStructures } from "./Pack99StrategicStructures";
 import { Pack99UnitSprite } from "./Pack99UnitSprite";
 import { ProgressiveBoardLayer } from "./ProgressiveBoardLayer";
 import { progressiveBoardPosition, progressiveBoardSvgPosition } from "./progressive-board-projection";
@@ -90,7 +91,7 @@ export function GoDotsBoard({
         }
         if (y < LIVING_BOARD_SIZE - 1) {
           const start = progressiveProjection ? progressiveBoardSvgPosition(x, y) : { x: squareSvgCoordinate(x), y: squareSvgCoordinate(y) };
-          const end = progressiveProjection ? progressiveBoardSvgPosition(x, y + 1) : { x: squareSvgCoordinate(x), y: squareSvgCoordinate(y + 1) };
+          const end = progressiveProjection ? progressiveBoardSvgPosition(x, y + 1) : { x: squareSvgCoordinate(x, y + 1), y: squareSvgCoordinate(y + 1) };
           lines.push({ id: `v-${x}-${y}`, x1: start.x, y1: start.y, x2: end.x, y2: end.y });
         }
       }
@@ -103,6 +104,7 @@ export function GoDotsBoard({
       <div className="go-dots-world">
         <div className="world-sky-glow" />
         <Pack99LivingWorldLayer tiles={tiles} collectedTileIds={collected} />
+        <Pack99StrategicStructures influenceEdges={influenceEdges} claimedCells={claimedCells} building={building} />
         <div className="legacy-world-fallback"><ProgressiveTerrainLayer tiles={tiles} onAvailabilityChange={setTerrainReady} /></div>
         <div className="world-river legacy-world-fallback"><span /><i /><b /></div>
         <div className="world-bridge legacy-world-fallback"><span /><i /><b /></div>
