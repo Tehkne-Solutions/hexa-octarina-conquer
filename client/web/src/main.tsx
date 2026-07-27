@@ -22,6 +22,7 @@ import "./living-board.css";
 import "./living-board-playtest.css";
 import "./go-dots-living-board.css";
 import "./progressive-terrain.css";
+import "./progressive-board.css";
 import "./unified-game.css";
 import "./sprint-ui-02.css";
 import "./sprint-ui-03.css";
