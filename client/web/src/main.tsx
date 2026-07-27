@@ -12,6 +12,7 @@ import { installLoadoutClientBridge } from "./loadout-client-bridge";
 import { LoadoutManagerPortal } from "./LoadoutManagerPortal";
 import { LivingGameplayDirector } from "./LivingGameplayDirector";
 import { Pack99PremiumHudRuntime } from "./Pack99PremiumHudRuntime";
+import { loadPack99RuntimeState } from "./pack99-runtime";
 import { PWA_APPLY_UPDATE_EVENT, PWA_CHECK_UPDATE_EVENT, emitPwaRuntimePatch } from "./pwa-lifecycle";
 import { RuntimeAssetOverlay } from "./RuntimeAssetOverlay";
 import { RuntimeEnhancements } from "./RuntimeEnhancements";
@@ -67,6 +68,17 @@ const Pack99ValidationArena = lazy(() => import("./Pack99ValidationArena").then(
 applyStoredInterfacePreferences();
 installExperienceTelemetry();
 installLoadoutClientBridge();
+void loadPack99RuntimeState()
+  .then((state) => {
+    document.documentElement.dataset.pack99Runtime = state.mode;
+    document.documentElement.dataset.pack99AssetCount = String(state.materializedAssetCount);
+    document.documentElement.dataset.pack99Full = String(state.isFullRuntime);
+  })
+  .catch(() => {
+    document.documentElement.dataset.pack99Runtime = "missing";
+    document.documentElement.dataset.pack99AssetCount = "0";
+    document.documentElement.dataset.pack99Full = "false";
+  });
 
 let serviceWorkerRegistration: ServiceWorkerRegistration | undefined;
 const updateSW = registerSW({
