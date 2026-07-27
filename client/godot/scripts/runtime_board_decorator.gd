@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 	_refresh_scene()
 
 func _refresh_scene() -> void:
-	if not AssetRuntime.has_runtime():
+	if not AssetRuntime.has_runtime() and not ProgressiveTerrainRuntime.has_runtime():
 		return
 	var scene := get_tree().current_scene
 	if scene == null:
@@ -56,6 +56,15 @@ func _decorate_board_node(node: Node) -> void:
 	node.set_meta(DECORATION_META, true)
 
 func _add_ground_tile(root: Node3D) -> void:
+	if ProgressiveTerrainRuntime.has_runtime():
+		var terrain_id := _terrain_id_for(root)
+		var progressive := ProgressiveTerrainRuntime.create_ground_tile(terrain_id, int(root.get_instance_id() % 3), 0.0021)
+		if progressive != null:
+			progressive.rotation_degrees.x = -90.0
+			progressive.position.y = 0.14
+			progressive.modulate.a = 0.9
+			root.add_child(progressive)
+			return
 	var sprite := AssetRuntime.create_billboard("TILE_GRASS_FLAT_CENTER_A_01", 0.0021)
 	if sprite == null:
 		return
@@ -65,6 +74,18 @@ func _add_ground_tile(root: Node3D) -> void:
 	sprite.position.y = 0.14
 	sprite.modulate.a = 0.76
 	root.add_child(sprite)
+
+func _terrain_id_for(root: Node3D) -> String:
+	var explicit: String = root.get_meta("terrain_id", "")
+	if not explicit.is_empty():
+		return explicit
+	var scene := get_tree().current_scene
+	if scene != null:
+		var theme: String = scene.get_meta("board_theme", "")
+		match theme:
+			"prismatic-ruins": return "TERRAIN_RUNIC_STONE"
+			"ash-fortress": return "TERRAIN_CORRUPTED"
+	return "TERRAIN_GRASS_ANCESTRAL"
 
 func _add_pillar(root: Node3D) -> void:
 	var selected := false

@@ -1,0 +1,166 @@
+name: Progressive PACK 01 Promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: GitHub Release tag containing the validated PACK 01 archive
+        required: true
+        default: pack01-terrain-core-v1.1.0
+      asset_name:
+        description: Release asset filename
+        required: true
+        default: HOC_PACK_01_TERRAIN_CORE_VALIDATED_1.1.0.zip
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release:
+    name: Validate and stage PACK 01 release
+    runs-on: ubuntu-latest
+    env:
+      EXPECTED_SHA256: 5cd1fc0844e2d17eefd1e010a62090526d60e74a2090047027a3e511949d0dad
+      EXPECTED_BYTES: "73072823"
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Download release asset
+        run: |
+          mkdir -p /tmp/pack01
+          gh release download "${{ inputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --pattern "${{ inputs.asset_name }}" \
+            --dir /tmp/pack01
+
+      - name: Verify release asset
+        run: |
+          ARCHIVE="/tmp/pack01/${{ inputs.asset_name }}"
+          test -f "$ARCHIVE"
+          test "$(stat -c%s "$ARCHIVE")" = "$EXPECTED_BYTES"
+          echo "$EXPECTED_SHA256  $ARCHIVE" | sha256sum -c -
+
+      - name: Audit PACK 01
+        run: |
+          mkdir -p .cache/progressive-pack01
+          python scripts/audit_progressive_pack.py \
+            "/tmp/pack01/${{ inputs.asset_name }}" \
+            --report .cache/progressive-pack01/audit-report.json
+
+      - name: Install Web and Godot staging runtimes
+        run: |
+          python scripts/install_progressive_pack.py \
+            "/tmp/pack01/${{ inputs.asset_name }}" \
+            --repo . \
+            --target all \
+            --report .cache/progressive-pack01/install-report.json
+
+      - name: Validate Web and Godot parity
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          roots = {
+              "web": Path("client/web/public/assets/progressive/PACK_01_TERRAIN_CORE"),
+              "godot": Path("client/godot/assets/progressive/PACK_01_TERRAIN_CORE"),
+          }
+          registries = {
+              name: json.loads((root / "registry/terrain-runtime.json").read_text(encoding="utf-8"))
+              for name, root in roots.items()
+          }
+          web = registries["web"]
+          godot = registries["godot"]
+          assert web == godot
+          assert web["packId"] == "HOC_PACK_01_TERRAIN_CORE_FINAL"
+          assert web["signature"] == "Tehkné Solutions"
+          assert web["assetCount"] == 103
+          assert len(web["assets"]) == 103
+          assert web["unresolved"] == []
+          ids = [asset["id"] for asset in web["assets"]]
+          assert len(set(ids)) == 103
+
+          compared = 0
+          for asset in web["assets"]:
+              for field in ("_runtimeFile", "_runtimeMask"):
+                  relative = asset.get(field)
+                  if not relative:
+                      continue
+                  web_path = roots["web"] / relative
+                  godot_path = roots["godot"] / relative
+                  assert web_path.is_file(), web_path
+                  assert godot_path.is_file(), godot_path
+                  assert hashlib.sha256(web_path.read_bytes()).digest() == hashlib.sha256(godot_path.read_bytes()).digest()
+                  compared += 1
+          assert compared == 199
+
+          for target in ("web", "godot"):
+              installed = json.loads((roots[target] / "runtime-install.json").read_text(encoding="utf-8"))
+              assert installed["assetCount"] == 103
+              assert installed["unresolvedReferences"] == 0
+              assert installed["runtimeGridStepPx"] == [252, 124]
+
+          bootstrap = json.loads(Path("client/web/public/assets/runtime/registry/assets-runtime.json").read_text(encoding="utf-8"))
+          assert bootstrap["assetCount"] == 33
+          assert bootstrap["unresolved"] == []
+          print(json.dumps({"passed": True, "ids": 103, "physicalReferencesCompared": compared}, indent=2))
+          PY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: client/web/package-lock.json
+
+      - name: Test and build Web client with PACK 01
+        working-directory: client/web
+        run: |
+          npm install --no-audit --no-fund
+          npm test -- --run
+          npm run build
+          if grep -R -q "A01_GRASS_ANCESTRAL/tiles" dist/sw.js; then
+            echo "PACK 01 entrou indevidamente no precache da PWA."
+            exit 1
+          fi
+          test -f dist/assets/progressive/PACK_01_TERRAIN_CORE/registry/terrain-runtime.json
+
+      - name: Package staged runtimes
+        run: |
+          tar -czf /tmp/pack01-web-runtime.tar.gz -C client/web/public/assets/progressive PACK_01_TERRAIN_CORE
+          tar -czf /tmp/pack01-godot-runtime.tar.gz -C client/godot/assets/progressive PACK_01_TERRAIN_CORE
+
+      - name: Upload promotion evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: pack01-progressive-promotion
+          retention-days: 14
+          compression-level: 0
+          path: |
+            .cache/progressive-pack01/audit-report.json
+            .cache/progressive-pack01/install-report.json
+            /tmp/pack01-web-runtime.tar.gz
+            /tmp/pack01-godot-runtime.tar.gz
+
+      - name: Promotion summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ## PACK 01 progressive release validated
+
+          - 103 canonical IDs
+          - 103 Web assets
+          - 103 Godot assets
+          - 199 physical references compared
+          - zero unresolved references
+          - bootstrap preserved
+          - PWA precache excludes progressive binaries
+          - signature: Tehkné Solutions
+          EOF

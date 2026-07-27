@@ -1,0 +1,31 @@
+{
+  "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+  "version": "1.1.0",
+  "targets": {
+    "web": {
+      "root": "/assets/progressive/PACK_01_TERRAIN_CORE",
+      "registry": "registry/terrain-runtime.json"
+    },
+    "godot": {
+      "root": "res://assets/progressive/PACK_01_TERRAIN_CORE",
+      "registry": "registry/terrain-runtime.json"
+    }
+  },
+  "requirements": {
+    "assetCount": 103,
+    "uniqueIds": 103,
+    "unresolvedReferences": 0,
+    "canonicalIdsIdentical": true,
+    "relativePathsIdentical": true,
+    "runtimeTilePx": [512, 256],
+    "runtimeGridStepPx": [252, 124],
+    "bootstrapUntouchedUntilPromotion": true,
+    "atomicInstall": true
+  },
+  "themeDefaults": {
+    "orun-mill": "TERRAIN_GRASS_ANCESTRAL",
+    "prismatic-ruins": "TERRAIN_RUNIC_STONE",
+    "ash-fortress": "TERRAIN_CORRUPTED"
+  },
+  "signature": "Tehkné Solutions"
+}

@@ -1,0 +1,59 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+  "canonicalPackId": "HOC_PACK_01_TERRAIN_CORE",
+  "version": "1.1.0",
+  "status": "validated-local-pending-release",
+  "requires": {
+    "HOC_PACK_00_FOUNDATION": "1.1.0"
+  },
+  "source": {
+    "archive": "HOC_PACK_01_TERRAIN_CORE_FINAL.zip",
+    "bytes": 75839049,
+    "sha256": "95f537534fbd9d9169d54789dcbda9659b568cf606046dd360d68a78f5153c61",
+    "result": "accepted-as-source-requiring-contract-fix",
+    "issues": [
+      "Ausência de licença, changelog e checksums integrais.",
+      "Tiles possuíam bleed transparente de 8 px, mas os manifests declaravam overlap zero.",
+      "Testes 3x3 exibiam linhas escuras entre células quando montados sem sobreposição."
+    ]
+  },
+  "overlayA01": {
+    "archive": "HOC_FINAL_A01_GRASS_FLAT_PREMIUM.zip",
+    "bytes": 12010917,
+    "sha256": "39a950605cfd2102e7956792ca49573beb14e8e5bf6cb657ece1856c28f8ebc2",
+    "decision": "applied",
+    "changedTiles": 10,
+    "changedMasks": 0,
+    "idsChanged": false,
+    "geometryChanged": false
+  },
+  "candidate": {
+    "archive": "HOC_PACK_01_TERRAIN_CORE_VALIDATED_1.1.0.zip",
+    "bytes": 73072823,
+    "sha256": "5cd1fc0844e2d17eefd1e010a62090526d60e74a2090047027a3e511949d0dad",
+    "entries": 257,
+    "checksumsValidated": 256,
+    "runtimeAssets": 103,
+    "uniqueIds": 103,
+    "terrainFamilies": 6,
+    "supportModules": 7,
+    "tiles": 103,
+    "masks": 96,
+    "unsafePaths": 0,
+    "unresolvedReferences": 0,
+    "edgeBleedPx": 8,
+    "runtimeTilePx": [512, 256],
+    "runtimeGridStepPx": [252, 124]
+  },
+  "promotion": {
+    "repositoryContract": "implemented",
+    "releaseAsset": "pending",
+    "web": "staging-only",
+    "godot": "staging-only",
+    "visualQa": "pending-release-install",
+    "bootstrapReplacement": "none-until-release-green",
+    "nextPack": "HOC_PACK_02_BOARD_SYSTEM"
+  },
+  "signature": "Tehkné Solutions"
+}
