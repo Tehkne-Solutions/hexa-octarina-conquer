@@ -11,6 +11,7 @@ import {
 } from "./battle-coach-state";
 import { BattlePresentationLayer } from "./BattlePresentationLayer";
 import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
+import { Pack99WorldVfx } from "./Pack99WorldVfx";
 import {
   beginLivingCampaignAttempt,
   updateLivingCampaignProgress,
@@ -194,6 +195,7 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
     <div className="campaign-experience" ref={rootRef}>
       <GoDotsLivingBoardDemo playerName={playerName} onBack={onBack} />
       <BattlePresentationLayer rootRef={rootRef} />
+      <Pack99WorldVfx rootRef={rootRef} />
 
       <button
         type="button"
