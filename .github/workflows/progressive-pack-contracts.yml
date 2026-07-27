@@ -5,23 +5,33 @@ on:
     paths:
       - "scripts/audit_progressive_pack.py"
       - "scripts/install_progressive_pack.py"
+      - "scripts/audit_pack02.py"
+      - "scripts/install_pack02.py"
       - "scripts/publish_pack01_release.ps1"
+      - "scripts/publish_pack02_release.ps1"
       - "PUBLICAR-PACK01-RELEASE.cmd"
+      - "PUBLICAR-PACK02-RELEASE.cmd"
       - "tests/test_audit_progressive_pack.py"
       - "tests/test_install_progressive_pack.py"
+      - "tests/test_pack02_progressive.py"
       - "runtime/packs/**"
       - "client/web/src/progressive-terrain*"
+      - "client/web/src/progressive-board*"
       - "client/web/src/ProgressiveTerrainLayer.tsx"
+      - "client/web/src/ProgressiveBoardLayer.tsx"
       - "client/web/src/GoDotsBoard.tsx"
       - "client/web/src/main.tsx"
       - "client/web/vite.config.ts"
       - "client/godot/scripts/progressive_terrain_runtime.gd"
+      - "client/godot/scripts/progressive_board_runtime.gd"
       - "client/godot/scripts/runtime_board_decorator.gd"
+      - "client/godot/scripts/asset_runtime.gd"
       - "client/godot/project.godot"
       - "docs/SPRINT_ASSETS_PROGRESSIVE_*.md"
-      - "docs/reports/PACK01_AUDIT_REPORT.md"
+      - "docs/reports/PACK0*_AUDIT_REPORT.md"
       - ".github/workflows/progressive-pack-contracts.yml"
       - ".github/workflows/progressive-pack01-promote.yml"
+      - ".github/workflows/progressive-pack02-promote.yml"
   workflow_dispatch:
 
 permissions:
@@ -29,7 +39,7 @@ permissions:
 
 jobs:
   pack-contracts:
-    name: PACK 00–01 progressive contracts (${{ matrix.python-version }})
+    name: PACK 00–02 progressive contracts (${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -45,11 +55,14 @@ jobs:
         run: |
           python -m py_compile scripts/audit_progressive_pack.py
           python -m py_compile scripts/install_progressive_pack.py
+          python -m py_compile scripts/audit_pack02.py
+          python -m py_compile scripts/install_pack02.py
       - name: Run progressive pack tests
         run: |
           python -m unittest \
             tests/test_audit_progressive_pack.py \
             tests/test_install_progressive_pack.py \
+            tests/test_pack02_progressive.py \
             -v
       - name: Validate progressive locks
         run: |
@@ -77,31 +90,53 @@ jobs:
           assert pack01["overlayA01"]["changedTiles"] == 10
           assert pack01["overlayA01"]["changedMasks"] == 0
           assert pack01["signature"] == "Tehkné Solutions"
+
+          pack02 = json.loads(Path("runtime/packs/PACK_02_BOARD_SYSTEM/pack-lock.json").read_text(encoding="utf-8"))
+          assert pack02["packId"] == "HOC_PACK_02_BOARD_SYSTEM_FINAL"
+          assert pack02["canonicalPackId"] == "HOC_PACK_02_BOARD_SYSTEM"
+          assert pack02["version"] == "1.1.0"
+          assert pack02["requires"]["HOC_PACK_00_FOUNDATION"] == "1.1.0"
+          assert pack02["requires"]["HOC_PACK_01_TERRAIN_CORE_FINAL"] == "1.1.0"
+          assert pack02["candidate"]["runtimeAssets"] == 55
+          assert pack02["candidate"]["uniqueIds"] == 55
+          assert pack02["candidate"]["pillars"] == 6
+          assert pack02["candidate"]["edges"] == 24
+          assert pack02["candidate"]["territoryStructures"] == 25
+          assert pack02["candidate"]["primaryPngs"] == 55
+          assert pack02["candidate"]["shadowPngs"] == 55
+          assert pack02["candidate"]["emissivePngs"] == 28
+          assert pack02["candidate"]["unresolvedReferences"] == 0
+          assert pack02["signature"] == "Tehkné Solutions"
           PY
 
   windows-publisher:
-    name: PACK 01 Windows publisher contract
+    name: PACK 01–02 Windows publisher contracts
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Parse PowerShell publisher
+      - name: Parse PowerShell publishers
         shell: powershell
         run: |
-          $tokens = $null
-          $errors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            (Resolve-Path "scripts/publish_pack01_release.ps1"),
-            [ref]$tokens,
-            [ref]$errors
-          ) | Out-Null
-          if ($errors.Count -gt 0) {
-            $errors | Format-List | Out-String | Write-Error
-            exit 1
+          foreach ($file in @("scripts/publish_pack01_release.ps1", "scripts/publish_pack02_release.ps1")) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $file),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | Format-List | Out-String | Write-Error
+              exit 1
+            }
           }
-      - name: Validate launcher encoding and target
+      - name: Validate launcher encoding and targets
         shell: powershell
         run: |
-          $launcher = Get-Content -Raw -Encoding UTF8 "PUBLICAR-PACK01-RELEASE.cmd"
-          if (-not $launcher.Contains("publish_pack01_release.ps1")) { throw "Lançador não chama o publicador do PACK 01." }
-          if (-not $launcher.Contains("chcp 65001")) { throw "Lançador não configura UTF-8." }
+          $pack01 = Get-Content -Raw -Encoding UTF8 "PUBLICAR-PACK01-RELEASE.cmd"
+          if (-not $pack01.Contains("publish_pack01_release.ps1")) { throw "Lançador não chama o publicador do PACK 01." }
+          if (-not $pack01.Contains("chcp 65001")) { throw "Lançador do PACK 01 não configura UTF-8." }
+          $pack02 = Get-Content -Raw -Encoding UTF8 "PUBLICAR-PACK02-RELEASE.cmd"
+          if (-not $pack02.Contains("publish_pack02_release.ps1")) { throw "Lançador não chama o publicador do PACK 02." }
+          if (-not $pack02.Contains("chcp 65001")) { throw "Lançador do PACK 02 não configura UTF-8." }
