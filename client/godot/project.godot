@@ -9,6 +9,7 @@ run/main_scene="res://scenes/arena_3d.tscn"
 [autoload]
 AssetRuntime="*res://scripts/asset_runtime.gd"
 ProgressiveTerrainRuntime="*res://scripts/progressive_terrain_runtime.gd"
+ProgressiveBoardRuntime="*res://scripts/progressive_board_runtime.gd"
 RuntimeBoardDecorator="*res://scripts/runtime_board_decorator.gd"
 
 [display]
