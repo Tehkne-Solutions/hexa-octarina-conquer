@@ -1,0 +1,172 @@
+name: Progressive PACK 02 Promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: GitHub Release tag containing the validated PACK 02 archive
+        required: true
+        default: pack02-board-system-v1.1.0
+      asset_name:
+        description: Release asset filename
+        required: true
+        default: HOC_PACK_02_BOARD_SYSTEM_VALIDATED_1.1.0.zip
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release:
+    name: Validate and stage PACK 02 release
+    runs-on: ubuntu-latest
+    env:
+      EXPECTED_SHA256: b4e68398cc7276fc1d2a2fc9348625f7596c6b93e71fe1e1de4277bb4a3063c5
+      EXPECTED_BYTES: "44534205"
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Download release asset
+        run: |
+          mkdir -p /tmp/pack02
+          gh release download "${{ inputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --pattern "${{ inputs.asset_name }}" \
+            --dir /tmp/pack02
+
+      - name: Verify release asset
+        run: |
+          ARCHIVE="/tmp/pack02/${{ inputs.asset_name }}"
+          test -f "$ARCHIVE"
+          test "$(stat -c%s "$ARCHIVE")" = "$EXPECTED_BYTES"
+          echo "$EXPECTED_SHA256  $ARCHIVE" | sha256sum -c -
+
+      - name: Audit PACK 02
+        run: |
+          mkdir -p .cache/progressive-pack02
+          python scripts/audit_pack02.py \
+            "/tmp/pack02/${{ inputs.asset_name }}" \
+            --report .cache/progressive-pack02/audit-report.json
+
+      - name: Install Web and Godot staging runtimes
+        run: |
+          python scripts/install_pack02.py \
+            "/tmp/pack02/${{ inputs.asset_name }}" \
+            --repo . \
+            --target all \
+            --report .cache/progressive-pack02/install-report.json
+
+      - name: Validate Web and Godot parity
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          roots = {
+              "web": Path("client/web/public/assets/progressive/PACK_02_BOARD_SYSTEM"),
+              "godot": Path("client/godot/assets/progressive/PACK_02_BOARD_SYSTEM"),
+          }
+          registries = {
+              name: json.loads((root / "registry/board-runtime.json").read_text(encoding="utf-8"))
+              for name, root in roots.items()
+          }
+          web = registries["web"]
+          godot = registries["godot"]
+          assert web == godot
+          assert web["packId"] == "HOC_PACK_02_BOARD_SYSTEM_FINAL"
+          assert web["canonicalPackId"] == "HOC_PACK_02_BOARD_SYSTEM"
+          assert web["version"] == "1.1.0"
+          assert web["signature"] == "Tehkné Solutions"
+          assert web["assetCount"] == 55
+          assert len(web["assets"]) == 55
+          assert web["unresolved"] == []
+          ids = [asset["id"] for asset in web["assets"]]
+          assert len(set(ids)) == 55
+
+          counts = {}
+          compared = 0
+          for asset in web["assets"]:
+              counts[asset["category"]] = counts.get(asset["category"], 0) + 1
+              for field in ("_runtimeFile", "_runtimeShadow", "_runtimeEmissive"):
+                  relative = asset.get(field)
+                  if not relative:
+                      continue
+                  web_path = roots["web"] / relative
+                  godot_path = roots["godot"] / relative
+                  assert web_path.is_file(), web_path
+                  assert godot_path.is_file(), godot_path
+                  assert hashlib.sha256(web_path.read_bytes()).digest() == hashlib.sha256(godot_path.read_bytes()).digest()
+                  compared += 1
+          assert counts == {"board-node": 6, "board-edge": 24, "territory-structure": 25}
+          assert compared == 138
+
+          for target in ("web", "godot"):
+              installed = json.loads((roots[target] / "runtime-install.json").read_text(encoding="utf-8"))
+              assert installed["assetCount"] == 55
+              assert installed["unresolvedReferences"] == 0
+              assert installed["bootstrapModified"] is False
+
+          bootstrap = json.loads(Path("client/web/public/assets/runtime/registry/assets-runtime.json").read_text(encoding="utf-8"))
+          assert bootstrap["assetCount"] == 33
+          assert bootstrap["unresolved"] == []
+          print(json.dumps({"passed": True, "ids": 55, "physicalReferencesCompared": compared}, indent=2))
+          PY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: client/web/package-lock.json
+
+      - name: Test and build Web client with PACK 02
+        working-directory: client/web
+        run: |
+          npm install --no-audit --no-fund
+          npm test -- --run
+          npm run build
+          if grep -R -q "P01_PILLARS/assets" dist/sw.js; then
+            echo "PACK 02 entrou indevidamente no precache da PWA."
+            exit 1
+          fi
+          test -f dist/assets/progressive/PACK_02_BOARD_SYSTEM/registry/board-runtime.json
+
+      - name: Package staged runtimes
+        run: |
+          tar -czf /tmp/pack02-web-runtime.tar.gz -C client/web/public/assets/progressive PACK_02_BOARD_SYSTEM
+          tar -czf /tmp/pack02-godot-runtime.tar.gz -C client/godot/assets/progressive PACK_02_BOARD_SYSTEM
+
+      - name: Upload promotion evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: pack02-progressive-promotion
+          retention-days: 14
+          compression-level: 0
+          path: |
+            .cache/progressive-pack02/audit-report.json
+            .cache/progressive-pack02/install-report.json
+            /tmp/pack02-web-runtime.tar.gz
+            /tmp/pack02-godot-runtime.tar.gz
+
+      - name: Promotion summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ## PACK 02 progressive release validated
+
+          - 55 canonical IDs
+          - 6 pillars
+          - 24 edges
+          - 25 territory structures
+          - 138 physical references compared
+          - zero unresolved references
+          - bootstrap preserved
+          - PWA precache excludes progressive binaries
+          - signature: Tehkné Solutions
+          EOF
