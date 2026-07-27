@@ -12,7 +12,10 @@ import {
   type LivingTile,
   type LivingUnit,
 } from "./living-board-data";
+import { Pack99EnvironmentalDensity } from "./Pack99EnvironmentalDensity";
 import { Pack99LivingWorldLayer } from "./Pack99LivingWorldLayer";
+import { Pack99StrategicStructures } from "./Pack99StrategicStructures";
+import { Pack99TacticalAtmosphere } from "./Pack99TacticalAtmosphere";
 import { Pack99UnitSprite } from "./Pack99UnitSprite";
 import { ProgressiveBoardLayer } from "./ProgressiveBoardLayer";
 import { progressiveBoardPosition, progressiveBoardSvgPosition } from "./progressive-board-projection";
@@ -103,6 +106,8 @@ export function GoDotsBoard({
       <div className="go-dots-world">
         <div className="world-sky-glow" />
         <Pack99LivingWorldLayer tiles={tiles} collectedTileIds={collected} />
+        <Pack99EnvironmentalDensity tiles={tiles} />
+        <Pack99StrategicStructures influenceEdges={influenceEdges} claimedCells={claimedCells} building={building} />
         <div className="legacy-world-fallback"><ProgressiveTerrainLayer tiles={tiles} onAvailabilityChange={setTerrainReady} /></div>
         <div className="world-river legacy-world-fallback"><span /><i /><b /></div>
         <div className="world-bridge legacy-world-fallback"><span /><i /><b /></div>
@@ -150,6 +155,7 @@ export function GoDotsBoard({
             );
           })}
         </div>
+        <Pack99TacticalAtmosphere units={units} selectedUnitId={selectedUnitId} objectiveTargetId={objectiveTargetId} enemyPhase={disabled} />
       </div>
       <footer className="go-dots-legend"><span><i className="legend-node" /> Nó de invocação</span><span><i className="legend-path" /> Trilha ou muralha</span><span><i className="legend-cell" /> Território fechado</span><span><i className="legend-valid" /> Liberdade válida</span></footer>
     </section>
