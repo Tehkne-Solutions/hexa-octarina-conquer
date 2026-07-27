@@ -1,0 +1,23 @@
+# PACK 99 binary assets managed by Git LFS
+assets/pack99/source/**/*.png filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.webp filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.gif filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.glb filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.gltf filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.fbx filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.obj filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.mtl filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.wav filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.ogg filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.mp3 filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.flac filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.ttf filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.otf filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.woff filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.woff2 filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.atlas filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.aseprite filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.psd filter=lfs diff=lfs merge=lfs -text
+assets/pack99/source/**/*.kra filter=lfs diff=lfs merge=lfs -text
