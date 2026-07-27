@@ -72,6 +72,24 @@ export async function resolvePack99MissionAsset(reference: {
     ?? await resolvePack99Asset(reference.required, reference.preferred);
 }
 
+export async function resolvePack99SiblingLayer(
+  baseAsset: Pack99RuntimeAsset | null,
+  layer: "shadow" | "emissive",
+): Promise<Pack99RuntimeAsset | null> {
+  if (!baseAsset) return null;
+  const index = await loadPack99Index();
+  const source = normalize(baseAsset.sourcePath);
+  const extensionIndex = source.lastIndexOf(".");
+  const stem = extensionIndex >= 0 ? source.slice(0, extensionIndex) : source;
+  const extension = extensionIndex >= 0 ? source.slice(extensionIndex) : ".png";
+  const candidates = [
+    `${stem}_${layer}${extension}`,
+    `${stem.replace(/_base$/, "")}_${layer}${extension}`,
+    `${stem.replace(/_base_/, `_${layer}_`)}${extension}`,
+  ];
+  return index.assets.find((asset) => candidates.includes(normalize(asset.sourcePath))) ?? null;
+}
+
 export function pack99PublicUrl(asset: Pack99RuntimeAsset | null): string | null {
   if (!asset) return null;
   const marker = "client/web/public";
