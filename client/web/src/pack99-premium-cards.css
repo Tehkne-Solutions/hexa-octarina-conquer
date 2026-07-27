@@ -1,0 +1,165 @@
+.pack99-card-combat-active .living-battle-overlay {
+  background: radial-gradient(circle at 50% 45%, rgba(28, 18, 58, .34), rgba(2, 5, 10, .92));
+  backdrop-filter: blur(4px);
+}
+
+.pack99-card-combat-active .living-battle-stage {
+  width: min(1180px, 95vw);
+  min-height: min(780px, 92vh);
+  border: 1px solid rgba(211, 166, 78, .48);
+  background:
+    linear-gradient(180deg, rgba(8, 13, 24, .97), rgba(5, 8, 16, .98)),
+    radial-gradient(circle at 50% 0%, rgba(111, 55, 190, .18), transparent 50%);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, .72), inset 0 0 80px rgba(84, 38, 145, .12);
+}
+
+.pack99-card-combat-active .tcg-hand {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(8px, 1vw, 16px);
+  padding: 10px 20px 24px;
+  overflow-x: auto;
+  perspective: 1200px;
+}
+
+.pack99-card-combat-active .living-card {
+  position: relative;
+  flex: 0 0 clamp(180px, 18vw, 230px);
+  min-height: 360px;
+  padding: 10px;
+  overflow: hidden;
+  color: #ead8ad;
+  border: 2px solid #7d6338;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #16120d 0%, #080a10 58%, #111017 100%);
+  box-shadow: 0 16px 28px rgba(0,0,0,.56), inset 0 0 0 2px rgba(226,186,105,.12);
+  transform-origin: 50% 100%;
+  transition: transform .22s ease, filter .22s ease, box-shadow .22s ease;
+}
+
+.pack99-card-combat-active .living-card:hover:not(:disabled),
+.pack99-card-combat-active .living-card.selected {
+  transform: translateY(-18px) scale(1.035);
+  z-index: 5;
+  box-shadow: 0 26px 48px rgba(0,0,0,.72), 0 0 26px rgba(106,165,255,.25), inset 0 0 0 2px rgba(255,221,141,.34);
+}
+
+.pack99-card-combat-active .living-card.recommended:not(.selected) {
+  animation: pack99CardRecommended 1.8s ease-in-out infinite;
+}
+
+.pack99-card-combat-active .living-card-cost {
+  z-index: 8;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff5d7;
+  background: radial-gradient(circle at 35% 30%, #7ed7ff, #153e75 58%, #07101e 100%);
+  border: 2px solid #d6b264;
+  box-shadow: 0 0 16px rgba(68,163,255,.55);
+}
+
+.pack99-card-combat-active .living-card-header {
+  min-height: 58px;
+  padding: 6px 8px 8px 50px;
+  border-bottom: 1px solid rgba(218,174,91,.34);
+  text-align: left;
+}
+
+.pack99-card-combat-active .living-card-header strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.pack99-card-combat-active .living-card-header small {
+  color: #9e8b64;
+}
+
+.pack99-card-combat-active .living-card-art {
+  position: relative;
+  height: 170px;
+  margin: 6px 0 8px;
+  overflow: hidden;
+  border: 1px solid rgba(212,171,87,.4);
+  background: radial-gradient(circle at center, rgba(83,52,146,.48), #080a10 72%);
+}
+
+.pack99-runtime-card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.12) contrast(1.08);
+}
+
+.pack99-card-combat-active .living-card-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(5,7,12,.78));
+  pointer-events: none;
+}
+
+.pack99-card-combat-active .living-card-art > :not(.pack99-runtime-card-image) {
+  position: relative;
+  z-index: 2;
+}
+
+.pack99-card-combat-active .living-card-keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pack99-card-combat-active .living-card-keywords span {
+  border: 1px solid rgba(211,170,91,.34);
+  background: rgba(21,17,14,.82);
+  color: #d4bd8a;
+}
+
+.pack99-card-combat-active .living-card > p {
+  min-height: 54px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #d8d1c3;
+}
+
+.pack99-card-combat-active .living-card blockquote {
+  display: none;
+}
+
+.pack99-card-combat-active .living-card-stats {
+  margin-top: auto;
+  border-top: 1px solid rgba(211,170,91,.28);
+  color: #f0dfb7;
+}
+
+.pack99-card-combat-active .living-card.rarity-legendary { border-color: #d9a441; }
+.pack99-card-combat-active .living-card.rarity-epic { border-color: #8c5bd3; }
+.pack99-card-combat-active .living-card.rarity-rare { border-color: #3f88c9; }
+.pack99-card-combat-active .living-card.selected { filter: brightness(1.12); }
+
+@keyframes pack99CardRecommended {
+  0%, 100% { box-shadow: 0 16px 28px rgba(0,0,0,.56), 0 0 0 rgba(223,181,83,0); }
+  50% { box-shadow: 0 18px 36px rgba(0,0,0,.62), 0 0 28px rgba(223,181,83,.38); }
+}
+
+@media (max-width: 900px) {
+  .pack99-card-combat-active .living-card {
+    flex-basis: 170px;
+    min-height: 320px;
+  }
+  .pack99-card-combat-active .living-card-art { height: 142px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack99-card-combat-active .living-card,
+  .pack99-card-combat-active .living-card.recommended { animation: none; transition: none; }
+}
