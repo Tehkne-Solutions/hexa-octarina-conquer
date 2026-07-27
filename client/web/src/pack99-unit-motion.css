@@ -1,0 +1,133 @@
+.pack99-unit-sprite {
+  transform-origin: 50% 88%;
+  will-change: transform, filter, opacity;
+}
+
+.pack99-unit-sprite .pack99-unit-stack {
+  transition: transform 220ms ease, filter 220ms ease, opacity 220ms ease;
+}
+
+.pack99-unit-sprite.motion-entering {
+  animation: pack99-unit-arrive 480ms cubic-bezier(.18,.84,.25,1) both;
+}
+
+.pack99-unit-sprite.motion-hit .pack99-unit-stack {
+  animation: pack99-unit-hit 520ms ease both;
+}
+
+.pack99-unit-sprite.motion-hit .pack99-unit-impact {
+  animation: pack99-impact-burst 520ms ease-out both;
+}
+
+.pack99-unit-sprite.motion-healed .pack99-unit-stack {
+  animation: pack99-unit-heal 560ms ease both;
+}
+
+.pack99-unit-sprite.state-selected .pack99-unit-stack,
+.pack99-unit-sprite.state-neutral .pack99-unit-stack {
+  animation: pack99-unit-breathe 2.8s ease-in-out infinite;
+}
+
+.pack99-unit-sprite.state-captive .pack99-unit-stack {
+  filter: saturate(.38) brightness(.78) drop-shadow(0 0 8px rgba(129, 94, 255, .35));
+  animation: pack99-captive-pulse 2.2s ease-in-out infinite;
+}
+
+.pack99-unit-sprite.state-wounded .pack99-unit-stack {
+  filter: saturate(.72) brightness(.9);
+  animation: pack99-wounded-breathe 1.55s ease-in-out infinite;
+}
+
+.pack99-unit-sprite.state-defeated {
+  pointer-events: none;
+}
+
+.pack99-unit-sprite.state-defeated .pack99-unit-stack {
+  animation: pack99-unit-defeat 620ms cubic-bezier(.4,0,.8,.2) both;
+}
+
+.pack99-unit-impact {
+  position: absolute;
+  inset: 18% 8% 28%;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.go-node {
+  transition: left 360ms cubic-bezier(.22,.75,.25,1), top 360ms cubic-bezier(.22,.75,.25,1), transform 220ms ease, opacity 220ms ease;
+}
+
+.go-node.occupied {
+  will-change: left, top;
+}
+
+.go-node.recommended .node-stone,
+.go-node.objective-target .node-target-ring {
+  animation: pack99-objective-pulse 1.35s ease-in-out infinite;
+}
+
+@keyframes pack99-unit-arrive {
+  0% { opacity: 0; transform: translateY(-18px) scale(.82); filter: blur(4px); }
+  65% { opacity: 1; transform: translateY(4px) scale(1.04); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pack99-unit-hit {
+  0%, 100% { transform: translateX(0) rotate(0); filter: brightness(1); }
+  18% { transform: translateX(-8px) rotate(-2deg); filter: brightness(1.7) saturate(.4); }
+  38% { transform: translateX(7px) rotate(2deg); }
+  58% { transform: translateX(-4px) rotate(-1deg); }
+  78% { transform: translateX(3px); }
+}
+
+@keyframes pack99-impact-burst {
+  0% { opacity: .95; transform: scale(.2); box-shadow: 0 0 0 2px rgba(255,243,207,.9), 0 0 28px 12px rgba(255,88,55,.8); }
+  65% { opacity: .55; transform: scale(1.2); box-shadow: 0 0 0 8px rgba(255,170,77,.2), 0 0 42px 20px rgba(255,65,38,.25); }
+  100% { opacity: 0; transform: scale(1.45); }
+}
+
+@keyframes pack99-unit-heal {
+  0% { filter: brightness(1); transform: translateY(0); }
+  45% { filter: brightness(1.55) saturate(1.35) drop-shadow(0 0 18px rgba(118,255,183,.9)); transform: translateY(-6px); }
+  100% { filter: brightness(1); transform: translateY(0); }
+}
+
+@keyframes pack99-unit-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.012); }
+}
+
+@keyframes pack99-captive-pulse {
+  0%, 100% { transform: translateY(0); opacity: .78; }
+  50% { transform: translateY(-2px); opacity: 1; }
+}
+
+@keyframes pack99-wounded-breathe {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(2px) rotate(-.8deg); }
+}
+
+@keyframes pack99-unit-defeat {
+  0% { opacity: 1; transform: translateY(0) rotate(0) scale(1); filter: grayscale(0); }
+  55% { opacity: .85; transform: translateY(8px) rotate(7deg) scale(.94); }
+  100% { opacity: .38; transform: translateY(18px) rotate(12deg) scale(.84); filter: grayscale(.8) brightness(.55); }
+}
+
+@keyframes pack99-objective-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.12); filter: brightness(1.35) drop-shadow(0 0 10px rgba(255,214,92,.85)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pack99-unit-sprite,
+  .pack99-unit-sprite .pack99-unit-stack,
+  .pack99-unit-impact,
+  .go-node,
+  .go-node .node-stone,
+  .go-node .node-target-ring {
+    animation: none !important;
+    transition: none !important;
+  }
+}
