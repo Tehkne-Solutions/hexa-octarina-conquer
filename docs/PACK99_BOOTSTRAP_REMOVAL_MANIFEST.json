@@ -1,0 +1,47 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "status": "pending-release-promotion",
+  "requiredRelease": {
+    "tag": "pack99-runtime-v1.0.1",
+    "asset": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.1.zip",
+    "sha256": "f72cce299fd28c8bb8520320871d90057884bb0ec19dd449f1c3d07e56a71bbe"
+  },
+  "perClient": {
+    "payloadFiles": 16,
+    "registryFiles": 1,
+    "bootstrapAssetIds": 33,
+    "bootstrapAliases": 17
+  },
+  "relativeFiles": [
+    "board/EDGE_ARCANE_BUILT_NE_SW_01.webp",
+    "board/EDGE_ARCANE_BUILT_NW_SE_01.webp",
+    "board/PILLAR_NEUTRAL_01.webp",
+    "board/PILLAR_SELECTED_01.webp",
+    "board/TILE_GRASS_FLAT_CENTER_A_01.webp",
+    "sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp",
+    "sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp",
+    "sprites/HERO_GUARDIAN_01_HIT_SE_01.webp",
+    "sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp",
+    "sprites/HERO_GUARDIAN_01_WALK_SE_01.webp",
+    "sprites/HERO_RANGER_01_HIT_SE_01.webp",
+    "sprites/HERO_RANGER_01_IDLE_SE_01.webp",
+    "vfx/VFX_CELL_SELECTED_01.webp",
+    "vfx/VFX_COMBAT_HEAVY_STRIKE_01.webp",
+    "vfx/VFX_COMBAT_SHIELD_01.webp",
+    "vfx/VFX_COMBAT_SLASH_01.webp",
+    "registry/assets-runtime.json"
+  ],
+  "clientRoots": [
+    "client/web/public/assets/runtime",
+    "client/godot/assets/runtime"
+  ],
+  "mergeGate": {
+    "expectedAssetIds": 1037,
+    "bootstrapAssetIds": 0,
+    "bootstrapAliases": 0,
+    "proceduralFallbackMode": false,
+    "passed": true
+  },
+  "signature": "Tehkné Solutions"
+}
