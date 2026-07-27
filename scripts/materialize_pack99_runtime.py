@@ -23,6 +23,7 @@ POLICY_PATH = CONTRACT_ROOT / "runtime-policy.json"
 CATALOG_PATH = CONTRACT_ROOT / "asset-catalog.json"
 WEB_ROOT = Path("client/web/public/assets/runtime/pack99")
 GODOT_ROOT = Path("client/godot/assets/runtime/pack99")
+WEB_PUBLIC_ROOT = Path("assets/runtime/pack99")
 
 
 def parse_args() -> argparse.Namespace:
@@ -175,6 +176,7 @@ def main() -> int:
                 "bytes": asset.get("bytes"),
                 "duplicateOf": asset.get("duplicate_of"),
                 "web": normalize(WEB_ROOT / relative_target),
+                "webPublic": "/" + normalize(WEB_PUBLIC_ROOT / relative_target),
                 "godot": normalize(GODOT_ROOT / relative_target),
             }
         )
@@ -182,10 +184,10 @@ def main() -> int:
             print(f"  runtime: {index}/{len(candidates)}", flush=True)
 
     runtime_index = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "packId": PACK_ID,
         "namespace": "PACK_99_RECOVERED",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "status": "materialized-local-policy-validated",
         "assetCount": len(runtime_assets),
         "excludedCount": len(excluded),
@@ -210,6 +212,8 @@ def main() -> int:
 
     write_json(repo / CONTRACT_ROOT / "runtime-index.json", runtime_index)
     write_json(repo / CONTRACT_ROOT / "materialization-report.json", report)
+    write_json(repo / WEB_ROOT / "runtime-index.json", runtime_index)
+    write_json(repo / GODOT_ROOT / "runtime-index.json", runtime_index)
 
     print("")
     print("=== PACK 99 MATERIALIZATION RESULT ===")
