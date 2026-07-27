@@ -3,10 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import tempfile
+import unittest
 from pathlib import Path
 from zipfile import ZipFile
-
-import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -59,55 +59,63 @@ def split_archive(tmp_path: Path, chunk_size: int = 32) -> tuple[Path, Path, lis
     return manifest_path, tmp_path / manifest["artifact"], parts
 
 
-def test_reassembles_and_audits_archive(tmp_path: Path) -> None:
-    manifest, output, _parts = split_archive(tmp_path)
+class ReassemblePack99PartsTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.tmp_path = Path(self.temporary.name)
 
-    report = reassemble(manifest, tmp_path)
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
 
-    assert output.is_file()
-    assert report["passed"] is True
-    assert report["partCount"] > 1
-    assert report["zipAudit"]["passed"] is True
-    assert report["zipAudit"]["entryCount"] == 5
-    assert sha256(output) == report["sha256"]
+    def test_reassembles_and_audits_archive(self) -> None:
+        manifest, output, _parts = split_archive(self.tmp_path)
+
+        report = reassemble(manifest, self.tmp_path)
+
+        self.assertTrue(output.is_file())
+        self.assertTrue(report["passed"])
+        self.assertGreater(report["partCount"], 1)
+        self.assertTrue(report["zipAudit"]["passed"])
+        self.assertEqual(report["zipAudit"]["entryCount"], 5)
+        self.assertEqual(sha256(output), report["sha256"])
+
+    def test_rejects_missing_part_without_touching_existing_output(self) -> None:
+        manifest, output, parts = split_archive(self.tmp_path)
+        output.write_bytes(b"previous-runtime")
+        parts[-1].unlink()
+
+        with self.assertRaisesRegex(ReassemblyError, "Parte ausente"):
+            reassemble(manifest, self.tmp_path)
+
+        self.assertEqual(output.read_bytes(), b"previous-runtime")
+
+    def test_rejects_part_hash_mismatch(self) -> None:
+        manifest, _output, parts = split_archive(self.tmp_path)
+        parts[0].write_bytes(parts[0].read_bytes() + b"tampered")
+
+        with self.assertRaisesRegex(ReassemblyError, "Tamanho incorreto|SHA-256 incorreto"):
+            reassemble(manifest, self.tmp_path)
+
+    def test_rejects_unsafe_part_name(self) -> None:
+        manifest, _output, _parts = split_archive(self.tmp_path)
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["parts"][0]["name"] = "../outside.part"
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+
+        with self.assertRaisesRegex(ReassemblyError, "Nome de parte inseguro"):
+            load_manifest(manifest)
+
+    def test_rejects_false_final_hash(self) -> None:
+        manifest, output, _parts = split_archive(self.tmp_path)
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        data["sha256"] = "0" * 64
+        manifest.write_text(json.dumps(data), encoding="utf-8")
+
+        with self.assertRaisesRegex(ReassemblyError, "SHA-256 final incorreto"):
+            reassemble(manifest, self.tmp_path)
+
+        self.assertFalse(output.exists())
 
 
-def test_rejects_missing_part_without_touching_existing_output(tmp_path: Path) -> None:
-    manifest, output, parts = split_archive(tmp_path)
-    output.write_bytes(b"previous-runtime")
-    parts[-1].unlink()
-
-    with pytest.raises(ReassemblyError, match="Parte ausente"):
-        reassemble(manifest, tmp_path)
-
-    assert output.read_bytes() == b"previous-runtime"
-
-
-def test_rejects_part_hash_mismatch(tmp_path: Path) -> None:
-    manifest, _output, parts = split_archive(tmp_path)
-    parts[0].write_bytes(parts[0].read_bytes() + b"tampered")
-
-    with pytest.raises(ReassemblyError, match="Tamanho incorreto|SHA-256 incorreto"):
-        reassemble(manifest, tmp_path)
-
-
-def test_rejects_unsafe_part_name(tmp_path: Path) -> None:
-    manifest, _output, _parts = split_archive(tmp_path)
-    data = json.loads(manifest.read_text(encoding="utf-8"))
-    data["parts"][0]["name"] = "../outside.part"
-    manifest.write_text(json.dumps(data), encoding="utf-8")
-
-    with pytest.raises(ReassemblyError, match="Nome de parte inseguro"):
-        load_manifest(manifest)
-
-
-def test_rejects_false_final_hash(tmp_path: Path) -> None:
-    manifest, output, _parts = split_archive(tmp_path)
-    data = json.loads(manifest.read_text(encoding="utf-8"))
-    data["sha256"] = "0" * 64
-    manifest.write_text(json.dumps(data), encoding="utf-8")
-
-    with pytest.raises(ReassemblyError, match="SHA-256 final incorreto"):
-        reassemble(manifest, tmp_path)
-
-    assert not output.exists()
+if __name__ == "__main__":
+    unittest.main()
