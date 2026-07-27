@@ -1,0 +1,212 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "version": "1.2.0-runtime02",
+  "profile": "bootstrap",
+  "assetCount": 33,
+  "canonicalAssetCount": 33,
+  "uniquePayloadCount": 16,
+  "runtimeMode": "bootstrap",
+  "fallback": "procedural",
+  "assets": [
+    {
+      "id": "CHAMP_BERSERKER_01_ATTACK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp"
+    },
+    {
+      "id": "CHAMP_BERSERKER_01_DEFEAT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp"
+    },
+    {
+      "id": "CHAMP_BERSERKER_01_HIT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_HIT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_HIT_SE_01.webp"
+    },
+    {
+      "id": "CHAMP_BERSERKER_01_IDLE_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp"
+    },
+    {
+      "id": "CHAMP_BERSERKER_01_WALK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_WALK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_WALK_SE_01.webp"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_ATTACK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_DEFEAT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_HIT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_HIT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_HIT_SE_01.webp"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_IDLE_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp"
+    },
+    {
+      "id": "HERO_GUARDIAN_01_WALK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_WALK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_WALK_SE_01.webp"
+    },
+    {
+      "id": "HERO_RANGER_01_ATTACK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp"
+    },
+    {
+      "id": "HERO_RANGER_01_DEFEAT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp"
+    },
+    {
+      "id": "HERO_RANGER_01_HIT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_RANGER_01_HIT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_RANGER_01_HIT_SE_01.webp"
+    },
+    {
+      "id": "HERO_RANGER_01_IDLE_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_RANGER_01_IDLE_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_RANGER_01_IDLE_SE_01.webp"
+    },
+    {
+      "id": "HERO_RANGER_01_WALK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_WALK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_WALK_SE_01.webp"
+    },
+    {
+      "id": "UNIT_RECRUIT_01_ATTACK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_ATTACK_SE_01.webp"
+    },
+    {
+      "id": "UNIT_RECRUIT_01_DEFEAT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_DEFEAT_SE_01.webp"
+    },
+    {
+      "id": "UNIT_RECRUIT_01_HIT_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_HIT_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_HIT_SE_01.webp"
+    },
+    {
+      "id": "UNIT_RECRUIT_01_IDLE_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_IDLE_SE_01.webp"
+    },
+    {
+      "id": "UNIT_RECRUIT_01_WALK_SE_01",
+      "category": "character-animation",
+      "sourcePath": "sprites/HERO_GUARDIAN_01_WALK_SE_01.webp",
+      "web": "client/web/public/assets/runtime/sprites/HERO_GUARDIAN_01_WALK_SE_01.webp"
+    },
+    {
+      "id": "EDGE_ARCANE_BUILT_NE_SW_01",
+      "category": "board-edge",
+      "sourcePath": "board/EDGE_ARCANE_BUILT_NE_SW_01.webp",
+      "web": "client/web/public/assets/runtime/board/EDGE_ARCANE_BUILT_NE_SW_01.webp"
+    },
+    {
+      "id": "EDGE_ARCANE_BUILT_NW_SE_01",
+      "category": "board-edge",
+      "sourcePath": "board/EDGE_ARCANE_BUILT_NW_SE_01.webp",
+      "web": "client/web/public/assets/runtime/board/EDGE_ARCANE_BUILT_NW_SE_01.webp"
+    },
+    {
+      "id": "PILLAR_NEUTRAL_01",
+      "category": "board-node",
+      "sourcePath": "board/PILLAR_NEUTRAL_01.webp",
+      "web": "client/web/public/assets/runtime/board/PILLAR_NEUTRAL_01.webp"
+    },
+    {
+      "id": "PILLAR_SELECTED_01",
+      "category": "board-node",
+      "sourcePath": "board/PILLAR_SELECTED_01.webp",
+      "web": "client/web/public/assets/runtime/board/PILLAR_SELECTED_01.webp"
+    },
+    {
+      "id": "TILE_FOREST_FLAT_CENTER_A_01",
+      "category": "terrain",
+      "sourcePath": "board/TILE_GRASS_FLAT_CENTER_A_01.webp",
+      "web": "client/web/public/assets/runtime/board/TILE_GRASS_FLAT_CENTER_A_01.webp"
+    },
+    {
+      "id": "TILE_GRASS_FLAT_CENTER_A_01",
+      "category": "terrain",
+      "sourcePath": "board/TILE_GRASS_FLAT_CENTER_A_01.webp",
+      "web": "client/web/public/assets/runtime/board/TILE_GRASS_FLAT_CENTER_A_01.webp"
+    },
+    {
+      "id": "TILE_WATER_FLAT_CENTER_A_01",
+      "category": "terrain",
+      "sourcePath": "board/TILE_GRASS_FLAT_CENTER_A_01.webp",
+      "web": "client/web/public/assets/runtime/board/TILE_GRASS_FLAT_CENTER_A_01.webp"
+    },
+    {
+      "id": "VFX_CELL_OBJECTIVE_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_CELL_SELECTED_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_CELL_SELECTED_01.webp"
+    },
+    {
+      "id": "VFX_CELL_SELECTED_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_CELL_SELECTED_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_CELL_SELECTED_01.webp"
+    },
+    {
+      "id": "VFX_CELL_VALID_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_CELL_SELECTED_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_CELL_SELECTED_01.webp"
+    },
+    {
+      "id": "VFX_COMBAT_HEAVY_STRIKE_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_COMBAT_HEAVY_STRIKE_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_COMBAT_HEAVY_STRIKE_01.webp"
+    },
+    {
+      "id": "VFX_COMBAT_SHIELD_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_COMBAT_SHIELD_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_COMBAT_SHIELD_01.webp"
+    },
+    {
+      "id": "VFX_COMBAT_SLASH_01",
+      "category": "vfx",
+      "sourcePath": "vfx/VFX_COMBAT_SLASH_01.webp",
+      "web": "client/web/public/assets/runtime/vfx/VFX_COMBAT_SLASH_01.webp"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}
