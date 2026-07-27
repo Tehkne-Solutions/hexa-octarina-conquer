@@ -27,7 +27,7 @@ interface GoDotsBoardProps {
   objectiveTargetId: string;
   influenceEdges: InfluenceEdge[];
   claimedCells: ClaimedCell[];
-  collectedTileIds: string[];
+  collectedTileIds?: string[];
   building: "farm" | "tower" | null;
   disabled?: boolean;
   onNodeClick: (tile: LivingTile) => void;
@@ -60,7 +60,7 @@ export function GoDotsBoard({
   objectiveTargetId,
   influenceEdges,
   claimedCells,
-  collectedTileIds,
+  collectedTileIds = [],
   building,
   disabled = false,
   onNodeClick,
