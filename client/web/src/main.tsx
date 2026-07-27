@@ -51,6 +51,7 @@ import "./pack99-premium-campaign.css";
 import "./pack99-premium-hud.css";
 import "./pack99-premium-cards.css";
 import "./pack99-territory-minimap.css";
+import "./pack99-strategic-structures.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
