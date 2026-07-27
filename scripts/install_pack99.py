@@ -119,9 +119,6 @@ def locate_runtime_root(path: Path) -> RuntimeSource:
 
 
 def normalize_extracted_root(path: Path) -> Path:
-    if (path / "runtime-install.json").is_file() and (path / "registry" / "assets-runtime.json").is_file():
-        return build_compat_root(path)
-
     if (path / "pack-manifest.json").is_file():
         return path
 
@@ -136,58 +133,6 @@ def normalize_extracted_root(path: Path) -> Path:
         "Não foi possível localizar a raiz do PACK 99. "
         "O diretório precisa conter pack-manifest.json."
     )
-
-
-def build_compat_root(path: Path) -> Path:
-    runtime_install = read_json(path / "runtime-install.json")
-    runtime_registry = read_json(path / "registry" / "assets-runtime.json")
-    compat_root = path / ".pack99-compat-root"
-    if compat_root.exists():
-        shutil.rmtree(compat_root)
-    compat_root.mkdir(parents=True, exist_ok=True)
-
-    manifest = {
-        "packId": PACK_ID,
-        "version": runtime_install.get("version", "1.0.0"),
-        "signature": SIGNATURE,
-        "profile": runtime_install.get("profile", "core"),
-        "sourceArchive": runtime_install.get("sourceArchive"),
-        "sourceSha256": runtime_install.get("sourceSha256"),
-    }
-    (compat_root / "pack-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    validation = {
-        "passed": True,
-        "source": "runtime-install.json",
-        "profile": runtime_install.get("profile", "core"),
-    }
-    (compat_root / "validation").mkdir(parents=True, exist_ok=True)
-    (compat_root / "validation" / "validation-report.json").write_text(json.dumps(validation, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    registry_dir = compat_root / "registry"
-    registry_dir.mkdir(parents=True, exist_ok=True)
-    registry_payload = {
-        "project": runtime_registry.get("project"),
-        "packId": PACK_ID,
-        "version": runtime_registry.get("version", manifest["version"]),
-        "profile": runtime_registry.get("profile", manifest["profile"]),
-        "assetCount": runtime_registry.get("assetCount", 0),
-        "assets": runtime_registry.get("assets", []),
-        "signature": SIGNATURE,
-    }
-    (registry_dir / "assets-global.json").write_text(json.dumps(registry_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    if (path / "registry" / "entities-global.json").is_file():
-        shutil.copy2(path / "registry" / "entities-global.json", registry_dir / "entities-global.json")
-    if (path / "registry" / "packs-global.json").is_file():
-        shutil.copy2(path / "registry" / "packs-global.json", registry_dir / "packs-global.json")
-
-    if (path / "packages").is_dir():
-        shutil.copytree(path / "packages", compat_root / "packages", dirs_exist_ok=True)
-    else:
-        (compat_root / "packages").mkdir(parents=True, exist_ok=True)
-
-    return compat_root
 
 
 def validate_pack(

@@ -40,22 +40,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/(?:campaign|ws)(?:\/|$)/],
         cleanupOutdatedCaches: true,
         globPatterns: ["**/*.{js,css,html,json,svg,png,webp,woff2}"],
-        globIgnores: ["assets/runtime/packages/**/*"],
         runtimeCaching: [
-          {
-            urlPattern: ({ request, url }) => request.method === "GET"
-              && url.pathname.startsWith("/assets/runtime/packages/"),
-            handler: "CacheFirst",
-            options: {
-              cacheName: "hexa-pack99-runtime-v1",
-              cacheableResponse: { statuses: [0, 200] },
-              expiration: {
-                maxEntries: 2048,
-                maxAgeSeconds: 60 * 60 * 24 * 180,
-                purgeOnQuotaError: true,
-              },
-            },
-          },
           {
             urlPattern: ({ request, url }) => request.method === "GET"
               && url.pathname === "/campaign/catalog"
@@ -70,13 +55,12 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({ request, url }) => request.destination === "image"
-              && !url.pathname.startsWith("/assets/runtime/packages/"),
+            urlPattern: ({ request }) => request.destination === "image",
             handler: "CacheFirst",
             options: {
               cacheName: "hexa-images",
               cacheableResponse: { statuses: [0, 200] },
-              expiration: { maxEntries: 96, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              expiration: { maxEntries: 64, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
           {

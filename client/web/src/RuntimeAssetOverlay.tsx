@@ -2,13 +2,6 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom";
 
 import { RuntimeAnimatedSprite, RuntimeStaticAsset, type RuntimeSpriteState } from "./RuntimePackSprite";
-import {
-  loadRuntimeAssetRegistry,
-  runtimePackRequired,
-  runtimePackStatus,
-  runtimePackStatusEvent,
-  type RuntimePackStatus,
-} from "./runtime-assets";
 
 interface UnitTarget { id: string; node: HTMLElement; entityId: string; state: RuntimeSpriteState; label: string; }
 interface NodeTarget { id: string; node: HTMLElement; pillarId: string; effectId: string | null; }
@@ -90,26 +83,6 @@ function readCombatTarget(): CombatTarget | null {
   };
 }
 
-function useRuntimePackState(): RuntimePackStatus {
-  const [status, setStatus] = useState<RuntimePackStatus>(() => runtimePackStatus());
-  useEffect(() => {
-    const eventName = runtimePackStatusEvent();
-    const handle = (event: Event) => setStatus((event as CustomEvent<RuntimePackStatus>).detail);
-    document.addEventListener(eventName, handle);
-    void loadRuntimeAssetRegistry();
-    return () => document.removeEventListener(eventName, handle);
-  }, []);
-  useEffect(() => {
-    document.documentElement.dataset.pack99Required = String(runtimePackRequired());
-    document.documentElement.dataset.pack99State = status.state;
-    return () => {
-      delete document.documentElement.dataset.pack99Required;
-      delete document.documentElement.dataset.pack99State;
-    };
-  }, [status.state]);
-  return status;
-}
-
 function useRuntimeSnapshot(): RuntimeSnapshot {
   const [snapshot, setSnapshot] = useState<RuntimeSnapshot>(EMPTY_SNAPSHOT);
   const positions = useRef(new Map<string, string>());
@@ -189,19 +162,7 @@ function RuntimeCombatPortal({ target }: { target: CombatTarget }) {
   return <div className={`runtime-combatants beat-${target.beat}`} aria-hidden="true"><div className="runtime-combatant runtime-player-combatant"><RuntimeAnimatedSprite entityId={playerEntity} state={playerState} className="runtime-combat-sprite" /></div><div className="runtime-combatant runtime-enemy-combatant"><RuntimeAnimatedSprite entityId={enemyEntity} state={enemyState} className="runtime-combat-sprite" /></div>{effectId ? <RuntimeStaticAsset assetId={effectId} className={`runtime-combat-vfx vfx-${target.beat}`} /> : null}</div>;
 }
 
-function RuntimePackDiagnostic({ status }: { status: RuntimePackStatus }) {
-  if (status.state !== "error" || !status.required) return null;
-  return (
-    <aside className="runtime-pack-diagnostic" role="alert" aria-live="assertive">
-      <strong>PACK 99 indisponível</strong>
-      <span>{status.message}</span>
-      <small>O runtime integral é obrigatório nesta versão. Tehkné Solutions</small>
-    </aside>
-  );
-}
-
 export function RuntimeAssetOverlay() {
-  const status = useRuntimePackState();
   const snapshot = useRuntimeSnapshot();
-  return <><RuntimePackDiagnostic status={status} />{snapshot.world ? createPortal(<RuntimeWorldOverlay edges={snapshot.edges} />, snapshot.world) : null}{snapshot.units.map((target) => createPortal(<RuntimeUnitPortal key={target.id} target={target} />, target.node))}{snapshot.nodes.map((target) => createPortal(<RuntimeNodePortal key={target.id} target={target} />, target.node))}{snapshot.combat ? createPortal(<RuntimeCombatPortal target={snapshot.combat} />, snapshot.combat.stage) : null}</>;
+  return <>{snapshot.world ? createPortal(<RuntimeWorldOverlay edges={snapshot.edges} />, snapshot.world) : null}{snapshot.units.map((target) => createPortal(<RuntimeUnitPortal key={target.id} target={target} />, target.node))}{snapshot.nodes.map((target) => createPortal(<RuntimeNodePortal key={target.id} target={target} />, target.node))}{snapshot.combat ? createPortal(<RuntimeCombatPortal target={snapshot.combat} />, snapshot.combat.stage) : null}</>;
 }
