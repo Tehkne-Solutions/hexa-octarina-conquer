@@ -50,6 +50,7 @@ import "./pack99-world-vfx.css";
 import "./pack99-premium-campaign.css";
 import "./pack99-premium-hud.css";
 import "./pack99-premium-cards.css";
+import "./pack99-territory-minimap.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
@@ -72,9 +73,7 @@ const updateSW = registerSW({
 window.addEventListener(PWA_APPLY_UPDATE_EVENT, () => { emitPwaRuntimePatch({ updateAvailable: false }); trackExperience("pwa_state", { value: "update-applied" }); void updateSW(true); });
 window.addEventListener(PWA_CHECK_UPDATE_EVENT, () => { emitPwaRuntimePatch({ lastCheckedAt: Date.now(), registrationError: null }); trackExperience("pwa_state", { value: "update-check" }); if (!serviceWorkerRegistration) return; void serviceWorkerRegistration.update().catch((error: unknown) => { emitPwaRuntimePatch({ registrationError: error instanceof Error ? error.message : String(error) }); }); });
 
-function BootFallback() {
-  return <main className="boot-fallback" role="status" aria-live="polite"><span aria-hidden="true">✦</span><strong>Preparando o Reino de Orun</strong><small>Tehkné Solutions</small></main>;
-}
+function BootFallback() { return <main className="boot-fallback" role="status" aria-live="polite"><span aria-hidden="true">✦</span><strong>Preparando o Reino de Orun</strong><small>Tehkné Solutions</small></main>; }
 
 const root = document.getElementById("root");
 if (!root) throw new Error("root element was not found");
