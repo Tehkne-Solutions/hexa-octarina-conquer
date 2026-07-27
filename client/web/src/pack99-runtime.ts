@@ -58,19 +58,21 @@ export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99Runt
   const reportedAssetCount = Number.isFinite(index.assetCount) ? index.assetCount : index.assets.length;
   const materializedAssetCount = index.assets.length;
   const declaredMode = index.runtimeMode ?? index.profile;
-  const effectiveCount = Math.max(reportedAssetCount, materializedAssetCount);
-  const mode: Pack99RuntimeMode = declaredMode === "full" || effectiveCount >= PACK99_FULL_MIN_ASSET_COUNT
+  const fullByCount = reportedAssetCount >= PACK99_FULL_MIN_ASSET_COUNT
+    && materializedAssetCount >= PACK99_FULL_MIN_ASSET_COUNT;
+  const coreByCount = reportedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT
+    && materializedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT;
+  const mode: Pack99RuntimeMode = declaredMode === "full" || fullByCount
     ? "full"
-    : declaredMode === "core" || effectiveCount >= PACK99_CORE_MIN_ASSET_COUNT
+    : declaredMode === "core" || coreByCount
       ? "core"
       : "bootstrap";
-  const isFullRuntime = mode === "full" && effectiveCount >= PACK99_FULL_MIN_ASSET_COUNT;
   return {
     mode,
     reportedAssetCount,
     materializedAssetCount,
-    isFullRuntime,
-    usesFallbacks: !isFullRuntime,
+    isFullRuntime: fullByCount,
+    usesFallbacks: !fullByCount,
   };
 }
 
