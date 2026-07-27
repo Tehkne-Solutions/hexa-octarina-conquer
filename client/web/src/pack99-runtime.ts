@@ -54,6 +54,24 @@ export async function resolvePack99Asset(required: string[], preferred: string[]
     .sort((left, right) => right.score - left.score || left.asset.sourcePath.localeCompare(right.asset.sourcePath))[0]?.asset ?? null;
 }
 
+export async function resolvePack99AssetBySuffix(sourceSuffixes: string[]): Promise<Pack99RuntimeAsset | null> {
+  const index = await loadPack99Index();
+  const suffixes = sourceSuffixes.map(normalize);
+  return index.assets.find((asset) => {
+    const path = normalize(asset.sourcePath);
+    return suffixes.some((suffix) => path.endsWith(suffix));
+  }) ?? null;
+}
+
+export async function resolvePack99MissionAsset(reference: {
+  sourceSuffixes: string[];
+  required: string[];
+  preferred: string[];
+}): Promise<Pack99RuntimeAsset | null> {
+  return await resolvePack99AssetBySuffix(reference.sourceSuffixes)
+    ?? await resolvePack99Asset(reference.required, reference.preferred);
+}
+
 export function pack99PublicUrl(asset: Pack99RuntimeAsset | null): string | null {
   if (!asset) return null;
   const marker = "client/web/public";
