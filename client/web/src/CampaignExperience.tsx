@@ -15,6 +15,7 @@ import { Pack99CombatCinematics } from "./Pack99CombatCinematics";
 import { Pack99ElementalAbilities } from "./Pack99ElementalAbilities";
 import { Pack99PremiumCardRuntime } from "./Pack99PremiumCardRuntime";
 import { Pack99TerritoryMinimap } from "./Pack99TerritoryMinimap";
+import { Pack99UnitPhysicalMotion } from "./Pack99UnitPhysicalMotion";
 import { Pack99WorldVfx } from "./Pack99WorldVfx";
 import {
   beginLivingCampaignAttempt,
@@ -93,6 +94,7 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
     <Pack99WorldVfx rootRef={rootRef} />
     <Pack99CombatCinematics rootRef={rootRef} />
     <Pack99ElementalAbilities rootRef={rootRef} />
+    <Pack99UnitPhysicalMotion rootRef={rootRef} />
     <Pack99PremiumCardRuntime rootRef={rootRef} />
     <Pack99TerritoryMinimap rootRef={rootRef} />
     <button type="button" className="battle-help-button" onClick={replayCoach} aria-label="Mostrar tutorial contextual novamente" title="Mostrar tutorial novamente">?</button>
