@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "clients": ["web", "godot"],
+  "requirements": {
+    "canonicalIdsIdentical": true,
+    "relativePathsEquivalent": true,
+    "zeroUnresolvedReferences": true,
+    "signature": "Tehkné Solutions",
+    "referenceOnlyAssetsExcludedFromRuntime": true,
+    "productionFallbacksRequireExplicitApproval": true
+  },
+  "requiredPackFiles": [
+    "pack-manifest.json",
+    "registry/assets-registry.json",
+    "validation/validation-report.json",
+    "SHA256SUMS.txt",
+    "LICENSE-ASSETS.md",
+    "CHANGELOG.md"
+  ],
+  "signature": "Tehkné Solutions"
+}

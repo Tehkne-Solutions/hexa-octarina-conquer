@@ -1,0 +1,39 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_00_FOUNDATION",
+  "version": "1.1.0",
+  "status": "validated-local-pending-release",
+  "source": {
+    "archive": "HOC_PACK_00_FOUNDATION_FINAL.zip",
+    "bytes": 2668465,
+    "sha256": "5785a510de068031b00187de5e7811032160e757678f7310e91e0ab45a8ec4d3",
+    "result": "rejected-as-final",
+    "reason": "Manifesto declarava final-foundation, mas o registro interno marcava o PACK 00 como partial e faltavam contratos técnicos obrigatórios."
+  },
+  "candidate": {
+    "archive": "HOC_PACK_00_FOUNDATION_VALIDATED_1.1.0.zip",
+    "bytes": 2673607,
+    "sha256": "363286d3a009e3e6a696e917478027a4d5a23564ffbaae9cbe686f4cdd3014bb",
+    "entries": 14,
+    "checksumsValidated": 13,
+    "runtimeAssets": 0,
+    "referenceAssets": 1,
+    "unsafePaths": 0,
+    "unresolvedReferences": 0
+  },
+  "styleLock": {
+    "id": "REF_STYLE_LOCK_01",
+    "file": "STYLE_LOCK_01.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "9cb801941cb02c656533fbb8b877b5ada49e3b81a2aec18b3654b953457b1dc6",
+    "runtime": false
+  },
+  "promotion": {
+    "repositoryContract": "pending-pr",
+    "releaseAsset": "pending",
+    "gameplayIntegration": "not-applicable",
+    "nextPack": "HOC_PACK_01_TERRAIN_CORE"
+  },
+  "signature": "Tehkné Solutions"
+}

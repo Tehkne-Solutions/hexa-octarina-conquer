@@ -1,0 +1,22 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_00_FOUNDATION",
+  "version": "1.1.0",
+  "assets": [
+    {
+      "id": "REF_STYLE_LOCK_01",
+      "category": "art-bible-reference",
+      "role": "reference-only",
+      "file": "STYLE_LOCK_01.png",
+      "sha256": "9cb801941cb02c656533fbb8b877b5ada49e3b81a2aec18b3654b953457b1dc6",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "colorMode": "RGB",
+      "alpha": false,
+      "runtime": false,
+      "signature": "Tehkné Solutions"
+    }
+  ],
+  "signature": "Tehkné Solutions"
+}

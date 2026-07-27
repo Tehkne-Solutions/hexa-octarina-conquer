@@ -1,0 +1,46 @@
+name: Progressive Pack Contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit_progressive_pack.py"
+      - "tests/test_audit_progressive_pack.py"
+      - "runtime/packs/**"
+      - "docs/SPRINT_ASSETS_PROGRESSIVE_*.md"
+      - ".github/workflows/progressive-pack-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pack-contracts:
+    name: PACK 00 progressive contracts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Compile progressive auditor
+        run: python -m py_compile scripts/audit_progressive_pack.py
+      - name: Run progressive pack tests
+        run: python -m unittest tests/test_audit_progressive_pack.py -v
+      - name: Validate PACK 00 lock
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lock = json.loads(Path("runtime/packs/PACK_00_FOUNDATION/pack-lock.json").read_text(encoding="utf-8"))
+          assert lock["packId"] == "HOC_PACK_00_FOUNDATION"
+          assert lock["version"] == "1.1.0"
+          assert lock["candidate"]["runtimeAssets"] == 0
+          assert lock["candidate"]["referenceAssets"] == 1
+          assert lock["candidate"]["unresolvedReferences"] == 0
+          assert lock["signature"] == "Tehkné Solutions"
+          PY
