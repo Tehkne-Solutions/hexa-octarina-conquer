@@ -1,0 +1,72 @@
+/* PACK 01 — progressive terrain layer */
+
+.progressive-terrain-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.progressive-terrain-layer.is-ready {
+  opacity: 0.92;
+}
+
+.progressive-terrain-tile {
+  position: absolute;
+  width: 22%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 50%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.3));
+}
+
+.progressive-terrain-layer[data-terrain-theme="orun-mill"] .progressive-terrain-tile {
+  filter: saturate(0.96) brightness(0.88) drop-shadow(0 5px 4px rgba(0, 0, 0, 0.28));
+}
+
+.progressive-terrain-layer[data-terrain-theme="prismatic-ruins"] .progressive-terrain-tile {
+  filter: saturate(1.08) hue-rotate(6deg) brightness(0.88) drop-shadow(0 5px 5px rgba(21, 12, 53, 0.48));
+}
+
+.progressive-terrain-layer[data-terrain-theme="ash-fortress"] .progressive-terrain-tile {
+  filter: saturate(0.98) brightness(0.76) contrast(1.08) drop-shadow(0 5px 5px rgba(28, 7, 5, 0.5));
+}
+
+.go-dots-world:has(.progressive-terrain-layer.is-ready) {
+  background:
+    radial-gradient(circle at 50% 35%, var(--board-haze, rgba(101, 148, 112, 0.18)), transparent 34%),
+    linear-gradient(165deg, color-mix(in srgb, var(--board-floor-a, #354433) 38%, transparent), var(--board-floor-b, #121b14) 84%);
+}
+
+.go-dots-world:has(.progressive-terrain-layer.is-ready) .world-river {
+  z-index: -2;
+}
+
+html[data-effects="light"] .progressive-terrain-tile,
+html[data-reduced-motion="true"] .progressive-terrain-tile {
+  filter: none !important;
+}
+
+@media (max-width: 640px) {
+  .progressive-terrain-tile {
+    width: 23%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-terrain-layer {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .progressive-terrain-layer {
+    display: none;
+  }
+}
