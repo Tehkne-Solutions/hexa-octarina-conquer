@@ -43,6 +43,7 @@ import "./sprint-ui-13-interaction.css";
 import "./sprint-ui-14.css";
 import "./sprint-runtime-02.css";
 import "./pack99-unit-sprite.css";
+import "./pack99-unit-motion.css";
 import "./pack99-living-world.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
