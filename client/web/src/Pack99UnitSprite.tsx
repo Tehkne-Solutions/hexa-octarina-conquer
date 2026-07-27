@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { FantasyUnitSprite } from "./FantasyUnitSprite";
 import { ASH_BRIDGE_UNITS } from "./pack99-ash-bridge-manifest";
@@ -21,10 +21,15 @@ interface UnitLayers {
   emissive: string | null;
 }
 
+type TransientState = "entering" | "hit" | "healed" | null;
+
 export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pack99UnitSpriteProps) {
   const reference = useMemo(() => ASH_BRIDGE_UNITS[unit.id] ?? ASH_BRIDGE_UNITS["raider-bridge"], [unit.id]);
   const [layers, setLayers] = useState<UnitLayers>({ base: null, shadow: null, emissive: null });
   const [failed, setFailed] = useState(false);
+  const [transientState, setTransientState] = useState<TransientState>("entering");
+  const previousHp = useRef(unit.hp);
+  const clearTimer = useRef<number | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -50,6 +55,23 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
     return () => { active = false; };
   }, [reference]);
 
+  useEffect(() => {
+    const oldHp = previousHp.current;
+    previousHp.current = unit.hp;
+    if (unit.hp === oldHp) return;
+    setTransientState(unit.hp < oldHp ? "hit" : "healed");
+    if (clearTimer.current !== null) window.clearTimeout(clearTimer.current);
+    clearTimer.current = window.setTimeout(() => setTransientState(null), 620);
+  }, [unit.hp]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setTransientState((state) => state === "entering" ? null : state), 520);
+    return () => {
+      window.clearTimeout(timer);
+      if (clearTimer.current !== null) window.clearTimeout(clearTimer.current);
+    };
+  }, []);
+
   if (failed || !layers.base) {
     return <FantasyUnitSprite unit={unit} selected={selected} compact={compact} />;
   }
@@ -59,12 +81,14 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
 
   return (
     <div
-      className={`pack99-unit-sprite faction-${unit.faction} role-${unit.role} state-${visualState} ${compact ? "compact" : ""}`}
+      className={`pack99-unit-sprite faction-${unit.faction} role-${unit.role} state-${visualState} ${transientState ? `motion-${transientState}` : ""} ${compact ? "compact" : ""}`}
       data-pack99-unit={unit.id}
       data-pack99-asset={reference.id}
+      data-unit-state={visualState}
     >
       <span className="pack99-unit-ring" aria-hidden="true" />
       <span className="pack99-unit-aura" aria-hidden="true" />
+      <span className="pack99-unit-impact" aria-hidden="true" />
       <span className="pack99-unit-stack" role="img" aria-label={`${unit.name}, ${unit.title}`}>
         {layers.shadow ? <img className="pack99-unit-layer pack99-unit-shadow" src={layers.shadow} alt="" aria-hidden="true" /> : null}
         <img className="pack99-unit-layer pack99-unit-base" src={layers.base} alt="" onError={() => setFailed(true)} />
