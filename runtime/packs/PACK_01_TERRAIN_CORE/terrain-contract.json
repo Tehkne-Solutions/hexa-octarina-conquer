@@ -1,0 +1,29 @@
+{
+  "packId": "HOC_PACK_01_TERRAIN_CORE_FINAL",
+  "version": "1.1.0",
+  "terrainFamilies": {
+    "TERRAIN_GRASS_ANCESTRAL": "A01_GRASS_ANCESTRAL",
+    "TERRAIN_RUNIC_STONE": "A02_RUNIC_STONE",
+    "TERRAIN_FOREST": "A03_FOREST",
+    "TERRAIN_CORRUPTED": "A04_CORRUPTED",
+    "TERRAIN_SHALLOW_WATER": "A05_SHALLOW_WATER",
+    "TERRAIN_LAVA": "A06_LAVA"
+  },
+  "supportPackage": "A07_SUPPORT_MODULES",
+  "technical": {
+    "masterCanvasPx": [1024, 512],
+    "runtimeTilePx": [512, 256],
+    "runtimeGridStepPx": [252, 124],
+    "edgeBleedPx": 8,
+    "baseTilesPerTerrain": 3,
+    "transitionAssetsPerTerrain": 13,
+    "assetsPerTerrain": 16,
+    "supportAssets": 7,
+    "totalRuntimeAssets": 103,
+    "bitOrder": ["N", "E", "S", "W"],
+    "alphaRequired": true,
+    "canonicalIdsIdentical": true,
+    "zeroUnresolvedReferences": true
+  },
+  "signature": "Tehkné Solutions"
+}
