@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "packId": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED",
+  "version": "1.0.1",
+  "categoryOverrides": {
+    "pack-manifest.json": "manifest",
+    "packages/PACK_00_FOUNDATION/pack-manifest.json": "manifest",
+    "packages/PACK_00_FOUNDATION/registry/pack-registry.json": "registry",
+    "packages/PACK_00_FOUNDATION/STYLE_LOCK_01.png": "reference",
+    "registry/assets-global.json": "registry",
+    "registry/entities-global.json": "registry",
+    "registry/packs-global.json": "registry"
+  },
+  "excludeFromRuntime": [
+    "packages/PACK_00_FOUNDATION/STYLE_LOCK_01.png"
+  ],
+  "rules": {
+    "styleLockIsReferenceOnly": true,
+    "manifestsRemainAvailable": true,
+    "globalRegistriesRemainAvailable": true,
+    "preserveCanonicalPaths": true
+  },
+  "signature": "Tehkné Solutions"
+}
