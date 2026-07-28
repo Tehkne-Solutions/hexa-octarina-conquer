@@ -1,0 +1,74 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "approvalMode": "complete-character-set",
+  "requiredStates": ["neutral", "speaking", "alert", "combat", "victory", "defeat"],
+  "characters": [
+    {
+      "characterId": "hero_vanguard_01",
+      "status": "pending-assets",
+      "review": {
+        "identityConsistent": false,
+        "statesReadable": false,
+        "framingConsistent": false,
+        "lightingConsistent": false,
+        "signatureElementsPreserved": false,
+        "approved": false,
+        "reviewer": null,
+        "reviewedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "characterId": "hero_arcanist_01",
+      "status": "pending-assets",
+      "review": {
+        "identityConsistent": false,
+        "statesReadable": false,
+        "framingConsistent": false,
+        "lightingConsistent": false,
+        "signatureElementsPreserved": false,
+        "approved": false,
+        "reviewer": null,
+        "reviewedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "characterId": "champion_raider_01",
+      "status": "pending-assets",
+      "review": {
+        "identityConsistent": false,
+        "statesReadable": false,
+        "framingConsistent": false,
+        "lightingConsistent": false,
+        "signatureElementsPreserved": false,
+        "approved": false,
+        "reviewer": null,
+        "reviewedAt": null,
+        "notes": []
+      }
+    },
+    {
+      "characterId": "faction_oracle_01",
+      "status": "pending-assets",
+      "review": {
+        "identityConsistent": false,
+        "statesReadable": false,
+        "framingConsistent": false,
+        "lightingConsistent": false,
+        "signatureElementsPreserved": false,
+        "approved": false,
+        "reviewer": null,
+        "reviewedAt": null,
+        "notes": []
+      }
+    }
+  ],
+  "promotion": {
+    "requiredApprovedCharacters": 4,
+    "approvedCharacters": 0,
+    "pack11Ready": false,
+    "pack99GateSatisfied": false,
+    "runtimeReady": false
+  }
+}
