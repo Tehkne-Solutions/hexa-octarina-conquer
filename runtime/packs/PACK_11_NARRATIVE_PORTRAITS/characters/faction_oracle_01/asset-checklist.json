@@ -1,0 +1,28 @@
+{
+  "characterId": "faction_oracle_01",
+  "status": "awaiting-assets",
+  "expectedDimensions": [1024, 1024],
+  "requiredAlpha": true,
+  "previewSize": [256, 256],
+  "assets": [
+    {"state": "neutral", "file": "faction_oracle_01__neutral.png", "status": "missing", "sha256": null, "approved": false},
+    {"state": "speaking", "file": "faction_oracle_01__speaking.png", "status": "missing", "sha256": null, "approved": false},
+    {"state": "alert", "file": "faction_oracle_01__alert.png", "status": "missing", "sha256": null, "approved": false},
+    {"state": "combat", "file": "faction_oracle_01__combat.png", "status": "missing", "sha256": null, "approved": false},
+    {"state": "victory", "file": "faction_oracle_01__victory.png", "status": "missing", "sha256": null, "approved": false},
+    {"state": "defeat", "file": "faction_oracle_01__defeat.png", "status": "missing", "sha256": null, "approved": false}
+  ],
+  "validation": {
+    "allFilesPresent": false,
+    "dimensionsValid": false,
+    "alphaValid": false,
+    "faceConsistent": false,
+    "outfitConsistent": false,
+    "signatureElementsConsistent": false,
+    "readableAtPreviewSize": false,
+    "allHashesPresent": false,
+    "characterApproved": false,
+    "manifestRegistered": false,
+    "runtimeReady": false
+  }
+}
