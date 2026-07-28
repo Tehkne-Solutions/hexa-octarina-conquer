@@ -1,0 +1,28 @@
+{
+  "characterId": "faction_oracle_01",
+  "role": "faction-oracle",
+  "productionStatus": "specified",
+  "visualIdentity": {
+    "archetype": "oraculo de faccao enigmatico e cerimonial",
+    "silhouette": "esguia, vertical e simetrica, com gola alta e adorno circular",
+    "face": "adulto de traços serenos, pele palida, olhos opalescentes e expressao controlada",
+    "hair": "longo, prateado, preso parcialmente por aro ritual",
+    "signatureMarks": [
+      "terceiro sigilo octarino luminoso na testa",
+      "halo mecanico segmentado atras da cabeca",
+      "fio de contas de obsidiana no ombro direito"
+    ],
+    "outfit": "vestes rituais em camadas, placas finas de metal claro e tecidos pesados",
+    "palette": ["marfim", "prata fria", "obsidiana", "ciano espectral"],
+    "materials": ["linho cerimonial", "prata escovada", "obsidiana", "vidro etereo"],
+    "framing": "busto frontal levemente em tres quartos, ombros visiveis e halo integralmente legivel",
+    "lighting": "luz frontal suave com emissao ciano do halo e do sigilo",
+    "consistencyRules": [
+      "manter o mesmo desenho do halo em todos os estados",
+      "preservar proporcoes faciais, penteado e gola",
+      "nao alterar a posicao do sigilo frontal",
+      "variar apenas expressao, tensao corporal e intensidade luminosa"
+    ]
+  },
+  "requiredStates": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+}
