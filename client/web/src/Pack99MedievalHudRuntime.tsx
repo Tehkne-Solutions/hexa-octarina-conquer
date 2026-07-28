@@ -1,12 +1,39 @@
 import { type RefObject, useEffect } from "react";
 
-function makeToggle(label: string, className: string, onClick: () => void): HTMLButtonElement {
+const MISSION_PANEL_KEY = "hoc.ui.mission-panel-open";
+const UNIT_PANEL_KEY = "hoc.ui.unit-panel-open";
+
+function readOpenState(key: string, fallback: boolean): boolean {
+  const stored = localStorage.getItem(key);
+  return stored === null ? fallback : stored === "true";
+}
+
+function applyPanelState(panel: HTMLElement, button: HTMLButtonElement, open: boolean, label: string): void {
+  panel.classList.toggle("is-collapsed", !open);
+  button.setAttribute("aria-expanded", String(open));
+  button.textContent = open ? "Recolher" : label;
+}
+
+function makeToggle(
+  label: string,
+  className: string,
+  storageKey: string,
+  panel: HTMLElement,
+  defaultOpen: boolean,
+): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `medieval-panel-toggle ${className}`;
-  button.textContent = label;
-  button.setAttribute("aria-expanded", "true");
-  button.addEventListener("click", onClick);
+
+  let open = readOpenState(storageKey, defaultOpen);
+  applyPanelState(panel, button, open, label);
+
+  button.addEventListener("click", () => {
+    open = panel.classList.contains("is-collapsed");
+    localStorage.setItem(storageKey, String(open));
+    applyPanelState(panel, button, open, label);
+  });
+
   return button;
 }
 
@@ -29,21 +56,13 @@ export function Pack99MedievalHudRuntime({ rootRef }: { rootRef: RefObject<HTMLD
         layout.classList.add("medieval-hud-layout");
 
         if (mission && !mission.querySelector(".mission-panel-toggle")) {
-          const button = makeToggle("Missão", "mission-panel-toggle", () => {
-            const collapsed = mission.classList.toggle("is-collapsed");
-            button.setAttribute("aria-expanded", String(!collapsed));
-            button.textContent = collapsed ? "Missão" : "Recolher";
-          });
+          const button = makeToggle("Missão", "mission-panel-toggle", MISSION_PANEL_KEY, mission, false);
           mission.prepend(button);
           cleanups.push(() => button.remove());
         }
 
         if (units && !units.querySelector(".unit-panel-toggle")) {
-          const button = makeToggle("Unidade", "unit-panel-toggle", () => {
-            const collapsed = units.classList.toggle("is-collapsed");
-            button.setAttribute("aria-expanded", String(!collapsed));
-            button.textContent = collapsed ? "Unidade" : "Recolher";
-          });
+          const button = makeToggle("Unidade", "unit-panel-toggle", UNIT_PANEL_KEY, units, false);
           units.prepend(button);
           cleanups.push(() => button.remove());
         }
