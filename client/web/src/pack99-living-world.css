@@ -5,7 +5,7 @@ html[data-pack99-full="true"] .pack99-world-active .legacy-board-fallback {
 
 html:not([data-pack99-full="true"]) .pack99-world-active .legacy-world-fallback,
 html:not([data-pack99-full="true"]) .pack99-world-active .legacy-board-fallback {
-  display: initial;
+  display: revert;
 }
 
 .pack99-living-world {
