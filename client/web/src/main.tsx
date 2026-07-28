@@ -58,6 +58,7 @@ import "./pack99-tactical-atmosphere.css";
 import "./pack99-combat-cinematics.css";
 import "./pack99-elemental-abilities.css";
 import "./pack99-unit-physical-motion.css";
+import "./pack99-canonical-runtime.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
@@ -72,11 +73,15 @@ void loadPack99RuntimeState()
   .then((state) => {
     document.documentElement.dataset.pack99Runtime = state.mode;
     document.documentElement.dataset.pack99AssetCount = String(state.materializedAssetCount);
+    document.documentElement.dataset.pack99CanonicalCount = String(state.canonicalAssetCount);
+    document.documentElement.dataset.pack99Fallbacks = String(state.usesFallbacks);
     document.documentElement.dataset.pack99Full = String(state.isFullRuntime);
   })
   .catch(() => {
     document.documentElement.dataset.pack99Runtime = "missing";
     document.documentElement.dataset.pack99AssetCount = "0";
+    document.documentElement.dataset.pack99CanonicalCount = "0";
+    document.documentElement.dataset.pack99Fallbacks = "true";
     document.documentElement.dataset.pack99Full = "false";
   });
 
