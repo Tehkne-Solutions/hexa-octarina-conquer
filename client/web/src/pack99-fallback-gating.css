@@ -1,0 +1,49 @@
+.medieval-strategy-ui .go-dots-world:has(.pack99-living-world[data-pack99-ready="true"]) .legacy-world-fallback,
+.medieval-strategy-ui .go-dots-world:has(.pack99-living-world[data-pack99-ready="true"]) .world-river.legacy-world-fallback,
+.medieval-strategy-ui .go-dots-world:has(.pack99-living-world[data-pack99-ready="true"]) .world-bridge.legacy-world-fallback,
+.medieval-strategy-ui .go-dots-world:has(.pack99-living-world[data-pack99-ready="true"]) .go-world-landmarks.legacy-world-fallback {
+  display: none !important;
+}
+
+.medieval-strategy-ui .pack99-living-world.is-loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.medieval-strategy-ui .pack99-living-world.is-ready {
+  opacity: 1;
+}
+
+.medieval-strategy-ui .go-node.occupied .node-stone {
+  opacity: .18;
+  transform: translate(-50%, -50%) scale(.62);
+}
+
+.medieval-strategy-ui .go-node.occupied.selected .node-stone,
+.medieval-strategy-ui .go-node.occupied.valid .node-stone,
+.medieval-strategy-ui .go-node.occupied.objective-target .node-stone {
+  opacity: .72;
+}
+
+.medieval-strategy-ui .go-dots-board-shell.is-resting .go-node:not(.occupied):not(.objective-target):not(.recommended) .node-stone {
+  opacity: .12;
+  transform: translate(-50%, -50%) scale(.58);
+}
+
+.medieval-strategy-ui .pack99-unit-ring,
+.medieval-strategy-ui .pack99-unit-aura {
+  opacity: .22;
+  filter: saturate(.55);
+}
+
+.medieval-strategy-ui .pack99-unit-sprite.state-selected .pack99-unit-ring {
+  opacity: .78;
+}
+
+.medieval-strategy-ui .pack99-world-landmark-label {
+  background: rgba(36, 25, 15, .82);
+  border: 1px solid rgba(170, 128, 70, .45);
+  color: #ead8b5;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .38);
+  text-shadow: none;
+}

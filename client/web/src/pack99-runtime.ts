@@ -45,6 +45,7 @@ export interface Pack99MissionAssetReference {
   sourceSuffixes: string[];
   required: string[];
   preferred: string[];
+  forbidden?: string[];
 }
 
 export const PACK99_CORE_MIN_ASSET_COUNT = 597;
@@ -69,6 +70,12 @@ function searchablePath(asset: Pack99RuntimeAsset): string {
 
 function canonicalId(asset: Pack99RuntimeAsset): string {
   return asset.canonicalId ?? asset.id.replace(/__(?:SHADOW|EMISSIVE|FACTION_MASK|SPRITESHEET|ATLAS|PREVIEW)$/, "");
+}
+
+function acceptsAsset(asset: Pack99RuntimeAsset, forbidden: string[]): boolean {
+  if (forbidden.length === 0) return true;
+  const haystack = normalize(`${asset.id} ${asset.canonicalId ?? ""} ${asset.category} ${searchablePath(asset)}`);
+  return !forbidden.some((token) => haystack.includes(normalize(token)));
 }
 
 function scoreAsset(asset: Pack99RuntimeAsset, required: string[], preferred: string[]): number {
@@ -165,37 +172,41 @@ export function findPack99CanonicalAsset(
     ?? null;
 }
 
-function findPack99AssetBySuffix(index: Pack99RuntimeIndex, sourceSuffixes: string[]): Pack99RuntimeAsset | null {
+function findPack99AssetBySuffix(index: Pack99RuntimeIndex, sourceSuffixes: string[], forbidden: string[] = []): Pack99RuntimeAsset | null {
   const suffixes = sourceSuffixes.map(normalize);
   return index.assets.find((asset) => {
+    if (!acceptsAsset(asset, forbidden)) return false;
     const path = normalize(searchablePath(asset));
     return suffixes.some((suffix) => path.endsWith(suffix));
   }) ?? null;
 }
 
-function findPack99Asset(index: Pack99RuntimeIndex, required: string[], preferred: string[]): Pack99RuntimeAsset | null {
+function findPack99Asset(index: Pack99RuntimeIndex, required: string[], preferred: string[], forbidden: string[] = []): Pack99RuntimeAsset | null {
   return index.assets
+    .filter((asset) => acceptsAsset(asset, forbidden))
     .map((asset) => ({ asset, score: scoreAsset(asset, required, preferred) }))
     .filter((entry) => entry.score >= 0)
     .sort((left, right) => right.score - left.score || searchablePath(left.asset).localeCompare(searchablePath(right.asset)))[0]?.asset ?? null;
 }
 
-export async function resolvePack99Asset(required: string[], preferred: string[] = []): Promise<Pack99RuntimeAsset | null> {
-  return findPack99Asset(await loadPack99Index(), required, preferred);
+export async function resolvePack99Asset(required: string[], preferred: string[] = [], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> {
+  return findPack99Asset(await loadPack99Index(), required, preferred, forbidden);
 }
 
-export async function resolvePack99AssetBySuffix(sourceSuffixes: string[]): Promise<Pack99RuntimeAsset | null> {
-  return findPack99AssetBySuffix(await loadPack99Index(), sourceSuffixes);
+export async function resolvePack99AssetBySuffix(sourceSuffixes: string[], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> {
+  return findPack99AssetBySuffix(await loadPack99Index(), sourceSuffixes, forbidden);
 }
 
 export async function resolvePack99MissionAsset(reference: Pack99MissionAssetReference): Promise<Pack99RuntimeAsset | null> {
   const index = await loadPack99Index();
   const state = inspectPack99RuntimeIndex(index);
+  const forbidden = reference.forbidden ?? [];
   if (state.isFullRuntime) {
-    return reference.canonicalId ? findPack99CanonicalAsset(index, reference.canonicalId, "base") : null;
+    const canonical = reference.canonicalId ? findPack99CanonicalAsset(index, reference.canonicalId, "base") : null;
+    return canonical && acceptsAsset(canonical, forbidden) ? canonical : null;
   }
-  return findPack99AssetBySuffix(index, reference.sourceSuffixes)
-    ?? findPack99Asset(index, reference.required, reference.preferred);
+  return findPack99AssetBySuffix(index, reference.sourceSuffixes, forbidden)
+    ?? findPack99Asset(index, reference.required, reference.preferred, forbidden);
 }
 
 export async function resolvePack99SiblingLayer(

@@ -59,6 +59,13 @@ import "./pack99-combat-cinematics.css";
 import "./pack99-elemental-abilities.css";
 import "./pack99-unit-physical-motion.css";
 import "./pack99-canonical-runtime.css";
+import "./medieval-strategy-reset.css";
+import "./medieval-hud-layout.css";
+import "./medieval-right-command-dock.css";
+import "./medieval-nonblocking-guidance.css";
+import "./pack99-fallback-gating.css";
+import "./pack99-explicit-asset-states.css";
+import "./pack99-asset-audit.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));

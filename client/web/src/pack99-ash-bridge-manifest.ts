@@ -6,6 +6,7 @@ export interface Pack99MissionAssetRef {
   sourceSuffixes: string[];
   required: string[];
   preferred: string[];
+  forbidden?: string[];
 }
 
 export const ASH_BRIDGE_TERRAIN: Record<LivingTile["terrain"], Pack99MissionAssetRef> = {
@@ -110,17 +111,19 @@ export const ASH_BRIDGE_UNITS: Record<LivingUnit["id"], Pack99MissionAssetRef> =
     preferred: ["ne", "se", "01"],
   },
   "raider-bridge": {
-    id: "unit.varg",
+    id: "unit.varg.raider-scout",
     canonicalId: "UNIT_RECRUIT_01_IDLE_BASE_NW_01",
     sourceSuffixes: ["UNIT_RECRUIT_01_IDLE_BASE_NW_01.png", "UNIT_SKELETON_01_IDLE_BASE_NW_01.png"],
     required: ["unit", "recruit", "idle", "base"],
-    preferred: ["nw", "se", "01"],
+    preferred: ["nw", "se", "scout", "light", "01"],
+    forbidden: ["orc", "brute", "berserker", "captain", "heavy"],
   },
   "raider-mill": {
-    id: "unit.brakk",
+    id: "unit.brakk.raider-captain",
     canonicalId: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
-    sourceSuffixes: ["CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png", "UNIT_SKELETON_01_IDLE_BASE_NW_01.png"],
+    sourceSuffixes: ["CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png"],
     required: ["champ", "berserker", "idle", "base"],
-    preferred: ["nw", "se", "01"],
+    preferred: ["nw", "se", "orc", "brute", "captain", "heavy", "01"],
+    forbidden: ["skeleton", "archer", "scout", "light", "recruit"],
   },
 };
