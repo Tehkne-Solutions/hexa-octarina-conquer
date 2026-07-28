@@ -1,0 +1,28 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "version": "0.1.0",
+  "status": "scaffold",
+  "requiredRuntimeVersion": "1.0.2",
+  "integrationBlockedBy": "PACK_99_FINAL_RUNTIME promotion",
+  "expectedInitialCharacters": 4,
+  "expectedStatesPerCharacter": 6,
+  "expectedInitialAssets": 24,
+  "states": [
+    "neutral",
+    "speaking",
+    "alert",
+    "combat",
+    "victory",
+    "defeat"
+  ],
+  "assets": [],
+  "validation": {
+    "duplicateIds": false,
+    "allHashesPresent": false,
+    "allTransparent": false,
+    "allApproved": false,
+    "webLoadPassed": false,
+    "godotLoadPassed": false
+  },
+  "signature": "Tehkné Solutions"
+}
