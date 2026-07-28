@@ -1,0 +1,128 @@
+/* Sprint de estabilização visual: o mapa deve ser o elemento dominante. */
+@media (min-width: 901px) {
+  .go-dots-layout.medieval-hud-layout .living-mission-panel,
+  .go-dots-layout.medieval-hud-layout .unit-command-panel {
+    top: 12px;
+    width: min(260px, 22vw);
+    max-height: calc(100vh - 160px);
+  }
+
+  .go-dots-layout.medieval-hud-layout .living-mission-panel.is-collapsed,
+  .go-dots-layout.medieval-hud-layout .unit-command-panel.is-collapsed {
+    width: 92px;
+    height: 36px;
+  }
+
+  .go-dots-demo .living-topbar {
+    min-height: 52px;
+    padding-block: 5px;
+  }
+
+  .go-dots-demo .resource-strip span {
+    padding: 4px 7px;
+  }
+
+  .pack99-notification-dock {
+    top: 66px;
+    right: 76px;
+  }
+
+  .pack99-notification-toggle {
+    min-width: 44px;
+    width: 44px;
+    height: 36px;
+    padding: 0;
+  }
+
+  .pack99-notification-toggle strong {
+    display: none;
+  }
+
+  .pack99-notification-toggle b {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+  }
+
+  .go-dots-demo .battle-coach-card,
+  .go-dots-demo .ai-turn-summary {
+    max-width: 260px;
+  }
+
+  .campaign-experience .living-objective-toast,
+  .campaign-experience .objective-guidance,
+  .campaign-experience .battle-coach-card {
+    max-width: 290px;
+  }
+
+  .campaign-experience .selected-unit-card,
+  .campaign-experience .unit-action-card {
+    max-width: 300px;
+  }
+
+  .pack99-rts-camera-controls {
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    opacity: .76;
+  }
+
+  .pack99-rts-camera-controls:hover,
+  .pack99-rts-camera-controls:focus-within {
+    opacity: 1;
+  }
+}
+
+/* Remove o aviso persistente de atualização de cima do campo de batalha.
+   A atualização continua disponível pelo menu principal. */
+.campaign-experience [class*="pwa"][class*="update"],
+.campaign-experience [data-pwa-update],
+.campaign-experience .update-available-banner {
+  display: none !important;
+}
+
+/* Evita que cartões inferiores cubram o centro tático. */
+.campaign-experience .living-objective-toast,
+.campaign-experience .objective-guidance {
+  left: 16px !important;
+  right: auto !important;
+  bottom: 14px !important;
+}
+
+.campaign-experience .selected-unit-card,
+.campaign-experience .unit-action-card {
+  left: 50% !important;
+  right: auto !important;
+  bottom: 12px !important;
+  transform: translateX(-50%);
+}
+
+/* Reduz elementos sem asset para que não pareçam grandes cartas quebradas. */
+.pack99-unit-asset-state.asset-missing,
+.pack99-unit-asset-state.asset-loading {
+  width: 72px !important;
+  min-width: 72px !important;
+  height: 92px !important;
+  padding: 6px !important;
+  border-radius: 8px !important;
+}
+
+.pack99-unit-asset-state .pack99-unit-loading-name {
+  max-width: 62px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-height: 820px) and (min-width: 901px) {
+  .go-dots-layout.medieval-hud-layout .living-mission-panel,
+  .go-dots-layout.medieval-hud-layout .unit-command-panel {
+    max-height: calc(100vh - 128px);
+  }
+
+  .go-dots-demo .current-objective-card p,
+  .go-dots-demo .living-notice {
+    font-size: 12px;
+    line-height: 1.25;
+  }
+}
