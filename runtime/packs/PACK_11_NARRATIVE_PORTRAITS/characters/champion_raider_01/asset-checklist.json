@@ -1,0 +1,34 @@
+{
+  "characterId": "champion_raider_01",
+  "status": "awaiting-assets",
+  "approved": false,
+  "expectedFiles": [
+    "champion_raider_01__neutral.png",
+    "champion_raider_01__speaking.png",
+    "champion_raider_01__alert.png",
+    "champion_raider_01__combat.png",
+    "champion_raider_01__victory.png",
+    "champion_raider_01__defeat.png"
+  ],
+  "assets": {
+    "neutral": {"file": "champion_raider_01__neutral.png", "status": "missing", "sha256": null},
+    "speaking": {"file": "champion_raider_01__speaking.png", "status": "missing", "sha256": null},
+    "alert": {"file": "champion_raider_01__alert.png", "status": "missing", "sha256": null},
+    "combat": {"file": "champion_raider_01__combat.png", "status": "missing", "sha256": null},
+    "victory": {"file": "champion_raider_01__victory.png", "status": "missing", "sha256": null},
+    "defeat": {"file": "champion_raider_01__defeat.png", "status": "missing", "sha256": null}
+  },
+  "validation": {
+    "allFilesPresent": false,
+    "dimensionsValid": false,
+    "transparentBackground": false,
+    "faceConsistent": false,
+    "outfitConsistent": false,
+    "signatureElementsConsistent": false,
+    "runtimeLegibility256": false,
+    "hashesPresent": false,
+    "approvedAsSet": false,
+    "includedInManifest": false,
+    "runtimeReady": false
+  }
+}
