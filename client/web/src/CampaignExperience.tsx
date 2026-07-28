@@ -14,11 +14,7 @@ import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
 import { Pack99AssetAudit } from "./Pack99AssetAudit";
 import { Pack99CombatCinematics } from "./Pack99CombatCinematics";
 import { Pack99ElementalAbilities } from "./Pack99ElementalAbilities";
-import { Pack99InterfaceCleanup } from "./Pack99InterfaceCleanup";
-import { Pack99MedievalHudRuntime } from "./Pack99MedievalHudRuntime";
-import { Pack99NonBlockingGuidance } from "./Pack99NonBlockingGuidance";
 import { Pack99PremiumCardRuntime } from "./Pack99PremiumCardRuntime";
-import { Pack99RightCommandDock } from "./Pack99RightCommandDock";
 import { Pack99TerritoryMinimap } from "./Pack99TerritoryMinimap";
 import { Pack99UnitPhysicalMotion } from "./Pack99UnitPhysicalMotion";
 import { Pack99WorldVfx } from "./Pack99WorldVfx";
@@ -99,10 +95,6 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
     <Pack99UnitPhysicalMotion rootRef={rootRef} />
     <Pack99PremiumCardRuntime rootRef={rootRef} />
     <Pack99TerritoryMinimap rootRef={rootRef} />
-    <Pack99InterfaceCleanup rootRef={rootRef} />
-    <Pack99MedievalHudRuntime rootRef={rootRef} />
-    <Pack99RightCommandDock rootRef={rootRef} />
-    <Pack99NonBlockingGuidance rootRef={rootRef} />
     <Pack99AssetAudit rootRef={rootRef} />
     <button type="button" className="battle-help-button" onClick={replayCoach} aria-label="Mostrar tutorial contextual novamente" title="Mostrar tutorial novamente">?</button>
     {activeCoach ? <aside className={`battle-coach-card coach-${activeCoach.id}`} role="dialog" aria-labelledby="battle-coach-title"><div className="battle-coach-heading"><span aria-hidden="true">✦</span><div><small>{activeCoach.eyebrow}</small><strong id="battle-coach-title">{activeCoach.title}</strong></div></div><p>{activeCoach.description}</p><div className="battle-coach-actions">{activeCoach.id === "story" ? <button type="button" className="coach-secondary" onClick={() => rootRef.current && skipStoryFrames(rootRef.current)}>Pular introdução</button> : null}<button type="button" className="coach-secondary" onClick={disableCoach}>Pular tutorial</button><button type="button" className="coach-primary" onClick={dismissCurrentStep}>{activeCoach.actionLabel}</button></div></aside> : null}
