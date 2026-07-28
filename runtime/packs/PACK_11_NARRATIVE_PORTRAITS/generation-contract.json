@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0.0",
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "batchId": "initial_24",
+  "output": {
+    "master": { "width": 1024, "height": 1024, "format": "png", "rgba": true },
+    "runtime": { "width": 256, "height": 256, "format": "png", "rgba": true },
+    "transparentBackground": true
+  },
+  "globalPrompt": "premium stylized 2.5D medieval fantasy narrative portrait, bust or half-body, slight three-quarter front view, strong readable silhouette, face-focused detail, key light from upper left, subtle cool rim light from right, transparent background, consistent game character design, no text, no logo, no frame, no scenery",
+  "negativePrompt": "opaque background, border, card frame, text, watermark, logo, full scene, cropped head, cropped face, extra limbs, extra fingers, duplicate accessories, inconsistent costume, photorealism, gore, extreme blur, low contrast",
+  "characters": [
+    {
+      "characterId": "hero_vanguard_01",
+      "group": "hero",
+      "identityPrompt": "disciplined heroic vanguard defender, robust brushed steel pauldrons, dark leather, deep blue cloth, partial shield, subtle golden central emblem, trustworthy resilient leadership",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "characterId": "hero_arcanist_01",
+      "group": "hero",
+      "identityPrompt": "focused arcane hero, asymmetric violet mantle, high collar, dark metal, octarine crystals, one hand channeling contained magenta-cyan energy, intelligent controlled presence",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "characterId": "champion_raider_01",
+      "group": "champion",
+      "identityPrompt": "aggressive mobile raider champion, irregular light armor, weathered iron, reddish leather, burned cloth, partial short blade or axe, orange and deep red accents, dangerous competitive energy",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "characterId": "faction_oracle_01",
+      "group": "faction",
+      "identityPrompt": "serene enigmatic faction oracle, veil, suspended ritual ornaments, pale layered cloth, aged bronze, translucent gemstones, octarine teal-green glow, authoritative spiritual presence",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    }
+  ],
+  "statePrompts": {
+    "neutral": "attentive resting expression, closed mouth, minimal energy effects",
+    "speaking": "natural speaking mouth shape, subtle conversational hand gesture",
+    "alert": "widened focused eyes, tense posture, attention directed slightly sideways",
+    "combat": "active combat-ready posture, weapon or controlled power visible without covering the face",
+    "victory": "relieved confident expression, subtly elevated posture, restrained celebratory energy",
+    "defeat": "exhausted expression, lowered posture, light non-graphic damage, no gore"
+  },
+  "namingPattern": "hoc_p11_portrait_{group}_{characterId}_{state}_a.png",
+  "expectedAssets": 24,
+  "approvalMode": "character_set",
+  "integrationBlockedBy": "PACK_99_FINAL_RUNTIME promotion"
+}
