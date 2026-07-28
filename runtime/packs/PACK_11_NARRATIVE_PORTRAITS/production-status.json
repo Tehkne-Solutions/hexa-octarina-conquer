@@ -1,0 +1,70 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "version": "0.1.0",
+  "status": "awaiting-assets",
+  "expectedAssets": 24,
+  "completedAssets": 0,
+  "approvedCharacters": 0,
+  "characters": [
+    {
+      "id": "hero_vanguard_01",
+      "status": "pending",
+      "approved": false,
+      "states": {
+        "neutral": "pending",
+        "speaking": "pending",
+        "alert": "pending",
+        "combat": "pending",
+        "victory": "pending",
+        "defeat": "pending"
+      }
+    },
+    {
+      "id": "hero_arcanist_01",
+      "status": "pending",
+      "approved": false,
+      "states": {
+        "neutral": "pending",
+        "speaking": "pending",
+        "alert": "pending",
+        "combat": "pending",
+        "victory": "pending",
+        "defeat": "pending"
+      }
+    },
+    {
+      "id": "champion_raider_01",
+      "status": "pending",
+      "approved": false,
+      "states": {
+        "neutral": "pending",
+        "speaking": "pending",
+        "alert": "pending",
+        "combat": "pending",
+        "victory": "pending",
+        "defeat": "pending"
+      }
+    },
+    {
+      "id": "faction_oracle_01",
+      "status": "pending",
+      "approved": false,
+      "states": {
+        "neutral": "pending",
+        "speaking": "pending",
+        "alert": "pending",
+        "combat": "pending",
+        "victory": "pending",
+        "defeat": "pending"
+      }
+    }
+  ],
+  "gates": {
+    "allFilesPresent": false,
+    "allDimensionsValid": false,
+    "allTransparent": false,
+    "allHashesPresent": false,
+    "allCharactersApproved": false,
+    "pack99PromotionPassed": false
+  }
+}
