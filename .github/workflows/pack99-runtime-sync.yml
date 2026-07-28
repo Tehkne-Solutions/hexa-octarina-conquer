@@ -21,8 +21,16 @@ on:
           - all
           - web
           - godot
+      source_provider:
+        description: Fonte do ZIP integral recuperado
+        required: true
+        default: drive-parts
+        type: choice
+        options:
+          - drive-parts
+          - https
       force_download:
-        description: Ignorar o ZIP validado em cache
+        description: Ignorar partes ou ZIP validados em cache
         required: true
         default: false
         type: boolean
@@ -46,7 +54,9 @@ jobs:
     timeout-minutes: 120
     env:
       PACK99_URL: ${{ secrets.PACK99_URL }}
-      PACK99_SHA256: e0a00bc450c0c80b4d9433f476b8377353433b0eb90318c9589b331923296c6d
+      PACK99_SHA256: 5efd54e05cd2a01aa764ad652423d4ceaca0030fb9aca3d233ede3144a3b86e0
+      PACK99_ARCHIVE: .cache/pack99/HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip
+      PACK99_PARTS_DIR: .cache/pack99/drive-parts
 
     steps:
       - name: Checkout
@@ -60,49 +70,99 @@ jobs:
       - name: Restore validated recovered PACK 99 cache
         uses: actions/cache@v4
         with:
-          path: .cache/pack99/HOC_PACK_99_FINAL_RUNTIME.zip
-          key: hoc-pack99-recovered-${{ env.PACK99_SHA256 }}
+          path: .cache/pack99
+          key: hoc-pack99-recovered-1.0.2-${{ env.PACK99_SHA256 }}
 
-      - name: Test installer, synchronizer and promotion gate
+      - name: Test installer, sources, synchronizer and promotion gate
         run: |
           python -m unittest \
             tests/test_install_pack99.py \
             tests/test_sync_pack99.py \
+            tests/test_reassemble_pack99_parts.py \
+            tests/test_download_pack99_drive_parts.py \
             tests/test_validate_pack99_promotion.py -v
           python -m py_compile \
             scripts/install_pack99.py \
             scripts/sync_pack99.py \
+            scripts/reassemble_pack99_parts.py \
+            scripts/download_pack99_drive_parts.py \
             scripts/validate_pack99_promotion.py
 
-      - name: Require HTTPS distribution URL
+      - name: Validate requested source and operation
+        env:
+          DRIVE_CREDENTIALS: ${{ secrets.PACK99_DRIVE_SERVICE_ACCOUNT_JSON }}
         shell: bash
         run: |
-          if [[ -z "${PACK99_URL}" ]]; then
-            echo "Configure o secret PACK99_URL com uma URL HTTPS do HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.1.zip." >&2
-            exit 2
-          fi
           if [[ "${{ inputs.operation }}" == "promote" && "${{ inputs.target }}" != "all" ]]; then
             echo "A promoção exige target=all para validar Web e Godot juntos." >&2
             exit 2
           fi
+          if [[ "${{ inputs.source_provider }}" == "https" && -z "${PACK99_URL}" ]]; then
+            echo "Configure o secret PACK99_URL com a URL HTTPS do ZIP recuperado 1.0.2." >&2
+            exit 2
+          fi
+          if [[ "${{ inputs.source_provider }}" == "drive-parts" && -z "${DRIVE_CREDENTIALS}" ]]; then
+            echo "Configure PACK99_DRIVE_SERVICE_ACCOUNT_JSON e compartilhe a pasta do Drive com a conta de serviço." >&2
+            exit 2
+          fi
 
-      - name: Synchronize requested operation
+      - name: Authenticate private Google Drive source
+        if: ${{ inputs.source_provider == 'drive-parts' }}
+        id: google-auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.PACK99_DRIVE_SERVICE_ACCOUNT_JSON }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/drive.readonly
+          create_credentials_file: false
+
+      - name: Download and verify private Drive fragments
+        if: ${{ inputs.source_provider == 'drive-parts' }}
+        env:
+          PACK99_DRIVE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
         shell: bash
         run: |
           FLAGS=()
           if [[ "${{ inputs.force_download }}" == "true" ]]; then
-            FLAGS+=(--force-download)
+            FLAGS+=(--force)
+          fi
+          python scripts/download_pack99_drive_parts.py \
+            --source runtime/packs/PACK_99_RECOVERED/drive-source.json \
+            --destination "${PACK99_PARTS_DIR}" \
+            "${FLAGS[@]}"
+          python scripts/reassemble_pack99_parts.py \
+            --manifest "${PACK99_PARTS_DIR}/HOC_PACK_99_RELEASE_PARTS_MANIFEST.json" \
+            --parts-dir "${PACK99_PARTS_DIR}" \
+            --output "${PACK99_ARCHIVE}" \
+            --report .cache/pack99/reassembly-report.json
+
+      - name: Synchronize requested operation
+        shell: bash
+        run: |
+          SOURCE_FLAGS=()
+          DOWNLOAD_FLAGS=()
+          if [[ "${{ inputs.source_provider }}" == "drive-parts" ]]; then
+            SOURCE_FLAGS+=(--source "${PACK99_ARCHIVE}")
+          else
+            SOURCE_FLAGS+=(--url "${PACK99_URL}")
+            if [[ "${{ inputs.force_download }}" == "true" ]]; then
+              DOWNLOAD_FLAGS+=(--force-download)
+            fi
           fi
 
           if [[ "${{ inputs.operation }}" == "promote" ]]; then
             python scripts/sync_pack99.py \
+              "${SOURCE_FLAGS[@]}" \
+              --expected-sha256 "${PACK99_SHA256}" \
               --target all \
               --profile core \
               --clean \
               --report .cache/pack99/sync-core-report.json \
-              "${FLAGS[@]}"
+              "${DOWNLOAD_FLAGS[@]}"
 
             python scripts/sync_pack99.py \
+              "${SOURCE_FLAGS[@]}" \
+              --expected-sha256 "${PACK99_SHA256}" \
               --target all \
               --profile full \
               --clean \
@@ -112,11 +172,13 @@ jobs:
               --report .cache/pack99/promotion-report.json
           else
             python scripts/sync_pack99.py \
+              "${SOURCE_FLAGS[@]}" \
+              --expected-sha256 "${PACK99_SHA256}" \
               --target "${{ inputs.target }}" \
               --profile "${{ inputs.operation }}" \
               --clean \
               --report ".cache/pack99/sync-${{ inputs.operation }}-report.json" \
-              "${FLAGS[@]}"
+              "${DOWNLOAD_FLAGS[@]}"
           fi
 
       - name: Upload synchronization and promotion reports
