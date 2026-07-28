@@ -1,0 +1,43 @@
+{
+  "id": "champion_raider_01",
+  "role": "champion",
+  "archetype": "raider",
+  "status": "awaiting-assets",
+  "visualIdentity": {
+    "silhouette": "broad-shouldered frontline raider with asymmetrical fur mantle and heavy octarine cleaver silhouette",
+    "face": "weathered adult fighter, square jaw, broken nose, short dark beard and a pale diagonal scar over the left brow",
+    "hair": "close-cropped black hair with one shaved temple marked by a geometric octarine war glyph",
+    "signatureElements": [
+      "asymmetrical fur mantle over the right shoulder",
+      "octarine war glyph on shaved temple",
+      "heavy chipped cleaver visible behind the shoulder",
+      "iron ring trophy attached to the chest harness"
+    ],
+    "outfit": "layered leather and dark iron raider armor with reinforced chest harness and weathered fur mantle",
+    "materials": ["weathered leather", "dark iron", "coarse fur", "bone", "octarine crystal inlays"],
+    "palette": ["charcoal", "rust red", "bone", "dark iron", "octarine green-violet accents"],
+    "framing": "bust portrait, three-quarter view, shoulders fully readable, transparent background",
+    "lighting": "hard warm key light with cool octarine rim light, preserving facial readability",
+    "consistencyRules": [
+      "facial proportions and scar placement must remain identical across all states",
+      "fur mantle must stay on the right shoulder",
+      "war glyph shape and placement must not change",
+      "cleaver silhouette must remain recognizable behind the shoulder",
+      "armor, harness and trophy ring must remain unchanged"
+    ]
+  },
+  "states": {
+    "neutral": "controlled confidence, relaxed jaw, focused forward gaze",
+    "speaking": "assertive mid-sentence expression, visible mouth articulation without caricature",
+    "alert": "sudden tension, raised brow and eyes tracking an immediate threat",
+    "combat": "aggressive forward drive, clenched jaw and battle-ready intensity",
+    "victory": "fierce restrained grin, proud posture and energized gaze",
+    "defeat": "exhausted and wounded resolve, lowered gaze without loss of identity"
+  },
+  "output": {
+    "format": "PNG",
+    "masterSize": "1024x1024",
+    "runtimeSize": "256x256",
+    "background": "transparent"
+  }
+}
