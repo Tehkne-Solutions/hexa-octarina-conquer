@@ -40,7 +40,28 @@ html[data-pack99-full="true"] .pack99-unit-missing.compact::after {
   font-size: 16px;
 }
 
-html[data-pack99-full="true"] [data-pack99-asset-error="canonical-payload-missing"] {
+html[data-pack99-full="true"] .living-card[data-pack99-asset-error] .pack99-runtime-card-image,
+html[data-pack99-full="true"] .living-card[data-pack99-asset-error] .card-character-silhouette {
+  display: none !important;
+}
+
+html[data-pack99-full="true"] .living-card[data-pack99-asset-error] .living-card-art {
+  box-shadow: inset 0 0 0 1px rgba(255, 114, 96, .38);
+}
+
+html[data-pack99-full="true"] .living-card[data-pack99-asset-error] .living-card-art::after {
+  content: "◇";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 145, 128, .82);
+  font: 700 28px/1 Georgia, serif;
+  text-shadow: 0 0 18px rgba(255, 72, 54, .42);
+}
+
+html[data-pack99-full="true"] [data-pack99-asset-error="canonical-payload-missing"],
+html[data-pack99-full="true"] [data-pack99-asset-error="canonical-card-art-missing"],
+html[data-pack99-full="true"] [data-pack99-asset-error="canonical-card-art-load-failed"] {
   animation: pack99-canonical-error-pulse 1.8s ease-in-out infinite;
 }
 
@@ -50,7 +71,7 @@ html[data-pack99-full="true"] [data-pack99-asset-error="canonical-payload-missin
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-pack99-full="true"] [data-pack99-asset-error="canonical-payload-missing"] {
+  html[data-pack99-full="true"] [data-pack99-asset-error] {
     animation: none;
   }
 }
