@@ -1,0 +1,53 @@
+{
+  "id": "hero_arcanist_01",
+  "role": "hero",
+  "archetype": "octarine arcanist",
+  "productionUnit": "complete-six-state-set",
+  "identity": {
+    "silhouette": "slender upright caster with asymmetrical mantle and floating octarine focus near the left shoulder",
+    "face": "adult woman, angular oval face, high cheekbones, focused violet-gray eyes, calm controlled expression",
+    "hair": "long dark indigo hair gathered behind the head with two loose front strands",
+    "signatureMarks": [
+      "thin luminous octarine sigil crossing the right temple",
+      "faceted crystal focus hovering near the left shoulder",
+      "asymmetrical high collar"
+    ],
+    "wardrobe": "layered midnight-blue arcane coat, fitted leather underlayer, silver-violet filigree, restrained crystalline accents",
+    "materials": ["matte woven cloth", "dark leather", "brushed silver", "translucent crystal"],
+    "palette": {
+      "primary": "midnight blue",
+      "secondary": "desaturated violet",
+      "accent": "octarine teal-magenta iridescence",
+      "metal": "cold silver"
+    }
+  },
+  "framing": {
+    "crop": "chest-up portrait",
+    "camera": "slight three-quarter view",
+    "eyeLine": "near camera",
+    "background": "transparent",
+    "safeArea": "face and signature focus readable at 256x256"
+  },
+  "lighting": {
+    "key": "soft cool key from upper left",
+    "rim": "subtle octarine rim on hair and mantle",
+    "contrast": "cinematic but UI-readable",
+    "forbidden": ["blown highlights", "heavy bloom", "opaque background glow"]
+  },
+  "states": {
+    "neutral": "composed, observant, closed mouth, restrained magical energy",
+    "speaking": "measured explanation, slight mouth movement, attentive eyes",
+    "alert": "eyes widened slightly, focus crystal activated, posture tightened",
+    "combat": "intense gaze, active spell geometry, controlled power rather than rage",
+    "victory": "small confident smile, relaxed shoulders, stable luminous sigil",
+    "defeat": "fatigued and pained but dignified, dimmed focus crystal, no caricature"
+  },
+  "consistencyRules": [
+    "same facial structure and apparent age in every state",
+    "same hair arrangement and front strands",
+    "same temple sigil shape and placement",
+    "same collar, mantle and crystal focus design",
+    "same camera distance and crop",
+    "emotion changes must not redesign the character"
+  ]
+}
