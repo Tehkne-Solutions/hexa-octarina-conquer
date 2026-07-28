@@ -1,0 +1,10 @@
+{
+  "sprint": "Runtime 18",
+  "status": "ready-for-ci",
+  "objective": "publish PACK 99 runtime 1.0.2 in one command",
+  "sourceVersion": "1.0.2",
+  "releaseTag": "pack99-runtime-v1.0.2",
+  "expectedCanonicalAssetIds": 1037,
+  "minimumMaterializedEntries": 1850,
+  "signature": "Tehkné Solutions"
+}
