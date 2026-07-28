@@ -82,7 +82,7 @@ function scoreAsset(asset: Pack99RuntimeAsset, required: string[], preferred: st
   const haystack = normalize(`${asset.id} ${asset.canonicalId ?? ""} ${asset.category} ${searchablePath(asset)}`);
   if (!required.every((token) => haystack.includes(normalize(token)))) return -1;
   return preferred.reduce((score, token) => score + (haystack.includes(normalize(token)) ? 4 : 0), 0)
-    + (haystack.endsWith(".png") ? 2 : 0)
+    + (haystack.endsWith(".png") || haystack.endsWith(".webp") ? 2 : 0)
     + (haystack.includes("base") ? 2 : 0)
     + (haystack.includes("idle") ? 2 : 0)
     - (haystack.includes("shadow") ? 5 : 0)
@@ -137,17 +137,26 @@ export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99Runt
 
 export async function loadPack99Index(): Promise<Pack99RuntimeIndex> {
   if (!indexPromise) {
-    indexPromise = fetch(INDEX_URL, { cache: "no-cache" }).then(async (response) => {
-      if (!response.ok) throw new Error(`PACK99_INDEX_HTTP_${response.status}`);
-      const parsed = await response.json() as Pack99RuntimeIndex;
-      if (!Array.isArray(parsed.assets) || parsed.assets.length === 0) throw new Error("PACK99_INDEX_INVALID");
-      if (parsed.assets.some((asset) => !asset.id || !asset.category || !asset.web)) {
-        throw new Error("PACK99_INDEX_ASSET_INVALID");
-      }
-      return parsed;
-    });
+    indexPromise = fetch(INDEX_URL, { cache: "no-cache" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`PACK99_INDEX_HTTP_${response.status}`);
+        const parsed = await response.json() as Pack99RuntimeIndex;
+        if (!Array.isArray(parsed.assets) || parsed.assets.length === 0) throw new Error("PACK99_INDEX_INVALID");
+        if (parsed.assets.some((asset) => !asset.id || !asset.category || !asset.web)) {
+          throw new Error("PACK99_INDEX_ASSET_INVALID");
+        }
+        return parsed;
+      })
+      .catch((error) => {
+        indexPromise = null;
+        throw error;
+      });
   }
   return indexPromise;
+}
+
+export function resetPack99RuntimeCache(): void {
+  indexPromise = null;
 }
 
 export async function loadPack99RuntimeState(): Promise<Pack99RuntimeState> {
@@ -176,8 +185,8 @@ function findPack99AssetBySuffix(index: Pack99RuntimeIndex, sourceSuffixes: stri
   const suffixes = sourceSuffixes.map(normalize);
   return index.assets.find((asset) => {
     if (!acceptsAsset(asset, forbidden)) return false;
-    const path = normalize(searchablePath(asset));
-    return suffixes.some((suffix) => path.endsWith(suffix));
+    const candidate = normalize(searchablePath(asset));
+    return suffixes.some((suffix) => candidate.endsWith(suffix));
   }) ?? null;
 }
 
@@ -199,12 +208,13 @@ export async function resolvePack99AssetBySuffix(sourceSuffixes: string[], forbi
 
 export async function resolvePack99MissionAsset(reference: Pack99MissionAssetReference): Promise<Pack99RuntimeAsset | null> {
   const index = await loadPack99Index();
-  const state = inspectPack99RuntimeIndex(index);
   const forbidden = reference.forbidden ?? [];
-  if (state.isFullRuntime) {
-    const canonical = reference.canonicalId ? findPack99CanonicalAsset(index, reference.canonicalId, "base") : null;
-    return canonical && acceptsAsset(canonical, forbidden) ? canonical : null;
-  }
+  const canonical = reference.canonicalId
+    ? findPack99CanonicalAsset(index, reference.canonicalId, "base")
+    : null;
+
+  if (canonical && acceptsAsset(canonical, forbidden)) return canonical;
+
   return findPack99AssetBySuffix(index, reference.sourceSuffixes, forbidden)
     ?? findPack99Asset(index, reference.required, reference.preferred, forbidden);
 }
@@ -215,9 +225,9 @@ export async function resolvePack99SiblingLayer(
 ): Promise<Pack99RuntimeAsset | null> {
   if (!baseAsset) return null;
   const index = await loadPack99Index();
-  if (inspectPack99RuntimeIndex(index).isFullRuntime) {
-    return findPack99CanonicalAsset(index, canonicalId(baseAsset), layer);
-  }
+  const sibling = findPack99CanonicalAsset(index, canonicalId(baseAsset), layer);
+  if (sibling) return sibling;
+
   const source = normalize(searchablePath(baseAsset));
   const extensionIndex = source.lastIndexOf(".");
   const stem = extensionIndex >= 0 ? source.slice(0, extensionIndex) : source;
@@ -227,7 +237,14 @@ export async function resolvePack99SiblingLayer(
     `${stem.replace(/_base$/, "")}_${layer}${extension}`,
     `${stem.replace(/_base_/, `_${layer}_`)}${extension}`,
   ];
-  return index.assets.find((asset) => candidates.includes(normalize(searchablePath(asset)))) ?? null;
+
+  return index.assets.find((asset) => candidates.includes(normalize(searchablePath(asset))))
+    ?? findPack99Asset(
+      index,
+      canonicalId(baseAsset).split("_").filter(Boolean).slice(0, -1),
+      [layer],
+      layer === "shadow" ? ["emissive"] : ["shadow"],
+    );
 }
 
 export function pack99PublicUrl(asset: Pack99RuntimeAsset | null): string | null {
