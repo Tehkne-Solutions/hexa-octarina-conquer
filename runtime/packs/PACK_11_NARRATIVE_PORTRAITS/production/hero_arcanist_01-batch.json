@@ -1,0 +1,23 @@
+{
+  "batchId": "pack11-hero-arcanist-01",
+  "characterId": "hero_arcanist_01",
+  "status": "ready-for-generation",
+  "output": {
+    "masterSize": "1024x1024",
+    "runtimeSize": "256x256",
+    "format": "PNG",
+    "colorMode": "RGBA",
+    "background": "transparent"
+  },
+  "basePrompt": "Create a single chest-up fantasy game character portrait of hero_arcanist_01, an adult female octarine arcanist. She has an angular oval face, high cheekbones, focused violet-gray eyes, long dark indigo hair gathered behind the head with two loose front strands, a thin luminous octarine sigil crossing the right temple, an asymmetrical high collar, a midnight-blue layered arcane coat, fitted dark leather underlayer, restrained silver-violet filigree, and a faceted crystal focus floating near the left shoulder. Use a slight three-quarter camera view, near-camera eye line, soft cool key light from upper left, subtle octarine teal-magenta rim light, cinematic but UI-readable rendering, transparent background, no frame, no text, no logo, no interface, no table, no infographic, no scenery, no opaque glow. Keep the exact same face, apparent age, hair, sigil, collar, mantle, crystal focus, camera distance and crop across every state.",
+  "negativePrompt": "dashboard, status screen, table, chart, infographic, card frame, UI panel, typography, captions, multiple characters, full body, landscape, opaque background, excessive bloom, redesign, different costume, different face, anime exaggeration, caricature",
+  "states": [
+    {"id":"neutral","file":"hero_arcanist_01__neutral.png","expression":"composed and observant, closed mouth, restrained magical energy"},
+    {"id":"speaking","file":"hero_arcanist_01__speaking.png","expression":"measured explanation, subtle mouth articulation, attentive eyes"},
+    {"id":"alert","file":"hero_arcanist_01__alert.png","expression":"slightly widened eyes, tightened posture, activated focus crystal"},
+    {"id":"combat","file":"hero_arcanist_01__combat.png","expression":"intense gaze, controlled spell geometry, powerful but not enraged"},
+    {"id":"victory","file":"hero_arcanist_01__victory.png","expression":"small confident smile, relaxed shoulders, stable luminous sigil"},
+    {"id":"defeat","file":"hero_arcanist_01__defeat.png","expression":"fatigued and pained but dignified, dimmed focus crystal"}
+  ],
+  "approvalGates": ["six files present","valid PNG signature","1024x1024 or 256x256","RGBA transparency","same identity across states","states readable at 256x256","no UI or text contamination"]
+}
