@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED",
+  "version": "1.0.2",
+  "provider": "google-drive",
+  "folderId": "1BV3U_kUMlR0iZ-44YMkL-5V87g29iTw2",
+  "artifact": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip",
+  "bytes": 583070593,
+  "sha256": "5efd54e05cd2a01aa764ad652423d4ceaca0030fb9aca3d233ede3144a3b86e0",
+  "parts": [
+    {"order":1,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part001","fileId":"1jVv15kwAB3sM7Avju6EYh4ODmCZ9zH3A","bytes":83886080,"sha256":"2fee170f67be0345eadf71766d6a0b9fe2bd2ed53626dc16551f2323a813317b"},
+    {"order":2,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part002","fileId":"1wY4eGpWz2ZOXdW2-lgLzMfJe_MG3JOhQ","bytes":83886080,"sha256":"d5238381ebed19f2ac8ce87fdaa1bbab8f0b7b99beb91f4a3225567e78c3c024"},
+    {"order":3,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part003","fileId":"1eoM4GTl5yEsu7_izjq8dZFzyG-Bbq5ke","bytes":83886080,"sha256":"c8fe6eb91583b1169694689bf900117644412ba3af26d94ed72d1a88f207ba22"},
+    {"order":4,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part004","fileId":"1uQOK5_hKXzuBHVW64VPfNR8ERmFLUGPi","bytes":83886080,"sha256":"7eff49b7016be05e0ac9e056d4d3a0653eede5950d225031ed421025fb4d061d"},
+    {"order":5,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part005","fileId":"1rJTGXzZXn2tjhmXchf6toNMqbbtmmKju","bytes":83886080,"sha256":"2402d9fcf47009a88c8f59b50e6af4b1a83efdc984f5511ff35358209cbc16df"},
+    {"order":6,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part006","fileId":"1FoeciFoHX6cByQtS7e2HDD_K7ZnB5iSB","bytes":83886080,"sha256":"5c5c6e2d6f5828959b32111a4e09678bae0e04a7d3db335e388a99f9e9e42b0b"},
+    {"order":7,"name":"HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip.part007","fileId":"1w8_wWSjfoai7LWbuwmqPXJV26C31fYh7","bytes":79754113,"sha256":"aacf8b757e5aa7ae1a927cc0c0cbcef02d154308da84085306a569777cd84eed"}
+  ],
+  "signature": "Tehkné Solutions"
+}
