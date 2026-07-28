@@ -24,10 +24,10 @@ export function Pack99NonBlockingGuidance({ rootRef }: { rootRef: RefObject<HTML
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const aiNode = root.querySelector(".ai-turn-curtain");
-        const ai = text(aiNode?.querySelector("strong") ?? aiNode) || null;
+        const ai = text(aiNode?.querySelector("strong") ?? aiNode ?? null) || null;
         const coach = root.querySelector(".battle-coach-card");
-        const title = text(coach?.querySelector("strong"));
-        const description = text(coach?.querySelector("p"));
+        const title = text(coach?.querySelector("strong") ?? null);
+        const description = text(coach?.querySelector("p") ?? null);
         setState({ ai, tutorial: coach && title ? { title, text: description } : null });
       });
     };
