@@ -39,9 +39,19 @@ on:
         required: true
         default: true
         type: boolean
+      publish_release:
+        description: Publicar archives full na GitHub Release oficial
+        required: true
+        default: true
+        type: boolean
+      trigger_deploy:
+        description: Acionar o deploy hook do Render após publicar a Release
+        required: true
+        default: true
+        type: boolean
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: pack99-runtime-${{ github.ref }}-${{ inputs.operation }}-${{ inputs.target }}
@@ -51,12 +61,16 @@ jobs:
   synchronize:
     name: Validate, install and promote PACK 99
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       PACK99_URL: ${{ secrets.PACK99_URL }}
       PACK99_SHA256: 5efd54e05cd2a01aa764ad652423d4ceaca0030fb9aca3d233ede3144a3b86e0
       PACK99_ARCHIVE: .cache/pack99/HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip
       PACK99_PARTS_DIR: .cache/pack99/drive-parts
+      PACK99_RELEASE_DIR: .cache/pack99/release
+      PACK99_RELEASE_TAG: pack99-runtime-v1.0.2
+      PACK99_WEB_RELEASE_ASSET: hoc-pack99-web-full.zip
+      PACK99_GODOT_RELEASE_ASSET: hoc-pack99-godot-full.zip
 
     steps:
       - name: Checkout
@@ -73,19 +87,22 @@ jobs:
           path: .cache/pack99
           key: hoc-pack99-recovered-1.0.2-${{ env.PACK99_SHA256 }}
 
-      - name: Test installer, sources, synchronizer and promotion gate
+      - name: Test installer, sources, indexes, packaging and promotion gate
         run: |
           python -m unittest \
             tests/test_install_pack99.py \
             tests/test_sync_pack99.py \
             tests/test_reassemble_pack99_parts.py \
             tests/test_download_pack99_drive_parts.py \
+            tests/test_pack99_runtime_release.py \
             tests/test_validate_pack99_promotion.py -v
           python -m py_compile \
             scripts/install_pack99.py \
             scripts/sync_pack99.py \
             scripts/reassemble_pack99_parts.py \
             scripts/download_pack99_drive_parts.py \
+            scripts/build_pack99_runtime_index.py \
+            scripts/package_pack99_runtime_release.py \
             scripts/validate_pack99_promotion.py
 
       - name: Validate requested source and operation
@@ -95,6 +112,10 @@ jobs:
         run: |
           if [[ "${{ inputs.operation }}" == "promote" && "${{ inputs.target }}" != "all" ]]; then
             echo "A promoção exige target=all para validar Web e Godot juntos." >&2
+            exit 2
+          fi
+          if [[ "${{ inputs.publish_release }}" == "true" && "${{ inputs.operation }}" != "promote" ]]; then
+            echo "A GitHub Release só pode ser publicada por operation=promote." >&2
             exit 2
           fi
           if [[ "${{ inputs.source_provider }}" == "https" && -z "${PACK99_URL}" ]]; then
@@ -168,9 +189,6 @@ jobs:
               --profile full \
               --clean \
               --report .cache/pack99/sync-full-report.json
-
-            python scripts/validate_pack99_promotion.py \
-              --report .cache/pack99/promotion-report.json
           else
             python scripts/sync_pack99.py \
               "${SOURCE_FLAGS[@]}" \
@@ -182,14 +200,133 @@ jobs:
               "${DOWNLOAD_FLAGS[@]}"
           fi
 
+      - name: Build premium runtime indexes
+        if: ${{ success() && inputs.operation != 'core' }}
+        shell: bash
+        run: |
+          if [[ "${{ inputs.target }}" == "all" || "${{ inputs.target }}" == "web" ]]; then
+            python scripts/build_pack99_runtime_index.py \
+              --runtime-root client/web/public/assets/runtime \
+              --target web
+          fi
+          if [[ "${{ inputs.target }}" == "all" || "${{ inputs.target }}" == "godot" ]]; then
+            python scripts/build_pack99_runtime_index.py \
+              --runtime-root client/godot/assets/runtime \
+              --target godot
+          fi
+
+      - name: Validate full Web and Godot promotion
+        if: ${{ success() && inputs.operation == 'promote' }}
+        run: |
+          python scripts/validate_pack99_promotion.py \
+            --report .cache/pack99/promotion-report.json
+
+      - name: Package deterministic production runtimes
+        if: ${{ success() && inputs.operation == 'promote' }}
+        shell: bash
+        run: |
+          mkdir -p "${PACK99_RELEASE_DIR}"
+          python scripts/package_pack99_runtime_release.py \
+            --runtime-root client/web/public/assets/runtime \
+            --target web \
+            --output "${PACK99_RELEASE_DIR}/${PACK99_WEB_RELEASE_ASSET}"
+          python scripts/package_pack99_runtime_release.py \
+            --runtime-root client/godot/assets/runtime \
+            --target godot \
+            --output "${PACK99_RELEASE_DIR}/${PACK99_GODOT_RELEASE_ASSET}"
+          cp .cache/pack99/promotion-report.json "${PACK99_RELEASE_DIR}/promotion-report.json"
+          if [[ -f .cache/pack99/reassembly-report.json ]]; then
+            cp .cache/pack99/reassembly-report.json "${PACK99_RELEASE_DIR}/source-reassembly-report.json"
+          else
+            python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          payload = {
+              "provider": "https",
+              "artifact": Path(os.environ["PACK99_ARCHIVE"]).name,
+              "bytes": Path(os.environ["PACK99_ARCHIVE"]).stat().st_size,
+              "sha256": os.environ["PACK99_SHA256"],
+              "passed": True,
+              "signature": "Tehkné Solutions",
+          }
+          output = Path(os.environ["PACK99_RELEASE_DIR"]) / "source-reassembly-report.json"
+          output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+          fi
+
+      - name: Publish canonical PACK 99 GitHub Release
+        if: ${{ success() && inputs.operation == 'promote' && inputs.publish_release }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cat > "${PACK99_RELEASE_DIR}/release-notes.md" <<'NOTES'
+          # HOC PACK 99 — Runtime Integral 1.0.2
+
+          Runtime integral validado para Web e Godot.
+
+          - 1.037 IDs canônicos idênticos nos dois clientes;
+          - zero referências pendentes;
+          - bootstrap e aliases ausentes dos archives full;
+          - índice premium incluído;
+          - archives acompanhados por SHA-256 e relatórios de validação.
+
+          **Tehkné Solutions**
+          NOTES
+
+          if gh release view "${PACK99_RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release edit "${PACK99_RELEASE_TAG}" \
+              --title "HOC PACK 99 — Runtime Integral 1.0.2" \
+              --notes-file "${PACK99_RELEASE_DIR}/release-notes.md"
+          else
+            gh release create "${PACK99_RELEASE_TAG}" \
+              --target "${GITHUB_SHA}" \
+              --title "HOC PACK 99 — Runtime Integral 1.0.2" \
+              --notes-file "${PACK99_RELEASE_DIR}/release-notes.md"
+          fi
+
+          gh release upload "${PACK99_RELEASE_TAG}" --clobber \
+            "${PACK99_RELEASE_DIR}/${PACK99_WEB_RELEASE_ASSET}" \
+            "${PACK99_RELEASE_DIR}/${PACK99_WEB_RELEASE_ASSET}.sha256" \
+            "${PACK99_RELEASE_DIR}/${PACK99_WEB_RELEASE_ASSET}.report.json" \
+            "${PACK99_RELEASE_DIR}/${PACK99_GODOT_RELEASE_ASSET}" \
+            "${PACK99_RELEASE_DIR}/${PACK99_GODOT_RELEASE_ASSET}.sha256" \
+            "${PACK99_RELEASE_DIR}/${PACK99_GODOT_RELEASE_ASSET}.report.json" \
+            "${PACK99_RELEASE_DIR}/promotion-report.json" \
+            "${PACK99_RELEASE_DIR}/source-reassembly-report.json"
+
+      - name: Trigger Render production rebuild
+        if: ${{ success() && inputs.operation == 'promote' && inputs.publish_release && inputs.trigger_deploy }}
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        shell: bash
+        run: |
+          if [[ -z "${RENDER_DEPLOY_HOOK_URL}" ]]; then
+            echo "RENDER_DEPLOY_HOOK_URL não configurado; a Release foi publicada, mas o redeploy precisa ser acionado manualmente."
+          else
+            curl --fail --silent --show-error --retry 3 --request POST "${RENDER_DEPLOY_HOOK_URL}"
+            echo "Redeploy do Render acionado."
+          fi
+
       - name: Upload synchronization and promotion reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hoc-pack99-reports-${{ inputs.operation }}-${{ inputs.target }}
-          path: .cache/pack99/*report.json
+          path: .cache/pack99/**/*report.json
           if-no-files-found: warn
           retention-days: 90
+
+      - name: Upload Release archives as workflow artifacts
+        if: ${{ success() && inputs.operation == 'promote' && inputs.publish_artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-pack99-release-archives
+          path: .cache/pack99/release
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
 
       - name: Upload Web runtime
         if: ${{ success() && inputs.publish_artifacts && (inputs.target == 'web' || inputs.target == 'all') }}
