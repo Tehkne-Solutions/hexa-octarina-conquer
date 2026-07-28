@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { progressiveBoardPosition } from "./progressive-board-projection";
-import { ASH_BRIDGE_RESOURCES, ASH_BRIDGE_TERRAIN } from "./pack99-ash-bridge-manifest";
+import {
+  ASH_BRIDGE_RESOURCES,
+  ASH_BRIDGE_TERRAIN,
+  type Pack99MissionAssetRef,
+} from "./pack99-ash-bridge-manifest";
 import { pack99PublicUrl, resolvePack99MissionAsset } from "./pack99-runtime";
 import type { LivingTile } from "./living-board-data";
 
@@ -12,7 +16,7 @@ interface Pack99LivingWorldLayerProps {
 
 type AssetMap = Record<string, string | null>;
 
-async function resolve(reference: { sourceSuffixes: string[]; required: string[]; preferred: string[] }): Promise<string | null> {
+async function resolve(reference: Pack99MissionAssetRef): Promise<string | null> {
   return pack99PublicUrl(await resolvePack99MissionAsset(reference));
 }
 
@@ -56,6 +60,7 @@ export function Pack99LivingWorldLayer({ tiles, collectedTileIds }: Pack99Living
           className={`pack99-world-cell terrain-${tile.terrain} ${tile.landmark ? "has-landmark" : ""}`}
           style={{ left: `${position.left}%`, top: `${position.top}%`, zIndex: tile.x + tile.y }}
           data-mission-asset={ASH_BRIDGE_TERRAIN[tile.terrain].id}
+          data-pack99-canonical-id={ASH_BRIDGE_TERRAIN[tile.terrain].canonicalId}
         >
           {terrainSource ? <img className="pack99-world-terrain" src={terrainSource} alt="" draggable={false} /> : null}
           {resourceSource && !collectedTileIds.has(tile.id) ? (

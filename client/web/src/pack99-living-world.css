@@ -1,6 +1,11 @@
-.pack99-world-active .legacy-world-fallback,
-.pack99-world-active .legacy-board-fallback {
+html[data-pack99-full="true"] .pack99-world-active .legacy-world-fallback,
+html[data-pack99-full="true"] .pack99-world-active .legacy-board-fallback {
   display: none !important;
+}
+
+html:not([data-pack99-full="true"]) .pack99-world-active .legacy-world-fallback,
+html:not([data-pack99-full="true"]) .pack99-world-active .legacy-board-fallback {
+  display: revert;
 }
 
 .pack99-living-world {
@@ -109,6 +114,7 @@
   box-shadow: 0 0 12px rgba(104, 238, 185, .35);
   animation: pack99-mote 9s linear infinite;
 }
+
 .pack99-world-atmosphere i:nth-child(1) { left: 12%; top: 72%; animation-delay: -2s; }
 .pack99-world-atmosphere i:nth-child(2) { left: 46%; top: 20%; animation-delay: -6s; }
 .pack99-world-atmosphere i:nth-child(3) { left: 82%; top: 66%; animation-delay: -4s; }

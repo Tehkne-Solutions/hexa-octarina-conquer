@@ -1,7 +1,12 @@
 import { type CSSProperties, type RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { pack99PublicUrl, resolvePack99Asset } from "./pack99-runtime";
+import {
+  loadPack99RuntimeState,
+  pack99PublicUrl,
+  resolvePack99MissionAsset,
+  type Pack99MissionAssetReference,
+} from "./pack99-runtime";
 
 type WorldVfxType = "move" | "attack" | "impact" | "collect" | "capture" | "build" | "victory" | "defeat";
 
@@ -11,15 +16,55 @@ interface WorldVfxEvent {
   label: string;
 }
 
-const VFX_QUERY: Record<WorldVfxType, { required: string[]; preferred: string[] }> = {
-  move: { required: ["vfx"], preferred: ["move", "trail", "rune", "base", "01"] },
-  attack: { required: ["vfx"], preferred: ["attack", "slash", "projectile", "base", "01"] },
-  impact: { required: ["vfx"], preferred: ["impact", "hit", "burst", "base", "01"] },
-  collect: { required: ["vfx"], preferred: ["collect", "resource", "spark", "base", "01"] },
-  capture: { required: ["vfx"], preferred: ["capture", "territory", "rune", "base", "01"] },
-  build: { required: ["vfx"], preferred: ["build", "construction", "summon", "base", "01"] },
-  victory: { required: ["vfx"], preferred: ["victory", "celebration", "octarine", "base", "01"] },
-  defeat: { required: ["vfx"], preferred: ["defeat", "corruption", "smoke", "base", "01"] },
+const VFX_REFERENCE: Record<WorldVfxType, Pack99MissionAssetReference> = {
+  move: {
+    canonicalId: "VFX_MAP_PATH_01",
+    sourceSuffixes: ["VFX_MAP_PATH_01.png"],
+    required: ["vfx", "map", "path"],
+    preferred: ["01"],
+  },
+  attack: {
+    canonicalId: "VFX_COMBAT_SLASH_01",
+    sourceSuffixes: ["VFX_COMBAT_SLASH_01.png"],
+    required: ["vfx", "combat", "slash"],
+    preferred: ["01"],
+  },
+  impact: {
+    canonicalId: "VFX_COMBAT_HEAVY_STRIKE_01",
+    sourceSuffixes: ["VFX_COMBAT_HEAVY_STRIKE_01.png"],
+    required: ["vfx", "combat", "heavy", "strike"],
+    preferred: ["01"],
+  },
+  collect: {
+    canonicalId: "VFX_RESOURCE_COLLECT_01",
+    sourceSuffixes: ["VFX_RESOURCE_COLLECT_01.png"],
+    required: ["vfx", "resource", "collect"],
+    preferred: ["01"],
+  },
+  capture: {
+    canonicalId: "VFX_TERRITORY_CONQUEST_01",
+    sourceSuffixes: ["VFX_TERRITORY_CONQUEST_01.png"],
+    required: ["vfx", "territory", "conquest"],
+    preferred: ["01"],
+  },
+  build: {
+    canonicalId: "VFX_CONSTRUCTION_01",
+    sourceSuffixes: ["VFX_CONSTRUCTION_01.png"],
+    required: ["vfx", "construction"],
+    preferred: ["01"],
+  },
+  victory: {
+    canonicalId: "VFX_COMBAT_VICTORY_01",
+    sourceSuffixes: ["VFX_COMBAT_VICTORY_01.png"],
+    required: ["vfx", "combat", "victory"],
+    preferred: ["01"],
+  },
+  defeat: {
+    canonicalId: "VFX_COMBAT_DEATH_01",
+    sourceSuffixes: ["VFX_COMBAT_DEATH_01.png"],
+    required: ["vfx", "combat", "death"],
+    preferred: ["01"],
+  },
 };
 
 function classifyEvent(text: string, root: HTMLElement): WorldVfxType | null {
@@ -39,14 +84,23 @@ export function Pack99WorldVfx({ rootRef }: { rootRef: RefObject<HTMLDivElement 
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [event, setEvent] = useState<WorldVfxEvent | null>(null);
   const [assets, setAssets] = useState<Partial<Record<WorldVfxType, string | null>>>({});
+  const [strictFullRuntime, setStrictFullRuntime] = useState(
+    () => document.documentElement.dataset.pack99Full === "true",
+  );
   const lastSignatureRef = useRef("");
   const tokenRef = useRef(0);
 
   useEffect(() => {
     let active = true;
-    void Promise.all((Object.keys(VFX_QUERY) as WorldVfxType[]).map(async (type) => {
-      const query = VFX_QUERY[type];
-      const asset = await resolvePack99Asset(query.required, query.preferred);
+    void loadPack99RuntimeState()
+      .then((state) => {
+        if (active) setStrictFullRuntime(state.isFullRuntime);
+      })
+      .catch(() => {
+        if (active) setStrictFullRuntime(false);
+      });
+    void Promise.all((Object.keys(VFX_REFERENCE) as WorldVfxType[]).map(async (type) => {
+      const asset = await resolvePack99MissionAsset(VFX_REFERENCE[type]);
       return [type, pack99PublicUrl(asset)] as const;
     })).then((entries) => {
       if (active) setAssets(Object.fromEntries(entries));
@@ -93,9 +147,16 @@ export function Pack99WorldVfx({ rootRef }: { rootRef: RefObject<HTMLDivElement 
 
   const source = useMemo(() => event ? assets[event.type] ?? null : null, [assets, event]);
   if (!target || !event) return null;
+  if (!source && strictFullRuntime) return null;
 
   return createPortal(
-    <div key={event.token} className={`pack99-world-vfx vfx-${event.type}`} aria-hidden="true" data-vfx-event={event.type}>
+    <div
+      key={event.token}
+      className={`pack99-world-vfx vfx-${event.type}`}
+      aria-hidden="true"
+      data-vfx-event={event.type}
+      data-pack99-canonical-id={VFX_REFERENCE[event.type].canonicalId}
+    >
       <span className="pack99-vfx-glow" />
       <span className="pack99-vfx-ring" />
       <span className="pack99-vfx-particles">{Array.from({ length: 12 }, (_, index) => <i key={index} style={{ "--particle": index } as CSSProperties} />)}</span>

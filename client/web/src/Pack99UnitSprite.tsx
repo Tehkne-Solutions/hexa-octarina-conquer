@@ -4,6 +4,7 @@ import { FantasyUnitSprite } from "./FantasyUnitSprite";
 import { ASH_BRIDGE_UNITS } from "./pack99-ash-bridge-manifest";
 import type { LivingUnit } from "./living-board-data";
 import {
+  loadPack99RuntimeState,
   pack99PublicUrl,
   resolvePack99MissionAsset,
   resolvePack99SiblingLayer,
@@ -27,9 +28,24 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
   const reference = useMemo(() => ASH_BRIDGE_UNITS[unit.id] ?? ASH_BRIDGE_UNITS["raider-bridge"], [unit.id]);
   const [layers, setLayers] = useState<UnitLayers>({ base: null, shadow: null, emissive: null });
   const [failed, setFailed] = useState(false);
+  const [strictFullRuntime, setStrictFullRuntime] = useState(
+    () => document.documentElement.dataset.pack99Full === "true",
+  );
   const [transientState, setTransientState] = useState<TransientState>("entering");
   const previousHp = useRef(unit.hp);
   const clearTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void loadPack99RuntimeState()
+      .then((state) => {
+        if (active) setStrictFullRuntime(state.isFullRuntime);
+      })
+      .catch(() => {
+        if (active) setStrictFullRuntime(false);
+      });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -73,6 +89,18 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
   }, []);
 
   if (failed || !layers.base) {
+    if (strictFullRuntime) {
+      return (
+        <span
+          className={`pack99-unit-missing ${compact ? "compact" : ""}`}
+          role="img"
+          aria-label={`Asset canônico indisponível para ${unit.name}`}
+          data-pack99-unit={unit.id}
+          data-pack99-canonical-id={reference.canonicalId}
+          data-pack99-asset-error="canonical-payload-missing"
+        />
+      );
+    }
     return <FantasyUnitSprite unit={unit} selected={selected} compact={compact} />;
   }
 
@@ -84,6 +112,7 @@ export function Pack99UnitSprite({ unit, selected = false, compact = false }: Pa
       className={`pack99-unit-sprite faction-${unit.faction} role-${unit.role} state-${visualState} ${transientState ? `motion-${transientState}` : ""} ${compact ? "compact" : ""}`}
       data-pack99-unit={unit.id}
       data-pack99-asset={reference.id}
+      data-pack99-canonical-id={reference.canonicalId}
       data-unit-state={visualState}
     >
       <span className="pack99-unit-ring" aria-hidden="true" />

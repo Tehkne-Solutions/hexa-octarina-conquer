@@ -10,6 +10,11 @@ on:
       - "scripts/update_pack99_production_marker.py"
       - "tests/test_validate_pack99_production.py"
       - "tests/test_update_pack99_production_marker.py"
+      - "client/web/src/pack99-runtime.ts"
+      - "client/web/src/pack99-runtime.test.ts"
+      - "client/web/src/pack99-ash-bridge-manifest.ts"
+      - "client/web/src/pack99-ash-bridge-manifest.test.ts"
+      - "client/web/src/main.tsx"
   workflow_run:
     workflows:
       - PACK 99 Runtime Sync
@@ -200,14 +205,18 @@ jobs:
           expected = {
               "data-pack99-runtime": "full",
               "data-pack99-full": "true",
+              "data-pack99-fallbacks": "false",
           }
           for key, value in expected.items():
               if attrs.get(key) != value:
                   raise SystemExit(f"DOM_GATE_FAILED: {key}={attrs.get(key)!r}, esperado {value!r}")
-          count = int(attrs.get("data-pack99-asset-count", "0"))
-          if count < 1850:
-              raise SystemExit(f"DOM_GATE_FAILED: materialized={count}, esperado >=1850")
-          print(f"PACK99_DOM_GATE=PASSED runtime=full materialized={count}")
+          canonical = int(attrs.get("data-pack99-canonical-count", "0"))
+          if canonical != 1037:
+              raise SystemExit(f"DOM_GATE_FAILED: canonical={canonical}, esperado 1037")
+          materialized = int(attrs.get("data-pack99-asset-count", "0"))
+          if materialized < 1850:
+              raise SystemExit(f"DOM_GATE_FAILED: materialized={materialized}, esperado >=1850")
+          print(f"PACK99_DOM_GATE=PASSED runtime=full canonical={canonical} materialized={materialized} fallbacks=false")
           print("SIGNATURE=Tehkné Solutions")
           PY
 
