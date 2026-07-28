@@ -1,0 +1,113 @@
+.medieval-strategy-ui .ai-turn-curtain,
+.medieval-strategy-ui .battle-coach-card,
+.medieval-strategy-ui .ai-turn-summary {
+  position: fixed !important;
+  inset: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  clip-path: inset(50%) !important;
+}
+
+.pack99-guidance-stack {
+  position: fixed;
+  left: 50%;
+  top: 76px;
+  z-index: 190;
+  width: min(520px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.pack99-guidance-card {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 34px 1fr 30px;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 10px 10px 12px;
+  border: 1px solid rgba(174, 128, 68, .65);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(47, 35, 24, .97), rgba(26, 20, 15, .97));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .34);
+  color: #efe2c3;
+}
+
+.pack99-guidance-card > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #9c7544;
+  border-radius: 50%;
+  background: #3a2b1d;
+  color: #d8b06b;
+  font-family: Georgia, serif;
+  font-weight: 700;
+}
+
+.pack99-guidance-card small {
+  display: block;
+  margin-bottom: 2px;
+  color: #bda47d;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.pack99-guidance-card strong {
+  display: block;
+  color: #f4e8cb;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.pack99-guidance-card p {
+  margin: 4px 0 0;
+  color: #d3c3a5;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.pack99-guidance-card > button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(180, 143, 91, .45);
+  border-radius: 4px;
+  background: rgba(18, 14, 11, .7);
+  color: #d9c39c;
+  cursor: pointer;
+}
+
+.pack99-guidance-card.is-ai {
+  border-left: 4px solid #8e3f32;
+}
+
+.pack99-guidance-card.is-tutorial {
+  border-left: 4px solid #8d6e35;
+}
+
+@media (max-width: 760px) {
+  .pack99-guidance-stack {
+    top: 58px;
+    width: calc(100vw - 20px);
+  }
+  .pack99-guidance-card {
+    grid-template-columns: 28px 1fr 28px;
+    padding: 8px;
+  }
+  .pack99-guidance-card > span {
+    width: 26px;
+    height: 26px;
+  }
+  .pack99-guidance-card p {
+    display: none;
+  }
+}

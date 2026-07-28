@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { ClaimedCell, InfluenceEdge } from "./go-dots-logic";
 import {
-  loadPack99RuntimeState,
   pack99PublicUrl,
   resolvePack99MissionAsset,
   type Pack99MissionAssetReference,
@@ -16,57 +15,17 @@ interface Pack99StrategicStructuresProps {
 }
 
 type StructureKey = "blueTower" | "redTower" | "purpleCrystal" | "blueCrystal" | "fortress" | "portal" | "farm" | "tower";
-
 type AssetMap = Partial<Record<StructureKey, string | null>>;
 
 const REFERENCES: Record<StructureKey, Pack99MissionAssetReference> = {
-  blueTower: {
-    canonicalId: "PROP_TOWER_BLUE_01",
-    sourceSuffixes: ["PROP_TOWER_BLUE_01.png"],
-    required: ["prop", "tower", "blue"],
-    preferred: ["base", "01"],
-  },
-  redTower: {
-    canonicalId: "PROP_TOWER_RED_01",
-    sourceSuffixes: ["PROP_TOWER_RED_01.png"],
-    required: ["prop", "tower", "red"],
-    preferred: ["base", "01"],
-  },
-  purpleCrystal: {
-    canonicalId: "RES_OCTARINE_CRYSTAL_ABUNDANT_01",
-    sourceSuffixes: ["RES_OCTARINE_CRYSTAL_ABUNDANT_01.png"],
-    required: ["res", "octarine", "crystal", "abundant"],
-    preferred: ["base", "01"],
-  },
-  blueCrystal: {
-    canonicalId: "RES_MANA_BLUE_ABUNDANT_01",
-    sourceSuffixes: ["RES_MANA_BLUE_ABUNDANT_01.png"],
-    required: ["res", "mana", "blue", "abundant"],
-    preferred: ["base", "01"],
-  },
-  fortress: {
-    canonicalId: "TERR_FORT_BLUE_01",
-    sourceSuffixes: ["TERR_FORT_BLUE_01.png"],
-    required: ["territory", "fort", "blue"],
-    preferred: ["base", "01"],
-  },
-  portal: {
-    canonicalId: "PROP_PORTAL_ACTIVE_01",
-    sourceSuffixes: ["PROP_PORTAL_ACTIVE_01.png"],
-    required: ["prop", "portal", "active"],
-    preferred: ["base", "01"],
-  },
-  farm: {
-    sourceSuffixes: ["PROP_FARM_BUILT_01.png"],
-    required: ["prop", "farm", "built"],
-    preferred: ["base", "01"],
-  },
-  tower: {
-    canonicalId: "PROP_TOWER_BLUE_01",
-    sourceSuffixes: ["PROP_TOWER_BLUE_01.png"],
-    required: ["prop", "tower", "blue"],
-    preferred: ["base", "01"],
-  },
+  blueTower: { canonicalId: "PROP_TOWER_BLUE_01", sourceSuffixes: ["PROP_TOWER_BLUE_01.png"], required: ["prop", "tower", "blue"], preferred: ["base", "01"] },
+  redTower: { canonicalId: "PROP_TOWER_RED_01", sourceSuffixes: ["PROP_TOWER_RED_01.png"], required: ["prop", "tower", "red"], preferred: ["base", "01"] },
+  purpleCrystal: { canonicalId: "RES_OCTARINE_CRYSTAL_ABUNDANT_01", sourceSuffixes: ["RES_OCTARINE_CRYSTAL_ABUNDANT_01.png"], required: ["res", "octarine", "crystal", "abundant"], preferred: ["base", "01"] },
+  blueCrystal: { canonicalId: "RES_MANA_BLUE_ABUNDANT_01", sourceSuffixes: ["RES_MANA_BLUE_ABUNDANT_01.png"], required: ["res", "mana", "blue", "abundant"], preferred: ["base", "01"] },
+  fortress: { canonicalId: "TERR_FORT_BLUE_01", sourceSuffixes: ["TERR_FORT_BLUE_01.png"], required: ["territory", "fort", "blue"], preferred: ["base", "01"] },
+  portal: { canonicalId: "PROP_PORTAL_ACTIVE_01", sourceSuffixes: ["PROP_PORTAL_ACTIVE_01.png"], required: ["prop", "portal", "active"], preferred: ["base", "01"] },
+  farm: { sourceSuffixes: ["PROP_FARM_BUILT_01.png"], required: ["prop", "farm", "built"], preferred: ["base", "01"] },
+  tower: { canonicalId: "PROP_TOWER_BLUE_01", sourceSuffixes: ["PROP_TOWER_BLUE_01.png"], required: ["prop", "tower", "blue"], preferred: ["base", "01"] },
 };
 
 async function loadAsset(reference: Pack99MissionAssetReference): Promise<string | null> {
@@ -79,22 +38,17 @@ function edgeMidpoint(edge: InfluenceEdge) {
 
 export function Pack99StrategicStructures({ influenceEdges, claimedCells, building }: Pack99StrategicStructuresProps) {
   const [assets, setAssets] = useState<AssetMap>({});
-  const [strictFullRuntime, setStrictFullRuntime] = useState(
-    () => document.documentElement.dataset.pack99Full === "true",
-  );
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let active = true;
-    void loadPack99RuntimeState()
-      .then((state) => {
-        if (active) setStrictFullRuntime(state.isFullRuntime);
-      })
-      .catch(() => {
-        if (active) setStrictFullRuntime(false);
-      });
     void Promise.all((Object.keys(REFERENCES) as StructureKey[]).map(async (key) => [key, await loadAsset(REFERENCES[key])] as const))
-      .then((entries) => { if (active) setAssets(Object.fromEntries(entries)); })
-      .catch(() => undefined);
+      .then((entries) => {
+        if (!active) return;
+        setAssets(Object.fromEntries(entries));
+        setLoaded(true);
+      })
+      .catch(() => { if (active) setLoaded(true); });
     return () => { active = false; };
   }, []);
 
@@ -119,13 +73,20 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
     { id: "mill-build", key: (building ?? "farm") as "farm" | "tower", x: 5.05, y: 1.05, owner: "player", hidden: !building },
   ];
 
+  const missingKeys = (Object.keys(REFERENCES) as StructureKey[]).filter((key) => loaded && !assets[key]);
+
   return (
-    <div className="pack99-strategic-structures" aria-hidden="true">
+    <div
+      className="pack99-strategic-structures"
+      aria-hidden="true"
+      data-pack99-structures-ready={loaded && missingKeys.length === 0 ? "true" : "false"}
+      data-pack99-structures-missing={missingKeys.join(",")}
+    >
       {landmarkStructures.map((item) => {
         if (item.hidden) return null;
         const position = progressiveBoardPosition(item.x, item.y);
         const source = assets[item.key];
-        if (!source && strictFullRuntime) return null;
+        if (!source) return null;
         return (
           <span
             key={item.id}
@@ -134,7 +95,7 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
             style={{ left: `${position.left}%`, top: `${position.top}%` }}
           >
             <i className="structure-aura" />
-            {source ? <img src={source} alt="" draggable={false} /> : <b className="structure-fallback" />}
+            <img src={source} alt="" draggable={false} />
           </span>
         );
       })}
@@ -142,7 +103,7 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
       {towers.map((tower) => {
         const key: StructureKey = tower.owner === "player" ? "blueTower" : "redTower";
         const source = assets[key];
-        if (!source && strictFullRuntime) return null;
+        if (!source) return null;
         return (
           <span
             key={tower.id}
@@ -151,7 +112,7 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
             style={{ left: `${tower.position.left}%`, top: `${tower.position.top}%` }}
           >
             <i />
-            {source ? <img src={source} alt="" draggable={false} /> : <b />}
+            <img src={source} alt="" draggable={false} />
           </span>
         );
       })}
@@ -159,7 +120,7 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
       {crystals.map((crystal) => {
         const key: StructureKey = crystal.owner === "player" ? "blueCrystal" : "purpleCrystal";
         const source = assets[key];
-        if (!source && strictFullRuntime) return null;
+        if (!source) return null;
         return (
           <span
             key={crystal.id}
@@ -168,7 +129,7 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
             style={{ left: `${crystal.position.left}%`, top: `${crystal.position.top}%` }}
           >
             <i />
-            {source ? <img src={source} alt="" draggable={false} /> : <b />}
+            <img src={source} alt="" draggable={false} />
           </span>
         );
       })}
