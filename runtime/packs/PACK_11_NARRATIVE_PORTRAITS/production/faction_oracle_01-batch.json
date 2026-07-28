@@ -1,0 +1,23 @@
+{
+  "batchId": "pack11-faction-oracle-01",
+  "characterId": "faction_oracle_01",
+  "status": "ready-for-generation",
+  "output": {
+    "masterSize": "1024x1024",
+    "runtimeSize": "256x256",
+    "format": "PNG",
+    "colorMode": "RGBA",
+    "background": "transparent"
+  },
+  "basePrompt": "Create a single bust fantasy game character portrait of faction_oracle_01, an enigmatic ceremonial faction oracle. The figure is slender, vertical and nearly symmetrical, with a serene pale adult face, opalescent eyes, long silver hair partially held by a ritual ring, a luminous octarine third sigil centered on the forehead, a segmented mechanical halo fully readable behind the head, and a strand of obsidian beads over the right shoulder. The oracle wears layered ritual robes, thin pale metal plates, heavy ceremonial fabrics and a high collar. Use ivory, cold silver, obsidian and spectral cyan, soft frontal lighting with restrained cyan emission from the halo and sigil, a slight three-quarter bust view, transparent background, no frame, no text, no logo, no interface, no table, no infographic, no scenery. Preserve the exact same facial proportions, hairstyle, collar, forehead sigil, halo design and bead placement across all states; vary only expression, body tension and emission intensity.",
+  "negativePrompt": "dashboard, status screen, table, chart, infographic, card frame, UI panel, typography, captions, multiple characters, full body, landscape, opaque background, religious iconography unrelated to the design, halo redesign, moved forehead sigil, different hairstyle, different face, excessive bloom, caricature",
+  "states": [
+    {"id":"neutral","file":"faction_oracle_01__neutral.png","expression":"serene controlled expression, steady opalescent gaze, low halo emission"},
+    {"id":"speaking","file":"faction_oracle_01__speaking.png","expression":"calm prophetic speech, subtle mouth articulation, attentive gaze"},
+    {"id":"alert","file":"faction_oracle_01__alert.png","expression":"heightened attention, slightly widened eyes, brighter forehead sigil"},
+    {"id":"combat","file":"faction_oracle_01__combat.png","expression":"focused ritual intensity, firm posture, active segmented halo"},
+    {"id":"victory","file":"faction_oracle_01__victory.png","expression":"quiet assurance, softened gaze, stable luminous halo"},
+    {"id":"defeat","file":"faction_oracle_01__defeat.png","expression":"drained but composed, lowered gaze, weakened spectral emission"}
+  ],
+  "approvalGates": ["six files present","valid PNG signature","1024x1024 or 256x256","RGBA transparency","same identity across states","states readable at 256x256","no UI or text contamination"]
+}
