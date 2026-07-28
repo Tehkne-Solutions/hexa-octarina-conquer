@@ -1,0 +1,60 @@
+{
+  "batchId": "PACK11-HERO-VANGUARD-01",
+  "characterId": "hero_vanguard_01",
+  "status": "ready-for-generation",
+  "sourceSpec": "../characters/hero_vanguard_01/character-spec.json",
+  "outputDirectory": "../characters/hero_vanguard_01/assets",
+  "generationMode": "one-master-plus-state-variants",
+  "masterPrompt": "Fantasy strategy game narrative portrait, adult battle-tested heroic vanguard, broad shoulders, square jaw, subtle healed scar, layered brushed-steel plate armor, asymmetric shoulder guard, muted blue short battle cloak with warm brass clasp, weathered leather details, octarine insignia, dignified medieval high-fantasy art direction, chest-up three-quarter portrait, centered readable silhouette, controlled studio light, transparent background, no text, no frame, no UI, no scenery, consistent face armor camera and lighting across all variants.",
+  "negativePrompt": "status board, table, infographic, typography, labels, captions, user interface, card frame, scenery, full body, extra limbs, duplicate face, helmet covering face, modern clothing, neon cyberpunk, purple tech UI, watermark, logo, opaque background",
+  "states": [
+    {
+      "id": "neutral",
+      "file": "hero_vanguard_01__neutral.png",
+      "variantPrompt": "Controlled, observant and composed expression; closed mouth; calm authority."
+    },
+    {
+      "id": "speaking",
+      "file": "hero_vanguard_01__speaking.png",
+      "variantPrompt": "Clear command expression; lips naturally parted; focused eye contact; restrained hand-free pose."
+    },
+    {
+      "id": "alert",
+      "file": "hero_vanguard_01__alert.png",
+      "variantPrompt": "Raised attention; tightened jaw; eyes scanning an immediate threat; same pose and crop."
+    },
+    {
+      "id": "combat",
+      "file": "hero_vanguard_01__combat.png",
+      "variantPrompt": "Intense resolve and forward energy; battle-ready expression; armor and camera unchanged."
+    },
+    {
+      "id": "victory",
+      "file": "hero_vanguard_01__victory.png",
+      "variantPrompt": "Restrained confidence and relieved authority; subtle proud smile; no celebratory props."
+    },
+    {
+      "id": "defeat",
+      "file": "hero_vanguard_01__defeat.png",
+      "variantPrompt": "Exhausted but dignified; wounded pride; minor non-graphic battle wear; no collapse or gore."
+    }
+  ],
+  "output": {
+    "masterWidth": 1024,
+    "masterHeight": 1024,
+    "runtimeWidth": 256,
+    "runtimeHeight": 256,
+    "format": "png",
+    "colorMode": "RGBA",
+    "transparentBackground": true
+  },
+  "acceptance": {
+    "exactlyOneCharacter": true,
+    "noTextOrUi": true,
+    "sameIdentityAcrossStates": true,
+    "sameArmorAcrossStates": true,
+    "sameCameraAcrossStates": true,
+    "sameLightRigAcrossStates": true,
+    "readableAt256": true
+  }
+}
