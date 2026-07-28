@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Download and verify the private Google Drive fragments of PACK 99.
 
-The workflow authenticates with Google and provides a short-lived OAuth token.
-No long-lived credential is parsed, stored or logged by this script.
+The workflow authenticates with Google and creates a temporary Application
+Default Credentials file. This script refreshes those credentials only in
+memory, uses the resulting short-lived token, and never logs credential data.
 
 Signature: Tehkné Solutions
 """
@@ -21,6 +22,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 SIGNATURE = "Tehkné Solutions"
+DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.readonly"
 CHUNK_SIZE = 1024 * 1024
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 ID_RE = re.compile(r"^[A-Za-z0-9_-]{10,}$")
@@ -128,6 +130,28 @@ def valid_cached(path: Path, part: dict[str, Any]) -> bool:
     return path.is_file() and path.stat().st_size == part["bytes"] and sha256_file(path) == part["sha256"]
 
 
+def resolve_access_token(token_env: str) -> str:
+    explicit = os.getenv(token_env, "").strip()
+    if explicit:
+        return explicit
+    try:
+        import google.auth
+        from google.auth.transport.requests import Request
+    except ImportError as error:
+        raise DriveSourceError(
+            "google-auth não está instalado e nenhum token temporário foi informado"
+        ) from error
+    try:
+        credentials, _project = google.auth.default(scopes=[DRIVE_SCOPE])
+        credentials.refresh(Request())
+    except Exception as error:
+        raise DriveSourceError(f"Falha ao atualizar credenciais temporárias do Google: {error}") from error
+    token = getattr(credentials, "token", None)
+    if not isinstance(token, str) or not token:
+        raise DriveSourceError("O Google não retornou um access token temporário")
+    return token
+
+
 def download_part(part: dict[str, Any], destination: Path, token: str, force: bool) -> str:
     destination.parent.mkdir(parents=True, exist_ok=True)
     if not force and valid_cached(destination, part):
@@ -188,11 +212,8 @@ def main() -> int:
     parser.add_argument("--token-env", default="PACK99_DRIVE_ACCESS_TOKEN")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
-    token = os.getenv(args.token_env, "").strip()
-    if not token:
-        print(f"Erro: configure {args.token_env} com um token OAuth temporário.", file=sys.stderr)
-        return 2
     try:
+        token = resolve_access_token(args.token_env)
         report = download_source(args.source, args.destination, token, args.force)
     except DriveSourceError as error:
         print(f"PACK99_DRIVE_DOWNLOAD=FAILED\nERROR={error}\nSIGNATURE={SIGNATURE}", file=sys.stderr)
