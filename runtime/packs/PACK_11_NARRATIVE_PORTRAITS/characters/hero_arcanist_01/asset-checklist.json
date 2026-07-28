@@ -1,1 +1,33 @@
-{}
+{
+  "characterId": "hero_arcanist_01",
+  "status": "awaiting-assets",
+  "requiredStates": [
+    "neutral",
+    "speaking",
+    "alert",
+    "combat",
+    "victory",
+    "defeat"
+  ],
+  "assets": [
+    {"file": "hero_arcanist_01__neutral.png", "status": "missing", "sha256": null},
+    {"file": "hero_arcanist_01__speaking.png", "status": "missing", "sha256": null},
+    {"file": "hero_arcanist_01__alert.png", "status": "missing", "sha256": null},
+    {"file": "hero_arcanist_01__combat.png", "status": "missing", "sha256": null},
+    {"file": "hero_arcanist_01__victory.png", "status": "missing", "sha256": null},
+    {"file": "hero_arcanist_01__defeat.png", "status": "missing", "sha256": null}
+  ],
+  "validation": {
+    "dimensions": "1024x1024 source; 256x256 runtime derivative",
+    "format": "PNG",
+    "alphaRequired": true,
+    "faceConsistency": false,
+    "costumeConsistency": false,
+    "signatureElementsConsistent": false,
+    "readableAtRuntimeSize": false,
+    "allHashesPresent": false,
+    "approved": false,
+    "includedInManifest": false,
+    "runtimeReady": false
+  }
+}
