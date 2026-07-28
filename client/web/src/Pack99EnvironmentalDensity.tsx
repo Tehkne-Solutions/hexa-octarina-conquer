@@ -1,21 +1,61 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { progressiveBoardPosition } from "./progressive-board-projection";
-import { pack99PublicUrl, resolvePack99Asset } from "./pack99-runtime";
+import {
+  loadPack99RuntimeState,
+  pack99PublicUrl,
+  resolvePack99MissionAsset,
+  type Pack99MissionAssetReference,
+} from "./pack99-runtime";
 import type { LivingTile } from "./living-board-data";
 
 type PropKind = "tree" | "rock" | "ruin" | "shrub" | "water" | "camp" | "crystal";
 
 type PropAssetMap = Partial<Record<PropKind, string | null>>;
 
-const QUERIES: Record<PropKind, { required: string[]; preferred: string[] }> = {
-  tree: { required: ["props"], preferred: ["tree", "forest", "pine", "base", "01"] },
-  rock: { required: ["props"], preferred: ["rock", "stone", "boulder", "base", "01"] },
-  ruin: { required: ["props"], preferred: ["ruin", "column", "arch", "base", "01"] },
-  shrub: { required: ["props"], preferred: ["bush", "shrub", "grass", "base", "01"] },
-  water: { required: ["vfx"], preferred: ["water", "ripple", "mist", "base", "01"] },
-  camp: { required: ["props"], preferred: ["camp", "tent", "banner", "base", "01"] },
-  crystal: { required: ["resources"], preferred: ["crystal", "octarina", "base", "01"] },
+const REFERENCES: Record<PropKind, Pack99MissionAssetReference> = {
+  tree: {
+    canonicalId: "PROP_TREE_GREEN_A_01",
+    sourceSuffixes: ["PROP_TREE_GREEN_A_01.png"],
+    required: ["prop", "tree", "green", "a"],
+    preferred: ["base", "01"],
+  },
+  rock: {
+    canonicalId: "PROP_ROCK_A_01",
+    sourceSuffixes: ["PROP_ROCK_A_01.png"],
+    required: ["prop", "rock", "a"],
+    preferred: ["base", "01"],
+  },
+  ruin: {
+    canonicalId: "PROP_RUIN_SMALL_01",
+    sourceSuffixes: ["PROP_RUIN_SMALL_01.png"],
+    required: ["prop", "ruin", "small"],
+    preferred: ["base", "01"],
+  },
+  shrub: {
+    canonicalId: "PROP_TREE_GREEN_C_01",
+    sourceSuffixes: ["PROP_TREE_GREEN_C_01.png"],
+    required: ["prop", "tree", "green", "c"],
+    preferred: ["base", "01"],
+  },
+  water: {
+    canonicalId: "TILE_WATER_FLAT_CENTER_B_01",
+    sourceSuffixes: ["TILE_WATER_FLAT_CENTER_B_01.png"],
+    required: ["tile", "water", "flat", "center", "b"],
+    preferred: ["base", "01"],
+  },
+  camp: {
+    canonicalId: "TERR_CAMP_NEUTRAL_01",
+    sourceSuffixes: ["TERR_CAMP_NEUTRAL_01.png"],
+    required: ["territory", "camp", "neutral"],
+    preferred: ["base", "01"],
+  },
+  crystal: {
+    canonicalId: "RES_OCTARINE_CRYSTAL_SMALL_01",
+    sourceSuffixes: ["RES_OCTARINE_CRYSTAL_SMALL_01.png"],
+    required: ["res", "octarine", "crystal", "small"],
+    preferred: ["base", "01"],
+  },
 };
 
 interface DensityProp {
@@ -61,12 +101,21 @@ function propsForTile(tile: LivingTile): DensityProp[] {
 
 export function Pack99EnvironmentalDensity({ tiles }: { tiles: LivingTile[] }) {
   const [assets, setAssets] = useState<PropAssetMap>({});
+  const [strictFullRuntime, setStrictFullRuntime] = useState(
+    () => document.documentElement.dataset.pack99Full === "true",
+  );
 
   useEffect(() => {
     let active = true;
-    void Promise.all((Object.keys(QUERIES) as PropKind[]).map(async (kind) => {
-      const query = QUERIES[kind];
-      const asset = await resolvePack99Asset(query.required, query.preferred);
+    void loadPack99RuntimeState()
+      .then((state) => {
+        if (active) setStrictFullRuntime(state.isFullRuntime);
+      })
+      .catch(() => {
+        if (active) setStrictFullRuntime(false);
+      });
+    void Promise.all((Object.keys(REFERENCES) as PropKind[]).map(async (kind) => {
+      const asset = await resolvePack99MissionAsset(REFERENCES[kind]);
       return [kind, pack99PublicUrl(asset)] as const;
     })).then((entries) => {
       if (active) setAssets(Object.fromEntries(entries));
@@ -81,10 +130,13 @@ export function Pack99EnvironmentalDensity({ tiles }: { tiles: LivingTile[] }) {
       {props.map((prop) => {
         const position = progressiveBoardPosition(prop.x, prop.y);
         const source = assets[prop.kind] ?? null;
+        if (!source && strictFullRuntime) return null;
         return (
           <span
             key={prop.id}
             className={`pack99-density-prop kind-${prop.kind} ${source ? "has-asset" : "fallback"}`}
+            data-pack99-canonical-id={REFERENCES[prop.kind].canonicalId}
+            data-pack99-asset-error={!source && strictFullRuntime ? "canonical-payload-missing" : undefined}
             style={{
               left: `calc(${position.left}% + ${prop.dx}px)`,
               top: `calc(${position.top}% + ${prop.dy}px)`,
