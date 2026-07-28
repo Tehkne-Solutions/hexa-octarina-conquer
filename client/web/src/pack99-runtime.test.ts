@@ -1,10 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   findPack99CanonicalAsset,
   inspectPack99RuntimeIndex,
   pack99PublicUrl,
   PACK99_FULL_MIN_MATERIALIZED_COUNT,
+  resetPack99RuntimeCache,
+  resolvePack99MissionAsset,
+  resolvePack99SiblingLayer,
   type Pack99RuntimeAsset,
   type Pack99RuntimeIndex,
 } from "./pack99-runtime";
@@ -56,6 +59,18 @@ function fullIndex(): Pack99RuntimeIndex {
     signature: "Tehkné Solutions",
   };
 }
+
+function mockIndex(index: Pack99RuntimeIndex): void {
+  vi.stubGlobal("fetch", vi.fn(async () => ({
+    ok: true,
+    json: async () => index,
+  })));
+}
+
+afterEach(() => {
+  resetPack99RuntimeCache();
+  vi.unstubAllGlobals();
+});
 
 describe("PACK 99 runtime gate", () => {
   it("classifica o índice versionado de 33 assets como bootstrap", () => {
@@ -123,11 +138,93 @@ describe("PACK 99 runtime gate", () => {
     expect(findPack99CanonicalAsset(index, canonicalId, "shadow")?.id).toBe(`${canonicalId}__SHADOW`);
   });
 
-  it("não aceita outro ID canônico como substituto", () => {
+  it("não aceita outro ID canônico como substituto direto", () => {
     expect(findPack99CanonicalAsset(fullIndex(), "HERO_INEXISTENTE_01", "base")).toBeNull();
   });
 
   it("resolve a URL pública mesmo quando o índice bootstrap não possui sourcePath", () => {
     expect(pack99PublicUrl(bootstrapAsset(9))).toBe("/assets/runtime/pack99/test/asset-9.png");
+  });
+});
+
+describe("PACK 99 resilient asset resolution", () => {
+  it("usa o sufixo quando o ID canônico solicitado não está materializado", async () => {
+    mockIndex({
+      assetCount: 1037,
+      profile: "full",
+      runtimeMode: "full",
+      fallback: null,
+      assets: [{
+        id: "TILE_GRASS_FLAT_CENTER_A_01_ALIAS",
+        canonicalId: "TILE_GRASS_FLAT_CENTER_A_01_ALIAS",
+        category: "terrain",
+        layer: "base",
+        sourcePath: "packages/PACK_01_TERRAIN_CORE/A01_GRASS_ANCESTRAL/tiles/TILE_GRASS_FLAT_CENTER_A_01.png",
+        web: "client/web/public/assets/runtime/pack99/terrain/TILE_GRASS_FLAT_CENTER_A_01.webp",
+      }],
+    });
+
+    const asset = await resolvePack99MissionAsset({
+      canonicalId: "TILE_GRASS_FLAT_CENTER_A_01",
+      sourceSuffixes: ["TILE_GRASS_FLAT_CENTER_A_01.png"],
+      required: ["tile", "grass", "flat", "center"],
+      preferred: ["a_01"],
+    });
+
+    expect(asset?.id).toBe("TILE_GRASS_FLAT_CENTER_A_01_ALIAS");
+  });
+
+  it("usa busca semântica quando ID e sufixo não encontram o asset", async () => {
+    mockIndex({
+      assetCount: 597,
+      profile: "core",
+      assets: [{
+        id: "PROP_STONE_BRIDGE_BUILT_VARIANT_01",
+        canonicalId: "PROP_STONE_BRIDGE_BUILT_VARIANT_01",
+        category: "prop",
+        layer: "base",
+        sourcePath: "packages/PACK_04_PROPS/bridges/stone_bridge_built_variant.png",
+        web: "client/web/public/assets/runtime/pack99/props/stone_bridge_built_variant.webp",
+      }],
+    });
+
+    const asset = await resolvePack99MissionAsset({
+      canonicalId: "PROP_STONE_BRIDGE_BUILT_NW_SE_01",
+      sourceSuffixes: ["missing-bridge.png"],
+      required: ["stone", "bridge", "built"],
+      preferred: ["variant"],
+    });
+
+    expect(asset?.id).toBe("PROP_STONE_BRIDGE_BUILT_VARIANT_01");
+  });
+
+  it("resolve shadow equivalente quando o sibling canônico não existe", async () => {
+    const base: Pack99RuntimeAsset = {
+      id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
+      canonicalId: "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
+      category: "hero",
+      layer: "base",
+      sourcePath: "packages/PACK_06_HEROES/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+      web: "client/web/public/assets/runtime/pack99/heroes/guardian-base.webp",
+    };
+
+    mockIndex({
+      assetCount: 597,
+      profile: "core",
+      assets: [
+        base,
+        {
+          id: "HERO_GUARDIAN_01_IDLE_SHADOW_SW_01",
+          canonicalId: "HERO_GUARDIAN_01_IDLE_SHADOW_SW_01",
+          category: "hero",
+          layer: "shadow",
+          sourcePath: "packages/PACK_06_HEROES/HERO_GUARDIAN_01_IDLE_SHADOW_SW_01.png",
+          web: "client/web/public/assets/runtime/pack99/heroes/guardian-shadow.webp",
+        },
+      ],
+    });
+
+    const shadow = await resolvePack99SiblingLayer(base, "shadow");
+    expect(shadow?.layer).toBe("shadow");
   });
 });
