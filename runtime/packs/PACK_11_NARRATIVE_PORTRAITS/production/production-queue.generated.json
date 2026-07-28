@@ -1,0 +1,49 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "status": "ready-for-generation",
+  "expectedAssets": 24,
+  "validatedAssets": 0,
+  "approvedCharacters": 0,
+  "sourceOfTruth": "physical PNG files validated by scripts/validate-pack11-portraits.mjs",
+  "rules": {
+    "mockupsDoNotCount": true,
+    "statusPanelsDoNotCount": true,
+    "fileMustExist": true,
+    "pngSignatureRequired": true,
+    "alphaRequired": true,
+    "allowedSizes": ["1024x1024", "256x256"],
+    "sha256Required": true,
+    "completeCharacterSetRequired": true
+  },
+  "queue": [
+    {"order":1,"characterId":"hero_vanguard_01","state":"neutral","file":"hero_vanguard_01__neutral.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":2,"characterId":"hero_vanguard_01","state":"speaking","file":"hero_vanguard_01__speaking.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":3,"characterId":"hero_vanguard_01","state":"alert","file":"hero_vanguard_01__alert.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":4,"characterId":"hero_vanguard_01","state":"combat","file":"hero_vanguard_01__combat.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":5,"characterId":"hero_vanguard_01","state":"victory","file":"hero_vanguard_01__victory.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":6,"characterId":"hero_vanguard_01","state":"defeat","file":"hero_vanguard_01__defeat.png","batch":"hero_vanguard_01-batch.json","status":"pending"},
+    {"order":7,"characterId":"hero_arcanist_01","state":"neutral","file":"hero_arcanist_01__neutral.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":8,"characterId":"hero_arcanist_01","state":"speaking","file":"hero_arcanist_01__speaking.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":9,"characterId":"hero_arcanist_01","state":"alert","file":"hero_arcanist_01__alert.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":10,"characterId":"hero_arcanist_01","state":"combat","file":"hero_arcanist_01__combat.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":11,"characterId":"hero_arcanist_01","state":"victory","file":"hero_arcanist_01__victory.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":12,"characterId":"hero_arcanist_01","state":"defeat","file":"hero_arcanist_01__defeat.png","batch":"hero_arcanist_01-batch.json","status":"pending"},
+    {"order":13,"characterId":"champion_raider_01","state":"neutral","file":"champion_raider_01__neutral.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":14,"characterId":"champion_raider_01","state":"speaking","file":"champion_raider_01__speaking.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":15,"characterId":"champion_raider_01","state":"alert","file":"champion_raider_01__alert.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":16,"characterId":"champion_raider_01","state":"combat","file":"champion_raider_01__combat.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":17,"characterId":"champion_raider_01","state":"victory","file":"champion_raider_01__victory.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":18,"characterId":"champion_raider_01","state":"defeat","file":"champion_raider_01__defeat.png","batch":"champion_raider_01-batch.json","status":"pending"},
+    {"order":19,"characterId":"faction_oracle_01","state":"neutral","file":"faction_oracle_01__neutral.png","batch":"faction_oracle_01-batch.json","status":"pending"},
+    {"order":20,"characterId":"faction_oracle_01","state":"speaking","file":"faction_oracle_01__speaking.png","batch":"faction_oracle_01-batch.json","status":"pending"},
+    {"order":21,"characterId":"faction_oracle_01","state":"alert","file":"faction_oracle_01__alert.png","batch":"faction_oracle_01-batch.json","status":"pending"},
+    {"order":22,"characterId":"faction_oracle_01","state":"combat","file":"faction_oracle_01__combat.png","batch":"faction_oracle_01-batch.json","status":"pending"},
+    {"order":23,"characterId":"faction_oracle_01","state":"victory","file":"faction_oracle_01__victory.png","batch":"faction_oracle_01-batch.json","status":"pending"},
+    {"order":24,"characterId":"faction_oracle_01","state":"defeat","file":"faction_oracle_01__defeat.png","batch":"faction_oracle_01-batch.json","status":"pending"}
+  ],
+  "promotion": {
+    "pack11Ready": false,
+    "pack99GateSatisfied": false,
+    "runtimeReady": false
+  }
+}
