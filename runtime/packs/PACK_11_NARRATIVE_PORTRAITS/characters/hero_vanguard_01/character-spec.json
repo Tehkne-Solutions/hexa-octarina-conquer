@@ -1,0 +1,35 @@
+{
+  "characterId": "hero_vanguard_01",
+  "productionRole": "frontline heroic vanguard",
+  "canonicalName": null,
+  "status": "ready-for-asset-generation",
+  "visualIdentity": {
+    "silhouette": "broad shoulders, layered plate armor, short battle cloak, strong upright posture",
+    "face": "adult, battle-tested, calm authority, square jaw, subtle healed scar",
+    "palette": ["deep steel", "muted blue", "warm brass", "weathered leather"],
+    "materials": ["brushed steel", "aged leather", "heavy woven cloth"],
+    "signatureElements": ["asymmetric shoulder guard", "octarine insignia", "short cloak clasp"]
+  },
+  "consistencyLocks": {
+    "sameFaceAcrossStates": true,
+    "sameArmorAcrossStates": true,
+    "sameCameraAcrossStates": true,
+    "sameLightRigAcrossStates": true,
+    "transparentBackground": true
+  },
+  "states": [
+    {"id": "neutral", "expression": "controlled, observant, composed"},
+    {"id": "speaking", "expression": "clear command, lips parted, focused eye contact"},
+    {"id": "alert", "expression": "raised attention, tightened jaw, scanning threat"},
+    {"id": "combat", "expression": "intense resolve, forward energy, battle readiness"},
+    {"id": "victory", "expression": "restrained confidence, relieved authority"},
+    {"id": "defeat", "expression": "exhausted but dignified, wounded pride without collapse"}
+  ],
+  "output": {
+    "masterSize": "1024x1024",
+    "runtimeSize": "256x256",
+    "format": "png",
+    "colorMode": "RGBA",
+    "filePattern": "hero_vanguard_01__{state}.png"
+  }
+}

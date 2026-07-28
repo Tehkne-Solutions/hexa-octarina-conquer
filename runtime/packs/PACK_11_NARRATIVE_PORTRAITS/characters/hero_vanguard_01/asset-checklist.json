@@ -1,0 +1,26 @@
+{
+  "characterId": "hero_vanguard_01",
+  "approvalMode": "complete-character-set",
+  "requiredStates": ["neutral", "speaking", "alert", "combat", "victory", "defeat"],
+  "assets": [
+    {"file": "hero_vanguard_01__neutral.png", "state": "neutral", "status": "missing", "sha256": null},
+    {"file": "hero_vanguard_01__speaking.png", "state": "speaking", "status": "missing", "sha256": null},
+    {"file": "hero_vanguard_01__alert.png", "state": "alert", "status": "missing", "sha256": null},
+    {"file": "hero_vanguard_01__combat.png", "state": "combat", "status": "missing", "sha256": null},
+    {"file": "hero_vanguard_01__victory.png", "state": "victory", "status": "missing", "sha256": null},
+    {"file": "hero_vanguard_01__defeat.png", "state": "defeat", "status": "missing", "sha256": null}
+  ],
+  "validation": {
+    "allFilesPresent": false,
+    "dimensionsValid": false,
+    "alphaValid": false,
+    "identityConsistent": false,
+    "statesReadableAt256": false,
+    "approved": false
+  },
+  "promotion": {
+    "manifestPopulated": false,
+    "pack99GateSatisfied": false,
+    "runtimeReady": false
+  }
+}
