@@ -19,7 +19,7 @@ A fonte recuperada do PACK 99 está preservada em sete partes privadas no Google
 3. Criar no repositório o secret `PACK99_DRIVE_SERVICE_ACCOUNT_JSON` com o JSON completo da conta de serviço.
 4. Não registrar a credencial em arquivos, logs, comentários ou artefatos.
 
-A autenticação é executada pela action oficial `google-github-actions/auth`. O downloader recebe somente um access token temporário e não manipula a chave privada.
+A autenticação usa `google-github-actions/auth@v3`, que cria um arquivo temporário de Application Default Credentials e o remove ao final do job. O downloader usa `google-auth` para gerar em memória um token OAuth curto com escopo `drive.readonly`; a chave privada não é analisada nem registrada pelos scripts do projeto.
 
 ## Execução
 
@@ -34,15 +34,16 @@ No GitHub Actions, executar `PACK 99 Runtime Sync` com:
 ## Sequência protegida
 
 1. validar os testes do instalador, sincronizador, remontador, downloader e gate de promoção;
-2. autenticar no Drive com token temporário;
-3. baixar as sete partes;
-4. validar tamanho e SHA-256 de cada parte;
-5. remontar o ZIP de forma atômica;
-6. validar tamanho, SHA-256 e entradas canônicas do ZIP final;
-7. instalar o perfil `core` em Web e Godot;
-8. instalar o perfil `full` em Web e Godot;
-9. executar o gate de promoção;
-10. publicar relatórios e runtimes como artefatos temporários.
+2. autenticar no Drive por credencial temporária;
+3. obter em memória um token somente leitura;
+4. baixar as sete partes;
+5. validar tamanho e SHA-256 de cada parte;
+6. remontar o ZIP de forma atômica;
+7. validar tamanho, SHA-256 e entradas canônicas do ZIP final;
+8. instalar o perfil `core` em Web e Godot;
+9. instalar o perfil `full` em Web e Godot;
+10. executar o gate de promoção;
+11. publicar relatórios e runtimes como artefatos temporários.
 
 ## Critérios obrigatórios
 
