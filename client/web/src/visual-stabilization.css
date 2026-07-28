@@ -18,111 +18,104 @@
     padding-block: 5px;
   }
 
-  .go-dots-demo .resource-strip span {
-    padding: 4px 7px;
-  }
-
-  .pack99-notification-dock {
-    top: 66px;
-    right: 76px;
-  }
-
-  .pack99-notification-toggle {
-    min-width: 44px;
-    width: 44px;
-    height: 36px;
-    padding: 0;
-  }
-
-  .pack99-notification-toggle strong {
-    display: none;
-  }
-
-  .pack99-notification-toggle b {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-  }
-
+  .go-dots-demo .resource-strip span { padding: 4px 7px; }
+  .pack99-notification-dock { top: 66px; right: 76px; }
+  .pack99-notification-toggle { min-width: 44px; width: 44px; height: 36px; padding: 0; }
+  .pack99-notification-toggle strong { display: none; }
+  .pack99-notification-toggle b { position: absolute; top: -6px; right: -6px; }
   .go-dots-demo .battle-coach-card,
-  .go-dots-demo .ai-turn-summary {
-    max-width: 260px;
-  }
-
+  .go-dots-demo .ai-turn-summary { max-width: 260px; }
   .campaign-experience .living-objective-toast,
   .campaign-experience .objective-guidance,
-  .campaign-experience .battle-coach-card {
-    max-width: 290px;
-  }
-
-  .campaign-experience .selected-unit-card,
-  .campaign-experience .unit-action-card {
-    max-width: 300px;
-  }
-
-  .pack99-rts-camera-controls {
-    left: 50%;
-    bottom: 10px;
-    transform: translateX(-50%);
-    opacity: .76;
-  }
-
+  .campaign-experience .battle-coach-card { max-width: 290px; }
+  .pack99-rts-camera-controls { left: 50%; bottom: 10px; transform: translateX(-50%); opacity: .76; }
   .pack99-rts-camera-controls:hover,
-  .pack99-rts-camera-controls:focus-within {
-    opacity: 1;
-  }
+  .pack99-rts-camera-controls:focus-within { opacity: 1; }
 }
 
-/* Remove o aviso persistente de atualização de cima do campo de batalha.
-   A atualização continua disponível pelo menu principal. */
-.campaign-experience [class*="pwa"][class*="update"],
-.campaign-experience [data-pwa-update],
-.campaign-experience .update-available-banner {
+/* HUD premium recolhível. */
+.pack99-hero-rail-toggle,
+.pack99-objective-toggle,
+.pack99-selected-toggle {
+  position: absolute;
+  z-index: 74;
+  border: 1px solid #8d6a37;
+  border-radius: 7px;
+  color: #ecd9a8;
+  background: linear-gradient(180deg, rgba(38,31,23,.96), rgba(17,14,11,.98));
+  box-shadow: 0 7px 18px rgba(0,0,0,.42);
+  pointer-events: auto;
+  cursor: pointer;
+  font: 700 11px/1 Georgia, serif;
+}
+.pack99-hero-rail-toggle { left: 14px; top: 54px; width: 52px; height: 38px; }
+.pack99-hero-rail-toggle span,
+.pack99-objective-toggle span { display: none; }
+.pack99-objective-toggle { right: 14px; top: 92px; width: 48px; height: 42px; }
+.pack99-selected-toggle { left: 50%; bottom: 13px; transform: translateX(-50%); min-width: 92px; height: 38px; padding: 0 14px; }
+.pack99-panel-close { position:absolute; right:7px; top:7px; z-index:4; width:25px; height:25px; border:1px solid #82643b; border-radius:5px; color:#e8d3a0; background:#211912; cursor:pointer; }
+.pack99-hero-rail.is-collapsed,
+.pack99-objective-panel.is-collapsed,
+.pack99-selected-command.is-collapsed { display: none !important; }
+.pack99-hero-rail.is-open { top: 100px; }
+.pack99-objective-panel.is-open { top: 142px; right: 14px; width: 238px; }
+.pack99-selected-command.is-open { bottom: 58px; min-width: 330px; height: 74px; }
+
+/* Cards redundantes da implementação antiga não disputam o campo com o HUD premium. */
+.living-demo.go-dots-demo:has(.pack99-premium-hud) .living-objective-toast,
+.living-demo.go-dots-demo:has(.pack99-premium-hud) .objective-guidance,
+.living-demo.go-dots-demo:has(.pack99-premium-hud) .selected-unit-card,
+.living-demo.go-dots-demo:has(.pack99-premium-hud) .unit-action-card {
   display: none !important;
 }
 
+/* Avisos do sistema viram chips discretos durante a partida. */
+.system-status-center.is-battle-active {
+  position: fixed;
+  top: 48px;
+  right: 72px;
+  z-index: 980;
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+}
+.system-status-center.is-battle-active .system-status-chip,
+.system-status-center.is-battle-active .system-update-chip {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid #715a36;
+  border-radius: 7px;
+  color: #d9c69a;
+  background: rgba(19,17,14,.92);
+  box-shadow: 0 5px 14px rgba(0,0,0,.38);
+  pointer-events: auto;
+  cursor: pointer;
+  font: 700 10px/1 system-ui, sans-serif;
+}
+.system-status-center.is-battle-active .system-status-card { display: none !important; }
+
 /* Evita que cartões inferiores cubram o centro tático. */
 .campaign-experience .living-objective-toast,
-.campaign-experience .objective-guidance {
-  left: 16px !important;
-  right: auto !important;
-  bottom: 14px !important;
-}
-
+.campaign-experience .objective-guidance { left: 16px !important; right: auto !important; bottom: 14px !important; }
 .campaign-experience .selected-unit-card,
-.campaign-experience .unit-action-card {
-  left: 50% !important;
-  right: auto !important;
-  bottom: 12px !important;
-  transform: translateX(-50%);
-}
+.campaign-experience .unit-action-card { left: 50% !important; right: auto !important; bottom: 12px !important; transform: translateX(-50%); }
 
 /* Reduz elementos sem asset para que não pareçam grandes cartas quebradas. */
 .pack99-unit-asset-state.asset-missing,
-.pack99-unit-asset-state.asset-loading {
-  width: 72px !important;
-  min-width: 72px !important;
-  height: 92px !important;
-  padding: 6px !important;
-  border-radius: 8px !important;
-}
-
-.pack99-unit-asset-state .pack99-unit-loading-name {
-  max-width: 62px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+.pack99-unit-asset-state.asset-loading { width: 60px !important; min-width: 60px !important; height: 76px !important; padding: 5px !important; border-radius: 7px !important; }
+.pack99-unit-asset-state .pack99-unit-loading-name { max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 @media (max-height: 820px) and (min-width: 901px) {
   .go-dots-layout.medieval-hud-layout .living-mission-panel,
-  .go-dots-layout.medieval-hud-layout .unit-command-panel {
-    max-height: calc(100vh - 128px);
-  }
-
+  .go-dots-layout.medieval-hud-layout .unit-command-panel { max-height: calc(100vh - 128px); }
   .go-dots-demo .current-objective-card p,
-  .go-dots-demo .living-notice {
-    font-size: 12px;
-    line-height: 1.25;
-  }
+  .go-dots-demo .living-notice { font-size: 12px; line-height: 1.25; }
+}
+
+@media (max-width: 900px) {
+  .pack99-hero-rail-toggle { left: 7px; top: 48px; }
+  .pack99-objective-toggle { right: 7px; top: 54px; }
+  .pack99-objective-panel.is-open { right: 7px; top: 102px; width: min(220px, calc(100vw - 14px)); }
+  .pack99-selected-command.is-open { min-width: min(300px, calc(100vw - 130px)); }
+  .system-status-center.is-battle-active { top: 44px; right: 62px; }
 }
