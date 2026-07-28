@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Pack99UnitSprite } from "./Pack99UnitSprite";
 import type { LivingUnit } from "./living-board-data";
 
@@ -34,6 +36,9 @@ export function Pack99PremiumHud({
   onSelectUnit,
   onEndTurn,
 }: Pack99PremiumHudProps) {
+  const [heroesOpen, setHeroesOpen] = useState(false);
+  const [objectiveOpen, setObjectiveOpen] = useState(false);
+  const [selectedOpen, setSelectedOpen] = useState(false);
   const playerUnits = units.filter((unit) => unit.faction === "player");
   const selected = playerUnits.find((unit) => unit.id === selectedUnitId) ?? null;
   const phaseLabel = phase === "enemy" ? "Turno inimigo" : phase === "battle" ? "Confronto" : "Seu turno";
@@ -48,7 +53,10 @@ export function Pack99PremiumHud({
         <span><i className="resource-command" />{commandPoints}/{maxCommandPoints}<small>comando</small></span>
       </div>
 
-      <aside className="pack99-hero-rail" aria-label="Heróis disponíveis">
+      <button type="button" className="pack99-hero-rail-toggle" onClick={() => setHeroesOpen((value) => !value)} aria-expanded={heroesOpen} aria-label={heroesOpen ? "Recolher heróis" : "Mostrar heróis"}>
+        ☰<span>Heróis</span>
+      </button>
+      <aside className={`pack99-hero-rail ${heroesOpen ? "is-open" : "is-collapsed"}`} aria-label="Heróis disponíveis">
         {playerUnits.map((unit) => {
           const hp = unit.maxHp > 0 ? Math.max(0, unit.hp / unit.maxHp) * 100 : 0;
           return (
@@ -73,7 +81,11 @@ export function Pack99PremiumHud({
         <strong>{phaseLabel}</strong>
       </div>
 
-      <aside className="pack99-objective-panel">
+      <button type="button" className="pack99-objective-toggle" onClick={() => setObjectiveOpen((value) => !value)} aria-expanded={objectiveOpen}>
+        ◈<span>Missão</span>
+      </button>
+      <aside className={`pack99-objective-panel ${objectiveOpen ? "is-open" : "is-collapsed"}`}>
+        <button type="button" className="pack99-panel-close" onClick={() => setObjectiveOpen(false)} aria-label="Recolher missão">×</button>
         <small>{objectiveTitle}</small>
         <strong>{objectiveLabel}</strong>
         <p>{objectiveHelp}</p>
@@ -81,10 +93,16 @@ export function Pack99PremiumHud({
       </aside>
 
       {selected ? (
-        <div className="pack99-selected-command">
-          <Pack99UnitSprite unit={selected} selected compact />
-          <div><small>{selected.title}</small><strong>{selected.name}</strong><span>HP {selected.hp}/{selected.maxHp} · ⚔ {selected.attack} · ◆ {selected.defense} · ➤ {selected.speed}</span></div>
-        </div>
+        <>
+          <button type="button" className="pack99-selected-toggle" onClick={() => setSelectedOpen((value) => !value)} aria-expanded={selectedOpen}>
+            {selected.name}
+          </button>
+          <div className={`pack99-selected-command ${selectedOpen ? "is-open" : "is-collapsed"}`}>
+            <button type="button" className="pack99-panel-close" onClick={() => setSelectedOpen(false)} aria-label="Recolher unidade">×</button>
+            <Pack99UnitSprite unit={selected} selected compact />
+            <div><small>{selected.title}</small><strong>{selected.name}</strong><span>HP {selected.hp}/{selected.maxHp} · ⚔ {selected.attack} · ◆ {selected.defense} · ➤ {selected.speed}</span></div>
+          </div>
+        </>
       ) : null}
 
       <button
