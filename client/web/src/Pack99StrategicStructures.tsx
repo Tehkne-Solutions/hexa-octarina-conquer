@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { ClaimedCell, InfluenceEdge } from "./go-dots-logic";
-import { pack99PublicUrl, resolvePack99Asset } from "./pack99-runtime";
+import {
+  loadPack99RuntimeState,
+  pack99PublicUrl,
+  resolvePack99MissionAsset,
+  type Pack99MissionAssetReference,
+} from "./pack99-runtime";
 import { progressiveBoardPosition } from "./progressive-board-projection";
 
 interface Pack99StrategicStructuresProps {
@@ -14,19 +19,58 @@ type StructureKey = "blueTower" | "redTower" | "purpleCrystal" | "blueCrystal" |
 
 type AssetMap = Partial<Record<StructureKey, string | null>>;
 
-const QUERIES: Record<StructureKey, { required: string[]; preferred: string[] }> = {
-  blueTower: { required: ["tower"], preferred: ["blue", "alliance", "crystal", "base", "01"] },
-  redTower: { required: ["tower"], preferred: ["red", "enemy", "corrupt", "base", "01"] },
-  purpleCrystal: { required: ["crystal"], preferred: ["octarine", "purple", "large", "base", "01"] },
-  blueCrystal: { required: ["crystal"], preferred: ["blue", "mana", "large", "base", "01"] },
-  fortress: { required: ["fortress"], preferred: ["castle", "stronghold", "blue", "base", "01"] },
-  portal: { required: ["portal"], preferred: ["active", "purple", "base", "01"] },
-  farm: { required: ["farm"], preferred: ["arcane", "built", "base", "01"] },
-  tower: { required: ["tower"], preferred: ["runic", "built", "blue", "base", "01"] },
+const REFERENCES: Record<StructureKey, Pack99MissionAssetReference> = {
+  blueTower: {
+    canonicalId: "PROP_TOWER_BLUE_01",
+    sourceSuffixes: ["PROP_TOWER_BLUE_01.png"],
+    required: ["prop", "tower", "blue"],
+    preferred: ["base", "01"],
+  },
+  redTower: {
+    canonicalId: "PROP_TOWER_RED_01",
+    sourceSuffixes: ["PROP_TOWER_RED_01.png"],
+    required: ["prop", "tower", "red"],
+    preferred: ["base", "01"],
+  },
+  purpleCrystal: {
+    canonicalId: "RES_OCTARINE_CRYSTAL_ABUNDANT_01",
+    sourceSuffixes: ["RES_OCTARINE_CRYSTAL_ABUNDANT_01.png"],
+    required: ["res", "octarine", "crystal", "abundant"],
+    preferred: ["base", "01"],
+  },
+  blueCrystal: {
+    canonicalId: "RES_MANA_BLUE_ABUNDANT_01",
+    sourceSuffixes: ["RES_MANA_BLUE_ABUNDANT_01.png"],
+    required: ["res", "mana", "blue", "abundant"],
+    preferred: ["base", "01"],
+  },
+  fortress: {
+    canonicalId: "TERR_FORT_BLUE_01",
+    sourceSuffixes: ["TERR_FORT_BLUE_01.png"],
+    required: ["territory", "fort", "blue"],
+    preferred: ["base", "01"],
+  },
+  portal: {
+    canonicalId: "PROP_PORTAL_ACTIVE_01",
+    sourceSuffixes: ["PROP_PORTAL_ACTIVE_01.png"],
+    required: ["prop", "portal", "active"],
+    preferred: ["base", "01"],
+  },
+  farm: {
+    sourceSuffixes: ["PROP_FARM_BUILT_01.png"],
+    required: ["prop", "farm", "built"],
+    preferred: ["base", "01"],
+  },
+  tower: {
+    canonicalId: "PROP_TOWER_BLUE_01",
+    sourceSuffixes: ["PROP_TOWER_BLUE_01.png"],
+    required: ["prop", "tower", "blue"],
+    preferred: ["base", "01"],
+  },
 };
 
-async function loadAsset(query: { required: string[]; preferred: string[] }): Promise<string | null> {
-  return pack99PublicUrl(await resolvePack99Asset(query.required, query.preferred));
+async function loadAsset(reference: Pack99MissionAssetReference): Promise<string | null> {
+  return pack99PublicUrl(await resolvePack99MissionAsset(reference));
 }
 
 function edgeMidpoint(edge: InfluenceEdge) {
@@ -35,10 +79,20 @@ function edgeMidpoint(edge: InfluenceEdge) {
 
 export function Pack99StrategicStructures({ influenceEdges, claimedCells, building }: Pack99StrategicStructuresProps) {
   const [assets, setAssets] = useState<AssetMap>({});
+  const [strictFullRuntime, setStrictFullRuntime] = useState(
+    () => document.documentElement.dataset.pack99Full === "true",
+  );
 
   useEffect(() => {
     let active = true;
-    void Promise.all((Object.keys(QUERIES) as StructureKey[]).map(async (key) => [key, await loadAsset(QUERIES[key])] as const))
+    void loadPack99RuntimeState()
+      .then((state) => {
+        if (active) setStrictFullRuntime(state.isFullRuntime);
+      })
+      .catch(() => {
+        if (active) setStrictFullRuntime(false);
+      });
+    void Promise.all((Object.keys(REFERENCES) as StructureKey[]).map(async (key) => [key, await loadAsset(REFERENCES[key])] as const))
       .then((entries) => { if (active) setAssets(Object.fromEntries(entries)); })
       .catch(() => undefined);
     return () => { active = false; };
@@ -71,8 +125,14 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
         if (item.hidden) return null;
         const position = progressiveBoardPosition(item.x, item.y);
         const source = assets[item.key];
+        if (!source && strictFullRuntime) return null;
         return (
-          <span key={item.id} className={`pack99-map-structure structure-${item.key} owner-${item.owner}`} style={{ left: `${position.left}%`, top: `${position.top}%` }}>
+          <span
+            key={item.id}
+            className={`pack99-map-structure structure-${item.key} owner-${item.owner}`}
+            data-pack99-canonical-id={REFERENCES[item.key].canonicalId ?? "missing-from-pack99"}
+            style={{ left: `${position.left}%`, top: `${position.top}%` }}
+          >
             <i className="structure-aura" />
             {source ? <img src={source} alt="" draggable={false} /> : <b className="structure-fallback" />}
           </span>
@@ -80,9 +140,16 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
       })}
 
       {towers.map((tower) => {
-        const source = tower.owner === "player" ? assets.blueTower : assets.redTower;
+        const key: StructureKey = tower.owner === "player" ? "blueTower" : "redTower";
+        const source = assets[key];
+        if (!source && strictFullRuntime) return null;
         return (
-          <span key={tower.id} className={`pack99-influence-tower owner-${tower.owner} ${tower.emphasized ? "is-emphasized" : ""}`} style={{ left: `${tower.position.left}%`, top: `${tower.position.top}%` }}>
+          <span
+            key={tower.id}
+            className={`pack99-influence-tower owner-${tower.owner} ${tower.emphasized ? "is-emphasized" : ""}`}
+            data-pack99-canonical-id={REFERENCES[key].canonicalId}
+            style={{ left: `${tower.position.left}%`, top: `${tower.position.top}%` }}
+          >
             <i />
             {source ? <img src={source} alt="" draggable={false} /> : <b />}
           </span>
@@ -90,9 +157,16 @@ export function Pack99StrategicStructures({ influenceEdges, claimedCells, buildi
       })}
 
       {crystals.map((crystal) => {
-        const source = crystal.owner === "player" ? assets.blueCrystal : assets.purpleCrystal;
+        const key: StructureKey = crystal.owner === "player" ? "blueCrystal" : "purpleCrystal";
+        const source = assets[key];
+        if (!source && strictFullRuntime) return null;
         return (
-          <span key={crystal.id} className={`pack99-territory-crystal owner-${crystal.owner} ${crystal.major ? "is-major" : ""}`} style={{ left: `${crystal.position.left}%`, top: `${crystal.position.top}%` }}>
+          <span
+            key={crystal.id}
+            className={`pack99-territory-crystal owner-${crystal.owner} ${crystal.major ? "is-major" : ""}`}
+            data-pack99-canonical-id={REFERENCES[key].canonicalId}
+            style={{ left: `${crystal.position.left}%`, top: `${crystal.position.top}%` }}
+          >
             <i />
             {source ? <img src={source} alt="" draggable={false} /> : <b />}
           </span>
