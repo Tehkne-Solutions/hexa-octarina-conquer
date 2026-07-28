@@ -5,20 +5,28 @@ import "./pack99-validation-arena.css";
 const INDEX_URL = "/assets/runtime/pack99/runtime-index.json";
 
 interface RuntimeAsset {
-  id?: string;
+  id: string;
+  canonicalId?: string;
   category?: string;
-  sourcePath: string;
+  layer?: "base" | "shadow" | "emissive" | "faction-mask" | "spritesheet" | "atlas" | "preview";
+  sourcePath?: string;
   webPublic?: string;
-  web?: string;
+  web: string;
 }
 
 interface RuntimeIndex {
   assetCount: number;
+  canonicalAssetCount?: number;
+  materializedAssetCount?: number;
+  runtimeMode?: "bootstrap" | "core" | "full";
+  profile?: string;
+  fallback?: string | null | false;
   assets: RuntimeAsset[];
 }
 
 interface AssetDefinition {
   id: string;
+  canonicalId: string;
   label: string;
   group: string;
   candidates: string[];
@@ -28,6 +36,7 @@ interface AssetDefinition {
 
 interface ValidationAsset {
   id: string;
+  canonicalId: string;
   label: string;
   group: string;
   path: string;
@@ -38,12 +47,14 @@ interface ValidationAsset {
 const DEFINITIONS: AssetDefinition[] = [
   {
     id: "terrain-grass",
+    canonicalId: "TILE_GRASS_FLAT_CENTER_A_01",
     label: "Terreno ancestral",
     group: "Terreno",
     candidates: ["TILE_GRASS_FLAT_CENTER_A_01.png", "GRASS_FLAT_CENTER_A_01.png"],
   },
   {
     id: "pillar-blue",
+    canonicalId: "PILLAR_BLUE_01",
     label: "Pilar azul",
     group: "Tabuleiro",
     candidates: ["PILLAR_BLUE_01.png", "PILAR_BLUE_01.png"],
@@ -52,6 +63,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "resource-octarine",
+    canonicalId: "RES_OCTARINE_CRYSTAL_ABUNDANT_01",
     label: "Cristal octarina",
     group: "Recursos",
     candidates: ["RES_OCTARINE_CRYSTAL_ABUNDANT_01.png", "OCTARINE_CRYSTAL", "CRISTAL_OCTARINA"],
@@ -59,6 +71,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "portal",
+    canonicalId: "PROP_PORTAL_ACTIVE_01",
     label: "Portal ativo",
     group: "Props",
     candidates: ["PROP_PORTAL_ACTIVE_01.png", "PORTAL_ACTIVE_01.png"],
@@ -67,6 +80,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "mage",
+    canonicalId: "HERO_MAGE_IDLE_BASE_SE_01",
     label: "Mago",
     group: "Heróis",
     candidates: ["HERO_MAGE_IDLE_BASE_SE_01.png", "MAGE_IDLE_BASE_SE", "HERO_MAGE"],
@@ -75,6 +89,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "warrior",
+    canonicalId: "HERO_WARRIOR_01_IDLE_BASE_SW_01",
     label: "Guerreiro",
     group: "Heróis",
     candidates: ["HERO_WARRIOR_01_IDLE_BASE_SW_01.png", "WARRIOR_01_IDLE_BASE_SW", "HERO_WARRIOR"],
@@ -83,6 +98,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "ranger",
+    canonicalId: "HERO_RANGER_01_IDLE_BASE_NE_01",
     label: "Arqueiro",
     group: "Heróis",
     candidates: ["HERO_RANGER_01_IDLE_BASE_NE_01.png", "RANGER_01_IDLE_BASE_NE", "HERO_RANGER", "ARCHER_IDLE"],
@@ -91,6 +107,7 @@ const DEFINITIONS: AssetDefinition[] = [
   },
   {
     id: "skeleton",
+    canonicalId: "UNIT_SKELETON_01_IDLE_BASE_NW_01",
     label: "Esqueleto",
     group: "Unidades",
     candidates: ["UNIT_SKELETON_01_IDLE_BASE_NW_01.png", "SKELETON_01_IDLE_BASE_NW", "UNIT_SKELETON"],
@@ -110,35 +127,69 @@ function publicPath(asset: RuntimeAsset): string {
   return offset >= 0 ? `/${normalized.slice(offset + marker.length)}` : normalized;
 }
 
+function canonicalId(asset: RuntimeAsset): string {
+  return asset.canonicalId ?? asset.id.replace(/__(?:SHADOW|EMISSIVE|FACTION_MASK|SPRITESHEET|ATLAS|PREVIEW)$/, "");
+}
+
+function resolveCanonicalLayer(
+  assets: RuntimeAsset[],
+  wantedCanonicalId: string,
+  layer: "base" | "shadow" | "emissive",
+): string | undefined {
+  const matching = assets.filter((asset) => canonicalId(asset) === wantedCanonicalId);
+  const exact = matching.find((asset) => asset.layer === layer)
+    ?? (layer === "base" ? matching.find((asset) => asset.id === wantedCanonicalId) : undefined);
+  return exact ? publicPath(exact) : undefined;
+}
+
 function resolveCandidate(assets: RuntimeAsset[], candidates: string[] = []): string | undefined {
   for (const candidate of candidates) {
     const wanted = normalize(candidate);
-    const exact = assets.find((asset) => normalize(asset.sourcePath).endsWith(`/${wanted}`) || normalize(asset.sourcePath) === wanted);
+    const exact = assets.find((asset) => {
+      const source = normalize(asset.sourcePath ?? asset.web ?? asset.id);
+      return source.endsWith(`/${wanted}`) || source === wanted;
+    });
     if (exact) return publicPath(exact);
   }
   for (const candidate of candidates) {
     const wanted = normalize(candidate).replace(/\.PNG$/, "");
-    const partial = assets.find((asset) => normalize(asset.sourcePath).includes(wanted));
+    const partial = assets.find((asset) => normalize(asset.sourcePath ?? asset.web ?? asset.id).includes(wanted));
     if (partial) return publicPath(partial);
   }
   return undefined;
 }
 
-function resolveAssets(index: RuntimeIndex): { assets: ValidationAsset[]; missing: string[] } {
+function isFullIndex(index: RuntimeIndex): boolean {
+  return (index.runtimeMode ?? index.profile) === "full"
+    && index.fallback === null
+    && index.assetCount === 1037
+    && index.canonicalAssetCount === 1037
+    && index.assets.length >= 1850;
+}
+
+function resolveAssets(index: RuntimeIndex): { assets: ValidationAsset[]; missing: string[]; full: boolean } {
   const missing: string[] = [];
+  const full = isFullIndex(index);
   const assets = DEFINITIONS.map((definition) => {
-    const path = resolveCandidate(index.assets, definition.candidates);
+    const path = full
+      ? resolveCanonicalLayer(index.assets, definition.canonicalId, "base")
+      : resolveCandidate(index.assets, definition.candidates);
     if (!path) missing.push(definition.id);
     return {
       id: definition.id,
+      canonicalId: definition.canonicalId,
       label: definition.label,
       group: definition.group,
       path: path ?? "",
-      shadow: resolveCandidate(index.assets, definition.shadowCandidates),
-      emissive: resolveCandidate(index.assets, definition.emissiveCandidates),
+      shadow: full
+        ? resolveCanonicalLayer(index.assets, definition.canonicalId, "shadow")
+        : resolveCandidate(index.assets, definition.shadowCandidates),
+      emissive: full
+        ? resolveCanonicalLayer(index.assets, definition.canonicalId, "emissive")
+        : resolveCandidate(index.assets, definition.emissiveCandidates),
     };
   });
-  return { assets, missing };
+  return { assets, missing, full };
 }
 
 function ArenaSprite({ asset, onLoaded, onFailed }: {
@@ -148,7 +199,7 @@ function ArenaSprite({ asset, onLoaded, onFailed }: {
 }) {
   if (!asset.path) return null;
   return (
-    <article className={`pack99-actor pack99-actor-${asset.id}`}>
+    <article className={`pack99-actor pack99-actor-${asset.id}`} data-pack99-canonical-id={asset.canonicalId}>
       <div className="pack99-sprite-stack">
         {asset.shadow && <img className="pack99-layer pack99-shadow" src={asset.shadow} alt="" aria-hidden="true" />}
         <img
@@ -168,6 +219,8 @@ function ArenaSprite({ asset, onLoaded, onFailed }: {
 export function Pack99ValidationArena() {
   const [runtimeAssets, setRuntimeAssets] = useState<ValidationAsset[]>([]);
   const [indexCount, setIndexCount] = useState(0);
+  const [canonicalCount, setCanonicalCount] = useState(0);
+  const [fullRuntime, setFullRuntime] = useState(false);
   const [indexError, setIndexError] = useState<string | null>(null);
   const [unresolved, setUnresolved] = useState<string[]>([]);
   const [loaded, setLoaded] = useState<string[]>([]);
@@ -187,7 +240,9 @@ export function Pack99ValidationArena() {
         const resolved = resolveAssets(index);
         setRuntimeAssets(resolved.assets);
         setUnresolved(resolved.missing);
-        setIndexCount(index.assetCount ?? index.assets.length);
+        setIndexCount(index.assets.length);
+        setCanonicalCount(index.canonicalAssetCount ?? index.assetCount ?? 0);
+        setFullRuntime(resolved.full);
       })
       .catch((error: unknown) => {
         if (!active) return;
@@ -218,7 +273,7 @@ export function Pack99ValidationArena() {
   };
 
   return (
-    <main className={`pack99-validation ${showGrid ? "show-grid" : ""} ${showEmissive ? "show-emissive" : "hide-emissive"}`}>
+    <main className={`pack99-validation ${showGrid ? "show-grid" : ""} ${showEmissive ? "show-emissive" : "hide-emissive"}`} data-pack99-full={String(fullRuntime)}>
       <header className="pack99-toolbar">
         <div>
           <p>PACK 99 · RUNTIME ACTIVATION</p>
@@ -246,7 +301,9 @@ export function Pack99ValidationArena() {
       <aside className="pack99-diagnostics">
         <strong>Diagnóstico em tempo real</strong>
         <span>Índice: <code>{INDEX_URL}</code></span>
-        <span>Assets indexados: <b>{indexCount}</b></span>
+        <span>Modo: <b>{fullRuntime ? "full canônico" : "bootstrap compatível"}</b></span>
+        <span>IDs canônicos: <b>{canonicalCount}</b></span>
+        <span>Entradas materializadas: <b>{indexCount}</b></span>
         <span>Carregados: <b>{loaded.length}</b></span>
         <span>Falhas HTTP: <b>{failed.length}</b></span>
         <span>IDs não resolvidos: <b>{unresolved.length}</b></span>
