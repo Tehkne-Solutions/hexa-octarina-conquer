@@ -1,6 +1,15 @@
 name: PACK 99 Production Gate
 
 on:
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - ".github/workflows/pack99-production-gate.yml"
+      - "runtime/packs/PACK_99_RECOVERED/production-release.json"
+      - "scripts/validate_pack99_production.py"
+      - "scripts/update_pack99_production_marker.py"
+      - "tests/test_validate_pack99_production.py"
+      - "tests/test_update_pack99_production_marker.py"
   workflow_run:
     workflows:
       - PACK 99 Runtime Sync
@@ -28,12 +37,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: pack99-production-gate
+  group: pack99-production-gate-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'production' }}
   cancel-in-progress: false
 
 jobs:
   promote-production:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -45,10 +54,9 @@ jobs:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
     steps:
-      - name: Checkout current main
+      - name: Checkout requested revision
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 1
 
       - name: Setup Python
@@ -65,7 +73,22 @@ jobs:
             scripts/validate_pack99_production.py \
             scripts/update_pack99_production_marker.py
 
+      - name: Stop after pull request validation
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "PACK99_PRODUCTION_GATE=PR_TESTS_PASSED"
+          echo "Nenhuma Release, alteração de main ou operação de produção foi executada."
+          echo "SIGNATURE=Tehkné Solutions"
+
+      - name: Switch to current main for production mutation
+        if: ${{ github.event_name != 'pull_request' }}
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          git checkout -B main origin/main
+
       - name: Locate canonical Release
+        if: ${{ github.event_name != 'pull_request' }}
         id: release
         shell: bash
         run: |
@@ -214,7 +237,7 @@ jobs:
           fi
 
       - name: Upload production evidence
-        if: always()
+        if: ${{ always() && github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: hoc-pack99-production-gate
