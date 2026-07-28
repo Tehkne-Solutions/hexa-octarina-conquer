@@ -1,0 +1,22 @@
+{
+  "project": "Hexa Octarina Conquer",
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "sourceVersion": "1.0.2",
+  "releaseTag": "pack99-runtime-v1.0.2",
+  "status": "awaiting-release",
+  "required": false,
+  "expectedCanonicalAssetIds": 1037,
+  "expectedRuntimeReferences": 1850,
+  "sourceArtifact": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip",
+  "sourceBytes": 583070593,
+  "sourceSha256": "5efd54e05cd2a01aa764ad652423d4ceaca0030fb9aca3d233ede3144a3b86e0",
+  "webArchive": "hoc-pack99-web-full.zip",
+  "godotArchive": "hoc-pack99-godot-full.zip",
+  "productionUrl": "https://hexa-octarina-conquer.onrender.com",
+  "promotedAtUtc": null,
+  "productionVerifiedAtUtc": null,
+  "webArchiveSha256": null,
+  "godotArchiveSha256": null,
+  "promotionReportPassed": false,
+  "signature": "Tehkné Solutions"
+}

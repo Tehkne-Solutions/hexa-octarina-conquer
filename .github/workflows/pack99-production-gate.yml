@@ -1,0 +1,246 @@
+name: PACK 99 Production Gate
+
+on:
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - ".github/workflows/pack99-production-gate.yml"
+      - "runtime/packs/PACK_99_RECOVERED/production-release.json"
+      - "scripts/validate_pack99_production.py"
+      - "scripts/update_pack99_production_marker.py"
+      - "tests/test_validate_pack99_production.py"
+      - "tests/test_update_pack99_production_marker.py"
+  workflow_run:
+    workflows:
+      - PACK 99 Runtime Sync
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      production_url:
+        description: URL pública do jogo para validação
+        required: false
+        default: https://hexa-octarina-conquer.onrender.com
+        type: string
+      attempts:
+        description: Tentativas de validação durante o redeploy
+        required: true
+        default: 30
+        type: number
+      trigger_deploy_hook:
+        description: Acionar também o deploy hook do Render quando configurado
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pack99-production-gate-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  promote-production:
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACK99_RELEASE_TAG: pack99-runtime-v1.0.2
+      PACK99_MARKER_PATH: runtime/packs/PACK_99_RECOVERED/production-release.json
+      PACK99_PRODUCTION_URL: ${{ inputs.production_url || vars.PACK99_PRODUCTION_URL || 'https://hexa-octarina-conquer.onrender.com' }}
+      PACK99_PRODUCTION_ATTEMPTS: ${{ inputs.attempts || 30 }}
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+    steps:
+      - name: Checkout requested revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Test production validators and marker transitions
+        run: |
+          python -m unittest \
+            tests/test_validate_pack99_production.py \
+            tests/test_update_pack99_production_marker.py -v
+          python -m py_compile \
+            scripts/validate_pack99_production.py \
+            scripts/update_pack99_production_marker.py
+
+      - name: Stop after pull request validation
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "PACK99_PRODUCTION_GATE=PR_TESTS_PASSED"
+          echo "Nenhuma Release, alteração de main ou operação de produção foi executada."
+          echo "SIGNATURE=Tehkné Solutions"
+
+      - name: Switch to current main for production mutation
+        if: ${{ github.event_name != 'pull_request' }}
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          git checkout -B main origin/main
+
+      - name: Locate canonical Release
+        if: ${{ github.event_name != 'pull_request' }}
+        id: release
+        shell: bash
+        run: |
+          if gh release view "${PACK99_RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "available=true" >> "${GITHUB_OUTPUT}"
+            echo "Release ${PACK99_RELEASE_TAG} localizada."
+          else
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            echo "A Release ${PACK99_RELEASE_TAG} ainda não existe; nenhuma promoção de produção será executada."
+          fi
+
+      - name: Download signed Release metadata
+        if: ${{ steps.release.outputs.available == 'true' }}
+        shell: bash
+        run: |
+          rm -rf .cache/pack99/production-gate
+          mkdir -p .cache/pack99/production-gate/release
+          gh release download "${PACK99_RELEASE_TAG}" \
+            --dir .cache/pack99/production-gate/release \
+            --pattern "hoc-pack99-web-full.zip.report.json" \
+            --pattern "hoc-pack99-godot-full.zip.report.json" \
+            --pattern "promotion-report.json"
+
+      - name: Build release-published marker
+        if: ${{ steps.release.outputs.available == 'true' }}
+        run: |
+          python scripts/update_pack99_production_marker.py \
+            --marker "${PACK99_MARKER_PATH}" \
+            --web-report .cache/pack99/production-gate/release/hoc-pack99-web-full.zip.report.json \
+            --godot-report .cache/pack99/production-gate/release/hoc-pack99-godot-full.zip.report.json \
+            --promotion-report .cache/pack99/production-gate/release/promotion-report.json \
+            --status release-published \
+            --output .cache/pack99/production-gate/production-release-published.json
+
+      - name: Record Release in main and trigger Git deploy
+        if: ${{ steps.release.outputs.available == 'true' }}
+        shell: bash
+        run: |
+          cp .cache/pack99/production-gate/production-release-published.json "${PACK99_MARKER_PATH}"
+          git config user.name "Tehkné Solutions Runtime"
+          git config user.email "runtime@tehkne.solutions"
+          git add "${PACK99_MARKER_PATH}"
+          if git diff --cached --quiet; then
+            echo "O marcador release-published já está registrado."
+          else
+            git commit -m "chore(pack99): registrar Release integral para produção [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Trigger Render deploy hook
+        if: ${{ steps.release.outputs.available == 'true' && (github.event_name == 'workflow_run' || inputs.trigger_deploy_hook) }}
+        shell: bash
+        run: |
+          if [[ -n "${RENDER_DEPLOY_HOOK_URL}" ]]; then
+            curl --fail --silent --show-error --retry 3 --request POST "${RENDER_DEPLOY_HOOK_URL}"
+            echo "Deploy hook do Render acionado."
+          else
+            echo "Deploy hook ausente; o commit do marcador permanece como gatilho de redeploy."
+          fi
+
+      - name: Validate public manifests and physical payloads
+        if: ${{ steps.release.outputs.available == 'true' }}
+        run: |
+          python scripts/validate_pack99_production.py \
+            --base-url "${PACK99_PRODUCTION_URL}" \
+            --expected-count 1037 \
+            --sample-count 16 \
+            --attempts "${PACK99_PRODUCTION_ATTEMPTS}" \
+            --delay-seconds 20 \
+            --timeout-seconds 30 \
+            --report .cache/pack99/production-gate/production-report.json
+
+      - name: Install Chromium for DOM gate
+        if: ${{ steps.release.outputs.available == 'true' }}
+        run: npx --yes playwright@1.54.2 install --with-deps chromium
+
+      - name: Validate full runtime markers in browser DOM
+        if: ${{ steps.release.outputs.available == 'true' }}
+        shell: bash
+        run: |
+          BROWSER="$(find "${HOME}/.cache/ms-playwright" -type f \( -name chrome -o -name headless_shell \) -perm -u+x | head -n 1)"
+          if [[ -z "${BROWSER}" ]]; then
+            echo "Chromium não localizado após instalação." >&2
+            exit 2
+          fi
+          DOM=.cache/pack99/production-gate/production-dom.html
+          mkdir -p "$(dirname "${DOM}")"
+          "${BROWSER}" \
+            --headless \
+            --no-sandbox \
+            --disable-gpu \
+            --disable-dev-shm-usage \
+            --virtual-time-budget=20000 \
+            --dump-dom \
+            "${PACK99_PRODUCTION_URL}/?pack99-production-gate=${GITHUB_RUN_ID}" > "${DOM}"
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class RootParser(HTMLParser):
+              attrs = {}
+              def handle_starttag(self, tag, attrs):
+                  if tag == "html" and not self.attrs:
+                      self.attrs = dict(attrs)
+
+          parser = RootParser()
+          parser.feed(Path(".cache/pack99/production-gate/production-dom.html").read_text(encoding="utf-8", errors="replace"))
+          attrs = parser.attrs
+          expected = {
+              "data-pack99-runtime": "full",
+              "data-pack99-full": "true",
+          }
+          for key, value in expected.items():
+              if attrs.get(key) != value:
+                  raise SystemExit(f"DOM_GATE_FAILED: {key}={attrs.get(key)!r}, esperado {value!r}")
+          count = int(attrs.get("data-pack99-asset-count", "0"))
+          if count < 1850:
+              raise SystemExit(f"DOM_GATE_FAILED: materialized={count}, esperado >=1850")
+          print(f"PACK99_DOM_GATE=PASSED runtime=full materialized={count}")
+          print("SIGNATURE=Tehkné Solutions")
+          PY
+
+      - name: Build promoted marker
+        if: ${{ steps.release.outputs.available == 'true' }}
+        run: |
+          python scripts/update_pack99_production_marker.py \
+            --marker "${PACK99_MARKER_PATH}" \
+            --web-report .cache/pack99/production-gate/release/hoc-pack99-web-full.zip.report.json \
+            --godot-report .cache/pack99/production-gate/release/hoc-pack99-godot-full.zip.report.json \
+            --promotion-report .cache/pack99/production-gate/release/promotion-report.json \
+            --production-report .cache/pack99/production-gate/production-report.json \
+            --status promoted \
+            --output .cache/pack99/production-gate/production-release-promoted.json
+
+      - name: Make full runtime mandatory in main
+        if: ${{ steps.release.outputs.available == 'true' }}
+        shell: bash
+        run: |
+          cp .cache/pack99/production-gate/production-release-promoted.json "${PACK99_MARKER_PATH}"
+          git add "${PACK99_MARKER_PATH}"
+          if git diff --cached --quiet; then
+            echo "O marcador promoted já está ativo."
+          else
+            git commit -m "chore(pack99): promover runtime integral em produção [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Upload production evidence
+        if: ${{ always() && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-pack99-production-gate
+          path: .cache/pack99/production-gate
+          if-no-files-found: warn
+          retention-days: 90

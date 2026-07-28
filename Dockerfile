@@ -12,6 +12,7 @@ WORKDIR /web
 COPY client/web/package*.json ./
 RUN npm install --no-audit --no-fund
 COPY client/web/ ./
+COPY runtime/packs/PACK_99_RECOVERED/production-release.json /tmp/pack99-production-release.json
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl unzip \
@@ -20,24 +21,35 @@ RUN apt-get update \
 RUN set -eux; \
     runtime_name="hoc-pack99-web-full.zip"; \
     checksum_name="${runtime_name}.sha256"; \
+    marker_required="$(node -e 'const marker=require("/tmp/pack99-production-release.json"); process.stdout.write(marker.required === true ? "true" : "false")')"; \
+    marker_status="$(node -e 'const marker=require("/tmp/pack99-production-release.json"); process.stdout.write(String(marker.status || "unknown"))')"; \
+    marker_sha="$(node -e 'const marker=require("/tmp/pack99-production-release.json"); process.stdout.write(String(marker.webArchiveSha256 || ""))')"; \
+    runtime_required="${PACK99_WEB_RUNTIME_REQUIRED}"; \
+    if [ "${marker_required}" = "true" ]; then runtime_required="true"; fi; \
+    echo "PACK99_PRODUCTION_MARKER=${marker_status} required=${runtime_required}"; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}"; \
     if curl --fail --location --silent --show-error --retry 3 \
          "${PACK99_WEB_RUNTIME_URL}" -o "/tmp/${runtime_name}" \
        && curl --fail --location --silent --show-error --retry 3 \
          "${PACK99_WEB_RUNTIME_SHA256_URL}" -o "/tmp/${checksum_name}"; then \
       (cd /tmp && sha256sum --check "${checksum_name}"); \
+      actual_sha="$(sha256sum "/tmp/${runtime_name}" | cut -d' ' -f1)"; \
+      if [ -n "${marker_sha}" ] && [ "${actual_sha}" != "${marker_sha}" ]; then \
+        echo "O archive Web diverge do SHA-256 promovido no marcador." >&2; \
+        exit 2; \
+      fi; \
       rm -rf /web/public/assets/runtime; \
       mkdir -p /web/public/assets/runtime; \
       unzip -oq "/tmp/${runtime_name}" -d /web/public/assets/runtime; \
-      node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const index=JSON.parse(fs.readFileSync(root+"/pack99/runtime-index.json","utf8")); if(install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||index.runtimeMode!=="full"||index.canonicalAssetCount!==1037||!Array.isArray(index.assets)||index.assets.length<1037){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length}`);'; \
+      node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const index=JSON.parse(fs.readFileSync(root+"/pack99/runtime-index.json","utf8")); if(install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||index.runtimeMode!=="full"||index.canonicalAssetCount!==1037||!Array.isArray(index.assets)||index.assets.length<1850||index.fallback!==null){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length}`);'; \
     else \
-      if [ "${PACK99_WEB_RUNTIME_REQUIRED}" = "true" ]; then \
-        echo "A Release integral do PACK 99 é obrigatória, mas não pôde ser baixada." >&2; \
+      if [ "${runtime_required}" = "true" ]; then \
+        echo "A Release integral promovida do PACK 99 é obrigatória, mas não pôde ser baixada." >&2; \
         exit 2; \
       fi; \
-      echo "PACK99_PRODUCTION_RUNTIME=bootstrap (Release ainda indisponível)"; \
+      echo "PACK99_PRODUCTION_RUNTIME=bootstrap (marcador ainda não promovido)"; \
     fi; \
-    rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}"
+    rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}" /tmp/pack99-production-release.json
 
 RUN npm run build
 
