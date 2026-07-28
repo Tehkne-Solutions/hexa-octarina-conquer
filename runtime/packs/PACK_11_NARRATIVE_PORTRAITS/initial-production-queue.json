@@ -1,0 +1,39 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "batchId": "P11_BATCH_01",
+  "status": "ready-for-asset-production",
+  "canonicalMappingRequired": true,
+  "characters": [
+    {
+      "productionId": "hero_vanguard_01",
+      "group": "hero",
+      "role": "frontline-protagonist",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "productionId": "hero_arcanist_01",
+      "group": "hero",
+      "role": "arcane-controller",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "productionId": "champion_raider_01",
+      "group": "champion",
+      "role": "aggressive-rival",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    },
+    {
+      "productionId": "faction_oracle_01",
+      "group": "faction",
+      "role": "leader-advisor",
+      "states": ["neutral", "speaking", "alert", "combat", "victory", "defeat"]
+    }
+  ],
+  "expectedAssets": 24,
+  "masterSize": 1024,
+  "runtimeSize": 256,
+  "format": "png",
+  "transparentBackground": true,
+  "integrationBlockedBy": "PACK_99_FINAL_RUNTIME promotion",
+  "signature": "Tehkné Solutions"
+}
