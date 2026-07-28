@@ -1,0 +1,45 @@
+{
+  "packId": "PACK_11_NARRATIVE_PORTRAITS",
+  "sourceOfTruth": "filesystem-validation",
+  "expectedAssets": 24,
+  "validatedAssets": 0,
+  "approvedCharacters": 0,
+  "status": "awaiting-assets",
+  "characters": [
+    {
+      "characterId": "hero_vanguard_01",
+      "expectedAssets": 6,
+      "validatedAssets": 0,
+      "status": "awaiting-assets"
+    },
+    {
+      "characterId": "hero_arcanist_01",
+      "expectedAssets": 6,
+      "validatedAssets": 0,
+      "status": "awaiting-assets"
+    },
+    {
+      "characterId": "champion_raider_01",
+      "expectedAssets": 6,
+      "validatedAssets": 0,
+      "status": "awaiting-assets"
+    },
+    {
+      "characterId": "faction_oracle_01",
+      "expectedAssets": 6,
+      "validatedAssets": 0,
+      "status": "awaiting-assets"
+    }
+  ],
+  "rules": {
+    "doNotInferProgressFromMockups": true,
+    "doNotCountGeneratedDashboardsAsAssets": true,
+    "requirePhysicalPngFile": true,
+    "requireValidatorPass": true,
+    "requireCompleteCharacterSetForApproval": true
+  },
+  "promotion": {
+    "pack99GateSatisfied": false,
+    "runtimeReady": false
+  }
+}
