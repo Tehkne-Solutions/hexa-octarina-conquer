@@ -1,0 +1,23 @@
+{
+  "batchId": "pack11-champion-raider-01",
+  "characterId": "champion_raider_01",
+  "status": "ready-for-generation",
+  "output": {
+    "masterSize": "1024x1024",
+    "runtimeSize": "256x256",
+    "format": "PNG",
+    "colorMode": "RGBA",
+    "background": "transparent"
+  },
+  "basePrompt": "Create a single bust fantasy game character portrait of champion_raider_01, a broad-shouldered frontline raider. He is a weathered adult fighter with a square jaw, broken nose, short dark beard, close-cropped black hair, a shaved temple marked by a geometric octarine war glyph, and a pale diagonal scar over the left brow. He wears layered weathered leather and dark iron raider armor, a reinforced chest harness with an iron ring trophy, and an asymmetrical coarse fur mantle over the right shoulder. A heavy chipped octarine cleaver remains visible behind the shoulder. Use a three-quarter view with shoulders readable, hard warm key light and cool octarine green-violet rim light, cinematic game portrait rendering, transparent background, no frame, no text, no logo, no interface, no table, no infographic, no scenery. Keep facial proportions, scar, glyph, fur mantle side, cleaver silhouette, armor, harness and trophy ring identical across all states.",
+  "negativePrompt": "dashboard, status screen, table, chart, infographic, card frame, UI panel, typography, captions, multiple characters, full body, landscape, opaque background, costume redesign, missing cleaver, swapped shoulder mantle, different scar, different face, cartoon caricature",
+  "states": [
+    {"id":"neutral","file":"champion_raider_01__neutral.png","expression":"controlled confidence, relaxed jaw, focused forward gaze"},
+    {"id":"speaking","file":"champion_raider_01__speaking.png","expression":"assertive mid-sentence expression with natural mouth articulation"},
+    {"id":"alert","file":"champion_raider_01__alert.png","expression":"sudden tension, raised brow, eyes tracking an immediate threat"},
+    {"id":"combat","file":"champion_raider_01__combat.png","expression":"aggressive forward drive, clenched jaw, battle-ready intensity"},
+    {"id":"victory","file":"champion_raider_01__victory.png","expression":"fierce restrained grin, proud posture, energized gaze"},
+    {"id":"defeat","file":"champion_raider_01__defeat.png","expression":"exhausted and wounded resolve, lowered gaze without identity loss"}
+  ],
+  "approvalGates": ["six files present","valid PNG signature","1024x1024 or 256x256","RGBA transparency","same identity across states","states readable at 256x256","no UI or text contamination"]
+}
