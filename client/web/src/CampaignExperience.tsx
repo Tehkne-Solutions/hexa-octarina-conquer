@@ -15,6 +15,7 @@ import { Pack99AssetAudit } from "./Pack99AssetAudit";
 import { Pack99CombatCinematics } from "./Pack99CombatCinematics";
 import { Pack99ElementalAbilities } from "./Pack99ElementalAbilities";
 import { Pack99PremiumCardRuntime } from "./Pack99PremiumCardRuntime";
+import { Pack99PremiumHudRuntime } from "./Pack99PremiumHudRuntime";
 import { Pack99TerritoryMinimap } from "./Pack99TerritoryMinimap";
 import { Pack99UnitPhysicalMotion } from "./Pack99UnitPhysicalMotion";
 import { Pack99WorldVfx } from "./Pack99WorldVfx";
@@ -88,6 +89,7 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
 
   return <div className="campaign-experience medieval-strategy-ui" ref={rootRef}>
     <GoDotsLivingBoardDemo playerName={playerName} onBack={onBack} />
+    <Pack99PremiumHudRuntime />
     <BattlePresentationLayer rootRef={rootRef} />
     <Pack99WorldVfx rootRef={rootRef} />
     <Pack99CombatCinematics rootRef={rootRef} />
