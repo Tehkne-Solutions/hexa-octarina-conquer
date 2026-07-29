@@ -11,7 +11,6 @@ import { applyStoredInterfacePreferences } from "./interface-preferences";
 import { installLoadoutClientBridge } from "./loadout-client-bridge";
 import { LoadoutManagerPortal } from "./LoadoutManagerPortal";
 import { LivingGameplayDirector } from "./LivingGameplayDirector";
-import { Pack99PremiumHudRuntime } from "./Pack99PremiumHudRuntime";
 import { loadPack99RuntimeState } from "./pack99-runtime";
 import { PWA_APPLY_UPDATE_EVENT, PWA_CHECK_UPDATE_EVENT, emitPwaRuntimePatch } from "./pwa-lifecycle";
 import { RuntimeAssetOverlay } from "./RuntimeAssetOverlay";
@@ -125,7 +124,7 @@ if (ui08QaRequested || ui13QaRequested || ui14QaRequested || pack99QaRequested) 
 }
 
 createRoot(root).render(
-  <StrictMode><GameErrorBoundary><BoardThemeRuntime /><LivingGameplayDirector /><RuntimeAssetOverlay /><Pack99PremiumHudRuntime />
+  <StrictMode><GameErrorBoundary><BoardThemeRuntime /><LivingGameplayDirector /><RuntimeAssetOverlay />
     {ui08QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi08VisualQa scene={requestedQaScene} /></Suspense>
       : ui13QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi13BoardQa scene={requestedQaScene} /></Suspense>
       : ui14QaRequested ? <Suspense fallback={<BootFallback />}><SprintUi14GameplayQa scene={requestedQaScene} /></Suspense>
