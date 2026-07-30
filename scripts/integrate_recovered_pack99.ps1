@@ -5,9 +5,9 @@ param(
 
     [string]$RepoRoot = "",
 
-    [string]$BaseName = "HOC_PACK_99_FINAL_RUNTIME_RECOVERED(1)",
+    [string]$BaseName = "HOC_PACK_99_FINAL_RUNTIME_RECOVERED",
 
-    [string]$ExpectedSha256 = "1d0fbbeda1f50bd61830b28f562fdcf434570b4db0920e47e30612f2c134d56f",
+    [string]$ExpectedSha256 = "0156b60b3e954044b47fa1c962683b1e55c8886e588a9cef50916842bafcf26a",
 
     [switch]$SkipCore
 )
@@ -79,8 +79,8 @@ $tempArchive = "$archive.part"
 Remove-Item -LiteralPath $tempArchive -Force -ErrorAction SilentlyContinue
 
 Write-Host "============================================================"
-Write-Host " HOC PACK 99 - RECONSTRUÇÃO E INTEGRAÇÃO DA FONTE RECUPERADA"
-Write-Host " Tehkné Solutions"
+Write-Host " HOC PACK 99 - RECONSTRUCAO E INTEGRACAO DA FONTE RECUPERADA"
+Write-Host " Tehkne Solutions"
 Write-Host "============================================================"
 Write-Host "Partes: $PartsDirectory"
 Write-Host "Destino: $archive"
@@ -150,4 +150,4 @@ Write-Host "PACK99_CORE_SYNC=$(-not $SkipCore)"
 Write-Host "PACK99_FULL_SYNC=YES"
 Write-Host "PACK99_TARGETS=WEB,GODOT"
 Write-Host "PACK99_NEXT_STEP=RUNTIME_VISUAL_VALIDATION"
-Write-Host "Tehkné Solutions"
+Write-Host "Tehkne Solutions"
