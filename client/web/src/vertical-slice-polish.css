@@ -1,0 +1,86 @@
+body.hoc-vertical-slice-active {
+  overflow: hidden;
+  background: #05080d;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield {
+  z-index: 2147483000;
+  isolation: isolate;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #05080d;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .vertical-slice-arena {
+  inset: 82px 24px 118px;
+  min-width: 0;
+  min-height: 0;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .living-topbar {
+  left: 50%;
+  right: auto;
+  width: min(1120px, calc(100vw - 48px));
+  transform: translateX(-50%);
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .unit-command-panel {
+  right: 24px;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .living-mission-panel {
+  left: 24px;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node.is-attackable .vertical-slice-node-marker {
+  border-color: #ff8b72;
+  background: #5a2925;
+  box-shadow: 0 0 0 10px rgba(255, 91, 75, 0.14), 0 0 30px rgba(255, 94, 78, 0.5);
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node strong.attack-action {
+  color: #ff9d8c;
+  border-color: rgba(255, 125, 104, 0.45);
+  background: rgba(62, 12, 12, 0.92);
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node strong.move-action {
+  color: #f4d574;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node.is-valid:not(.is-occupied) {
+  cursor: pointer;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node.is-attackable {
+  cursor: crosshair;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-node:disabled {
+  cursor: default;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .selected-unit-card {
+  min-width: 190px;
+}
+
+body.hoc-vertical-slice-active .vertical-slice-battlefield .end-turn-button:not(:disabled) {
+  box-shadow: 0 0 0 1px rgba(244, 211, 117, 0.25), 0 10px 32px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 900px) {
+  body.hoc-vertical-slice-active .vertical-slice-battlefield .vertical-slice-arena {
+    inset: 76px 8px 122px;
+  }
+
+  body.hoc-vertical-slice-active .vertical-slice-battlefield .living-topbar {
+    width: calc(100vw - 16px);
+  }
+}
