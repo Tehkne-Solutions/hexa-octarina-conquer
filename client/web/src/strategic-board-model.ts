@@ -2,6 +2,7 @@ export type StrategicFaction = "blue" | "red";
 export type StrategicUnitId = "kael" | "lyra" | "varg" | "brakk";
 export type StrategicStructureType = "bastion" | "watchtower";
 export type StrategicResult = "playing" | "victory" | "defeat";
+export type StrategicRouteState = "unbuilt" | "road";
 
 export interface StrategicNode {
   id: string;
@@ -14,6 +15,7 @@ export interface StrategicEdge {
   a: string;
   b: string;
   owner: StrategicFaction | null;
+  state: StrategicRouteState;
 }
 
 export interface StrategicStructure {
@@ -64,10 +66,22 @@ export function strategicEdgeId(a: string, b: string): string {
   return [a, b].sort().join("--");
 }
 
-function makeEdge(aCol: number, aRow: number, bCol: number, bRow: number, owner: StrategicFaction | null = null): StrategicEdge {
+function makeEdge(
+  aCol: number,
+  aRow: number,
+  bCol: number,
+  bRow: number,
+  owner: StrategicFaction | null = null,
+): StrategicEdge {
   const a = strategicNodeId(aCol, aRow);
   const b = strategicNodeId(bCol, bRow);
-  return { id: strategicEdgeId(a, b), a, b, owner };
+  return {
+    id: strategicEdgeId(a, b),
+    a,
+    b,
+    owner,
+    state: owner ? "road" : "unbuilt",
+  };
 }
 
 function cellEdges(corners: StrategicCell["corners"]): StrategicCell["edgeIds"] {
@@ -83,8 +97,12 @@ function cellEdges(corners: StrategicCell["corners"]): StrategicCell["edgeIds"] 
 function deriveCells(cells: StrategicCell[], edges: StrategicEdge[]): StrategicCell[] {
   const edgeIndex = new Map(edges.map((edge) => [edge.id, edge]));
   return cells.map((cell) => {
-    const owners = cell.edgeIds.map((id) => edgeIndex.get(id)?.owner ?? null);
-    const owner = owners[0] && owners.every((entry) => entry === owners[0]) ? owners[0] : null;
+    const boundary = cell.edgeIds.map((id) => edgeIndex.get(id));
+    const firstOwner = boundary[0]?.owner ?? null;
+    const owner = firstOwner
+      && boundary.every((edge) => edge?.state === "road" && edge.owner === firstOwner)
+      ? firstOwner
+      : null;
     return {
       ...cell,
       owner,
@@ -101,6 +119,8 @@ export function createStrategicBoard(): StrategicBoard {
     }
   }
 
+  // Three blue roads already outline most of the south-west region.
+  // Kael can construct the missing connection s-1-1 -> s-1-2 to close it.
   const edgeOwners = new Map<string, StrategicFaction>([
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(1, 1)), "blue"],
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(0, 2)), "blue"],
@@ -114,12 +134,12 @@ export function createStrategicBoard(): StrategicBoard {
   for (let row = 0; row < STRATEGIC_ROWS; row += 1) {
     for (let col = 0; col < STRATEGIC_COLUMNS; col += 1) {
       if (col < STRATEGIC_COLUMNS - 1) {
-        const edge = makeEdge(col, row, col + 1, row);
-        edges.push({ ...edge, owner: edgeOwners.get(edge.id) ?? null });
+        const id = strategicEdgeId(strategicNodeId(col, row), strategicNodeId(col + 1, row));
+        edges.push(makeEdge(col, row, col + 1, row, edgeOwners.get(id) ?? null));
       }
       if (row < STRATEGIC_ROWS - 1) {
-        const edge = makeEdge(col, row, col, row + 1);
-        edges.push({ ...edge, owner: edgeOwners.get(edge.id) ?? null });
+        const id = strategicEdgeId(strategicNodeId(col, row), strategicNodeId(col, row + 1));
+        edges.push(makeEdge(col, row, col, row + 1, edgeOwners.get(id) ?? null));
       }
     }
   }
@@ -174,7 +194,7 @@ export function strategicBuildTargets(board: StrategicBoard, unitId: StrategicUn
   if (unit.hp <= 0) return [];
   return strategicAdjacentNodeIds(board, unit.nodeId).filter((target) => {
     const edge = board.edges.find((entry) => entry.id === strategicEdgeId(unit.nodeId, target));
-    return edge?.owner === null && !strategicUnitAt(board, target);
+    return edge?.state === "unbuilt" && !strategicUnitAt(board, target);
   });
 }
 
@@ -183,7 +203,7 @@ export function strategicMoveTargets(board: StrategicBoard, unitId: StrategicUni
   if (unit.hp <= 0) return [];
   return strategicAdjacentNodeIds(board, unit.nodeId).filter((target) => {
     const edge = board.edges.find((entry) => entry.id === strategicEdgeId(unit.nodeId, target));
-    return edge?.owner === unit.faction && !strategicUnitAt(board, target);
+    return edge?.state === "road" && edge.owner === unit.faction && !strategicUnitAt(board, target);
   });
 }
 
@@ -200,7 +220,9 @@ export function strategicClaimEdge(board: StrategicBoard, unitId: StrategicUnitI
   if (!strategicBuildTargets(board, unitId).includes(targetNodeId)) return board;
   const unit = strategicUnit(board, unitId);
   const edgeId = strategicEdgeId(unit.nodeId, targetNodeId);
-  const edges = board.edges.map((edge) => edge.id === edgeId ? { ...edge, owner: unit.faction } : edge);
+  const edges = board.edges.map((edge) => edge.id === edgeId
+    ? { ...edge, owner: unit.faction, state: "road" as const }
+    : edge);
   return { ...board, edges, cells: deriveCells(board.cells, edges) };
 }
 
@@ -254,6 +276,10 @@ export function strategicStructureCount(board: StrategicBoard, faction: Strategi
   return board.cells.filter((cell) => cell.structure?.owner === faction).length;
 }
 
+export function strategicRoadCount(board: StrategicBoard, faction: StrategicFaction): number {
+  return board.edges.filter((edge) => edge.state === "road" && edge.owner === faction).length;
+}
+
 export function strategicActionBudget(board: StrategicBoard, faction: StrategicFaction): number {
   return Math.min(5, 3 + strategicStructureCount(board, faction));
 }
@@ -283,14 +309,14 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
       let next = strategicClaimEdge(board, enemy.id, builds[0]);
       const structures = strategicStructureTargets(next, enemy.id);
       if (structures.length > 0) next = strategicBuildStructure(next, enemy.id, structures[0], "watchtower");
-      return { board: next, message: `${enemy.name} expandiu uma muralha rubra.` };
+      return { board: next, message: `${enemy.name} construiu uma estrada rubra.` };
     }
   }
 
   for (const enemy of enemies) {
     const moves = strategicMoveTargets(board, enemy.id);
     if (moves.length > 0) {
-      return { board: strategicMoveUnit(board, enemy.id, moves[0]), message: `${enemy.name} avançou pela rota rubra.` };
+      return { board: strategicMoveUnit(board, enemy.id, moves[0]), message: `${enemy.name} avançou por uma estrada rubra.` };
     }
   }
 
