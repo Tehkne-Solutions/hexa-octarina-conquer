@@ -26,11 +26,13 @@ const ASSET_IDS: Record<AssetKey, string> = {
   varg: "UNIT_RECRUIT_01_IDLE_BASE_NW_01", brakk: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
 };
 
-const BIOME_PATCHES = [[18,20,34,26,"forest"],[78,21,30,24,"forest"],[17,70,30,22,"forest"],[82,68,32,25,"forest"]] as const;
-const PROPS = [
-  ["camp",24,43,"Fortaleza de Orun","blue"], ["ruins",43,35,"Observatório","blue"],
-  ["crystal",54,61,"Santuário Octarino","violet"], ["outpost",75,42,"Cidadela Rubra","red"],
-  ["rock",84,24,"Escarpas Rubras","red"], ["rock",17,65,"Penhascos de Orun","blue"],
+const SITES = [
+  ["camp", "n-1-3", "Fortaleza de Orun", "blue"],
+  ["ruins", "n-2-1", "Observatório", "blue"],
+  ["crystal", "n-4-3", "Santuário Octarino", "violet"],
+  ["outpost", "n-5-1", "Cidadela Rubra", "red"],
+  ["rock", "n-6-0", "Escarpas Rubras", "red"],
+  ["rock", "n-0-4", "Penhascos de Orun", "blue"],
 ] as const;
 
 const DEFAULT_UNIT_NODES: Record<MetaUnitId,string> = { kael:"n-1-3", lyra:"n-2-3", varg:"n-5-2", brakk:"n-5-1" };
@@ -49,10 +51,10 @@ export function MetaPack99World({ unitNodes=DEFAULT_UNIT_NODES, unitHp=DEFAULT_H
   const resolved=useMemo(()=>Object.values(assets).filter(Boolean).length,[assets]);
   return <div className="meta-pack99-world" data-resolved-assets={resolved}>
     <div className="meta-world-ground" style={assets.grass?{backgroundImage:`url(${assets.grass})`}:undefined}/>
-    <div className="meta-world-biomes">{BIOME_PATCHES.map(([left,top,width,height,key],index)=>assets[key]?<div key={`${key}-${index}`} className={`meta-world-biome biome-${key}`} style={{left:`${left}%`,top:`${top}%`,width:`${width}%`,height:`${height}%`,backgroundImage:`url(${assets[key]})`}}/>:null)}</div>
+    <div className="meta-world-biome-map" style={assets.forest?{backgroundImage:`url(${assets.forest})`}:undefined}/>
     <div className="meta-pack99-water-band">{assets.water?<img src={assets.water} alt="" draggable={false}/>:null}</div>
     {assets.bridge?<img className="meta-world-bridge" src={assets.bridge} alt="" draggable={false}/>:null}
-    <div className="meta-world-props">{PROPS.map(([key,left,top,label,faction])=>assets[key]?<div key={label} className={`meta-world-prop prop-${key} owner-${faction}`} style={{left:`${left}%`,top:`${top}%`}}><img src={assets[key]!} alt="" draggable={false}/><span>{label}</span></div>:null)}</div>
+    <div className="meta-world-sites">{SITES.map(([key,nodeId,label,faction])=>assets[key]?<div key={label} className={`meta-world-site site-${key} owner-${faction}`} style={nodePosition(nodeId)}><img src={assets[key]!} alt="" draggable={false}/><span>{label}</span></div>:null)}</div>
     <div className="meta-world-units">{(Object.keys(UNIT_META) as MetaUnitId[]).map((unitId)=>{
       if(defeatedUnits.has(unitId)) return null;
       const source=assets[unitId]; const meta=UNIT_META[unitId]; if(!source)return null;
