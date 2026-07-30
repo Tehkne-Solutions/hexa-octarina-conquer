@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { MetaPack99World } from "./MetaPack99World";
 import { createMetaBoardModel, metaCellPolygon, metaIsoPoint, type MetaFaction } from "./meta-board-model";
 import { runtimeAssetUrl } from "./runtime-assets";
 import "./meta-board-foundation.css";
@@ -10,7 +11,6 @@ interface MetaBoardFoundationProps {
 }
 
 interface MetaRuntimeVisuals {
-  grass: string | null;
   pillar: string | null;
   pillarSelected: string | null;
 }
@@ -21,11 +21,7 @@ const FACTION_LABEL: Record<MetaFaction, string> = {
   violet: "Convergência Octarina",
 };
 
-const EMPTY_VISUALS: MetaRuntimeVisuals = {
-  grass: null,
-  pillar: null,
-  pillarSelected: null,
-};
+const EMPTY_VISUALS: MetaRuntimeVisuals = { pillar: null, pillarSelected: null };
 
 export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationProps) {
   const board = useMemo(() => createMetaBoardModel(), []);
@@ -36,20 +32,19 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
   useEffect(() => {
     let active = true;
     void Promise.all([
-      runtimeAssetUrl("TILE_FOREST_FLAT_CENTER_A_01"),
       runtimeAssetUrl("PILLAR_NEUTRAL_01"),
       runtimeAssetUrl("PILLAR_SELECTED_01"),
-    ]).then(([grass, pillar, pillarSelected]) => {
-      if (active) setRuntimeVisuals({ grass, pillar, pillarSelected });
+    ]).then(([pillar, pillarSelected]) => {
+      if (active) setRuntimeVisuals({ pillar, pillarSelected });
     });
     return () => { active = false; };
   }, []);
 
   return (
-    <main className="meta-foundation-screen">
+    <main className="meta-foundation-screen meta-world-board-screen">
       <header className="meta-foundation-topbar">
         <button type="button" onClick={onBack} aria-label="Voltar ao menu">☰</button>
-        <div><small>FUNDAÇÃO META 01</small><strong>Malha Estratégica de Orun</strong></div>
+        <div><small>META 02 · MUNDO ESTRATÉGICO</small><strong>Convergência de Orun</strong></div>
         <div className="meta-foundation-turn"><small>RODADA 1</small><strong>SEU TURNO</strong></div>
         <div className="meta-foundation-resources"><span>◈ 1870</span><span>◆ 660</span><span>✦ 640</span></div>
       </header>
@@ -65,13 +60,10 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
           </div>
         </aside>
 
-        <section className="meta-board-shell" aria-label="Tabuleiro estratégico isométrico">
-          <div
-            className={`meta-board-terrain ${runtimeVisuals.grass ? "has-pack99-terrain" : "is-fallback"}`}
-            style={runtimeVisuals.grass ? { backgroundImage: `linear-gradient(rgba(8,18,14,.38),rgba(8,18,14,.48)), url(${runtimeVisuals.grass})` } : undefined}
-            data-runtime-asset={runtimeVisuals.grass ? "TILE_FOREST_FLAT_CENTER_A_01" : undefined}
-          />
-          <svg className="meta-board-svg" viewBox="0 0 1080 620" role="img" aria-label="Nós, muros e territórios">
+        <section className="meta-board-shell" aria-label="Mundo estratégico isométrico">
+          <MetaPack99World />
+
+          <svg className="meta-board-svg" viewBox="0 0 1080 620" role="img" aria-label="Muros e territórios sobre o mundo">
             <defs>
               <filter id="meta-glow"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
             </defs>
@@ -105,28 +97,20 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
                   data-runtime-asset={runtimePillar ? (selected ? "PILLAR_SELECTED_01" : "PILLAR_NEUTRAL_01") : undefined}
                 >
                   <span className="meta-node-pillar"><i /><b />{runtimePillar ? <img src={runtimePillar} alt="" aria-hidden="true" /> : null}</span>
-                  {selected ? <strong>SELECIONADO</strong> : null}
+                  {selected ? <strong>COMANDO</strong> : null}
                 </button>
               );
             })}
-          </div>
-
-          <div className="meta-board-landmark landmark-blue">Fortaleza de Orun</div>
-          <div className="meta-board-landmark landmark-red">Cidadela Rubra</div>
-          <div className="meta-board-landmark landmark-violet">Núcleo Octarino</div>
-          <div className="meta-runtime-status" aria-live="polite">
-            <span className={runtimeVisuals.grass && runtimeVisuals.pillar ? "is-ready" : "is-fallback"} />
-            {runtimeVisuals.grass && runtimeVisuals.pillar ? "PACK 99 ativo" : "Fallback visual"}
           </div>
         </section>
 
         <aside className="meta-foundation-objectives">
           <small>OBJETIVO PRINCIPAL</small>
-          <h3>Feche 3 territórios</h3>
-          <p>Conecte quatro muros da mesma facção ao redor de uma célula.</p>
+          <h3>Domine a Convergência</h3>
+          <p>Conecte seus bastiões, feche três territórios e alcance o Santuário Octarino.</p>
           <div className="meta-objective-progress"><span /><span /><span /></div>
-          <small>LEITURA DO TABULEIRO</small>
-          <ul><li>Pilares = pontos estratégicos</li><li>Muros = conexões controladas</li><li>Área colorida = território fechado</li></ul>
+          <small>LEITURA DO MUNDO</small>
+          <ul><li>Estruturas = pontos estratégicos</li><li>Muros luminosos = rotas controladas</li><li>Área colorida = território fechado</li></ul>
           <button type="button">ENCERRAR TURNO</button>
         </aside>
       </section>
