@@ -35,29 +35,26 @@ const ASSET_IDS: Record<AssetKey, string> = {
   brakk: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
 };
 
-const TILE_PATCHES = [
-  [12, 13, "grass"], [23, 11, "grass"], [34, 10, "forest"], [45, 12, "grass"],
-  [56, 14, "grass"], [68, 13, "forest"], [80, 15, "grass"], [18, 30, "forest"],
-  [30, 29, "grass"], [42, 31, "grass"], [55, 30, "grass"], [68, 31, "grass"],
-  [81, 30, "forest"], [13, 48, "grass"], [25, 49, "forest"], [38, 48, "grass"],
-  [51, 50, "grass"], [64, 48, "grass"], [77, 50, "forest"], [88, 48, "grass"],
-  [20, 68, "forest"], [34, 67, "grass"], [48, 69, "grass"], [62, 67, "grass"],
-  [76, 68, "forest"], [88, 66, "grass"],
+const BIOME_PATCHES = [
+  [18, 20, 34, 26, "forest"],
+  [78, 21, 30, 24, "forest"],
+  [17, 70, 30, 22, "forest"],
+  [82, 68, 32, 25, "forest"],
 ] as const;
 
 const PROPS = [
-  ["camp", 23, 40, "Fortaleza de Orun", "blue"],
-  ["ruins", 44, 36, "Observatório", "blue"],
-  ["crystal", 53, 58, "Santuário Octarino", "violet"],
-  ["outpost", 73, 39, "Cidadela Rubra", "red"],
-  ["rock", 82, 24, "Escarpas Rubras", "red"],
-  ["rock", 18, 61, "Penhascos de Orun", "blue"],
+  ["camp", 24, 43, "Fortaleza de Orun", "blue"],
+  ["ruins", 43, 35, "Observatório", "blue"],
+  ["crystal", 54, 61, "Santuário Octarino", "violet"],
+  ["outpost", 75, 42, "Cidadela Rubra", "red"],
+  ["rock", 84, 24, "Escarpas Rubras", "red"],
+  ["rock", 17, 65, "Penhascos de Orun", "blue"],
 ] as const;
 
 const UNITS = [
-  ["kael", 31, 45, "Kael", "blue"],
-  ["lyra", 40, 53, "Lyra", "blue"],
-  ["varg", 67, 46, "Varg", "red"],
+  ["kael", 31, 46, "Kael", "blue"],
+  ["lyra", 41, 55, "Lyra", "blue"],
+  ["varg", 67, 48, "Varg", "red"],
   ["brakk", 77, 31, "Brakk", "red"],
 ] as const;
 
@@ -80,15 +77,26 @@ export function MetaPack99World() {
 
   return (
     <div className="meta-pack99-world" aria-hidden="true" data-resolved-assets={resolved}>
-      <div className="meta-pack99-water-band">
-        {assets.water ? <img src={assets.water} alt="" draggable={false} /> : null}
+      <div
+        className="meta-world-ground"
+        style={assets.grass ? { backgroundImage: `url(${assets.grass})` } : undefined}
+      />
+
+      <div className="meta-world-biomes">
+        {BIOME_PATCHES.map(([left, top, width, height, key], index) => {
+          const source = assets[key];
+          return source ? (
+            <div
+              key={`${key}-${index}`}
+              className={`meta-world-biome biome-${key}`}
+              style={{ left: `${left}%`, top: `${top}%`, width: `${width}%`, height: `${height}%`, backgroundImage: `url(${source})` }}
+            />
+          ) : null;
+        })}
       </div>
 
-      <div className="meta-pack99-tile-field">
-        {TILE_PATCHES.map(([left, top, key], index) => {
-          const source = assets[key];
-          return source ? <img key={`${key}-${index}`} className={`meta-world-tile tile-${key}`} src={source} alt="" style={{ left: `${left}%`, top: `${top}%` }} draggable={false} /> : null;
-        })}
+      <div className="meta-pack99-water-band">
+        {assets.water ? <img src={assets.water} alt="" draggable={false} /> : null}
       </div>
 
       {assets.bridge ? <img className="meta-world-bridge" src={assets.bridge} alt="" draggable={false} /> : null}
@@ -109,7 +117,7 @@ export function MetaPack99World() {
         {UNITS.map(([key, left, top, label, faction]) => {
           const source = assets[key];
           return source ? (
-            <div key={label} className={`meta-world-unit owner-${faction}`} style={{ left: `${left}%`, top: `${top}%` }}>
+            <div key={label} className={`meta-world-unit unit-${key} owner-${faction}`} style={{ left: `${left}%`, top: `${top}%` }}>
               <span className="meta-world-unit-ring" />
               <img src={source} alt="" draggable={false} />
               <b>{label}</b>
