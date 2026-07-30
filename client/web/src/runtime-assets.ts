@@ -23,11 +23,20 @@ export interface RuntimeAssetRegistry {
   signature: "Tehkné Solutions";
 }
 
+interface RuntimeAliasRegistry {
+  packId: "HOC_PACK_99_FINAL_RUNTIME";
+  version: string;
+  aliases: Record<string, string>;
+}
+
 const RUNTIME_ROOT = "/assets/runtime";
 const REGISTRY_URL = `${RUNTIME_ROOT}/registry/assets-runtime.json`;
+const ALIAS_REGISTRY_URL = `${RUNTIME_ROOT}/registry/canonical-runtime-aliases.json`;
 
 let registryPromise: Promise<RuntimeAssetRegistry | null> | null = null;
+let aliasPromise: Promise<RuntimeAliasRegistry | null> | null = null;
 let assetIndex: Map<string, RuntimeAsset> | null = null;
+let aliasIndex: Map<string, string> | null = null;
 
 function normalizeAssetKey(value: string): string {
   return value
@@ -45,6 +54,27 @@ function indexAsset(index: Map<string, RuntimeAsset>, key: unknown, asset: Runti
   index.set(normalizeAssetKey(key), asset);
 }
 
+async function loadRuntimeAliasRegistry(): Promise<RuntimeAliasRegistry | null> {
+  if (!aliasPromise) {
+    aliasPromise = fetch(ALIAS_REGISTRY_URL, { cache: "no-cache" })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        const registry = await response.json() as RuntimeAliasRegistry;
+        if (registry.packId !== "HOC_PACK_99_FINAL_RUNTIME") return null;
+        aliasIndex = new Map<string, string>();
+        for (const [assetId, relativePath] of Object.entries(registry.aliases ?? {})) {
+          if (typeof relativePath !== "string" || relativePath.length === 0) continue;
+          aliasIndex.set(assetId, relativePath);
+          aliasIndex.set(assetId.toUpperCase(), relativePath);
+          aliasIndex.set(normalizeAssetKey(assetId), relativePath);
+        }
+        return registry;
+      })
+      .catch(() => null);
+  }
+  return aliasPromise;
+}
+
 export async function loadRuntimeAssetRegistry(): Promise<RuntimeAssetRegistry | null> {
   if (!registryPromise) {
     registryPromise = fetch(REGISTRY_URL, { cache: "no-cache" })
@@ -60,6 +90,7 @@ export async function loadRuntimeAssetRegistry(): Promise<RuntimeAssetRegistry |
           indexAsset(index, asset._runtimeFile, asset);
         }
         assetIndex = index;
+        await loadRuntimeAliasRegistry();
         return registry;
       })
       .catch(() => null);
@@ -72,18 +103,24 @@ export async function getRuntimeAsset(assetId: string): Promise<RuntimeAsset | n
   return assetIndex?.get(assetId) ?? assetIndex?.get(assetId.toUpperCase()) ?? assetIndex?.get(normalizeAssetKey(assetId)) ?? null;
 }
 
+function getRuntimeAlias(assetId: string): string | null {
+  return aliasIndex?.get(assetId) ?? aliasIndex?.get(assetId.toUpperCase()) ?? aliasIndex?.get(normalizeAssetKey(assetId)) ?? null;
+}
+
 export async function runtimeAssetUrl(
   assetId: string,
   field: "file" | "shadow" | "emissive" | "factionMask" | "spritesheet" = "file",
 ): Promise<string | null> {
   const asset = await getRuntimeAsset(assetId);
-  if (!asset) return null;
+  if (asset) {
+    const runtimeKey = `_runtime${field[0].toUpperCase()}${field.slice(1)}`;
+    const relativePath = asset[runtimeKey];
+    if (typeof relativePath === "string") return `${RUNTIME_ROOT}/${relativePath}`;
+  }
 
-  const runtimeKey = `_runtime${field[0].toUpperCase()}${field.slice(1)}`;
-  const relativePath = asset[runtimeKey];
-  return typeof relativePath === "string"
-    ? `${RUNTIME_ROOT}/${relativePath}`
-    : null;
+  if (!aliasIndex) await loadRuntimeAliasRegistry();
+  const aliasPath = field === "file" ? getRuntimeAlias(assetId) : null;
+  return aliasPath ? `${RUNTIME_ROOT}/${aliasPath}` : null;
 }
 
 export async function preloadRuntimeAssets(assetIds: readonly string[]): Promise<void> {
@@ -98,5 +135,7 @@ export async function preloadRuntimeAssets(assetIds: readonly string[]): Promise
 
 export function resetRuntimeAssetCache(): void {
   registryPromise = null;
+  aliasPromise = null;
   assetIndex = null;
+  aliasIndex = null;
 }
