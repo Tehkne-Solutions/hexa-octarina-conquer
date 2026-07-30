@@ -89,25 +89,28 @@ export function GoDotsBoard({
             const recommended = recommendedNodeId === tile.id;
             const target = objectiveTargetId === tile.id;
             const selected = selectedUnitId === unit?.id;
+            const attackable = Boolean(valid && unit?.faction === "enemy");
+            const movable = Boolean(valid && !unit);
             const visible = Boolean(unit || valid || recommended || target || terrainLabel(tile));
             if (!visible) return null;
 
             const position = progressiveBoardPosition(tile.x, tile.y);
             const label = terrainLabel(tile);
+            const actionLabel = attackable ? "ATACAR" : movable ? "MOVER" : null;
 
             return (
               <button
                 key={tile.id}
                 type="button"
-                className={`vertical-slice-node ${valid ? "is-valid" : ""} ${recommended ? "is-recommended" : ""} ${target ? "is-target" : ""} ${selected ? "is-selected" : ""} ${unit ? "is-occupied" : ""} ${unit?.faction === "enemy" ? "is-enemy" : ""}`}
+                className={`vertical-slice-node ${valid ? "is-valid" : ""} ${recommended ? "is-recommended" : ""} ${target ? "is-target" : ""} ${selected ? "is-selected" : ""} ${unit ? "is-occupied" : ""} ${unit?.faction === "enemy" ? "is-enemy" : ""} ${attackable ? "is-attackable" : ""}`}
                 style={{ left: `${position.left}%`, top: `${position.top}%` }}
                 onClick={() => onNodeClick(tile)}
                 disabled={disabled || (!unit && !valid)}
-                aria-label={`${label ?? `Posição ${tile.x + 1}, ${tile.y + 1}`}${unit ? `, ${unit.name}` : ""}`}
+                aria-label={`${actionLabel ? `${actionLabel}: ` : ""}${label ?? `Posição ${tile.x + 1}, ${tile.y + 1}`}${unit ? `, ${unit.name}` : ""}`}
               >
                 <span className="vertical-slice-node-marker" aria-hidden="true" />
                 {label ? <small>{label}</small> : null}
-                {recommended ? <strong>MOVER</strong> : null}
+                {actionLabel ? <strong className={attackable ? "attack-action" : "move-action"}>{actionLabel}</strong> : null}
                 {unit ? (
                   <span className="vertical-slice-unit">
                     <FantasyUnitSprite unit={unit} selected={selected} compact />
