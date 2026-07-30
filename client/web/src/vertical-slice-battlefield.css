@@ -1,0 +1,162 @@
+.vertical-slice-battlefield {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #07100d;
+}
+
+.vertical-slice-battlefield .living-demo.go-dots-demo {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.vertical-slice-battlefield .living-topbar {
+  position: fixed;
+  z-index: 40;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  width: auto;
+  min-height: 56px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: rgba(6, 12, 12, 0.88);
+  backdrop-filter: blur(14px);
+}
+
+.vertical-slice-battlefield .mission-identity small,
+.vertical-slice-battlefield .resource-strip span:nth-child(n + 3) {
+  display: none;
+}
+
+.vertical-slice-battlefield .living-layout.go-dots-layout {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.vertical-slice-battlefield .go-dots-board,
+.vertical-slice-battlefield .living-board-shell,
+.vertical-slice-battlefield .board-stage {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100vh;
+  max-width: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.vertical-slice-battlefield .living-mission-panel {
+  position: fixed;
+  z-index: 45;
+  left: 18px;
+  bottom: 18px;
+  width: min(330px, calc(100vw - 36px));
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(5, 11, 13, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.vertical-slice-battlefield .living-mission-panel .command-points,
+.vertical-slice-battlefield .living-mission-panel .objective-list,
+.vertical-slice-battlefield .living-mission-panel .living-notice {
+  display: none;
+}
+
+.vertical-slice-battlefield .current-objective-card {
+  margin: 8px 0 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.vertical-slice-battlefield .current-objective-card p {
+  display: none;
+}
+
+.vertical-slice-battlefield .phase-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vertical-slice-battlefield .end-turn-button {
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+}
+
+.vertical-slice-battlefield .unit-command-panel {
+  position: fixed;
+  z-index: 45;
+  right: 18px;
+  bottom: 18px;
+  width: 220px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(5, 11, 13, 0.92);
+  backdrop-filter: blur(16px);
+}
+
+.vertical-slice-battlefield .unit-roster,
+.vertical-slice-battlefield .unit-help,
+.vertical-slice-battlefield .event-timeline,
+.vertical-slice-battlefield .unit-stats {
+  display: none;
+}
+
+.vertical-slice-battlefield .selected-unit-card {
+  margin: 0;
+  min-height: 76px;
+}
+
+.vertical-slice-battlefield .battle-help-button,
+.vertical-slice-battlefield .battle-coach-card,
+.vertical-slice-battlefield .ai-turn-summary,
+.vertical-slice-battlefield [class*="pack99-premium-hud"],
+.vertical-slice-battlefield [class*="territory-minimap"],
+.vertical-slice-battlefield [class*="asset-audit"] {
+  display: none !important;
+}
+
+.vertical-slice-battlefield .tile-label,
+.vertical-slice-battlefield .terrain-label,
+.vertical-slice-battlefield .landmark-label {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.vertical-slice-battlefield .living-battle-overlay,
+.vertical-slice-battlefield .construction-overlay,
+.vertical-slice-battlefield .ai-turn-curtain {
+  z-index: 80;
+}
+
+@media (max-width: 760px) {
+  .vertical-slice-battlefield .living-topbar {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .vertical-slice-battlefield .mission-identity,
+  .vertical-slice-battlefield .resource-strip {
+    display: none;
+  }
+
+  .vertical-slice-battlefield .living-mission-panel {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+  }
+
+  .vertical-slice-battlefield .unit-command-panel {
+    display: none;
+  }
+}
