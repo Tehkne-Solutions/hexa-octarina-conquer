@@ -53,6 +53,14 @@ describe("META board foundation", () => {
     expect(claimed.edges.find((edge) => edge.id === metaEdgeId(origin, neutralTarget!))?.owner).toBe("blue");
   });
 
+  it("always gives Kael a valid opening route", () => {
+    const board = createMetaBoardModel();
+    const kaelNode = "n-1-3";
+    const openingTargets = connectedNodeIds(board, kaelNode)
+      .filter((nodeId) => canClaimEdge(board, kaelNode, nodeId));
+    expect(openingTargets).toContain("n-1-2");
+  });
+
   it("recomputes faction territory progress after route changes", () => {
     const board = createMetaBoardModel();
     const initial = countFactionCells(board, "blue");
