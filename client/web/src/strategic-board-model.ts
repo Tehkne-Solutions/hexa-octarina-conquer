@@ -149,7 +149,7 @@ export function createStrategicBoard(): StrategicBoard {
     { id: "kael", name: "Kael", role: "Guardião", faction: "blue", nodeId: strategicNodeId(1, 1), hp: 18, maxHp: 18 },
     { id: "lyra", name: "Lyra", role: "Arqueira", faction: "blue", nodeId: strategicNodeId(0, 2), hp: 14, maxHp: 14 },
     { id: "varg", name: "Varg", role: "Batedor", faction: "red", nodeId: strategicNodeId(2, 0), hp: 12, maxHp: 12 },
-    { id: "brakk", name: "Brakk", role: "Campeão", faction: "red", nodeId: strategicNodeId(2, 1), hp: 16, maxHp: 16 },
+    { id: "brakk", name: "Brakk", role: "Campeão", faction: "red", nodeId: strategicNodeId(2, 2), hp: 16, maxHp: 16 },
   ];
 
   return { nodes, edges, cells: deriveCells(cells, edges), units };
