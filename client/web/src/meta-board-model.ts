@@ -64,18 +64,28 @@ function initialOwner(col: number, row: number): MetaFaction | null {
   return null;
 }
 
+function deriveCells(cells: MetaCell[], edges: MetaEdge[]): MetaCell[] {
+  const edgeIndex = new Map(edges.map((edge) => [edge.id, edge]));
+  return cells.map((cell) => {
+    const [nw, ne, se, sw] = cell.corners;
+    const owners = [
+      edgeIndex.get(metaEdgeId(nw, ne))?.owner,
+      edgeIndex.get(metaEdgeId(ne, se))?.owner,
+      edgeIndex.get(metaEdgeId(sw, se))?.owner,
+      edgeIndex.get(metaEdgeId(nw, sw))?.owner,
+    ];
+    const owner = owners[0] && owners.every((entry) => entry === owners[0]) ? owners[0] : null;
+    return { ...cell, owner };
+  });
+}
+
 export function createMetaBoardModel(): MetaBoardModel {
   const nodes: MetaNode[] = [];
   for (let row = 0; row < META_ROWS; row += 1) {
     for (let col = 0; col < META_COLUMNS; col += 1) {
       const isCapital = (col === 1 && row === 3) || (col === 5 && row === 1) || (col === 5 && row === 4);
       const isSanctuary = (col === 3 && row === 2) || (col === 2 && row === 1) || (col === 4 && row === 3);
-      nodes.push({
-        id: metaNodeId(col, row),
-        col,
-        row,
-        kind: isCapital ? "capital" : isSanctuary ? "sanctuary" : "normal",
-      });
+      nodes.push({ id: metaNodeId(col, row), col, row, kind: isCapital ? "capital" : isSanctuary ? "sanctuary" : "normal" });
     }
   }
 
@@ -95,7 +105,6 @@ export function createMetaBoardModel(): MetaBoardModel {
     }
   }
 
-  const edgeIndex = new Map(edges.map((edge) => [edge.id, edge]));
   const cells: MetaCell[] = [];
   for (let row = 0; row < META_ROWS - 1; row += 1) {
     for (let col = 0; col < META_COLUMNS - 1; col += 1) {
@@ -103,26 +112,37 @@ export function createMetaBoardModel(): MetaBoardModel {
       const ne = metaNodeId(col + 1, row);
       const sw = metaNodeId(col, row + 1);
       const se = metaNodeId(col + 1, row + 1);
-      const owners = [
-        edgeIndex.get(metaEdgeId(nw, ne))?.owner,
-        edgeIndex.get(metaEdgeId(ne, se))?.owner,
-        edgeIndex.get(metaEdgeId(sw, se))?.owner,
-        edgeIndex.get(metaEdgeId(nw, sw))?.owner,
-      ];
-      const owner = owners[0] && owners.every((entry) => entry === owners[0]) ? owners[0] : null;
-      cells.push({ id: `c-${col}-${row}`, col, row, corners: [nw, ne, se, sw], owner });
+      cells.push({ id: `c-${col}-${row}`, col, row, corners: [nw, ne, se, sw], owner: null });
     }
   }
 
-  return { columns: META_COLUMNS, rows: META_ROWS, nodes, edges, cells };
+  return { columns: META_COLUMNS, rows: META_ROWS, nodes, edges, cells: deriveCells(cells, edges) };
+}
+
+export function connectedNodeIds(board: MetaBoardModel, nodeId: string): string[] {
+  return board.edges.flatMap((edge) => edge.a === nodeId ? [edge.b] : edge.b === nodeId ? [edge.a] : []);
+}
+
+export function canClaimEdge(board: MetaBoardModel, fromNodeId: string, toNodeId: string): boolean {
+  const edge = board.edges.find((entry) => entry.id === metaEdgeId(fromNodeId, toNodeId));
+  return Boolean(edge && edge.owner === null);
+}
+
+export function claimEdge(board: MetaBoardModel, fromNodeId: string, toNodeId: string, owner: MetaFaction): MetaBoardModel {
+  if (!canClaimEdge(board, fromNodeId, toNodeId)) return board;
+  const edgeId = metaEdgeId(fromNodeId, toNodeId);
+  const edges = board.edges.map((edge) => edge.id === edgeId ? { ...edge, owner } : edge);
+  return { ...board, edges, cells: deriveCells(board.cells, edges) };
+}
+
+export function countFactionCells(board: MetaBoardModel, faction: MetaFaction): number {
+  return board.cells.filter((cell) => cell.owner === faction).length;
 }
 
 export function metaCellPolygon(cell: MetaCell): string {
-  return cell.corners
-    .map((id) => {
-      const [, col, row] = id.split("-");
-      const point = metaIsoPoint(Number(col), Number(row));
-      return `${point.x},${point.y}`;
-    })
-    .join(" ");
+  return cell.corners.map((id) => {
+    const [, col, row] = id.split("-");
+    const point = metaIsoPoint(Number(col), Number(row));
+    return `${point.x},${point.y}`;
+  }).join(" ");
 }
