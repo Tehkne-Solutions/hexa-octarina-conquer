@@ -4,6 +4,7 @@ import { MetaPack99World } from "./MetaPack99World";
 import { createMetaBoardModel, metaCellPolygon, metaIsoPoint, type MetaFaction } from "./meta-board-model";
 import { runtimeAssetUrl } from "./runtime-assets";
 import "./meta-board-foundation.css";
+import "./meta-pack99-world.css";
 
 interface MetaBoardFoundationProps {
   playerName: string;
