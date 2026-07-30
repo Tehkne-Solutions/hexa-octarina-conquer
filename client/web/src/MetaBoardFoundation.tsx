@@ -1,11 +1,18 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { createMetaBoardModel, metaCellPolygon, metaIsoPoint, type MetaFaction } from "./meta-board-model";
+import { runtimeAssetUrl } from "./runtime-assets";
 import "./meta-board-foundation.css";
 
 interface MetaBoardFoundationProps {
   playerName: string;
   onBack: () => void;
+}
+
+interface MetaRuntimeVisuals {
+  grass: string | null;
+  pillar: string | null;
+  pillarSelected: string | null;
 }
 
 const FACTION_LABEL: Record<MetaFaction, string> = {
@@ -14,10 +21,29 @@ const FACTION_LABEL: Record<MetaFaction, string> = {
   violet: "Convergência Octarina",
 };
 
+const EMPTY_VISUALS: MetaRuntimeVisuals = {
+  grass: null,
+  pillar: null,
+  pillarSelected: null,
+};
+
 export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationProps) {
   const board = useMemo(() => createMetaBoardModel(), []);
   const nodeIndex = useMemo(() => new Map(board.nodes.map((node) => [node.id, node])), [board.nodes]);
   const [selectedNodeId, setSelectedNodeId] = useState("n-1-3");
+  const [runtimeVisuals, setRuntimeVisuals] = useState<MetaRuntimeVisuals>(EMPTY_VISUALS);
+
+  useEffect(() => {
+    let active = true;
+    void Promise.all([
+      runtimeAssetUrl("TILE_FOREST_FLAT_CENTER_A_01"),
+      runtimeAssetUrl("PILLAR_NEUTRAL_01"),
+      runtimeAssetUrl("PILLAR_SELECTED_01"),
+    ]).then(([grass, pillar, pillarSelected]) => {
+      if (active) setRuntimeVisuals({ grass, pillar, pillarSelected });
+    });
+    return () => { active = false; };
+  }, []);
 
   return (
     <main className="meta-foundation-screen">
@@ -40,7 +66,11 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
         </aside>
 
         <section className="meta-board-shell" aria-label="Tabuleiro estratégico isométrico">
-          <div className="meta-board-terrain" />
+          <div
+            className={`meta-board-terrain ${runtimeVisuals.grass ? "has-pack99-terrain" : "is-fallback"}`}
+            style={runtimeVisuals.grass ? { backgroundImage: `linear-gradient(rgba(8,18,14,.38),rgba(8,18,14,.48)), url(${runtimeVisuals.grass})` } : undefined}
+            data-runtime-asset={runtimeVisuals.grass ? "TILE_FOREST_FLAT_CENTER_A_01" : undefined}
+          />
           <svg className="meta-board-svg" viewBox="0 0 1080 620" role="img" aria-label="Nós, muros e territórios">
             <defs>
               <filter id="meta-glow"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
@@ -63,16 +93,18 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
             {board.nodes.map((node) => {
               const point = metaIsoPoint(node.col, node.row);
               const selected = selectedNodeId === node.id;
+              const runtimePillar = selected ? runtimeVisuals.pillarSelected ?? runtimeVisuals.pillar : runtimeVisuals.pillar;
               return (
                 <button
                   key={node.id}
                   type="button"
-                  className={`meta-node kind-${node.kind} ${selected ? "is-selected" : ""}`}
+                  className={`meta-node kind-${node.kind} ${selected ? "is-selected" : ""} ${runtimePillar ? "has-pack99-pillar" : "is-fallback"}`}
                   style={{ left: `${point.x / 10.8}%`, top: `${point.y / 6.2}%` }}
                   onClick={() => setSelectedNodeId(node.id)}
                   aria-label={`Nó ${node.col + 1}, ${node.row + 1}`}
+                  data-runtime-asset={runtimePillar ? (selected ? "PILLAR_SELECTED_01" : "PILLAR_NEUTRAL_01") : undefined}
                 >
-                  <span className="meta-node-pillar"><i /><b /></span>
+                  <span className="meta-node-pillar"><i /><b />{runtimePillar ? <img src={runtimePillar} alt="" aria-hidden="true" /> : null}</span>
                   {selected ? <strong>SELECIONADO</strong> : null}
                 </button>
               );
@@ -82,6 +114,10 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
           <div className="meta-board-landmark landmark-blue">Fortaleza de Orun</div>
           <div className="meta-board-landmark landmark-red">Cidadela Rubra</div>
           <div className="meta-board-landmark landmark-violet">Núcleo Octarino</div>
+          <div className="meta-runtime-status" aria-live="polite">
+            <span className={runtimeVisuals.grass && runtimeVisuals.pillar ? "is-ready" : "is-fallback"} />
+            {runtimeVisuals.grass && runtimeVisuals.pillar ? "PACK 99 ativo" : "Fallback visual"}
+          </div>
         </section>
 
         <aside className="meta-foundation-objectives">
