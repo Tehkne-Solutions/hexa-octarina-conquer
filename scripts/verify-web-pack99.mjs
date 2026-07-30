@@ -8,6 +8,7 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptDirectory, "..");
 const webRoot = path.join(root, "client", "web");
 const runtimeRoot = path.join(webRoot, "public", "assets", "runtime");
+const packagesRoot = path.join(runtimeRoot, "packages");
 const installPath = path.join(runtimeRoot, "runtime-install.json");
 const manifestPath = path.join(runtimeRoot, "pack-manifest.json");
 const registryPath = path.join(runtimeRoot, "registry", "assets-runtime.json");
@@ -50,15 +51,39 @@ function normalizedAssetText(asset) {
     .toUpperCase();
 }
 
+function collectPhysicalAssetIds(directory) {
+  const ids = new Set();
+  const stack = [directory];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || !fs.existsSync(current)) continue;
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) stack.push(entryPath);
+      else if (entry.isFile()) ids.add(path.parse(entry.name).name.toUpperCase());
+    }
+  }
+
+  return ids;
+}
+
 try {
   const install = readJson(installPath, "runtime install manifest");
   const manifest = readJson(manifestPath, "pack manifest");
   const registry = readJson(registryPath, "runtime asset registry");
   const validation = fs.existsSync(validationPath) ? readJson(validationPath, "validation report") : null;
   const assets = Array.isArray(registry.assets) ? registry.assets : [];
-  const missingCanonicalIds = REQUIRED_CANONICAL_IDS.filter(
-    (requiredId) => !assets.some((asset) => normalizedAssetText(asset).includes(requiredId)),
-  );
+  const physicalAssetIds = collectPhysicalAssetIds(packagesRoot);
+
+  const requiredAssetResolution = REQUIRED_CANONICAL_IDS.map((requiredId) => {
+    const registered = assets.some((asset) => normalizedAssetText(asset).includes(requiredId));
+    const physical = physicalAssetIds.has(requiredId);
+    return { id: requiredId, registered, physical, resolved: registered || physical };
+  });
+  const missingCanonicalIds = requiredAssetResolution.filter((item) => !item.resolved).map((item) => item.id);
+  const physicalFallbackIds = requiredAssetResolution.filter((item) => !item.registered && item.physical).map((item) => item.id);
   const missingFiles = [];
 
   for (const asset of assets) {
@@ -82,6 +107,9 @@ try {
     reportedAssetCount: install.assetCount,
     materializedAssetCount: assets.length,
     requiredMissionAssets: REQUIRED_CANONICAL_IDS.length,
+    requiredAssetResolution,
+    physicalFallbackCount: physicalFallbackIds.length,
+    physicalFallbackIds,
     missingCanonicalIds,
     missingFileCount: missingFiles.length,
     missingFiles: missingFiles.slice(0, 200),
@@ -107,6 +135,7 @@ try {
   console.log(`Mode: ${summary.runtimeMode}`);
   console.log(`Materialized entries: ${summary.materializedAssetCount}`);
   console.log(`Mission assets missing: ${summary.missingCanonicalIds.length}`);
+  console.log(`Mission assets resolved by physical fallback: ${summary.physicalFallbackCount}`);
   console.log(`Physical files missing: ${summary.missingFileCount}`);
   console.log(`Unresolved references: ${summary.unresolvedReferences}`);
   console.log(`Report: ${path.relative(root, reportPath)}`);
