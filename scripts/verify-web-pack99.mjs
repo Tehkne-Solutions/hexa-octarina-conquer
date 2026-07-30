@@ -2,9 +2,10 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import process from "node:process";
+import { fileURLToPath } from "node:url";
 
-const root = process.cwd();
+const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(scriptDirectory, "..");
 const webRoot = path.join(root, "client", "web");
 const indexPath = path.join(webRoot, "public", "assets", "runtime", "pack99", "runtime-index.json");
 const reportPath = path.join(root, "reports", "pack99-web-verification.json");
