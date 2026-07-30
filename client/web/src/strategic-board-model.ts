@@ -105,6 +105,7 @@ export function createStrategicBoard(): StrategicBoard {
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(1, 1)), "blue"],
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(0, 2)), "blue"],
     [strategicEdgeId(strategicNodeId(0, 2), strategicNodeId(1, 2)), "blue"],
+    [strategicEdgeId(strategicNodeId(1, 0), strategicNodeId(1, 1)), "blue"],
     [strategicEdgeId(strategicNodeId(1, 0), strategicNodeId(2, 0)), "red"],
     [strategicEdgeId(strategicNodeId(2, 0), strategicNodeId(2, 1)), "red"],
   ]);
@@ -173,7 +174,7 @@ export function strategicBuildTargets(board: StrategicBoard, unitId: StrategicUn
   if (unit.hp <= 0) return [];
   return strategicAdjacentNodeIds(board, unit.nodeId).filter((target) => {
     const edge = board.edges.find((entry) => entry.id === strategicEdgeId(unit.nodeId, target));
-    return edge?.owner === null;
+    return edge?.owner === null && !strategicUnitAt(board, target);
   });
 }
 
