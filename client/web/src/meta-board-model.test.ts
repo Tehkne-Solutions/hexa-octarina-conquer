@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { createMetaBoardModel, metaCellPolygon, metaEdgeId, metaIsoPoint } from "./meta-board-model";
+import {
+  canClaimEdge,
+  claimEdge,
+  connectedNodeIds,
+  countFactionCells,
+  createMetaBoardModel,
+  metaCellPolygon,
+  metaEdgeId,
+  metaIsoPoint,
+} from "./meta-board-model";
 
 describe("META board foundation", () => {
   it("creates a stable node, edge and cell topology", () => {
@@ -30,5 +39,24 @@ describe("META board foundation", () => {
     expect(board.cells.some((cell) => cell.owner === "blue")).toBe(true);
     expect(board.cells.some((cell) => cell.owner === "red")).toBe(true);
     expect(board.cells.some((cell) => cell.owner === "violet")).toBe(true);
+  });
+
+  it("exposes adjacent nodes and claims only neutral routes", () => {
+    const board = createMetaBoardModel();
+    const origin = "n-3-2";
+    const neighbours = connectedNodeIds(board, origin);
+    expect(neighbours.length).toBeGreaterThan(0);
+    const neutralTarget = neighbours.find((nodeId) => canClaimEdge(board, origin, nodeId));
+    expect(neutralTarget).toBeTruthy();
+    const claimed = claimEdge(board, origin, neutralTarget!, "blue");
+    expect(canClaimEdge(claimed, origin, neutralTarget!)).toBe(false);
+    expect(claimed.edges.find((edge) => edge.id === metaEdgeId(origin, neutralTarget!))?.owner).toBe("blue");
+  });
+
+  it("recomputes faction territory progress after route changes", () => {
+    const board = createMetaBoardModel();
+    const initial = countFactionCells(board, "blue");
+    const claimed = claimEdge(board, "n-2-0", "n-3-0", "blue");
+    expect(countFactionCells(claimed, "blue")).toBeGreaterThanOrEqual(initial);
   });
 });
