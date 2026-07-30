@@ -1,5 +1,4 @@
-import { MetaBoardFoundation } from "./MetaBoardFoundation";
-import "./meta-board-gameplay.css";
+import { StrategicBoardSlice } from "./StrategicBoardSlice";
 
 interface CampaignExperienceProps {
   playerName: string;
@@ -7,5 +6,5 @@ interface CampaignExperienceProps {
 }
 
 export function CampaignExperience({ playerName, onBack }: CampaignExperienceProps) {
-  return <MetaBoardFoundation playerName={playerName} onBack={onBack} />;
+  return <StrategicBoardSlice playerName={playerName} onBack={onBack} />;
 }
