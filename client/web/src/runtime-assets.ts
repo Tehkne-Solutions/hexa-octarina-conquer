@@ -1,5 +1,6 @@
 export interface RuntimeAsset {
   id: string;
+  canonicalId?: string;
   category?: string;
   file?: string;
   _runtimeFile?: string;
@@ -28,6 +29,22 @@ const REGISTRY_URL = `${RUNTIME_ROOT}/registry/assets-runtime.json`;
 let registryPromise: Promise<RuntimeAssetRegistry | null> | null = null;
 let assetIndex: Map<string, RuntimeAsset> | null = null;
 
+function normalizeAssetKey(value: string): string {
+  return value
+    .replaceAll("\\", "/")
+    .split("/")
+    .at(-1)!
+    .replace(/\.[^.]+$/, "")
+    .toUpperCase();
+}
+
+function indexAsset(index: Map<string, RuntimeAsset>, key: unknown, asset: RuntimeAsset): void {
+  if (typeof key !== "string" || key.length === 0) return;
+  index.set(key, asset);
+  index.set(key.toUpperCase(), asset);
+  index.set(normalizeAssetKey(key), asset);
+}
+
 export async function loadRuntimeAssetRegistry(): Promise<RuntimeAssetRegistry | null> {
   if (!registryPromise) {
     registryPromise = fetch(REGISTRY_URL, { cache: "no-cache" })
@@ -35,7 +52,14 @@ export async function loadRuntimeAssetRegistry(): Promise<RuntimeAssetRegistry |
         if (!response.ok) return null;
         const registry = await response.json() as RuntimeAssetRegistry;
         if (registry.packId !== "HOC_PACK_99_FINAL_RUNTIME") return null;
-        assetIndex = new Map(registry.assets.map((asset) => [asset.id, asset]));
+        const index = new Map<string, RuntimeAsset>();
+        for (const asset of registry.assets) {
+          indexAsset(index, asset.id, asset);
+          indexAsset(index, asset.canonicalId, asset);
+          indexAsset(index, asset.file, asset);
+          indexAsset(index, asset._runtimeFile, asset);
+        }
+        assetIndex = index;
         return registry;
       })
       .catch(() => null);
@@ -45,7 +69,7 @@ export async function loadRuntimeAssetRegistry(): Promise<RuntimeAssetRegistry |
 
 export async function getRuntimeAsset(assetId: string): Promise<RuntimeAsset | null> {
   if (!assetIndex) await loadRuntimeAssetRegistry();
-  return assetIndex?.get(assetId) ?? null;
+  return assetIndex?.get(assetId) ?? assetIndex?.get(assetId.toUpperCase()) ?? assetIndex?.get(normalizeAssetKey(assetId)) ?? null;
 }
 
 export async function runtimeAssetUrl(
