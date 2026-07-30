@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { MetaPack99World } from "./MetaPack99World";
-import { createMetaBoardModel, metaCellPolygon, metaIsoPoint, type MetaFaction } from "./meta-board-model";
+import { createMetaBoardModel, metaCellPolygon, metaIsoPoint, type MetaEdge, type MetaFaction, type MetaNode } from "./meta-board-model";
 import { runtimeAssetUrl } from "./runtime-assets";
 import "./meta-board-foundation.css";
 import "./meta-pack99-world.css";
@@ -24,6 +24,21 @@ const FACTION_LABEL: Record<MetaFaction, string> = {
 
 const EMPTY_VISUALS: MetaRuntimeVisuals = { pillar: null, pillarSelected: null };
 
+function edgeGeometry(edge: MetaEdge, nodeIndex: Map<string, MetaNode>) {
+  const a = nodeIndex.get(edge.a)!;
+  const b = nodeIndex.get(edge.b)!;
+  const start = metaIsoPoint(a.col, a.row);
+  const end = metaIsoPoint(b.col, b.row);
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  return {
+    left: `${((start.x + end.x) / 2 / 10.8)}%`,
+    top: `${((start.y + end.y) / 2 / 6.2)}%`,
+    width: `${Math.hypot(dx, dy) / 10.8}%`,
+    transform: `translate(-50%, -50%) rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`,
+  };
+}
+
 export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationProps) {
   const board = useMemo(() => createMetaBoardModel(), []);
   const nodeIndex = useMemo(() => new Map(board.nodes.map((node) => [node.id, node])), [board.nodes]);
@@ -45,7 +60,7 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
     <main className="meta-foundation-screen meta-world-board-screen">
       <header className="meta-foundation-topbar">
         <button type="button" onClick={onBack} aria-label="Voltar ao menu">☰</button>
-        <div><small>META 02 · MUNDO ESTRATÉGICO</small><strong>Convergência de Orun</strong></div>
+        <div><small>META 03 · ROTAS E MURALHAS</small><strong>Convergência de Orun</strong></div>
         <div className="meta-foundation-turn"><small>RODADA 1</small><strong>SEU TURNO</strong></div>
         <div className="meta-foundation-resources"><span>◈ 1870</span><span>◆ 660</span><span>✦ 640</span></div>
       </header>
@@ -64,23 +79,23 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
         <section className="meta-board-shell" aria-label="Mundo estratégico isométrico">
           <MetaPack99World />
 
-          <svg className="meta-board-svg" viewBox="0 0 1080 620" role="img" aria-label="Muros e territórios sobre o mundo">
-            <defs>
-              <filter id="meta-glow"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-            </defs>
+          <svg className="meta-board-svg" viewBox="0 0 1080 620" role="img" aria-label="Territórios controlados">
             <g className="meta-territories">
               {board.cells.filter((cell) => cell.owner).map((cell) => <polygon key={cell.id} className={`owner-${cell.owner}`} points={metaCellPolygon(cell)} />)}
             </g>
-            <g className="meta-walls">
-              {board.edges.map((edge) => {
-                const a = nodeIndex.get(edge.a)!;
-                const b = nodeIndex.get(edge.b)!;
-                const start = metaIsoPoint(a.col, a.row);
-                const end = metaIsoPoint(b.col, b.row);
-                return <line key={edge.id} className={edge.owner ? `owner-${edge.owner}` : "owner-neutral"} x1={start.x} y1={start.y} x2={end.x} y2={end.y} />;
-              })}
-            </g>
           </svg>
+
+          <div className="meta-physical-links" aria-hidden="true">
+            {board.edges.map((edge) => (
+              <span
+                key={edge.id}
+                className={`meta-physical-link ${edge.owner ? `owner-${edge.owner} is-wall` : "owner-neutral is-road"}`}
+                style={edgeGeometry(edge, nodeIndex)}
+              >
+                <i /><b /><em />
+              </span>
+            ))}
+          </div>
 
           <div className="meta-node-layer">
             {board.nodes.map((node) => {
@@ -111,7 +126,7 @@ export function MetaBoardFoundation({ playerName, onBack }: MetaBoardFoundationP
           <p>Conecte seus bastiões, feche três territórios e alcance o Santuário Octarino.</p>
           <div className="meta-objective-progress"><span /><span /><span /></div>
           <small>LEITURA DO MUNDO</small>
-          <ul><li>Estruturas = pontos estratégicos</li><li>Muros luminosos = rotas controladas</li><li>Área colorida = território fechado</li></ul>
+          <ul><li>Estruturas = pontos estratégicos</li><li>Estradas = rotas livres</li><li>Muralhas = conexões controladas</li><li>Área colorida = território fechado</li></ul>
           <button type="button">ENCERRAR TURNO</button>
         </aside>
       </section>
