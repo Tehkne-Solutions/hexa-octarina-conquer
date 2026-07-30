@@ -90,12 +90,15 @@ export function createMetaBoardModel(): MetaBoardModel {
   }
 
   const edges: MetaEdge[] = [];
+  const kaelOpeningEdge = metaEdgeId(metaNodeId(1, 3), metaNodeId(1, 2));
   const pushEdge = (aCol: number, aRow: number, bCol: number, bRow: number) => {
     const a = metaNodeId(aCol, aRow);
     const b = metaNodeId(bCol, bRow);
     const leftOwner = initialOwner(aCol, aRow);
     const rightOwner = initialOwner(bCol, bRow);
-    edges.push({ id: metaEdgeId(a, b), a, b, owner: leftOwner === rightOwner ? leftOwner : null });
+    const edgeId = metaEdgeId(a, b);
+    const owner = edgeId === kaelOpeningEdge ? null : leftOwner === rightOwner ? leftOwner : null;
+    edges.push({ id: edgeId, a, b, owner });
   };
 
   for (let row = 0; row < META_ROWS; row += 1) {
