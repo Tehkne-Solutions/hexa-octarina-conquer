@@ -1,6 +1,7 @@
 .vertical-slice-battlefield {
   position: fixed;
   inset: 0;
+  z-index: 9999;
   overflow: hidden;
   background: #07100d;
 }
@@ -14,14 +15,14 @@
 .vertical-slice-battlefield .living-topbar {
   position: fixed;
   z-index: 40;
-  top: 16px;
-  left: 16px;
-  right: 16px;
+  top: 14px;
+  left: 14px;
+  right: 14px;
   width: auto;
-  min-height: 56px;
+  min-height: 54px;
   padding: 8px 12px;
   border-radius: 16px;
-  background: rgba(6, 12, 12, 0.88);
+  background: rgba(6, 12, 12, 0.92);
   backdrop-filter: blur(14px);
 }
 
@@ -37,9 +38,10 @@
   padding: 0;
 }
 
-.vertical-slice-battlefield .go-dots-board,
-.vertical-slice-battlefield .living-board-shell,
-.vertical-slice-battlefield .board-stage {
+.vertical-slice-battlefield .go-dots-board-shell,
+.vertical-slice-battlefield .pack99-rts-viewport,
+.vertical-slice-battlefield .pack99-rts-stage,
+.vertical-slice-battlefield .go-dots-world {
   width: 100% !important;
   height: 100% !important;
   min-height: 100vh;
@@ -57,7 +59,7 @@
   width: min(330px, calc(100vw - 36px));
   padding: 14px;
   border-radius: 16px;
-  background: rgba(5, 11, 13, 0.92);
+  background: rgba(5, 11, 13, 0.94);
   backdrop-filter: blur(16px);
 }
 
@@ -99,7 +101,7 @@
   width: 220px;
   padding: 12px;
   border-radius: 16px;
-  background: rgba(5, 11, 13, 0.92);
+  background: rgba(5, 11, 13, 0.94);
   backdrop-filter: blur(16px);
 }
 
@@ -120,21 +122,58 @@
 .vertical-slice-battlefield .ai-turn-summary,
 .vertical-slice-battlefield [class*="pack99-premium-hud"],
 .vertical-slice-battlefield [class*="territory-minimap"],
-.vertical-slice-battlefield [class*="asset-audit"] {
-  display: none !important;
-}
-
+.vertical-slice-battlefield [class*="asset-audit"],
+.vertical-slice-battlefield .pack99-rts-camera-controls,
+.vertical-slice-battlefield .base-go-grid,
+.vertical-slice-battlefield .legacy-board-fallback,
+.vertical-slice-battlefield .legacy-world-fallback,
+.vertical-slice-battlefield .go-world-landmarks small,
 .vertical-slice-battlefield .tile-label,
 .vertical-slice-battlefield .terrain-label,
 .vertical-slice-battlefield .landmark-label {
+  display: none !important;
+}
+
+.vertical-slice-battlefield .go-node {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.vertical-slice-battlefield .go-node:not(.valid):not(.recommended):not(.objective-target):not(.occupied) .node-stone {
   opacity: 0;
-  pointer-events: none;
+}
+
+.vertical-slice-battlefield .go-node.valid .node-stone,
+.vertical-slice-battlefield .go-node.recommended .node-stone,
+.vertical-slice-battlefield .go-node.objective-target .node-stone {
+  opacity: .9;
+  transform: scale(.82);
+}
+
+.vertical-slice-battlefield .go-node.occupied .node-stone {
+  opacity: 0;
+}
+
+.vertical-slice-battlefield .go-node .fantasy-unit-sprite {
+  width: 88px;
+  height: 112px;
+  transform: translate(-50%, -72%);
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .55));
+}
+
+.vertical-slice-battlefield .go-node.selected .fantasy-unit-sprite {
+  transform: translate(-50%, -72%) scale(1.08);
+}
+
+.vertical-slice-battlefield .node-callout {
+  transform: translate(-50%, 34px);
 }
 
 .vertical-slice-battlefield .living-battle-overlay,
 .vertical-slice-battlefield .construction-overlay,
 .vertical-slice-battlefield .ai-turn-curtain {
-  z-index: 80;
+  z-index: 10020;
 }
 
 @media (max-width: 760px) {
@@ -158,5 +197,10 @@
 
   .vertical-slice-battlefield .unit-command-panel {
     display: none;
+  }
+
+  .vertical-slice-battlefield .go-node .fantasy-unit-sprite {
+    width: 70px;
+    height: 92px;
   }
 }
