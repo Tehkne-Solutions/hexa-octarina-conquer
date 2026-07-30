@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 import { GoDotsLivingBoardDemo } from "./GoDotsLivingBoardDemo";
 import "./vertical-slice-battlefield.css";
+import "./vertical-slice-polish.css";
 
 interface CampaignExperienceProps {
   playerName: string;
@@ -24,10 +25,14 @@ export function CampaignExperience({ playerName, onBack }: CampaignExperiencePro
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    document.body.classList.add("hoc-vertical-slice-active");
     const root = rootRef.current;
-    if (!root) return;
-    const timer = window.setTimeout(() => skipStory(root), 50);
-    return () => window.clearTimeout(timer);
+    const timer = root ? window.setTimeout(() => skipStory(root), 50) : null;
+
+    return () => {
+      if (timer !== null) window.clearTimeout(timer);
+      document.body.classList.remove("hoc-vertical-slice-active");
+    };
   }, []);
 
   return (
