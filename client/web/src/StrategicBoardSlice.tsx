@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import {
   createStrategicBoard,
@@ -13,6 +13,7 @@ import {
   strategicMoveUnit,
   strategicOwnedCellCount,
   strategicResult,
+  strategicRoadCount,
   strategicStructureCount,
   strategicStructureTargets,
   strategicUnit,
@@ -35,7 +36,7 @@ interface StrategicBoardSliceProps {
   onBack: () => void;
 }
 
-type ActionMode = "wall" | "move" | "structure" | "attack";
+type ActionMode = "road" | "move" | "structure" | "attack";
 
 const FRIENDLY_UNITS: StrategicUnitId[] = ["kael", "lyra"];
 const UNIT_ASSET_KEY: Record<StrategicUnitId, "kael" | "lyra" | "varg" | "brakk"> = {
@@ -44,6 +45,8 @@ const UNIT_ASSET_KEY: Record<StrategicUnitId, "kael" | "lyra" | "varg" | "brakk"
   varg: "varg",
   brakk: "brakk",
 };
+
+const REGION_LABELS = ["Bosque de Orun", "Vale da Vigília", "Vau Octarino", "Escarpas Rubras"];
 
 function nodePoint(node: StrategicNode): { left: string; top: string } {
   return {
@@ -59,7 +62,7 @@ function cellPoint(cell: StrategicCell): { left: string; top: string } {
   };
 }
 
-function edgeStyle(edge: StrategicEdge, nodeIndex: Map<string, StrategicNode>): React.CSSProperties {
+function edgeStyle(edge: StrategicEdge, nodeIndex: Map<string, StrategicNode>): CSSProperties {
   const a = nodeIndex.get(edge.a)!;
   const b = nodeIndex.get(edge.b)!;
   const start = { x: 50 + (a.col - a.row) * 17, y: 15 + (a.col + a.row) * 16 };
@@ -81,7 +84,7 @@ function cellAsset(cell: StrategicCell, catalog: Pack99StrategicCatalog): string
 }
 
 function actionLabel(mode: ActionMode): string {
-  if (mode === "wall") return "ERGUEr MURO";
+  if (mode === "road") return "CONSTRUIR ESTRADA";
   if (mode === "move") return "MOVER";
   if (mode === "structure") return "EDIFICAR";
   return "ATACAR";
@@ -93,16 +96,22 @@ function resultTitle(result: StrategicResult): string {
   return "";
 }
 
+function otherEdgeNode(edge: StrategicEdge, originNodeId: string): string | null {
+  if (edge.a === originNodeId) return edge.b;
+  if (edge.b === originNodeId) return edge.a;
+  return null;
+}
+
 export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceProps) {
   const initialBoard = useMemo(() => createStrategicBoard(), []);
   const [board, setBoard] = useState<StrategicBoard>(initialBoard);
   const [catalog, setCatalog] = useState<Pack99StrategicCatalog>(emptyPack99StrategicCatalog());
   const [selectedUnitId, setSelectedUnitId] = useState<StrategicUnitId>("kael");
-  const [mode, setMode] = useState<ActionMode>("wall");
+  const [mode, setMode] = useState<ActionMode>("road");
   const [round, setRound] = useState(1);
   const [actions, setActions] = useState(3);
   const [messages, setMessages] = useState<string[]>([
-    "Kael está no nó central. Feche a célula azul erguendo o muro destacado.",
+    "Kael está no Entroncamento Central. Construa a estrada dourada para fechar a primeira região.",
   ]);
 
   useEffect(() => {
@@ -115,7 +124,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
 
   const nodeIndex = useMemo(() => new Map(board.nodes.map((node) => [node.id, node])), [board.nodes]);
   const selectedUnit = strategicUnit(board, selectedUnitId);
-  const wallTargets = useMemo(() => new Set(strategicBuildTargets(board, selectedUnitId)), [board, selectedUnitId]);
+  const roadTargets = useMemo(() => new Set(strategicBuildTargets(board, selectedUnitId)), [board, selectedUnitId]);
   const moveTargets = useMemo(() => new Set(strategicMoveTargets(board, selectedUnitId)), [board, selectedUnitId]);
   const attackTargets = useMemo(() => new Set(strategicAttackTargets(board, selectedUnitId)), [board, selectedUnitId]);
   const structureTargets = useMemo(() => new Set(strategicStructureTargets(board, selectedUnitId)), [board, selectedUnitId]);
@@ -123,6 +132,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
   const blueCells = strategicOwnedCellCount(board, "blue");
   const redCells = strategicOwnedCellCount(board, "red");
   const blueStructures = strategicStructureCount(board, "blue");
+  const blueRoads = strategicRoadCount(board, "blue");
   const resolvedAssets = Object.values(catalog).filter(Boolean).length;
 
   function pushMessage(message: string): void {
@@ -139,51 +149,50 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
     if (unit.hp <= 0 || result !== "playing") return;
     if (unit.faction === "red") {
       if (mode === "attack" && attackTargets.has(unitId) && actions > 0) {
-        const next = strategicAttack(board, selectedUnitId, unitId);
-        consumeAction(next);
+        consumeAction(strategicAttack(board, selectedUnitId, unitId));
         pushMessage(`${selectedUnit.name} atacou ${unit.name}.`);
       } else {
-        pushMessage(`${unit.name} só pode ser atacado quando estiver adjacente ao herói selecionado.`);
+        pushMessage(`${unit.name} só pode ser atacado quando estiver em um nó adjacente.`);
       }
       return;
     }
     setSelectedUnitId(unitId);
-    setMode("wall");
-    pushMessage(`${unit.name} selecionado. Escolha uma ação e um alvo iluminado.`);
+    setMode("road");
+    pushMessage(`${unit.name} selecionado. As estradas possíveis aparecem em dourado.`);
   }
 
   function clickNode(nodeId: string): void {
     if (result !== "playing" || actions <= 0) return;
-    if (mode === "wall" && wallTargets.has(nodeId)) {
+    if (mode === "road" && roadTargets.has(nodeId)) {
       const next = strategicClaimEdge(board, selectedUnitId, nodeId);
       consumeAction(next);
       const nextStructures = strategicStructureTargets(next, selectedUnitId);
       if (nextStructures.length > 0) {
         setMode("structure");
-        pushMessage("Célula dominada. Agora clique no território azul para erguer um Bastião.");
+        pushMessage("As quatro estradas fecharam uma região. Clique no slot central para erguer o Bastião.");
       } else {
         setMode("move");
-        pushMessage("Muralha concluída. Use MOVER para atravessar a conexão azul.");
+        pushMessage("Estrada construída. Agora os destinos conectados aparecem em azul.");
       }
       return;
     }
     if (mode === "move" && moveTargets.has(nodeId)) {
-      const next = strategicMoveUnit(board, selectedUnitId, nodeId);
-      consumeAction(next);
-      pushMessage(`${selectedUnit.name} ocupou um novo nó estratégico.`);
+      consumeAction(strategicMoveUnit(board, selectedUnitId, nodeId));
+      pushMessage(`${selectedUnit.name} percorreu a estrada e ocupou um novo posto.`);
       return;
     }
-    pushMessage("Esse nó não é um alvo válido para a ação atual.");
+    pushMessage(mode === "road"
+      ? "Clique no corredor dourado ligado ao posto da unidade."
+      : "Esse posto não está conectado por uma estrada válida para a ação atual.");
   }
 
   function clickCell(cellId: string): void {
     if (result !== "playing" || actions <= 0) return;
     if (mode !== "structure" || !structureTargets.has(cellId)) {
-      pushMessage("Primeiro feche os quatro lados da célula e mantenha um herói em um de seus nós.");
+      pushMessage("A região precisa estar cercada por quatro estradas da mesma facção e ter um herói em um de seus postos.");
       return;
     }
-    const next = strategicBuildStructure(board, selectedUnitId, cellId, "bastion");
-    consumeAction(next);
+    consumeAction(strategicBuildStructure(board, selectedUnitId, cellId, "bastion"));
     setMode("move");
     pushMessage("Bastião erguido. Ele concederá +1 ação nas próximas rodadas.");
   }
@@ -196,23 +205,23 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
     setActions(strategicActionBudget(enemy.board, "blue"));
     const survivor = FRIENDLY_UNITS.find((id) => strategicUnit(enemy.board, id).hp > 0) ?? "kael";
     setSelectedUnitId(survivor);
-    setMode("wall");
+    setMode("road");
     pushMessage(`${enemy.message} Rodada ${round + 1}: ${strategicActionBudget(enemy.board, "blue")} ações.`);
   }
 
   function restart(): void {
     setBoard(initialBoard);
     setSelectedUnitId("kael");
-    setMode("wall");
+    setMode("road");
     setRound(1);
     setActions(3);
-    setMessages(["Nova campanha iniciada. Feche a primeira célula azul."]);
+    setMessages(["Nova campanha iniciada. Construa a estrada dourada para fechar a primeira região."]);
   }
 
-  return <main className="strategic-slice">
+  return <main className="strategic-slice meta08-roads">
     <header className="strategic-topbar">
       <button type="button" className="strategic-menu" onClick={onBack} aria-label="Voltar">☰</button>
-      <div className="strategic-title"><small>META 07 · VERTICAL SLICE ESTRATÉGICO</small><strong>Fronteira da Convergência</strong></div>
+      <div className="strategic-title"><small>META 08 · ROTAS E TERRITÓRIO LEGÍVEL</small><strong>Fronteira da Convergência</strong></div>
       <div className="strategic-turn"><small>RODADA {round}</small><strong>{result === "playing" ? "SEU TURNO" : result === "victory" ? "VITÓRIA" : "DERROTA"}</strong></div>
       <div className="strategic-resources"><span>◈ 1870</span><span>◆ 660</span><span>✦ {actions}/{strategicActionBudget(board, "blue")}</span></div>
     </header>
@@ -233,14 +242,14 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
         </button>)}
 
         <div className="strategic-actions" role="group" aria-label="Ações estratégicas">
-          {(["wall", "move", "structure", "attack"] as ActionMode[]).map((action) => {
-            const targetCount = action === "wall" ? wallTargets.size : action === "move" ? moveTargets.size : action === "structure" ? structureTargets.size : attackTargets.size;
+          {(["road", "move", "structure", "attack"] as ActionMode[]).map((action) => {
+            const targetCount = action === "road" ? roadTargets.size : action === "move" ? moveTargets.size : action === "structure" ? structureTargets.size : attackTargets.size;
             return <button
               key={action}
               type="button"
               disabled={result !== "playing" || actions <= 0 || selectedUnit.faction !== "blue"}
               className={mode === action ? "is-active" : ""}
-              onClick={() => { setMode(action); pushMessage(`${actionLabel(action)} selecionado: escolha um alvo iluminado.`); }}
+              onClick={() => { setMode(action); pushMessage(`${actionLabel(action)}: escolha um alvo destacado no mapa.`); }}
             >
               <b>{actionLabel(action)}</b><span>{targetCount}</span>
             </button>;
@@ -254,11 +263,16 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
         </div>
       </aside>
 
-      <section className="strategic-board" aria-label="Tabuleiro estratégico META 07">
+      <section className="strategic-board" aria-label="Tabuleiro estratégico META 08">
         <div className="strategic-world-light" />
+        <div className="strategic-map-key">
+          <span className="key-unbuilt">CORREDOR</span>
+          <span className="key-blue">ESTRADA DE ORUN</span>
+          <span className="key-red">ESTRADA RUBRA</span>
+        </div>
 
         <div className="strategic-cells">
-          {board.cells.map((cell) => {
+          {board.cells.map((cell, index) => {
             const asset = cellAsset(cell, catalog);
             const canBuild = mode === "structure" && structureTargets.has(cell.id) && actions > 0;
             return <button
@@ -267,10 +281,12 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
               className={`strategic-cell owner-${cell.owner ?? "neutral"} ${canBuild ? "is-build-target" : ""}`}
               style={{ ...cellPoint(cell), ...(asset ? { backgroundImage: `url(${asset})` } : {}) }}
               onClick={() => clickCell(cell.id)}
-              aria-label={canBuild ? "Construir Bastião nesta célula" : `Célula ${cell.id}`}
+              aria-label={canBuild ? "Construir Bastião nesta região" : REGION_LABELS[index]}
             >
               <span className="strategic-cell-tint" />
-              {cell.owner ? <small>{cell.owner === "blue" ? "ORUN" : "RUBRA"}</small> : null}
+              <small>REGIÃO {String.fromCharCode(65 + index)}</small>
+              <strong>{REGION_LABELS[index]}</strong>
+              {!cell.structure && cell.owner ? <i className="strategic-building-slot">SLOT DE EDIFICAÇÃO</i> : null}
               {canBuild ? <b>EDIFICAR</b> : null}
             </button>;
           })}
@@ -282,12 +298,21 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             const b = nodeIndex.get(edge.b)!;
             const rising = (a.col - b.col) === 0;
             const edgeAsset = rising ? catalog.edgeNeSw : catalog.edgeNwSe;
-            const active = edge.owner === null && wallTargets.has(edge.a === selectedUnit.nodeId ? edge.b : edge.a);
-            return <span
+            const targetNode = otherEdgeNode(edge, selectedUnit.nodeId);
+            const active = edge.state === "unbuilt" && Boolean(targetNode && roadTargets.has(targetNode));
+            return <button
               key={edge.id}
-              className={`strategic-edge owner-${edge.owner ?? "neutral"} ${active ? "is-wall-target" : ""}`}
+              type="button"
+              className={`strategic-edge state-${edge.state} owner-${edge.owner ?? "neutral"} ${active ? "is-road-target" : ""}`}
               style={edgeStyle(edge, nodeIndex)}
-            >{edgeAsset ? <img src={edgeAsset} alt="" draggable={false} /> : null}</span>;
+              onClick={() => { if (active && targetNode) clickNode(targetNode); }}
+              disabled={!active}
+              aria-label={active ? "Construir estrada" : edge.state === "road" ? "Estrada construída" : "Corredor sem estrada"}
+            >
+              <span className="strategic-road-bed" />
+              {edge.state === "road" && edgeAsset ? <img src={edgeAsset} alt="" draggable={false} /> : null}
+              {active ? <b>CONSTRUIR ESTRADA</b> : null}
+            </button>;
           })}
         </div>
 
@@ -300,26 +325,26 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
               <b>{cell.structure.type === "bastion" ? "Bastião" : "Torre Rubra"}</b>
             </div>;
           })}
-          <div className="strategic-sanctuary" style={cellPoint(board.cells[0])} aria-hidden="true">
-            {catalog.sanctuary ? <img src={catalog.sanctuary} alt="" draggable={false} /> : null}
-          </div>
         </div>
 
         <div className="strategic-nodes">
-          {board.nodes.map((node) => {
+          {board.nodes.map((node, index) => {
             const unit = board.units.find((entry) => entry.hp > 0 && entry.nodeId === node.id);
-            const wallTarget = mode === "wall" && wallTargets.has(node.id) && actions > 0;
+            const roadTarget = mode === "road" && roadTargets.has(node.id) && actions > 0;
             const moveTarget = mode === "move" && moveTargets.has(node.id) && actions > 0;
+            const isOrigin = selectedUnit.nodeId === node.id;
             return <button
               key={node.id}
               type="button"
-              className={`strategic-node ${wallTarget ? "is-wall-target" : ""} ${moveTarget ? "is-move-target" : ""} ${unit ? "is-occupied" : ""}`}
+              className={`strategic-node ${roadTarget ? "is-road-target" : ""} ${moveTarget ? "is-move-target" : ""} ${unit ? "is-occupied" : ""} ${isOrigin ? "is-origin" : ""}`}
               style={nodePoint(node)}
               onClick={() => clickNode(node.id)}
-              aria-label={wallTarget ? "Erguer muralha" : moveTarget ? "Mover unidade" : "Nó estratégico"}
+              aria-label={roadTarget ? "Destino da nova estrada" : moveTarget ? "Mover unidade" : `Posto ${index + 1}`}
             >
-              {catalog.pillar ? <img src={wallTarget || moveTarget ? catalog.pillarSelected ?? catalog.pillar : catalog.pillar} alt="" draggable={false} /> : <span />}
-              {wallTarget ? <b>MURO</b> : moveTarget ? <b>MOVER</b> : null}
+              <span className="strategic-node-pad" />
+              {catalog.pillar ? <img src={roadTarget || moveTarget || isOrigin ? catalog.pillarSelected ?? catalog.pillar : catalog.pillar} alt="" draggable={false} /> : null}
+              <small>P{index + 1}</small>
+              {roadTarget ? <b>ESTRADA</b> : moveTarget ? <b>MOVER</b> : isOrigin ? <b>ORIGEM</b> : null}
             </button>;
           })}
         </div>
@@ -351,18 +376,19 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
         {result !== "playing" ? <div className={`strategic-result is-${result}`}>
           <small>CONFRONTO ENCERRADO</small>
           <h2>{resultTitle(result)}</h2>
-          <p>{result === "victory" ? "Duas células foram dominadas e a fronteira recebeu um Bastião." : "A Legião Rubra consolidou a fronteira."}</p>
+          <p>{result === "victory" ? "Duas regiões foram dominadas e a fronteira recebeu um Bastião." : "A Legião Rubra consolidou a fronteira."}</p>
           <button type="button" onClick={restart}>JOGAR NOVAMENTE</button>
         </div> : null}
       </section>
 
       <aside className="strategic-objectives">
         <small>OBJETIVO PRINCIPAL</small>
-        <h2>Consolidar a Fronteira</h2>
-        <p>Domine duas células e erga ao menos um Bastião.</p>
+        <h2>Formar a Fronteira</h2>
+        <p>Construa estradas, domine duas regiões e erga ao menos um Bastião.</p>
 
         <div className="strategic-progress">
-          <div><span style={{ width: `${Math.min(100, blueCells / 2 * 100)}%` }} /><b>Células {blueCells}/2</b></div>
+          <div><span style={{ width: `${Math.min(100, blueRoads / 6 * 100)}%` }} /><b>Estradas {blueRoads}/6</b></div>
+          <div><span style={{ width: `${Math.min(100, blueCells / 2 * 100)}%` }} /><b>Regiões {blueCells}/2</b></div>
           <div><span style={{ width: `${Math.min(100, blueStructures * 100)}%` }} /><b>Bastiões {blueStructures}/1</b></div>
         </div>
 
