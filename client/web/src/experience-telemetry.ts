@@ -44,6 +44,7 @@ export const CLIENT_RELEASE_VERSION = import.meta.env.VITE_RELEASE_VERSION ?? "0
 export const CLIENT_RELEASE_SHA = import.meta.env.VITE_RELEASE_SHA ?? "unknown";
 export const CLIENT_RELEASE = `${CLIENT_RELEASE_VERSION}+${CLIENT_RELEASE_SHA}`;
 
+const EXPERIENCE_ENDPOINT = (import.meta.env.VITE_EXPERIENCE_ENDPOINT as string | undefined)?.trim() ?? "";
 const queue: ExperienceEvent[] = [];
 let flushTimer: number | null = null;
 let installed = false;
@@ -89,13 +90,13 @@ export function buildExperienceEvent(
 }
 
 async function sendQueuedEvents(events: ExperienceEvent[]): Promise<void> {
-  if (events.length === 0) return;
+  if (events.length === 0 || !EXPERIENCE_ENDPOINT) return;
   const body = JSON.stringify({ events });
   if (typeof navigator.sendBeacon === "function") {
-    const accepted = navigator.sendBeacon("/experience/events", new Blob([body], { type: "application/json" }));
+    const accepted = navigator.sendBeacon(EXPERIENCE_ENDPOINT, new Blob([body], { type: "application/json" }));
     if (accepted) return;
   }
-  await fetch("/experience/events", {
+  await fetch(EXPERIENCE_ENDPOINT, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body,
