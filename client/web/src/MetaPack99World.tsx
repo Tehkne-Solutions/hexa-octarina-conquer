@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { metaIsoPoint } from "./meta-board-model";
 import { runtimeAssetUrl } from "./runtime-assets";
 
 type AssetKey =
@@ -18,6 +19,14 @@ type AssetKey =
   | "brakk";
 
 type AssetMap = Record<AssetKey, string | null>;
+
+export type MetaUnitId = "kael" | "lyra" | "varg" | "brakk";
+
+interface MetaPack99WorldProps {
+  unitNodes?: Record<MetaUnitId, string>;
+  selectedUnit?: MetaUnitId;
+  onUnitSelect?: (unitId: MetaUnitId) => void;
+}
 
 const ASSET_IDS: Record<AssetKey, string> = {
   grass: "TILE_GRASS_FLAT_CENTER_A_01",
@@ -51,16 +60,29 @@ const PROPS = [
   ["rock", 17, 65, "Penhascos de Orun", "blue"],
 ] as const;
 
-const UNITS = [
-  ["kael", 31, 46, "Kael", "blue"],
-  ["lyra", 41, 55, "Lyra", "blue"],
-  ["varg", 67, 48, "Varg", "red"],
-  ["brakk", 77, 31, "Brakk", "red"],
-] as const;
+const DEFAULT_UNIT_NODES: Record<MetaUnitId, string> = {
+  kael: "n-1-3",
+  lyra: "n-2-3",
+  varg: "n-5-2",
+  brakk: "n-5-1",
+};
+
+const UNIT_META: Record<MetaUnitId, { label: string; faction: "blue" | "red" }> = {
+  kael: { label: "Kael", faction: "blue" },
+  lyra: { label: "Lyra", faction: "blue" },
+  varg: { label: "Varg", faction: "red" },
+  brakk: { label: "Brakk", faction: "red" },
+};
 
 const EMPTY_ASSETS = Object.fromEntries(Object.keys(ASSET_IDS).map((key) => [key, null])) as AssetMap;
 
-export function MetaPack99World() {
+function nodePosition(nodeId: string): { left: string; top: string } {
+  const [, col, row] = nodeId.split("-");
+  const point = metaIsoPoint(Number(col), Number(row));
+  return { left: `${point.x / 10.8}%`, top: `${point.y / 6.2}%` };
+}
+
+export function MetaPack99World({ unitNodes = DEFAULT_UNIT_NODES, selectedUnit, onUnitSelect }: MetaPack99WorldProps) {
   const [assets, setAssets] = useState<AssetMap>(EMPTY_ASSETS);
 
   useEffect(() => {
@@ -114,14 +136,22 @@ export function MetaPack99World() {
       </div>
 
       <div className="meta-world-units">
-        {UNITS.map(([key, left, top, label, faction]) => {
-          const source = assets[key];
+        {(Object.keys(UNIT_META) as MetaUnitId[]).map((unitId) => {
+          const source = assets[unitId];
+          const meta = UNIT_META[unitId];
           return source ? (
-            <div key={label} className={`meta-world-unit unit-${key} owner-${faction}`} style={{ left: `${left}%`, top: `${top}%` }}>
+            <button
+              type="button"
+              key={unitId}
+              className={`meta-world-unit unit-${unitId} owner-${meta.faction} ${selectedUnit === unitId ? "is-selected" : ""}`}
+              style={nodePosition(unitNodes[unitId])}
+              onClick={() => onUnitSelect?.(unitId)}
+              aria-label={`Selecionar ${meta.label}`}
+            >
               <span className="meta-world-unit-ring" />
               <img src={source} alt="" draggable={false} />
-              <b>{label}</b>
-            </div>
+              <b>{meta.label}</b>
+            </button>
           ) : null;
         })}
       </div>
