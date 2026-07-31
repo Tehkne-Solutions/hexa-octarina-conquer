@@ -1,0 +1,313 @@
+/*
+ * META 08.8 — interaction and viewport authority
+ * Tehkné Solutions
+ *
+ * This layer is loaded after the territorial and canonical-unit authorities.
+ * Its only responsibility is to make hit testing, keyboard focus and compact
+ * viewport behavior deterministic without changing gameplay rules.
+ */
+
+.meta08-physical-world {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.meta08-physical-world .strategic-topbar,
+.meta08-physical-world .strategic-layout,
+.meta08-physical-world .strategic-board,
+.meta08-physical-world .strategic-roster,
+.meta08-physical-world .strategic-objectives {
+  min-height: 0;
+}
+
+.meta08-physical-world .strategic-layout {
+  height: calc(100dvh - 58px);
+  overflow: hidden;
+}
+
+.meta08-physical-world .strategic-roster,
+.meta08-physical-world .strategic-objectives {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.meta08-physical-world .strategic-board {
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.meta08-physical-world .strategic-world-light,
+.meta08-physical-world .strategic-world-depth,
+.meta08-physical-world .strategic-command-banner,
+.meta08-physical-world .strategic-map-key,
+.meta08-physical-world .strategic-board-status,
+.meta08-physical-world .strategic-scenery,
+.meta08-physical-world .strategic-structures,
+.meta08-physical-world .strategic-cells::before,
+.meta08-physical-world .strategic-cells::after {
+  pointer-events: none !important;
+}
+
+/* Decorative terrain never intercepts roads, nodes or units. */
+.meta08-physical-world .strategic-cells {
+  pointer-events: none !important;
+}
+
+.meta08-physical-world .strategic-cell {
+  pointer-events: none !important;
+  touch-action: manipulation;
+}
+
+.meta08-physical-world .strategic-cell.is-build-target {
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.meta08-physical-world .strategic-cell > * {
+  pointer-events: none !important;
+}
+
+/* Only actionable roads participate in hit testing. */
+.meta08-physical-world .strategic-edges {
+  z-index: 20 !important;
+  pointer-events: none !important;
+}
+
+.meta08-physical-world .strategic-edge {
+  min-height: 62px;
+  pointer-events: none !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.meta08-physical-world .strategic-edge:not(:disabled) {
+  z-index: 22;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.meta08-physical-world .strategic-edge > * {
+  pointer-events: none !important;
+}
+
+/* Invalid nodes stop blocking the road underneath them. */
+.meta08-physical-world .strategic-nodes {
+  z-index: 30 !important;
+  pointer-events: none !important;
+}
+
+.meta08-physical-world .strategic-node {
+  min-width: 104px;
+  min-height: 112px;
+  pointer-events: none !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.meta08-physical-world .strategic-node.is-road-target,
+.meta08-physical-world .strategic-node.is-move-target,
+.meta08-physical-world .strategic-node.is-recommended {
+  z-index: 33;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.meta08-physical-world .strategic-node > * {
+  pointer-events: none !important;
+}
+
+/* Units remain the highest interactive board objects. */
+.meta08-physical-world .strategic-units {
+  z-index: 40 !important;
+  pointer-events: none !important;
+}
+
+.meta08-physical-world .strategic-unit {
+  min-width: 118px;
+  min-height: 148px;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.meta08-physical-world .strategic-unit > * {
+  pointer-events: none !important;
+}
+
+.meta08-physical-world .strategic-menu,
+.meta08-physical-world .strategic-roster-card,
+.meta08-physical-world .strategic-actions button,
+.meta08-physical-world .strategic-end-turn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.meta08-physical-world :is(
+  .strategic-menu,
+  .strategic-roster-card,
+  .strategic-actions button,
+  .strategic-cell.is-build-target,
+  .strategic-edge:not(:disabled),
+  .strategic-node.is-road-target,
+  .strategic-node.is-move-target,
+  .strategic-unit,
+  .strategic-end-turn
+):focus-visible {
+  outline: 3px solid #f4cf70 !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(244, 207, 112, .2) !important;
+}
+
+.meta08-physical-world .strategic-unit.owner-blue:focus-visible,
+.meta08-physical-world .strategic-node.is-move-target:focus-visible {
+  outline-color: #77cdfa !important;
+  box-shadow: 0 0 0 5px rgba(86, 185, 239, .22) !important;
+}
+
+.meta08-physical-world .strategic-unit.owner-red:focus-visible {
+  outline-color: #f07a72 !important;
+  box-shadow: 0 0 0 5px rgba(231, 91, 83, .22) !important;
+}
+
+.meta08-physical-world .strategic-edge:not(:disabled):hover .strategic-edge-asset,
+.meta08-physical-world .strategic-edge:not(:disabled):focus-visible .strategic-edge-asset {
+  filter:
+    saturate(1.08)
+    brightness(1.12)
+    contrast(1.16)
+    drop-shadow(0 0 12px rgba(241, 199, 91, .76))
+    drop-shadow(0 10px 8px rgba(0, 0, 0, .82)) !important;
+}
+
+.meta08-physical-world .strategic-node.is-road-target:hover .strategic-node-pad,
+.meta08-physical-world .strategic-node.is-move-target:hover .strategic-node-pad,
+.meta08-physical-world .strategic-node.is-road-target:focus-visible .strategic-node-pad,
+.meta08-physical-world .strategic-node.is-move-target:focus-visible .strategic-node-pad {
+  transform: translateX(-50%) scale(1.08);
+}
+
+.meta08-physical-world .strategic-end-turn {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+
+@media (max-width: 1366px) and (min-width: 901px) {
+  .meta08-physical-world .strategic-layout {
+    grid-template-columns: 184px minmax(0, 1fr) 208px !important;
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .meta08-physical-world .strategic-roster,
+  .meta08-physical-world .strategic-objectives {
+    padding: 9px;
+  }
+
+  .meta08-physical-world .strategic-command-banner {
+    width: min(400px, 54%);
+  }
+}
+
+@media (max-height: 800px) and (min-width: 901px) {
+  .meta08-physical-world {
+    grid-template-rows: 54px minmax(0, 1fr) !important;
+  }
+
+  .meta08-physical-world .strategic-layout {
+    height: calc(100dvh - 54px);
+    padding: 6px;
+  }
+
+  .meta08-physical-world .strategic-topbar {
+    min-height: 54px;
+    padding-inline: 10px;
+  }
+
+  .meta08-physical-world .strategic-roster-card {
+    margin-bottom: 4px;
+    padding: 5px 6px;
+  }
+
+  .meta08-physical-world .strategic-actions {
+    gap: 5px;
+    margin: 8px 0;
+  }
+
+  .meta08-physical-world .strategic-actions button {
+    min-height: 40px;
+  }
+
+  .meta08-physical-world .strategic-help {
+    padding: 7px;
+  }
+
+  .meta08-physical-world .strategic-command-banner {
+    top: 6px;
+    padding: 6px 10px;
+  }
+
+  .meta08-physical-world .strategic-objectives p {
+    margin-bottom: 9px;
+  }
+
+  .meta08-physical-world .strategic-progress {
+    gap: 5px;
+    margin: 9px 0;
+  }
+
+  .meta08-physical-world .strategic-progress div {
+    height: 21px;
+  }
+
+  .meta08-physical-world .strategic-objectives ol {
+    max-height: 118px;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .meta08-physical-world {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    overflow: auto !important;
+  }
+
+  .meta08-physical-world .strategic-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  .meta08-physical-world .strategic-roster,
+  .meta08-physical-world .strategic-objectives {
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+
+  .meta08-physical-world .strategic-board {
+    min-height: 620px;
+  }
+
+  .meta08-physical-world .strategic-node {
+    min-width: 112px;
+    min-height: 120px;
+  }
+
+  .meta08-physical-world .strategic-edge {
+    min-height: 68px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta08-physical-world *,
+  .meta08-physical-world *::before,
+  .meta08-physical-world *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
