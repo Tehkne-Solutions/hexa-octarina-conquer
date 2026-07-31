@@ -1,3 +1,5 @@
+@import "./strategic-world-foundation.css";
+
 /*
  * META 08.8 — interaction and viewport authority
  * Tehkné Solutions
@@ -49,7 +51,6 @@
   pointer-events: none !important;
 }
 
-/* Decorative terrain never intercepts roads, nodes or units. */
 .meta08-physical-world .strategic-cells {
   pointer-events: none !important;
 }
@@ -69,7 +70,6 @@
   pointer-events: none !important;
 }
 
-/* Only actionable roads participate in hit testing. */
 .meta08-physical-world .strategic-edges {
   z-index: 20 !important;
   pointer-events: none !important;
@@ -92,7 +92,6 @@
   pointer-events: none !important;
 }
 
-/* Invalid nodes stop blocking the road underneath them. */
 .meta08-physical-world .strategic-nodes {
   z-index: 30 !important;
   pointer-events: none !important;
@@ -118,7 +117,6 @@
   pointer-events: none !important;
 }
 
-/* Units remain the highest interactive board objects. */
 .meta08-physical-world .strategic-units {
   z-index: 40 !important;
   pointer-events: none !important;
