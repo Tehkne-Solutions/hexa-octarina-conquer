@@ -13,7 +13,7 @@ if errorlevel 1 (
 echo ============================================================
 echo  HOC PACK 99 - PUBLICACAO INTEGRAL 1.0.2
 echo  Web + Godot + GitHub Release + Production Gate
-echo  Tehkne Solutions
+echo  Tehkné Solutions
 echo ============================================================
 echo.
 echo Uso padrao:
@@ -47,5 +47,5 @@ if not "%RESULT%"=="0" (
   echo O workflow PACK 99 Production Gate validara o deploy publico e tornara o runtime full obrigatorio.
 )
 echo.
-echo Tehkne Solutions
+echo Tehkné Solutions
 exit /b %RESULT%

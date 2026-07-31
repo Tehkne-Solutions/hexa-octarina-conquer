@@ -69,6 +69,7 @@ import "./visual-stabilization.css";
 import "./campaign-hud-authority.css";
 import "./strategic-board-canonical-units.css";
 import "./strategic-board-territorial-world.css";
+import "./strategic-board-interaction-qa.css";
 
 const LegacyApp = lazy(() => import("./App").then((module) => ({ default: module.App })));
 const SprintUi08VisualQa = lazy(() => import("./SprintUi08VisualQa").then((module) => ({ default: module.SprintUi08VisualQa })));
