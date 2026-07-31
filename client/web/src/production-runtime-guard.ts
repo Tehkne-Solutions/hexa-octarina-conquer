@@ -1,6 +1,7 @@
 const releaseVersion = import.meta.env.VITE_RELEASE_VERSION || "dev";
 const releaseSha = import.meta.env.VITE_RELEASE_SHA || "local";
-const isProduction = import.meta.env.PROD;
+const publishedHost = "hexa-octarina-conquer.onrender.com";
+const isPublishedProduction = import.meta.env.PROD && window.location.hostname === publishedHost;
 
 function ensureBuildMarker(): HTMLElement {
   let marker = document.getElementById("hexa-build-marker");
@@ -29,7 +30,7 @@ function ensureBuildMarker(): HTMLElement {
 }
 
 function ensureRuntimeFailureOverlay(reason: string): void {
-  if (!isProduction || document.getElementById("pack99-production-block")) return;
+  if (!isPublishedProduction || document.getElementById("pack99-production-block")) return;
 
   const overlay = document.createElement("section");
   overlay.id = "pack99-production-block";
