@@ -1,0 +1,280 @@
+/*
+ * META 09.1 — living world foundation authority
+ * Tehkné Solutions
+ *
+ * Converts the accepted META 08 board into a continuous strategic world
+ * without changing nodes, routes, turns, AI or mission rules.
+ */
+
+.meta08-physical-world .strategic-board {
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 66% 58% at 51% 47%, rgba(101, 139, 79, .42), transparent 70%),
+    radial-gradient(ellipse 28% 42% at 23% 60%, rgba(37, 112, 137, .24), transparent 76%),
+    radial-gradient(ellipse 30% 42% at 78% 44%, rgba(127, 53, 42, .19), transparent 76%),
+    linear-gradient(180deg, #1c3b29 0%, #10261b 58%, #07130e 100%) !important;
+  perspective: 1100px;
+}
+
+.meta08-physical-world .strategic-world-depth {
+  z-index: 0 !important;
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 55% 24% at 50% 86%, rgba(0, 0, 0, .5), transparent 72%),
+    radial-gradient(ellipse 90% 84% at 50% 50%, transparent 55%, rgba(1, 8, 5, .5) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, .28), transparent 18%, transparent 82%, rgba(0, 0, 0, .28)) !important;
+}
+
+/* Atmospheric horizon and terrain apron beyond the playable cells. */
+.meta08-physical-world .strategic-board::after {
+  inset: 1.5% 1.5% 2% !important;
+  border-radius: 28px !important;
+  opacity: .86 !important;
+  filter: none !important;
+  background:
+    radial-gradient(ellipse 22% 32% at 12% 38%, rgba(20, 54, 31, .72), transparent 74%),
+    radial-gradient(ellipse 25% 31% at 88% 34%, rgba(54, 35, 25, .6), transparent 75%),
+    radial-gradient(ellipse 78% 50% at 50% 90%, rgba(5, 19, 12, .88), transparent 70%),
+    repeating-linear-gradient(25deg, rgba(216, 203, 151, .022) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(-25deg, rgba(4, 13, 8, .04) 0 1px, transparent 1px 31px) !important;
+}
+
+/* The map reads as one elevated landmass instead of four cards. */
+.meta08-physical-world .strategic-cells {
+  inset: 4.2% 4.2% 3.5% !important;
+  transform: translateY(1.5%) rotateX(1.4deg);
+  transform-origin: 50% 72%;
+  filter:
+    drop-shadow(0 34px 24px rgba(0, 0, 0, .58))
+    drop-shadow(0 8px 8px rgba(0, 0, 0, .34));
+}
+
+.meta08-physical-world .strategic-cells::before {
+  inset: 7.5% 4.5% 2.5% !important;
+  clip-path: polygon(50% 0, 98.5% 49.5%, 50% 100%, 1.5% 49.5%);
+  background:
+    radial-gradient(ellipse 43% 38% at 29% 63%, rgba(32, 105, 115, .32), transparent 72%),
+    radial-gradient(ellipse 42% 36% at 72% 38%, rgba(111, 96, 54, .34), transparent 72%),
+    radial-gradient(ellipse 65% 62% at 50% 52%, rgba(92, 126, 72, .96), rgba(38, 73, 44, .98) 68%, #142b1d 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(222, 204, 145, .1),
+    inset 0 -42px 48px rgba(3, 14, 8, .52),
+    0 0 0 9px rgba(8, 25, 15, .24);
+}
+
+.meta08-physical-world .strategic-cells::after {
+  inset: 8.5% 5.5% 3.8% !important;
+  opacity: .46;
+  background:
+    radial-gradient(circle at 22% 36%, rgba(228, 218, 166, .06) 0 1px, transparent 2px) 0 0 / 34px 29px,
+    radial-gradient(circle at 68% 70%, rgba(5, 20, 10, .1) 0 1px, transparent 2px) 0 0 / 41px 37px,
+    repeating-linear-gradient(31deg, transparent 0 47px, rgba(231, 217, 166, .024) 48px 49px),
+    repeating-linear-gradient(-31deg, transparent 0 43px, rgba(2, 13, 7, .052) 44px 46px);
+}
+
+.meta08-physical-world .strategic-cell {
+  width: 45.6% !important;
+  height: 42.8% !important;
+  background-size: 128% 128% !important;
+  background-position: 50% 52% !important;
+  filter: saturate(1.08) brightness(.88) contrast(1.07) !important;
+  box-shadow:
+    inset 0 0 42px rgba(7, 22, 12, .15),
+    inset 0 -22px 28px rgba(2, 13, 7, .16) !important;
+}
+
+.meta08-physical-world .strategic-cell.biome-water {
+  filter: saturate(1.18) brightness(.9) contrast(1.06) !important;
+}
+
+.meta08-physical-world .strategic-cell.biome-forest,
+.meta08-physical-world .strategic-cell.biome-rock {
+  filter: saturate(1.1) brightness(.84) contrast(1.08) !important;
+}
+
+/* Subtle living light over each biome. */
+.meta08-physical-world .strategic-cell::after {
+  opacity: .62;
+  background:
+    radial-gradient(ellipse 56% 46% at 50% 42%, rgba(255, 244, 197, .07), transparent 72%),
+    radial-gradient(ellipse at center, transparent 48%, rgba(6, 19, 10, .15) 100%) !important;
+}
+
+.meta08-physical-world .strategic-cell.biome-water::after {
+  background:
+    linear-gradient(112deg, transparent 22%, rgba(188, 229, 231, .12) 34%, transparent 46%),
+    repeating-linear-gradient(112deg, transparent 0 29px, rgba(209, 240, 238, .055) 30px 32px, transparent 33px 57px),
+    radial-gradient(ellipse at center, transparent 48%, rgba(6, 22, 27, .18) 100%) !important;
+  animation: meta09-water-drift 8s linear infinite;
+}
+
+@keyframes meta09-water-drift {
+  from { background-position: -80px 0, 0 0, 0 0; }
+  to { background-position: 100px 0, 120px 0, 0 0; }
+}
+
+/* Built routes become the architectural backbone of the world. */
+.meta08-physical-world .strategic-edge.state-road {
+  z-index: 24 !important;
+}
+
+.meta08-physical-world .strategic-edge.state-road .strategic-edge-asset {
+  height: 58px !important;
+  filter:
+    saturate(1.03)
+    brightness(.96)
+    contrast(1.25)
+    drop-shadow(0 13px 8px rgba(0, 0, 0, .88))
+    drop-shadow(0 2px 1px rgba(224, 208, 150, .15)) !important;
+}
+
+.meta08-physical-world .strategic-edge.state-road::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: .42;
+  background: linear-gradient(90deg, transparent, rgba(240, 223, 165, .48), transparent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .52);
+}
+
+.meta08-physical-world .strategic-edge.state-road.owner-blue::after {
+  background: linear-gradient(90deg, transparent, rgba(69, 176, 232, .76), transparent);
+}
+
+.meta08-physical-world .strategic-edge.state-road.owner-red::after {
+  background: linear-gradient(90deg, transparent, rgba(223, 76, 65, .72), transparent);
+}
+
+.meta08-physical-world .strategic-edge.state-unbuilt .strategic-edge-asset {
+  height: 10px !important;
+  opacity: .035 !important;
+}
+
+.meta08-physical-world .strategic-edge.is-secondary-target .strategic-edge-asset {
+  height: 23px !important;
+  opacity: .16 !important;
+}
+
+.meta08-physical-world .strategic-edge.is-recommended .strategic-edge-asset {
+  height: 62px !important;
+  filter:
+    saturate(1.08)
+    brightness(1.08)
+    contrast(1.24)
+    drop-shadow(0 14px 9px rgba(0, 0, 0, .9))
+    drop-shadow(0 0 12px rgba(222, 186, 83, .42)) !important;
+}
+
+/* Strategic posts read as grounded architecture. */
+.meta08-physical-world .strategic-node-pad {
+  transform: translate(-50%, -50%) scale(1.08) !important;
+  box-shadow:
+    0 16px 15px rgba(0, 0, 0, .72),
+    inset 0 2px 2px rgba(255, 244, 199, .16),
+    0 0 0 1px rgba(220, 202, 147, .16) !important;
+}
+
+.meta08-physical-world .strategic-node-pillar {
+  filter:
+    saturate(1.06)
+    contrast(1.08)
+    drop-shadow(0 15px 8px rgba(0, 0, 0, .76)) !important;
+}
+
+/* Structures and scenery sit inside the landscape instead of floating above it. */
+.meta08-physical-world .strategic-scenery-prop {
+  opacity: .94 !important;
+  transform: translate(3%, -59%) scale(1.22) !important;
+}
+
+.meta08-physical-world .strategic-scenery-prop.biome-forest {
+  transform: translate(12%, -54%) scale(1.28) !important;
+}
+
+.meta08-physical-world .strategic-scenery-prop.biome-water {
+  transform: translate(-50%, -47%) scale(1.18) !important;
+}
+
+.meta08-physical-world .strategic-scenery-prop img {
+  filter:
+    saturate(1.08)
+    contrast(1.08)
+    brightness(.94)
+    drop-shadow(0 20px 12px rgba(0, 0, 0, .82)) !important;
+}
+
+.meta08-physical-world .strategic-structure {
+  transform: translate(-50%, -78%) scale(1.22) !important;
+  filter: drop-shadow(0 20px 12px rgba(0, 0, 0, .82));
+}
+
+.meta08-physical-world .strategic-region-badge {
+  top: 11.5% !important;
+  backdrop-filter: blur(5px);
+  opacity: .88;
+}
+
+/* Faction ownership is material, not a flat neon wash. */
+.meta08-physical-world .strategic-cell.owner-blue .strategic-cell-tint {
+  opacity: .1 !important;
+  background:
+    radial-gradient(ellipse at center, rgba(46, 145, 201, .22), transparent 68%),
+    linear-gradient(145deg, rgba(53, 167, 224, .12), transparent 52%) !important;
+}
+
+.meta08-physical-world .strategic-cell.owner-red .strategic-cell-tint {
+  opacity: .1 !important;
+  background:
+    radial-gradient(ellipse at center, rgba(191, 55, 48, .2), transparent 68%),
+    linear-gradient(145deg, rgba(211, 67, 57, .11), transparent 52%) !important;
+}
+
+.meta08-physical-world .strategic-territory-wall {
+  opacity: .82;
+  filter: saturate(.92) contrast(1.08) drop-shadow(0 9px 7px rgba(0, 0, 0, .56));
+}
+
+/* Gentle life without moving interactive hitboxes. */
+.meta08-physical-world .strategic-unit-image,
+.meta08-physical-world .strategic-node-pillar,
+.meta08-physical-world .strategic-scenery-prop img {
+  transform-origin: 50% 100%;
+}
+
+.meta08-physical-world .strategic-unit:not(.is-defeated) .strategic-unit-image {
+  animation: meta09-unit-breathe 3.4s ease-in-out infinite !important;
+}
+
+@keyframes meta09-unit-breathe {
+  0%, 100% { translate: 0 0; scale: 1; }
+  50% { translate: 0 -2px; scale: 1.018; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta08-physical-world .strategic-cell.biome-water::after,
+  .meta08-physical-world .strategic-unit-image {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-cells {
+    inset: 4% 1.5% 3% !important;
+    transform: none;
+  }
+
+  .meta08-physical-world .strategic-cell {
+    width: 45.2% !important;
+    height: 42.2% !important;
+  }
+
+  .meta08-physical-world .strategic-edge.state-road .strategic-edge-asset {
+    height: 54px !important;
+  }
+}
