@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 const entrypoint = readFileSync(resolve(currentDirectory, "main.tsx"), "utf8");
+const boardSlice = readFileSync(resolve(currentDirectory, "StrategicBoardSlice.tsx"), "utf8");
 const stylesheet = readFileSync(
   resolve(currentDirectory, "strategic-board-interaction-qa.css"),
   "utf8",
@@ -29,6 +30,13 @@ describe("META 08.8 strategic interaction QA contract", () => {
     expect(stylesheet).toContain(".strategic-unit {");
     expect(stylesheet).toContain("pointer-events: none !important");
     expect(stylesheet).toContain("pointer-events: auto !important");
+  });
+
+  it("removes inactive nodes from keyboard interaction", () => {
+    expect(boardSlice).toContain("const nodeActionable = roadTarget || moveTarget");
+    expect(boardSlice).toContain("disabled={!nodeActionable}");
+    expect(boardSlice).toContain("tabIndex={nodeActionable ? 0 : -1}");
+    expect(boardSlice).toContain("aria-disabled={!nodeActionable}");
   });
 
   it("provides larger actionable targets and keyboard focus", () => {
