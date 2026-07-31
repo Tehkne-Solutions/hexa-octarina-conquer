@@ -1,0 +1,44 @@
+name: Production PACK 99 Gate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-pack99-gate
+  cancel-in-progress: true
+
+jobs:
+  verify-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/web/package-lock.json
+
+      - name: Install Web dependencies
+        working-directory: client/web
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Chromium
+        working-directory: client/web
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify published runtime and rendered game
+        working-directory: client/web
+        env:
+          HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
+          HEXA_PRODUCTION_ATTEMPTS: "8"
+          HEXA_PRODUCTION_DELAY_MS: "15000"
+        run: node scripts/production-pack99-gate.mjs

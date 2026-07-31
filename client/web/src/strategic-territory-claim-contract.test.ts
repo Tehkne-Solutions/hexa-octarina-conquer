@@ -8,11 +8,11 @@ const territory = readFileSync(
 );
 
 describe("META 09.3 physical territory claim", () => {
-  it("loads the territory authority from the Vite shell", () => {
-    expect(html).toContain('/src/strategic-territory-claim.css');
+  it("keeps the territory authority out of the production shell during META 09-R", () => {
+    expect(html).not.toContain('/src/strategic-territory-claim.css');
   });
 
-  it("materializes faction control with perimeter, standard and occupation", () => {
+  it("preserves the experimental source for later renderer layers", () => {
     expect(territory).toContain("meta09-territory-fill");
     expect(territory).toContain("meta09-territory-perimeter");
     expect(territory).toContain("meta09-territory-standard");
@@ -20,7 +20,7 @@ describe("META 09.3 physical territory claim", () => {
     expect(territory).toContain(".strategic-building-slot");
   });
 
-  it("animates only cell decoration and keeps the strategic button stable", () => {
+  it("keeps cell hitboxes stable", () => {
     expect(territory).not.toContain(".strategic-cell {\n  transform:");
     expect(territory).not.toContain("pointer-events: auto");
     expect(territory).toContain("@media (prefers-reduced-motion: reduce)");

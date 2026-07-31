@@ -8,13 +8,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Hexa Octarina" />
+    <meta name="hexa-release-version" content="%VITE_RELEASE_VERSION%" />
+    <meta name="hexa-release-sha" content="%VITE_RELEASE_SHA%" />
     <link rel="icon" href="/favicon.svg" />
-    <link rel="stylesheet" href="/src/strategic-territory-claim.css" />
     <title>Hexa Octarina Conquer</title>
   </head>
   <body>
     <noscript>Ative o JavaScript para jogar Hexa Octarina Conquer.</noscript>
     <div id="root"></div>
+    <script type="module" src="/src/production-runtime-guard.ts"></script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -11,20 +11,17 @@ const worldAuthority = readFileSync(
 );
 
 describe("META 09.1 living world foundation", () => {
-  it("loads the living-world authority before interaction overrides", () => {
-    expect(interactionAuthority.trimStart().startsWith('@import "./strategic-world-foundation.css";')).toBe(true);
+  it("keeps the experimental authority dormant during META 09-R", () => {
+    expect(interactionAuthority).not.toContain('@import "./strategic-world-foundation.css"');
   });
 
-  it("keeps a continuous landmass and physical route hierarchy", () => {
+  it("preserves the experimental source for later architectural refactoring", () => {
     expect(worldAuthority).toContain(".strategic-cells::before");
-    expect(worldAuthority).toContain("clip-path: polygon(50% 0, 98.5% 49.5%, 50% 100%, 1.5% 49.5%)");
     expect(worldAuthority).toContain(".strategic-edge.state-road .strategic-edge-asset");
-    expect(worldAuthority).toContain("height: 58px !important");
     expect(worldAuthority).toContain(".strategic-edge.state-unbuilt .strategic-edge-asset");
-    expect(worldAuthority).toContain("opacity: .035 !important");
   });
 
-  it("adds life without moving interactive hitboxes", () => {
+  it("keeps motion isolated from interactive hitboxes", () => {
     expect(worldAuthority).toContain("meta09-water-drift");
     expect(worldAuthority).toContain("meta09-unit-breathe");
     expect(worldAuthority).toContain("@media (prefers-reduced-motion: reduce)");
