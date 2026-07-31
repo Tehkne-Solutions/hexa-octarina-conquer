@@ -11,6 +11,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
+    "acceptance:meta08": "node scripts/meta08-acceptance.mjs",
     "verify:pack99": "node ../../scripts/verify-web-pack99.mjs",
     "check": "npm run verify:pack99 && npm run test && npm run build"
   },
@@ -22,6 +23,7 @@
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.3",
+    "playwright": "1.54.2",
     "typescript": "7.0.2",
     "vite": "8.1.5",
     "vite-plugin-pwa": "1.3.0",

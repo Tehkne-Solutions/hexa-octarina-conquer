@@ -1,0 +1,115 @@
+/*
+ * META 08.9 — active-mode hit-test authority
+ * Tehkné Solutions
+ *
+ * StrategicBoardSlice keeps target sets for every mechanic available so the
+ * action palette can display counts. Only the mechanic selected in the command
+ * banner may participate in board hit testing. This prevents a unit, stale
+ * route or node from covering the active Bastião target.
+ */
+
+/* ROAD: move routes remain visible, but only road targets receive the pointer. */
+.meta08-physical-world:has(.strategic-command-banner.mode-road)
+  .strategic-edge.is-move-route:not(.is-road-target),
+.meta08-physical-world:has(.strategic-command-banner.mode-road)
+  .strategic-node.is-move-target:not(.is-road-target) {
+  pointer-events: none !important;
+}
+
+/* MOVE: potential construction routes remain visible, but are not actionable. */
+.meta08-physical-world:has(.strategic-command-banner.mode-move)
+  .strategic-edge.is-road-target:not(.is-move-route),
+.meta08-physical-world:has(.strategic-command-banner.mode-move)
+  .strategic-node.is-road-target:not(.is-move-target) {
+  pointer-events: none !important;
+}
+
+/*
+ * STRUCTURE: the region is the only board target. Units, roads and nodes remain
+ * rendered as context, but cannot intercept the click over the cell.
+ */
+.meta08-physical-world:has(.strategic-command-banner.mode-structure)
+  :is(.strategic-unit, .strategic-edge, .strategic-node) {
+  pointer-events: none !important;
+}
+
+/*
+ * The build target must not animate its transform. A moving transform changes
+ * the browser hitbox every frame and can make mouse, touch and assistive clicks
+ * miss even though the target looks available. The highlight stays visible via
+ * a stable filter and shadow instead.
+ */
+.meta08-physical-world:has(.strategic-command-banner.mode-structure)
+  .strategic-cell.is-build-target {
+  animation: none !important;
+  transform: translate(-50%, -50%) !important;
+  filter: saturate(1.08) brightness(.98) contrast(1.04) !important;
+  box-shadow:
+    inset 0 0 34px rgba(8, 22, 12, .18),
+    inset 0 0 0 2px rgba(241, 199, 91, .42),
+    0 0 28px rgba(241, 199, 91, .3) !important;
+}
+
+/* ATTACK: routes and posts provide context while unit tokens own the action. */
+.meta08-physical-world:has(.strategic-command-banner.mode-attack)
+  :is(.strategic-edge, .strategic-node, .strategic-cell) {
+  pointer-events: none !important;
+}
+
+.meta08-physical-world:has(.strategic-command-banner.mode-attack)
+  .strategic-unit.owner-red:not(.is-attack-target) {
+  pointer-events: none !important;
+}
+
+/*
+ * The physical-world stylesheet owns the desktop three-column composition with
+ * a more specific selector than the slice's original mobile rule. Reassert the
+ * canonical mobile order here, after the lazy campaign styles are collected:
+ * roster -> board -> objectives. Roads stay the primary touch targets.
+ */
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(620px, 72vh) auto !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .meta08-physical-world .strategic-roster,
+  .meta08-physical-world .strategic-board,
+  .meta08-physical-world .strategic-objectives {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .meta08-physical-world .strategic-board {
+    min-height: 620px !important;
+  }
+
+  /*
+   * A destination node overlaps the final section of its route. During ROAD and
+   * MOVE the route is the primary mobile gesture, so its stacking context rises
+   * above nodes while unit tokens remain authoritative at z-index 40.
+   */
+  .meta08-physical-world:has(.strategic-command-banner.mode-road)
+    .strategic-edges,
+  .meta08-physical-world:has(.strategic-command-banner.mode-move)
+    .strategic-edges {
+    z-index: 35 !important;
+  }
+
+  .meta08-physical-world:has(.strategic-command-banner.mode-road)
+    .strategic-edge:not(:disabled),
+  .meta08-physical-world:has(.strategic-command-banner.mode-move)
+    .strategic-edge:not(:disabled) {
+    z-index: 36 !important;
+  }
+
+  .meta08-physical-world .strategic-nodes {
+    z-index: 30 !important;
+  }
+
+  .meta08-physical-world .strategic-units {
+    z-index: 40 !important;
+  }
+}

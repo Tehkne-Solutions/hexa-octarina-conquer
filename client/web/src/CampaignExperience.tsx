@@ -1,4 +1,5 @@
 import { StrategicBoardSlice } from "./StrategicBoardSlice";
+import "./strategic-board-mode-authority.css";
 
 interface CampaignExperienceProps {
   playerName: string;

@@ -1,0 +1,84 @@
+name: META 08 Playable Acceptance
+
+on:
+  pull_request:
+    paths:
+      - "client/web/src/main.tsx"
+      - "client/web/src/GameApp.tsx"
+      - "client/web/src/CampaignExperience.tsx"
+      - "client/web/src/StrategicBoardSlice.tsx"
+      - "client/web/src/strategic-board-model.ts"
+      - "client/web/src/strategic-board-model.test.ts"
+      - "client/web/src/strategic-playable-acceptance.test.ts"
+      - "client/web/src/strategic-mode-authority.test.ts"
+      - "client/web/src/strategic-board-*.css"
+      - "client/web/scripts/meta08-acceptance.mjs"
+      - "client/web/package.json"
+      - ".github/workflows/meta08-playable-acceptance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meta08-playable-acceptance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acceptance:
+    name: Complete strategic mission acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: client/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prove complete strategic victory path
+        run: npm run test -- strategic-playable-acceptance.test.ts strategic-mode-authority.test.ts
+
+      - name: Build production PWA
+        run: npm run build
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start production preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/meta08-preview.log 2>&1 &
+          echo $! > /tmp/meta08-preview.pid
+          npx --yes wait-on@8.0.3 http://127.0.0.1:4173
+
+      - name: Run complete notebook, keyboard, touch and mobile acceptance
+        env:
+          META08_BASE_URL: http://127.0.0.1:4173
+          META08_OUTPUT_DIR: meta08-acceptance
+        run: npm run acceptance:meta08
+
+      - name: Upload acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meta08-playable-acceptance
+          path: client/web/meta08-acceptance
+          if-no-files-found: error
+          retention-days: 45
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/meta08-preview.pid ]; then
+            kill "$(cat /tmp/meta08-preview.pid)" || true
+          fi
+          cat /tmp/meta08-preview.log || true
