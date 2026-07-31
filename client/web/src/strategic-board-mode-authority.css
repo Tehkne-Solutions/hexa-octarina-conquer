@@ -60,3 +60,29 @@
   .strategic-unit.owner-red:not(.is-attack-target) {
   pointer-events: none !important;
 }
+
+/*
+ * The physical-world stylesheet owns the desktop three-column composition with
+ * a more specific selector than the slice's original mobile rule. Reassert the
+ * canonical mobile order here, after the lazy campaign styles are collected:
+ * roster -> board -> objectives. Roads stay the primary touch targets.
+ */
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(620px, 72vh) auto !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .meta08-physical-world .strategic-roster,
+  .meta08-physical-world .strategic-board,
+  .meta08-physical-world .strategic-objectives {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .meta08-physical-world .strategic-board {
+    min-height: 620px !important;
+  }
+}
