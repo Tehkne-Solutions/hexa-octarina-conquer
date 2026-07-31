@@ -19,6 +19,12 @@ describe("META 08.9 active mode authority", () => {
     expect(authorityCss).toContain("pointer-events: none !important");
   });
 
+  it("keeps the active Bastião hitbox physically stable", () => {
+    expect(authorityCss).toContain(".strategic-cell.is-build-target");
+    expect(authorityCss).toContain("animation: none !important");
+    expect(authorityCss).toContain("transform: translate(-50%, -50%) !important");
+  });
+
   it("keeps road, move and attack hit testing scoped to the active mechanic", () => {
     expect(authorityCss).toContain("mode-road");
     expect(authorityCss).toContain("mode-move");
