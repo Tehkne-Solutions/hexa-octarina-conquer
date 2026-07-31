@@ -538,15 +538,19 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             const unit = board.units.find((entry) => entry.hp > 0 && entry.nodeId === node.id);
             const roadTarget = mode === "road" && roadTargets.has(node.id) && actions > 0;
             const moveTarget = mode === "move" && moveTargets.has(node.id) && actions > 0;
+            const nodeActionable = roadTarget || moveTarget;
             const isOrigin = selectedUnit.nodeId === node.id;
-            const recommended = node.id === preferredNodeTarget && (roadTarget || moveTarget);
+            const recommended = node.id === preferredNodeTarget && nodeActionable;
             const faction = nodeFaction(board, node.id);
-            const source = pillarAsset(catalog, faction, roadTarget || moveTarget || isOrigin || recommended);
+            const source = pillarAsset(catalog, faction, nodeActionable || isOrigin || recommended);
 
             return <button
               key={node.id}
               type="button"
               title={node.name}
+              disabled={!nodeActionable}
+              tabIndex={nodeActionable ? 0 : -1}
+              aria-disabled={!nodeActionable}
               className={[
                 "strategic-node",
                 faction ? `owner-${faction}` : "owner-neutral",
