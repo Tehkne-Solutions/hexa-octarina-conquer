@@ -33,6 +33,23 @@
   pointer-events: none !important;
 }
 
+/*
+ * The build target must not animate its transform. A moving transform changes
+ * the browser hitbox every frame and can make mouse, touch and assistive clicks
+ * miss even though the target looks available. The highlight stays visible via
+ * a stable filter and shadow instead.
+ */
+.meta08-physical-world:has(.strategic-command-banner.mode-structure)
+  .strategic-cell.is-build-target {
+  animation: none !important;
+  transform: translate(-50%, -50%) !important;
+  filter: saturate(1.08) brightness(.98) contrast(1.04) !important;
+  box-shadow:
+    inset 0 0 34px rgba(8, 22, 12, .18),
+    inset 0 0 0 2px rgba(241, 199, 91, .42),
+    0 0 28px rgba(241, 199, 91, .3) !important;
+}
+
 /* ATTACK: routes and posts provide context while unit tokens own the action. */
 .meta08-physical-world:has(.strategic-command-banner.mode-attack)
   :is(.strategic-edge, .strategic-node, .strategic-cell) {
