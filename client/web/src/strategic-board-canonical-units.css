@@ -1,0 +1,106 @@
+.meta08-physical-world .strategic-unit {
+  width: 122px;
+  height: 152px;
+  transform: translate(-50%, -88%);
+}
+
+.meta08-physical-world .strategic-unit-image {
+  left: 50%;
+  top: -10px;
+  width: 112px;
+  height: 112px;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: center bottom;
+  mix-blend-mode: normal;
+  -webkit-mask-image: radial-gradient(ellipse 64% 74% at 50% 54%, #000 56%, transparent 94%);
+  mask-image: radial-gradient(ellipse 64% 74% at 50% 54%, #000 56%, transparent 94%);
+  filter:
+    saturate(1.08)
+    contrast(1.1)
+    brightness(1.03)
+    drop-shadow(0 18px 10px rgba(0, 0, 0, .86));
+}
+
+.meta08-physical-world .strategic-unit.unit-varg .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  width: 112px;
+  height: 112px;
+  top: -10px;
+}
+
+.meta08-physical-world .strategic-unit.owner-blue .strategic-unit-image {
+  filter:
+    saturate(1.12)
+    contrast(1.1)
+    brightness(1.04)
+    drop-shadow(0 0 8px rgba(73, 173, 232, .34))
+    drop-shadow(0 18px 10px rgba(0, 0, 0, .86));
+}
+
+.meta08-physical-world .strategic-unit.owner-red .strategic-unit-image {
+  filter:
+    saturate(1.12)
+    contrast(1.1)
+    brightness(1.02)
+    drop-shadow(0 0 8px rgba(218, 70, 63, .32))
+    drop-shadow(0 18px 10px rgba(0, 0, 0, .86));
+}
+
+.meta08-physical-world .strategic-unit > b {
+  top: 103px;
+}
+
+.meta08-physical-world .strategic-unit > small {
+  top: 121px;
+}
+
+.meta08-physical-world .strategic-unit-ring {
+  bottom: 18px;
+  width: 74px;
+  height: 29px;
+}
+
+.meta08-physical-world .strategic-edge.state-road .strategic-edge-asset {
+  height: 42px;
+  opacity: .98;
+  filter:
+    saturate(.92)
+    brightness(.92)
+    contrast(1.16)
+    drop-shadow(0 8px 6px rgba(0, 0, 0, .78));
+}
+
+.meta08-physical-world .strategic-edge.state-unbuilt .strategic-edge-asset {
+  height: 24px;
+  opacity: .14;
+}
+
+.meta08-physical-world .strategic-edge.is-secondary-target .strategic-edge-asset {
+  height: 31px;
+  opacity: .36;
+}
+
+.meta08-physical-world .strategic-edge.is-recommended .strategic-edge-asset {
+  height: 47px;
+  opacity: 1;
+}
+
+.meta08-physical-world .strategic-edge-owner-trim {
+  height: 2px;
+}
+
+.meta08-physical-world .strategic-node.is-occupied img {
+  opacity: .32;
+  transform: translateX(-50%) scale(.7);
+}
+
+.meta08-physical-world .strategic-scenery-prop {
+  opacity: .86;
+}
+
+.meta08-physical-world .strategic-board-status.is-ready {
+  border-color: rgba(76, 200, 147, .62);
+  color: #75e0b0;
+  box-shadow: 0 0 12px rgba(65, 190, 137, .12);
+}
