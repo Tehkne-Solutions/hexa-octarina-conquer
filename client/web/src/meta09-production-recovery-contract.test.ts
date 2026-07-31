@@ -30,7 +30,7 @@ describe("META 09-R production recovery", () => {
     expect(html).toContain("production-runtime-guard.ts");
     expect(html).toContain("hexa-release-sha");
     expect(guard).toContain("PACK 99 incompleto");
-    expect(guard).toContain("data.productionBlocked");
+    expect(guard).toContain("dataset.productionBlocked");
     expect(guard).toContain("PACK 99 ${canonical ?? \"0\"}/1037");
   });
 
