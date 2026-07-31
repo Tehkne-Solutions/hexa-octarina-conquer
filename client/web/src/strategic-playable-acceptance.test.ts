@@ -63,7 +63,6 @@ function progressScore(state: AcceptanceState): number {
   const damagedEnemies = state.board.units
     .filter((unit) => unit.faction === "red")
     .reduce((damage, unit) => damage + (unit.maxHp - unit.hp), 0);
-  const mechanics = ACTION_BITS.road + ACTION_BITS.move + ACTION_BITS.structure + ACTION_BITS.attack + ACTION_BITS["end-turn"];
   const seenMechanics = state.mask.toString(2).split("1").length - 1;
   return (strategicResult(state.board) === "victory" ? 100_000 : 0)
     + strategicOwnedCellCount(state.board, "blue") * 2_000
@@ -96,6 +95,8 @@ function appendCandidate(
 }
 
 function expandState(current: AcceptanceState): Candidate[] {
+  if (strategicResult(current.board) !== "playing") return [];
+
   const candidates: Candidate[] = [];
 
   if (current.actions > 0) {
@@ -184,9 +185,9 @@ function findWinningAcceptancePath(): AcceptanceState | null {
     const current = frontier.shift()!.state;
     expanded += 1;
 
-    if (strategicResult(current.board) === "victory" && current.mask === REQUIRED_MASK) {
-      return current;
-    }
+    const currentResult = strategicResult(current.board);
+    if (currentResult === "victory" && current.mask === REQUIRED_MASK) return current;
+    if (currentResult !== "playing") continue;
     if (current.path.length >= 60 || current.round > 14) continue;
 
     const key = boardKey(current);
@@ -194,9 +195,7 @@ function findWinningAcceptancePath(): AcceptanceState | null {
     if (previousDepth !== undefined && previousDepth <= current.path.length) continue;
     visited.set(key, current.path.length);
 
-    for (const candidate of expandState(current)) {
-      frontier.push(candidate);
-    }
+    for (const candidate of expandState(current)) frontier.push(candidate);
 
     if (frontier.length > 6_000) {
       frontier.sort((a, b) => b.score - a.score);
@@ -208,7 +207,7 @@ function findWinningAcceptancePath(): AcceptanceState | null {
 }
 
 describe("META 08.9 playable acceptance", () => {
-  it("finds a complete player path through every strategic mechanic and reaches victory", () => {
+  it("finds a complete legal path through every strategic mechanic and reaches victory", () => {
     const solution = findWinningAcceptancePath();
 
     expect(solution, "the strategic mission must remain fully winnable").not.toBeNull();
