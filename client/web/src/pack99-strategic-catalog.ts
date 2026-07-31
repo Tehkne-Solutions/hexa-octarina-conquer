@@ -5,7 +5,14 @@ export type StrategicAssetKey =
   | "forest"
   | "water"
   | "pillar"
+  | "pillarBlue"
+  | "pillarRed"
+  | "pillarEnergized"
   | "pillarSelected"
+  | "edgePreviewNeSw"
+  | "edgePreviewNwSe"
+  | "edgeBuiltNeSw"
+  | "edgeBuiltNwSe"
   | "kael"
   | "lyra"
   | "varg"
@@ -28,14 +35,23 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   grass: { id: "TILE_GRASS_FLAT_CENTER_A_01" },
   forest: { id: "TILE_FOREST_FLAT_CENTER_A_01" },
   water: { id: "TILE_WATER_FLAT_CENTER_A_01" },
+
   pillar: { id: "PILLAR_NEUTRAL_01" },
+  pillarBlue: { id: "PILLAR_BLUE_01" },
+  pillarRed: { id: "PILLAR_RED_01" },
+  pillarEnergized: { id: "PILLAR_ENERGIZED_01" },
   pillarSelected: { id: "PILLAR_SELECTED_01" },
 
-  // Variantes individuais transparentes: não dependem dos spritesheets ausentes.
-  kael: { id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01" },
-  lyra: { id: "HERO_RANGER_01_IDLE_BASE_NE_01" },
-  varg: { id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01" },
-  brakk: { id: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01" },
+  edgePreviewNeSw: { id: "EDGE_STONE_PREVIEW_NE_SW_01" },
+  edgePreviewNwSe: { id: "EDGE_STONE_PREVIEW_NW_SE_01" },
+  edgeBuiltNeSw: { id: "EDGE_STONE_BUILT_NE_SW_01" },
+  edgeBuiltNwSe: { id: "EDGE_STONE_BUILT_NW_SE_01" },
+
+  // Spritesheets oficiais do PACK 99: quatro quadros de idle em 256x256.
+  kael: { id: "HERO_GUARDIAN_01_IDLE_SW_01", field: "spritesheet" },
+  lyra: { id: "HERO_RANGER_01_IDLE_NE_01", field: "spritesheet" },
+  varg: { id: "UNIT_RECRUIT_01_IDLE_NW_01", field: "spritesheet" },
+  brakk: { id: "CHAMP_BERSERKER_01_IDLE_NW_01", field: "spritesheet" },
 
   bastion: { id: "TERR_OUTPOST_NEUTRAL_01" },
   watchtower: { id: "TERR_CAMP_NEUTRAL_01" },
