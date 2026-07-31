@@ -3,10 +3,14 @@ name: META 08 Playable Acceptance
 on:
   pull_request:
     paths:
+      - "client/web/src/main.tsx"
+      - "client/web/src/GameApp.tsx"
+      - "client/web/src/CampaignExperience.tsx"
       - "client/web/src/StrategicBoardSlice.tsx"
       - "client/web/src/strategic-board-model.ts"
       - "client/web/src/strategic-board-model.test.ts"
       - "client/web/src/strategic-playable-acceptance.test.ts"
+      - "client/web/src/strategic-mode-authority.test.ts"
       - "client/web/src/strategic-board-*.css"
       - "client/web/scripts/meta08-acceptance.mjs"
       - "client/web/package.json"
@@ -42,7 +46,7 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Prove complete strategic victory path
-        run: npm run test -- strategic-playable-acceptance.test.ts
+        run: npm run test -- strategic-playable-acceptance.test.ts strategic-mode-authority.test.ts
 
       - name: Build production PWA
         run: npm run build
@@ -56,7 +60,7 @@ jobs:
           echo $! > /tmp/meta08-preview.pid
           npx --yes wait-on@8.0.3 http://127.0.0.1:4173
 
-      - name: Run notebook, keyboard, touch and mobile acceptance
+      - name: Run complete notebook, keyboard, touch and mobile acceptance
         env:
           META08_BASE_URL: http://127.0.0.1:4173
           META08_OUTPUT_DIR: meta08-acceptance
