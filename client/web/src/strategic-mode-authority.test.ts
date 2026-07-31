@@ -31,4 +31,11 @@ describe("META 08.9 active mode authority", () => {
     expect(authorityCss).toContain("mode-attack");
     expect(authorityCss).toContain(".strategic-unit.owner-red:not(.is-attack-target)");
   });
+
+  it("overrides the physical desktop grid with the canonical single-column mobile order", () => {
+    expect(authorityCss).toContain("@media (max-width: 900px)");
+    expect(authorityCss).toContain("grid-template-columns: minmax(0, 1fr) !important");
+    expect(authorityCss).toContain("grid-template-rows: auto minmax(620px, 72vh) auto !important");
+    expect(authorityCss).toContain("min-height: 620px !important");
+  });
 });
