@@ -1,4 +1,5 @@
 import { runtimeAssetUrl } from "./runtime-assets";
+import "./strategic-board-canonical-units.css";
 
 export type StrategicAssetKey =
   | "grass"
@@ -47,11 +48,12 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   edgeBuiltNeSw: { id: "EDGE_STONE_BUILT_NE_SW_01" },
   edgeBuiltNwSe: { id: "EDGE_STONE_BUILT_NW_SE_01" },
 
-  // Spritesheets oficiais do PACK 99: quatro quadros de idle em 256x256.
-  kael: { id: "HERO_GUARDIAN_01_IDLE_SW_01", field: "spritesheet" },
-  lyra: { id: "HERO_RANGER_01_IDLE_NE_01", field: "spritesheet" },
-  varg: { id: "UNIT_RECRUIT_01_IDLE_NW_01", field: "spritesheet" },
-  brakk: { id: "CHAMP_BERSERKER_01_IDLE_NW_01", field: "spritesheet" },
+  // O runtime 1.0.1 materializa as direções canônicas como PNGs individuais.
+  // Estes quatro IDs possuem aliases oficiais em canonical-runtime-aliases.json.
+  kael: { id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01" },
+  lyra: { id: "HERO_RANGER_01_IDLE_BASE_NE_01" },
+  varg: { id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01" },
+  brakk: { id: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01" },
 
   bastion: { id: "TERR_OUTPOST_NEUTRAL_01" },
   watchtower: { id: "TERR_CAMP_NEUTRAL_01" },
