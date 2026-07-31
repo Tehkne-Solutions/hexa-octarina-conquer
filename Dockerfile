@@ -4,7 +4,7 @@ ARG HEXA_RELEASE_VERSION=0.12.0
 ARG HEXA_RELEASE_SHA=unknown
 ARG PACK99_WEB_RUNTIME_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2/hoc-pack99-web-full.zip
 ARG PACK99_WEB_RUNTIME_SHA256_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2/hoc-pack99-web-full.zip.sha256
-ARG PACK99_WEB_RUNTIME_REQUIRED=false
+ARG PACK99_WEB_RUNTIME_REQUIRED=true
 ENV VITE_RELEASE_VERSION=${HEXA_RELEASE_VERSION} \
     VITE_RELEASE_SHA=${HEXA_RELEASE_SHA}
 
@@ -28,27 +28,24 @@ RUN set -eux; \
     if [ "${marker_required}" = "true" ]; then runtime_required="true"; fi; \
     echo "PACK99_PRODUCTION_MARKER=${marker_status} required=${runtime_required}"; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}"; \
-    if curl --fail --location --silent --show-error --retry 3 \
-         "${PACK99_WEB_RUNTIME_URL}" -o "/tmp/${runtime_name}" \
-       && curl --fail --location --silent --show-error --retry 3 \
-         "${PACK99_WEB_RUNTIME_SHA256_URL}" -o "/tmp/${checksum_name}"; then \
-      (cd /tmp && sha256sum --check "${checksum_name}"); \
-      actual_sha="$(sha256sum "/tmp/${runtime_name}" | cut -d' ' -f1)"; \
-      if [ -n "${marker_sha}" ] && [ "${actual_sha}" != "${marker_sha}" ]; then \
-        echo "O archive Web diverge do SHA-256 promovido no marcador." >&2; \
-        exit 2; \
-      fi; \
-      rm -rf /web/public/assets/runtime; \
-      mkdir -p /web/public/assets/runtime; \
-      unzip -oq "/tmp/${runtime_name}" -d /web/public/assets/runtime; \
-      node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const index=JSON.parse(fs.readFileSync(root+"/pack99/runtime-index.json","utf8")); if(install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||index.runtimeMode!=="full"||index.canonicalAssetCount!==1037||!Array.isArray(index.assets)||index.assets.length<1850||index.fallback!==null){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length}`);'; \
-    else \
-      if [ "${runtime_required}" = "true" ]; then \
-        echo "A Release integral promovida do PACK 99 é obrigatória, mas não pôde ser baixada." >&2; \
-        exit 2; \
-      fi; \
-      echo "PACK99_PRODUCTION_RUNTIME=bootstrap (marcador ainda não promovido)"; \
+    if ! curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_URL}" -o "/tmp/${runtime_name}"; then \
+      echo "PACK99_RELEASE_DOWNLOAD_FAILED=${PACK99_WEB_RUNTIME_URL}" >&2; \
+      exit 2; \
     fi; \
+    if ! curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_SHA256_URL}" -o "/tmp/${checksum_name}"; then \
+      echo "PACK99_CHECKSUM_DOWNLOAD_FAILED=${PACK99_WEB_RUNTIME_SHA256_URL}" >&2; \
+      exit 2; \
+    fi; \
+    (cd /tmp && sha256sum --check "${checksum_name}"); \
+    actual_sha="$(sha256sum "/tmp/${runtime_name}" | cut -d' ' -f1)"; \
+    if [ -n "${marker_sha}" ] && [ "${actual_sha}" != "${marker_sha}" ]; then \
+      echo "O archive Web diverge do SHA-256 promovido no marcador." >&2; \
+      exit 2; \
+    fi; \
+    rm -rf /web/public/assets/runtime; \
+    mkdir -p /web/public/assets/runtime; \
+    unzip -oq "/tmp/${runtime_name}" -d /web/public/assets/runtime; \
+    node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const required=["runtime-install.json","pack99/runtime-index.json","registry/assets-runtime.json","registry/canonical-runtime-aliases.json"]; for(const file of required){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_FILE_MISSING:"+file)} const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const index=JSON.parse(fs.readFileSync(root+"/pack99/runtime-index.json","utf8")); const aliases=JSON.parse(fs.readFileSync(root+"/registry/canonical-runtime-aliases.json","utf8")); const requiredAliases=["HERO_GUARDIAN_01_IDLE_BASE_SW_01","HERO_RANGER_01_IDLE_BASE_NE_01","UNIT_RECRUIT_01_IDLE_BASE_NW_01","CHAMP_BERSERKER_01_IDLE_BASE_NW_01"]; if(install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||index.runtimeMode!=="full"||index.canonicalAssetCount!==1037||!Array.isArray(index.assets)||index.assets.length<1850||index.fallback!==null){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; for(const id of requiredAliases){if(!aliases.aliases?.[id]) throw new Error("PACK99_CANONICAL_ALIAS_MISSING:"+id)} console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length} aliases=${requiredAliases.length}`);'; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}" /tmp/pack99-production-release.json
 
 RUN npm run build
@@ -59,10 +56,8 @@ ARG HEXA_RELEASE_VERSION=0.12.0
 ARG HEXA_RELEASE_SHA=unknown
 
 WORKDIR /app
-
 COPY server/package.json ./package.json
 RUN npm install --omit=dev --no-audit --no-fund && npm cache clean --force
-
 COPY server/src ./src
 COPY --from=web-build /web/dist ./web
 
@@ -83,13 +78,9 @@ ENV NODE_ENV=production \
     HEXA_RECOVERY_EXPOSE_CODE=false
 
 RUN mkdir -p /data && chown -R node:node /app /data
-
 USER node
-
 EXPOSE 8080
 VOLUME ["/data"]
-
 HEALTHCHECK --interval=20s --timeout=4s --start-period=10s --retries=3 \
   CMD node -e "const p=process.env.PORT||8080;fetch('http://127.0.0.1:'+p+'/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
-
 CMD ["node", "src/index.js"]
