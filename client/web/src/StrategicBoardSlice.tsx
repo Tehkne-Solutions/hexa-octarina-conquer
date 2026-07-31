@@ -21,6 +21,7 @@ import {
   type StrategicBoard,
   type StrategicCell,
   type StrategicEdge,
+  type StrategicFaction,
   type StrategicNode,
   type StrategicResult,
   type StrategicUnitId,
@@ -32,6 +33,7 @@ import {
   type StrategicAssetKey,
 } from "./pack99-strategic-catalog";
 import "./strategic-board-slice.css";
+import "./strategic-board-physical-world.css";
 
 interface StrategicBoardSliceProps {
   playerName: string;
@@ -39,6 +41,7 @@ interface StrategicBoardSliceProps {
 }
 
 type ActionMode = "road" | "move" | "structure" | "attack";
+type EdgeOrientation = "ne-sw" | "nw-se";
 
 const FRIENDLY_UNITS: StrategicUnitId[] = ["kael", "lyra"];
 const UNIT_ASSET_KEY: Record<StrategicUnitId, "kael" | "lyra" | "varg" | "brakk"> = {
@@ -77,6 +80,48 @@ function edgeStyle(edge: StrategicEdge, nodeIndex: Map<string, StrategicNode>): 
     transform: `translate(-50%, -50%) rotate(${angle}deg)`,
     "--edge-rotation": `${angle}deg`,
   } as CSSProperties;
+}
+
+function edgeOrientation(edge: StrategicEdge, nodeIndex: Map<string, StrategicNode>): EdgeOrientation {
+  const a = nodeIndex.get(edge.a)!;
+  const b = nodeIndex.get(edge.b)!;
+  return a.col === b.col ? "nw-se" : "ne-sw";
+}
+
+function physicalEdgeAsset(
+  edge: StrategicEdge,
+  orientation: EdgeOrientation,
+  catalog: Pack99StrategicCatalog,
+): string | null {
+  if (edge.state === "road") {
+    return orientation === "ne-sw" ? catalog.edgeBuiltNeSw : catalog.edgeBuiltNwSe;
+  }
+  return orientation === "ne-sw" ? catalog.edgePreviewNeSw : catalog.edgePreviewNwSe;
+}
+
+function nodeFaction(board: StrategicBoard, nodeId: string): StrategicFaction | null {
+  const occupant = board.units.find((unit) => unit.hp > 0 && unit.nodeId === nodeId);
+  if (occupant) return occupant.faction;
+
+  const connected = board.edges.filter((edge) => (
+    edge.state === "road" && (edge.a === nodeId || edge.b === nodeId)
+  ));
+  const blue = connected.filter((edge) => edge.owner === "blue").length;
+  const red = connected.filter((edge) => edge.owner === "red").length;
+  if (blue > red) return "blue";
+  if (red > blue) return "red";
+  return null;
+}
+
+function pillarAsset(
+  catalog: Pack99StrategicCatalog,
+  faction: StrategicFaction | null,
+  highlighted: boolean,
+): string | null {
+  if (highlighted) return catalog.pillarSelected ?? catalog.pillarEnergized ?? catalog.pillar;
+  if (faction === "blue") return catalog.pillarBlue ?? catalog.pillar;
+  if (faction === "red") return catalog.pillarRed ?? catalog.pillar;
+  return catalog.pillar;
 }
 
 function actionLabel(mode: ActionMode): string {
@@ -310,7 +355,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
     setMessages(["Rota recomendada: construa a estrada do Entroncamento Central ao Vau Octarino."]);
   }
 
-  return <main className="strategic-slice meta08-roads">
+  return <main className="strategic-slice meta08-roads meta08-physical-world">
     <header className="strategic-topbar">
       <button type="button" className="strategic-menu" onClick={onBack} aria-label="Voltar">☰</button>
       <div className="strategic-title">
@@ -374,6 +419,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
 
       <section className="strategic-board" aria-label="Tabuleiro estratégico META 08">
         <div className="strategic-world-light" />
+        <div className="strategic-world-depth" aria-hidden="true" />
 
         <div className={`strategic-command-banner mode-${mode}`}>
           <small>PRÓXIMA AÇÃO</small>
@@ -437,14 +483,18 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             const moveRoute = edge.state === "road" && Boolean(targetNode && moveTargets.has(targetNode));
             const recommended = Boolean(targetNode && targetNode === preferredNodeTarget && (roadTarget || moveRoute));
             const secondary = Boolean((roadTarget || moveRoute) && !recommended);
+            const orientation = edgeOrientation(edge, nodeIndex);
+            const physicalSource = physicalEdgeAsset(edge, orientation, catalog);
 
             return <button
               key={edge.id}
               type="button"
               className={[
                 "strategic-edge",
+                `orientation-${orientation}`,
                 `state-${edge.state}`,
                 `owner-${edge.owner ?? "neutral"}`,
+                physicalSource ? "has-physical-asset" : "",
                 roadTarget ? "is-road-target" : "",
                 moveRoute ? "is-move-route" : "",
                 recommended ? "is-recommended" : "",
@@ -464,6 +514,8 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
               <span className="strategic-road-shadow" />
               <span className="strategic-road-bed" />
               <span className="strategic-road-stones" />
+              {physicalSource ? <img className="strategic-edge-asset" src={physicalSource} alt="" draggable={false} /> : null}
+              <span className="strategic-edge-owner-trim" />
               {recommended ? <b>{roadTarget ? "CONSTRUIR" : "MOVER"}</b> : null}
             </button>;
           })}
@@ -474,6 +526,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             if (!cell.structure) return null;
             const source = cell.structure.type === "bastion" ? catalog.bastion : catalog.watchtower;
             return <div key={cell.id} className={`strategic-structure owner-${cell.structure.owner}`} style={cellPoint(cell)}>
+              <span className="strategic-structure-platform" />
               {source ? <img src={source} alt="" draggable={false} /> : <span>⌂</span>}
               <b>{cell.structure.type === "bastion" ? "Bastião" : "Torre Rubra"}</b>
             </div>;
@@ -487,6 +540,8 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             const moveTarget = mode === "move" && moveTargets.has(node.id) && actions > 0;
             const isOrigin = selectedUnit.nodeId === node.id;
             const recommended = node.id === preferredNodeTarget && (roadTarget || moveTarget);
+            const faction = nodeFaction(board, node.id);
+            const source = pillarAsset(catalog, faction, roadTarget || moveTarget || isOrigin || recommended);
 
             return <button
               key={node.id}
@@ -494,6 +549,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
               title={node.name}
               className={[
                 "strategic-node",
+                faction ? `owner-${faction}` : "owner-neutral",
                 roadTarget ? "is-road-target" : "",
                 moveTarget ? "is-move-target" : "",
                 unit ? "is-occupied" : "",
@@ -507,11 +563,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
                 : moveTarget ? `Mover para ${node.name}` : node.name}
             >
               <span className="strategic-node-pad" />
-              {catalog.pillar ? <img
-                src={roadTarget || moveTarget || isOrigin ? catalog.pillarSelected ?? catalog.pillar : catalog.pillar}
-                alt=""
-                draggable={false}
-              /> : <span className="strategic-node-fallback" />}
+              {source ? <img src={source} alt="" draggable={false} /> : <span className="strategic-node-fallback" />}
               <em>{node.name}</em>
             </button>;
           })}
@@ -529,7 +581,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
             return <button
               key={unit.id}
               type="button"
-              className={`strategic-unit owner-${unit.faction} ${selectedUnitId === unit.id ? "is-selected" : ""} ${attackable ? "is-attack-target" : ""}`}
+              className={`strategic-unit unit-${unit.id} owner-${unit.faction} ${selectedUnitId === unit.id ? "is-selected" : ""} ${attackable ? "is-attack-target" : ""}`}
               style={nodePoint(node)}
               onClick={() => selectUnit(unit.id)}
               aria-label={`${unit.name}, ${unit.hp} de vida`}
