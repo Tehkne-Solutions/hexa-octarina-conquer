@@ -1,0 +1,173 @@
+/*
+ * META 09.3 — physical territory claim authority
+ * Tehkné Solutions
+ *
+ * Turns an owner-neutral → owner-blue/owner-red cell transition into a
+ * material conquest sequence. Only decorative descendants animate; the cell
+ * button and its hitbox remain stable.
+ */
+
+.meta08-physical-world .strategic-cell.owner-blue,
+.meta08-physical-world .strategic-cell.owner-red {
+  isolation: isolate;
+  animation: meta09-territory-settle 980ms cubic-bezier(.16,.76,.2,1) both;
+}
+
+/* A controlled region receives a material occupation layer, not a flat wash. */
+.meta08-physical-world .strategic-cell.owner-blue .strategic-cell-tint,
+.meta08-physical-world .strategic-cell.owner-red .strategic-cell-tint {
+  opacity: .18 !important;
+  animation: meta09-territory-fill 1150ms ease-out both;
+}
+
+.meta08-physical-world .strategic-cell.owner-blue .strategic-cell-tint {
+  background:
+    radial-gradient(ellipse 62% 54% at 50% 54%, rgba(56,158,213,.3), transparent 72%),
+    repeating-linear-gradient(32deg, transparent 0 28px, rgba(98,192,235,.055) 29px 31px),
+    linear-gradient(145deg, rgba(42,144,201,.2), transparent 58%) !important;
+}
+
+.meta08-physical-world .strategic-cell.owner-red .strategic-cell-tint {
+  background:
+    radial-gradient(ellipse 62% 54% at 50% 54%, rgba(198,63,54,.28), transparent 72%),
+    repeating-linear-gradient(32deg, transparent 0 28px, rgba(232,103,87,.05) 29px 31px),
+    linear-gradient(145deg, rgba(195,57,48,.19), transparent 58%) !important;
+}
+
+/* Existing territory-wall markup becomes a physical perimeter construction. */
+.meta08-physical-world .strategic-cell.owner-blue .strategic-territory-wall,
+.meta08-physical-world .strategic-cell.owner-red .strategic-territory-wall {
+  opacity: .96 !important;
+  transform-origin: 50% 50%;
+  animation: meta09-territory-perimeter 1250ms cubic-bezier(.18,.78,.2,1) both;
+}
+
+.meta08-physical-world .strategic-cell.owner-blue .strategic-territory-wall {
+  filter:
+    saturate(.92) contrast(1.12)
+    drop-shadow(0 8px 6px rgba(0,0,0,.66))
+    drop-shadow(0 0 8px rgba(75,179,232,.36)) !important;
+}
+
+.meta08-physical-world .strategic-cell.owner-red .strategic-territory-wall {
+  filter:
+    saturate(.94) contrast(1.12)
+    drop-shadow(0 8px 6px rgba(0,0,0,.66))
+    drop-shadow(0 0 8px rgba(226,79,68,.34)) !important;
+}
+
+/* The region badge becomes a faction standard after conquest. */
+.meta08-physical-world .strategic-cell.owner-blue .strategic-region-badge,
+.meta08-physical-world .strategic-cell.owner-red .strategic-region-badge {
+  overflow: visible;
+  animation: meta09-territory-standard 1150ms 260ms ease-out both;
+}
+
+.meta08-physical-world .strategic-cell.owner-blue .strategic-region-badge::before,
+.meta08-physical-world .strategic-cell.owner-red .strategic-region-badge::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 2px);
+  width: 3px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 3px 3px 0 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, #5a4930, #c1a66a 48%, #473820);
+  box-shadow: 0 4px 5px rgba(0,0,0,.6);
+}
+
+.meta08-physical-world .strategic-cell.owner-blue .strategic-region-badge::after,
+.meta08-physical-world .strategic-cell.owner-red .strategic-region-badge::after {
+  content: "";
+  position: absolute;
+  left: calc(50% + 2px);
+  bottom: calc(100% + 10px);
+  width: 24px;
+  height: 15px;
+  clip-path: polygon(0 0, 100% 0, 78% 50%, 100% 100%, 0 100%);
+  pointer-events: none;
+  transform-origin: 0 50%;
+  animation: meta09-territory-banner 2.8s ease-in-out infinite;
+  box-shadow: 0 5px 6px rgba(0,0,0,.45);
+}
+
+.meta08-physical-world .strategic-cell.owner-blue .strategic-region-badge::after {
+  background: linear-gradient(135deg, #69c7f3, #176ca2 72%);
+}
+
+.meta08-physical-world .strategic-cell.owner-red .strategic-region-badge::after {
+  background: linear-gradient(135deg, #f07d6f, #9c2824 72%);
+}
+
+/* A short conquest wave travels through the region without moving the cell. */
+.meta08-physical-world .strategic-cell.owner-blue::after,
+.meta08-physical-world .strategic-cell.owner-red::after {
+  animation: meta09-territory-pulse 1350ms ease-out both !important;
+}
+
+/* The liberated foundation reads as an actual construction plot. */
+.meta08-physical-world .strategic-cell.owner-blue .strategic-building-slot,
+.meta08-physical-world .strategic-cell.owner-red .strategic-building-slot {
+  min-width: 70px;
+  padding: 18px 10px 7px !important;
+  border: 1px solid rgba(222,201,142,.44) !important;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(235,215,157,.16), transparent 46%),
+    repeating-linear-gradient(90deg, rgba(186,163,105,.16) 0 2px, transparent 2px 11px),
+    rgba(25,22,15,.74) !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(7,10,7,.28),
+    0 9px 10px rgba(0,0,0,.48) !important;
+  animation: meta09-foundation-reveal 800ms 620ms ease-out both;
+}
+
+@keyframes meta09-territory-settle {
+  0% { filter: saturate(.7) brightness(1.18); }
+  48% { filter: saturate(1.28) brightness(1.06); }
+  100% { filter: saturate(1.08) brightness(.88) contrast(1.07); }
+}
+
+@keyframes meta09-territory-fill {
+  0% { opacity: 0; clip-path: circle(0 at 50% 50%); }
+  100% { opacity: .18; clip-path: circle(76% at 50% 50%); }
+}
+
+@keyframes meta09-territory-perimeter {
+  0% { opacity: 0; scale: .66; filter: brightness(1.8); }
+  64% { opacity: 1; scale: 1.035; }
+  100% { opacity: .96; scale: 1; }
+}
+
+@keyframes meta09-territory-standard {
+  0% { opacity: 0; translate: 0 8px; }
+  100% { opacity: .96; translate: 0 0; }
+}
+
+@keyframes meta09-territory-banner {
+  0%, 100% { transform: skewY(0deg) scaleX(1); }
+  50% { transform: skewY(-4deg) scaleX(.9); }
+}
+
+@keyframes meta09-territory-pulse {
+  0% { opacity: 1; box-shadow: inset 0 0 0 0 rgba(255,235,168,.58); }
+  55% { opacity: .78; box-shadow: inset 0 0 46px 8px rgba(255,235,168,.28); }
+  100% { opacity: .62; box-shadow: inset 0 0 0 0 transparent; }
+}
+
+@keyframes meta09-foundation-reveal {
+  0% { opacity: 0; translate: 0 8px; scale: .72; }
+  100% { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta08-physical-world .strategic-cell.owner-blue,
+  .meta08-physical-world .strategic-cell.owner-red,
+  .meta08-physical-world .strategic-cell.owner-blue *,
+  .meta08-physical-world .strategic-cell.owner-red *,
+  .meta08-physical-world .strategic-cell.owner-blue::after,
+  .meta08-physical-world .strategic-cell.owner-red::after {
+    animation: none !important;
+  }
+}
