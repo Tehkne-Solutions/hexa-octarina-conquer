@@ -1,0 +1,45 @@
+/*
+ * META 08.9 — active-mode hit-test authority
+ * Tehkné Solutions
+ *
+ * StrategicBoardSlice keeps target sets for every mechanic available so the
+ * action palette can display counts. Only the mechanic selected in the command
+ * banner may participate in board hit testing. This prevents a unit, stale
+ * route or node from covering the active Bastião target.
+ */
+
+/* ROAD: move routes remain visible, but only road targets receive the pointer. */
+.meta08-physical-world:has(.strategic-command-banner.mode-road)
+  .strategic-edge.is-move-route:not(.is-road-target),
+.meta08-physical-world:has(.strategic-command-banner.mode-road)
+  .strategic-node.is-move-target:not(.is-road-target) {
+  pointer-events: none !important;
+}
+
+/* MOVE: potential construction routes remain visible, but are not actionable. */
+.meta08-physical-world:has(.strategic-command-banner.mode-move)
+  .strategic-edge.is-road-target:not(.is-move-route),
+.meta08-physical-world:has(.strategic-command-banner.mode-move)
+  .strategic-node.is-road-target:not(.is-move-target) {
+  pointer-events: none !important;
+}
+
+/*
+ * STRUCTURE: the region is the only board target. Units, roads and nodes remain
+ * rendered as context, but cannot intercept the click over the cell.
+ */
+.meta08-physical-world:has(.strategic-command-banner.mode-structure)
+  :is(.strategic-unit, .strategic-edge, .strategic-node) {
+  pointer-events: none !important;
+}
+
+/* ATTACK: routes and posts provide context while unit tokens own the action. */
+.meta08-physical-world:has(.strategic-command-banner.mode-attack)
+  :is(.strategic-edge, .strategic-node, .strategic-cell) {
+  pointer-events: none !important;
+}
+
+.meta08-physical-world:has(.strategic-command-banner.mode-attack)
+  .strategic-unit.owner-red:not(.is-attack-target) {
+  pointer-events: none !important;
+}
