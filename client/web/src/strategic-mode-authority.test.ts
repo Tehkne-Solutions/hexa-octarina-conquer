@@ -38,4 +38,15 @@ describe("META 08.9 active mode authority", () => {
     expect(authorityCss).toContain("grid-template-rows: auto minmax(620px, 72vh) auto !important");
     expect(authorityCss).toContain("min-height: 620px !important");
   });
+
+  it("makes actionable routes the primary mobile touch layer without covering units", () => {
+    expect(authorityCss).toContain(":has(.strategic-command-banner.mode-road)");
+    expect(authorityCss).toContain(":has(.strategic-command-banner.mode-move)");
+    expect(authorityCss).toContain(".strategic-edges {");
+    expect(authorityCss).toContain("z-index: 35 !important");
+    expect(authorityCss).toContain(".strategic-edge:not(:disabled)");
+    expect(authorityCss).toContain("z-index: 36 !important");
+    expect(authorityCss).toContain(".strategic-units {");
+    expect(authorityCss).toContain("z-index: 40 !important");
+  });
 });
