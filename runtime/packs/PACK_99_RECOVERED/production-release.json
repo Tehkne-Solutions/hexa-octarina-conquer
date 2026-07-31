@@ -4,7 +4,7 @@
   "sourceVersion": "1.0.2",
   "releaseTag": "pack99-runtime-v1.0.2",
   "status": "awaiting-release",
-  "required": false,
+  "required": true,
   "expectedCanonicalAssetIds": 1037,
   "expectedRuntimeReferences": 1850,
   "sourceArtifact": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip",
