@@ -85,4 +85,31 @@
   .meta08-physical-world .strategic-board {
     min-height: 620px !important;
   }
+
+  /*
+   * A destination node overlaps the final section of its route. During ROAD and
+   * MOVE the route is the primary mobile gesture, so its stacking context rises
+   * above nodes while unit tokens remain authoritative at z-index 40.
+   */
+  .meta08-physical-world:has(.strategic-command-banner.mode-road)
+    .strategic-edges,
+  .meta08-physical-world:has(.strategic-command-banner.mode-move)
+    .strategic-edges {
+    z-index: 35 !important;
+  }
+
+  .meta08-physical-world:has(.strategic-command-banner.mode-road)
+    .strategic-edge:not(:disabled),
+  .meta08-physical-world:has(.strategic-command-banner.mode-move)
+    .strategic-edge:not(:disabled) {
+    z-index: 36 !important;
+  }
+
+  .meta08-physical-world .strategic-nodes {
+    z-index: 30 !important;
+  }
+
+  .meta08-physical-world .strategic-units {
+    z-index: 40 !important;
+  }
 }
