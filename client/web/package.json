@@ -13,6 +13,7 @@
     "test": "vitest run",
     "acceptance:meta08": "node scripts/meta08-acceptance.mjs",
     "verify:pack99": "node ../../scripts/verify-web-pack99.mjs",
+    "verify:production": "node scripts/production-pack99-gate.mjs",
     "check": "npm run verify:pack99 && npm run test && npm run build"
   },
   "dependencies": {
