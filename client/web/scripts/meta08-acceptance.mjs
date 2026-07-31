@@ -23,11 +23,7 @@ const report = {
 };
 
 function record(step, detail = {}) {
-  report.steps.push({
-    step,
-    at: new Date().toISOString(),
-    ...detail,
-  });
+  report.steps.push({ step, at: new Date().toISOString(), ...detail });
   console.log(`[META 08.9] ${step}`);
 }
 
@@ -46,10 +42,97 @@ async function expectText(page, text) {
   await page.getByText(text, { exact: true }).waitFor({ state: "visible", timeout: 10_000 });
 }
 
-async function clickRoad(page, label) {
+async function expectMode(page, label) {
+  await page.locator(".strategic-command-banner strong").getByText(label, { exact: true })
+    .waitFor({ state: "visible", timeout: 10_000 });
+}
+
+async function selectUnit(page, name) {
+  const button = page.locator(".strategic-roster-card:not(:disabled)").filter({ hasText: name }).first();
+  await button.waitFor({ state: "visible", timeout: 10_000 });
+  await button.click();
+  await page.locator(".strategic-help").getByText(new RegExp(`^${name} ·`)).waitFor({ timeout: 10_000 });
+}
+
+async function setMode(page, mode) {
+  const labels = {
+    road: { action: "ESTRADA", banner: "CONSTRUIR ESTRADA" },
+    move: { action: "MOVER", banner: "MOVER UNIDADE" },
+    structure: { action: "BASTIÃO", banner: "CONSTRUIR BASTIÃO" },
+    attack: { action: "ATACAR", banner: "ATACAR" },
+  };
+  const target = labels[mode];
+  const current = (await page.locator(".strategic-command-banner strong").textContent())?.trim();
+  if (current !== target.banner) {
+    const button = page.locator(".strategic-actions button:not(:disabled)").filter({ hasText: target.action }).first();
+    await button.waitFor({ state: "visible", timeout: 10_000 });
+    await button.click();
+  }
+  await expectMode(page, target.banner);
+}
+
+async function clickRoute(page, label) {
   const edge = page.locator(`.strategic-edge[aria-label="${label}"]:not(:disabled)`).first();
   await edge.waitFor({ state: "visible", timeout: 10_000 });
   await edge.click();
+}
+
+async function tapRoute(page, label) {
+  const edge = page.locator(`.strategic-edge[aria-label="${label}"]:not(:disabled)`).first();
+  await edge.waitFor({ state: "visible", timeout: 10_000 });
+  await edge.tap();
+}
+
+async function attackUnit(page, name) {
+  const target = page.locator(`.strategic-unit[aria-label^="${name},"]`).first();
+  await target.waitFor({ state: "visible", timeout: 10_000 });
+  await target.click();
+}
+
+async function buildBastion(page, regionName) {
+  const target = page.locator(`.strategic-cell[aria-label="Construir Bastião em ${regionName}"]:not(:disabled)`).first();
+  await target.waitFor({ state: "visible", timeout: 10_000 });
+  await target.click();
+}
+
+async function endTurn(page) {
+  await page.getByRole("button", { name: "ENCERRAR TURNO" }).click();
+}
+
+async function activeControl(page) {
+  return page.evaluate(() => {
+    const element = document.activeElement;
+    if (!(element instanceof HTMLElement)) return null;
+    return {
+      tag: element.tagName,
+      label: (element.getAttribute("aria-label") ?? element.textContent ?? "").replace(/\s+/g, " ").trim(),
+      disabled: element instanceof HTMLButtonElement ? element.disabled : false,
+      ariaDisabled: element.getAttribute("aria-disabled"),
+    };
+  });
+}
+
+async function activateByKeyboard(page, expectedLabel, key) {
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  });
+
+  const visited = [];
+  for (let index = 0; index < 100; index += 1) {
+    await page.keyboard.press("Tab");
+    const active = await activeControl(page);
+    if (!active) continue;
+    visited.push(active.label);
+    if (active.disabled || active.ariaDisabled === "true") {
+      throw new Error(`disabled control received keyboard focus: ${JSON.stringify(active)}`);
+    }
+    if (active.label === expectedLabel) {
+      await page.keyboard.press(key);
+      record("strategic control activated from keyboard", { label: expectedLabel, key, traversed: visited.length });
+      return;
+    }
+  }
+  throw new Error(`keyboard could not reach strategic control ${expectedLabel}; visited=${JSON.stringify(visited)}`);
 }
 
 async function capture(page, name) {
@@ -69,54 +152,67 @@ async function runNotebookAcceptance(browser) {
     await expectText(page, "Estradas 2/6");
     await capture(page, "01-initial-notebook.png");
 
-    await clickRoad(page, "Construir estrada até Vau Octarino");
+    // Round 1: keyboard road, movement and first attack.
+    await activateByKeyboard(page, "Construir estrada até Mirante de Orun", "Enter");
     await expectText(page, "Estradas 3/6");
-    record("recommended road built", { roadProgress: "3/6" });
+    await setMode(page, "move");
+    await clickRoute(page, "Mover para Mirante de Orun");
+    await page.locator(".strategic-help").getByText("Kael · Mirante de Orun", { exact: true }).waitFor({ timeout: 10_000 });
+    await setMode(page, "attack");
+    await attackUnit(page, "Varg");
+    await page.locator('.strategic-unit[aria-label="Varg, 6 de vida"]').waitFor({ timeout: 10_000 });
+    record("round one completed with road movement and combat");
 
-    await clickRoad(page, "Mover para Vau Octarino");
-    await page.locator(".strategic-help").getByText("Kael · Vau Octarino", { exact: true }).waitFor({ timeout: 10_000 });
-    record("Kael moved through the constructed route");
+    await activateByKeyboard(page, "ENCERRAR TURNO", "Space");
+    await expectText(page, "RODADA 2");
 
-    await clickRoad(page, "Construir estrada até Acampamento de Lyra");
+    // Round 2: defeat Varg and prepare both western regions.
+    await setMode(page, "attack");
+    await attackUnit(page, "Varg");
+    await expectText(page, "Baixas Rubras 1/1");
+    await setMode(page, "road");
+    await clickRoute(page, "Construir estrada até Portal do Norte");
+    await selectUnit(page, "Lyra");
+    await setMode(page, "road");
+    await clickRoute(page, "Construir estrada até Vau Octarino");
+    record("enemy defeated and second regional route prepared");
+    await capture(page, "02-enemy-defeated-notebook.png");
+
+    await endTurn(page);
+    await expectText(page, "RODADA 3");
+
+    // Round 3: close Bosque de Orun and build the required Bastion.
+    await setMode(page, "move");
+    await clickRoute(page, "Mover para Portal do Norte");
+    await page.locator(".strategic-help").getByText("Kael · Portal do Norte", { exact: true }).waitFor({ timeout: 10_000 });
+    await setMode(page, "road");
+    await clickRoute(page, "Construir estrada até Posto da Floresta");
     await expectText(page, "Regiões 1/2");
-    record("first territory closed", { regionProgress: "1/2" });
-    await capture(page, "02-region-closed-notebook.png");
-
-    await page.getByRole("button", { name: "ENCERRAR TURNO" }).click();
-    await page.getByText("RODADA 2", { exact: true }).waitFor({ state: "visible", timeout: 10_000 });
-    record("enemy turn resolved and round two started");
-
-    let buildTarget = page.locator('.strategic-cell[aria-label^="Construir Bastião em"]:not(:disabled)').first();
-    if (await buildTarget.count() === 0) {
-      const bastionAction = page.locator(".strategic-actions button:not(:disabled)").filter({ hasText: "BASTIÃO" }).first();
-      await bastionAction.click();
-      buildTarget = page.locator('.strategic-cell[aria-label^="Construir Bastião em"]:not(:disabled)').first();
-    }
-    await buildTarget.waitFor({ state: "visible", timeout: 10_000 });
-    const bastionLabel = await buildTarget.getAttribute("aria-label");
-    await buildTarget.click();
+    await setMode(page, "structure");
+    await buildBastion(page, "Bosque de Orun");
     await expectText(page, "Bastiões 1/1");
-    record("Bastion built after territory closure", { target: bastionLabel });
+    record("first territory closed and Bastion built");
     await capture(page, "03-bastion-notebook.png");
 
-    const keyboardTargets = [];
-    for (let index = 0; index < 24; index += 1) {
-      await page.keyboard.press("Tab");
-      const active = await page.evaluate(() => {
-        const element = document.activeElement;
-        if (!(element instanceof HTMLElement)) return null;
-        return {
-          tag: element.tagName,
-          label: element.getAttribute("aria-label") ?? element.textContent?.trim().slice(0, 80) ?? "",
-          disabled: element instanceof HTMLButtonElement ? element.disabled : false,
-          ariaDisabled: element.getAttribute("aria-disabled"),
-        };
-      });
-      if (active) keyboardTargets.push(active);
-    }
-    const invalidFocus = keyboardTargets.find((target) => target.disabled || target.ariaDisabled === "true");
-    if (invalidFocus) throw new Error(`disabled strategic control received keyboard focus: ${JSON.stringify(invalidFocus)}`);
-    record("keyboard traversal skipped disabled strategic controls", { sampledTargets: keyboardTargets.length });
+    await endTurn(page);
+    await expectText(page, "RODADA 4");
+
+    // Round 4: close the second region and assert victory through React UI.
+    await selectUnit(page, "Lyra");
+    await setMode(page, "move");
+    await clickRoute(page, "Mover para Vau Octarino");
+    await page.locator(".strategic-help").getByText("Lyra · Vau Octarino", { exact: true }).waitFor({ timeout: 10_000 });
+    await setMode(page, "road");
+    await clickRoute(page, "Construir estrada até Entroncamento Central");
+
+    const victory = page.locator(".strategic-result.is-victory");
+    await victory.waitFor({ state: "visible", timeout: 10_000 });
+    await victory.getByText("Orun consolidou a fronteira", { exact: true }).waitFor({ timeout: 10_000 });
+    await expectText(page, "VITÓRIA");
+    await expectText(page, "Regiões 2/2");
+    await victory.getByRole("button", { name: "JOGAR NOVAMENTE" }).waitFor({ state: "visible" });
+    record("complete strategic victory rendered through the browser UI", { round: 4 });
+    await capture(page, "04-victory-notebook.png");
   } catch (error) {
     await capture(page, "failure-notebook.png").catch(() => undefined);
     throw error;
@@ -148,8 +244,12 @@ async function runMobileAcceptance(browser) {
     if (geometry.boardHeight < 560) {
       throw new Error(`mobile strategic board is too short: ${JSON.stringify(geometry)}`);
     }
-    record("mobile layout accepted without horizontal overflow", geometry);
-    await capture(page, "04-initial-mobile.png");
+
+    await tapRoute(page, "Construir estrada até Vau Octarino");
+    await expectText(page, "Estradas 3/6");
+    await expectMode(page, "MOVER UNIDADE");
+    record("mobile touch built a strategic road without horizontal overflow", geometry);
+    await capture(page, "05-road-built-mobile.png");
   } catch (error) {
     await capture(page, "failure-mobile.png").catch(() => undefined);
     throw error;
