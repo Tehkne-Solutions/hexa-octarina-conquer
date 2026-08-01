@@ -39,7 +39,7 @@ Require-Command "node"
 
 $RequiredFiles = @(
     "runtime-install.json",
-    "pack99/runtime-index.json",
+    "pack-manifest.json",
     "registry/assets-runtime.json",
     "registry/canonical-runtime-aliases.json"
 )
@@ -52,16 +52,31 @@ foreach ($Relative in $RequiredFiles) {
 }
 
 $Install = Get-Content (Join-Path $ResolvedRuntime "runtime-install.json") -Raw | ConvertFrom-Json
-$Index = Get-Content (Join-Path $ResolvedRuntime "pack99/runtime-index.json") -Raw | ConvertFrom-Json
+$Manifest = Get-Content (Join-Path $ResolvedRuntime "pack-manifest.json") -Raw | ConvertFrom-Json
+$Registry = Get-Content (Join-Path $ResolvedRuntime "registry/assets-runtime.json") -Raw | ConvertFrom-Json
 $Aliases = Get-Content (Join-Path $ResolvedRuntime "registry/canonical-runtime-aliases.json") -Raw | ConvertFrom-Json
 
+$Assets = @($Registry.assets)
+$Unresolved = @($Registry.unresolved)
+
+if ($Install.packId -ne "HOC_PACK_99_FINAL_RUNTIME") { Fail "runtime-install.packId is invalid" }
 if ($Install.profile -ne "full") { Fail "runtime-install.profile must be full" }
 if ([int]$Install.assetCount -ne 1037) { Fail "runtime-install.assetCount must be 1037" }
 if ([int]$Install.unresolvedReferences -ne 0) { Fail "runtime-install.unresolvedReferences must be 0" }
-if ($Index.runtimeMode -ne "full") { Fail "runtime-index.runtimeMode must be full" }
-if ([int]$Index.canonicalAssetCount -ne 1037) { Fail "runtime-index.canonicalAssetCount must be 1037" }
-if (@($Index.assets).Count -lt 1850) { Fail "runtime-index.assets must contain at least 1850 references" }
-if ($null -ne $Index.fallback) { Fail "runtime-index.fallback must be null" }
+if ($Registry.packId -ne $Install.packId) { Fail "registry.packId must match runtime-install.packId" }
+if ($Registry.profile -ne "full") { Fail "registry.profile must be full" }
+if ([int]$Registry.assetCount -ne 1037) { Fail "registry.assetCount must be 1037" }
+if ($Assets.Count -ne 1037) { Fail "registry.assets must contain exactly 1037 entries" }
+if ($Unresolved.Count -ne 0) { Fail "registry.unresolved must be empty" }
+if (-not $Manifest.version) { Fail "pack-manifest.version is required" }
+
+foreach ($Asset in $Assets) {
+    if (-not $Asset._runtimeFile) { continue }
+    $PhysicalPath = Join-Path $ResolvedRuntime ($Asset._runtimeFile -replace "/", "\")
+    if (-not (Test-Path $PhysicalPath -PathType Leaf)) {
+        Fail "Physical runtime file missing: $($Asset._runtimeFile)"
+    }
+}
 
 $RequiredAliases = @(
     "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
@@ -73,7 +88,15 @@ foreach ($Id in $RequiredAliases) {
     if (-not $Aliases.aliases.PSObject.Properties[$Id]) {
         Fail "Canonical alias missing: $Id"
     }
+    $AliasTarget = Join-Path $ResolvedRuntime (($Aliases.aliases.$Id) -replace "/", "\")
+    if (-not (Test-Path $AliasTarget -PathType Leaf)) {
+        Fail "Canonical alias target missing: $Id -> $($Aliases.aliases.$Id)"
+    }
 }
+
+Write-Host "Running canonical PACK 99 verifier..."
+& node (Join-Path $RepoRoot "scripts/verify-web-pack99.mjs")
+if ($LASTEXITCODE -ne 0) { Fail "Canonical PACK 99 verification failed" }
 
 $OutputDir = Join-Path $RepoRoot ".cache/pack99/release"
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
@@ -101,7 +124,7 @@ if ($LASTEXITCODE -eq 0) { $ReleaseExists = $true }
 
 if (-not $ReleaseExists) {
     Write-Host "Creating release $Tag..."
-    $Notes = "Full PACK 99 Web runtime. 1037 canonical IDs, zero unresolved references. $Signature."
+    $Notes = "Full PACK 99 Web runtime. 1037 materialized assets, zero unresolved references. $Signature."
     & gh release create $Tag --repo $Repository --title "HOC PACK 99 - Full Web Runtime 1.0.2" --notes $Notes
     if ($LASTEXITCODE -ne 0) { Fail "GitHub Release creation failed" }
 }
