@@ -33,7 +33,7 @@ describe("META 10.10 global AI action scoring", () => {
     expect(best?.targetId).toBe("kael");
   });
 
-  it("elevates a territory-closing road above ordinary movement", () => {
+  it("elevates a territory-closing road above ordinary movement but below attack floor", () => {
     let board = createStrategicBoard();
     board = {
       ...board,
@@ -49,8 +49,25 @@ describe("META 10.10 global AI action scoring", () => {
     const closingBuild = candidates.find((candidate) => candidate.kind === "build");
     const move = candidates.find((candidate) => candidate.kind === "move");
 
-    expect(closingBuild).toBeDefined();
+    expect(closingBuild?.score).toBe(98);
     expect(closingBuild?.score ?? 0).toBeGreaterThan(move?.score ?? 0);
+    expect(closingBuild?.score ?? 0).toBeLessThan(100);
+  });
+
+  it("gives controlled momentum to a road that advances a perimeter to three sides", () => {
+    let board = createStrategicBoard();
+    board = {
+      ...board,
+      units: board.units.map((unit) => unit.id === "varg"
+        ? { ...unit, nodeId: "s-2-1" }
+        : unit),
+    };
+
+    const candidates = strategicGlobalActionCandidates(board);
+    const build = candidates.find((candidate) => candidate.kind === "build" && candidate.unitId === "varg");
+
+    expect(build?.score).toBe(94);
+    expect(build?.reason).toContain("três lados");
   });
 
   it("prefers movement that enables a territory closure on the next action", () => {
@@ -62,7 +79,7 @@ describe("META 10.10 global AI action scoring", () => {
     const closureSetup = moves.find((candidate) => candidate.targetId === "s-1-0");
     const alternatives = moves.filter((candidate) => candidate.targetId !== "s-1-0");
 
-    expect(closureSetup?.score).toBe(84);
+    expect(closureSetup?.score).toBe(86);
     expect(closureSetup?.reason).toContain("fechar território");
     expect(alternatives.every((candidate) => (closureSetup?.score ?? 0) > candidate.score)).toBe(true);
   });
