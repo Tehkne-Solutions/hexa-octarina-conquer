@@ -83,7 +83,10 @@ async function buildBastion(page, regionName) {
 }
 
 async function endTurn(page) {
-  await page.getByRole("button", { name: "ENCERRAR TURNO" }).click();
+  const button = page.getByRole("button", { name: "ENCERRAR TURNO" });
+  await button.waitFor({ state: "visible", timeout: 10_000 });
+  if (await button.isDisabled()) throw new Error("ENCERRAR TURNO is disabled while the round should be closable");
+  await button.click();
 }
 
 async function capture(page, name) {
@@ -128,9 +131,12 @@ async function runNotebook(browser) {
     await buildBastion(page, "Bosque de Orun");
     await expectText(page, "Bastiões 1/1");
 
-    const enabledActions = await page.locator(".strategic-actions button:not(:disabled)").count();
-    if (enabledActions < 1) throw new Error("strategic UI became non-actionable after building the Bastion");
-    record("territory and Bastion completed without deadlocking the strategic UI", { enabledActions });
+    const endTurnButton = page.getByRole("button", { name: "ENCERRAR TURNO" });
+    await endTurnButton.waitFor({ state: "visible", timeout: 10_000 });
+    if (await endTurnButton.isDisabled()) {
+      throw new Error("strategic UI cannot close the round after building the Bastion");
+    }
+    record("territory and Bastion completed with a valid end-turn transition");
     await capture(page, "03-bastion-notebook.png");
   } finally {
     await context.close();
