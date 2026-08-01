@@ -382,6 +382,7 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
   let next = board;
   const messages: string[] = [];
   const movedUnits = new Set<StrategicUnitId>();
+  const attackedUnits = new Set<StrategicUnitId>();
   const budget = strategicActionBudget(board, "red");
 
   for (let action = 0; action < budget && strategicResult(next) === "playing"; action += 1) {
@@ -400,12 +401,17 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    // Se já existe uma rota materializada para um posto inimigo, combate tem prioridade.
+    // Cada unidade pode atacar no máximo uma vez por turno. Entre alvos válidos,
+    // a IA prioriza o menor HP atual para pressionar peças vulneráveis sem burst artificial.
     for (const enemy of enemies) {
-      const attacks = strategicAttackTargets(next, enemy.id);
+      if (attackedUnits.has(enemy.id)) continue;
+      const attacks = strategicAttackTargets(next, enemy.id)
+        .map((targetId) => strategicUnit(next, targetId))
+        .sort((a, b) => a.hp - b.hp || a.id.localeCompare(b.id));
       if (attacks.length > 0) {
-        next = strategicAttack(next, enemy.id, attacks[0]);
-        messages.push(`${enemy.name} atacou por uma estrada construída.`);
+        next = strategicAttack(next, enemy.id, attacks[0].id);
+        attackedUnits.add(enemy.id);
+        messages.push(`${enemy.name} atacou ${attacks[0].name} por uma estrada construída.`);
         acted = true;
         break;
       }
@@ -413,12 +419,16 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     if (acted) continue;
 
     // Unidades adjacentes podem abrir uma rota de confronto sem ocupar o mesmo nó.
+    // Quando existem vários postos inimigos adjacentes, a IA conecta primeiro o alvo mais vulnerável.
     for (const enemy of enemies) {
-      const confrontations = strategicConfrontationTargets(next, enemy.id);
+      const confrontations = strategicConfrontationTargets(next, enemy.id)
+        .map((nodeId) => ({ nodeId, target: strategicUnitAt(next, nodeId) }))
+        .filter((entry): entry is { nodeId: string; target: StrategicUnit } => Boolean(entry.target))
+        .sort((a, b) => a.target.hp - b.target.hp || a.target.id.localeCompare(b.target.id));
       if (confrontations.length > 0) {
-        const targetUnit = strategicUnitAt(next, confrontations[0]);
-        next = strategicClaimEdge(next, enemy.id, confrontations[0]);
-        messages.push(`${enemy.name} abriu uma rota de confronto contra ${targetUnit?.name ?? "Orun"}.`);
+        const selected = confrontations[0];
+        next = strategicClaimEdge(next, enemy.id, selected.nodeId);
+        messages.push(`${enemy.name} abriu uma rota de confronto contra ${selected.target.name}.`);
         acted = true;
         break;
       }
