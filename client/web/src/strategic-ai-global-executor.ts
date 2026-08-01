@@ -18,12 +18,13 @@ function decisionTrace(action: StrategicAiActionCandidate): string {
   return `[IA ${action.kind.toUpperCase()} · score ${action.score}] ${action.reason}`;
 }
 
-export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn {
+export function strategicEnemyTurnGlobal(board: StrategicBoard, maxActions?: number): StrategicAiTurn {
   let next = board;
   const messages: string[] = [];
   const movedUnits = new Set<StrategicUnitId>();
   const attackedUnits = new Set<StrategicUnitId>();
-  const budget = strategicActionBudget(board, "red");
+  const naturalBudget = strategicActionBudget(board, "red");
+  const budget = maxActions === undefined ? naturalBudget : Math.max(0, Math.min(naturalBudget, maxActions));
 
   for (let actionIndex = 0; actionIndex < budget && strategicResult(next) === "playing"; actionIndex += 1) {
     const selected = strategicBestGlobalAction(next, attackedUnits, movedUnits);
