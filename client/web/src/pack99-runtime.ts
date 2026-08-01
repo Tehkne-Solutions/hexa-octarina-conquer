@@ -31,6 +31,25 @@ export interface Pack99RuntimeIndex {
   signature?: string;
 }
 
+interface CanonicalRuntimeAsset {
+  id: string;
+  canonicalId?: string;
+  category?: string;
+  file?: string;
+  _runtimeFile?: string;
+  bytes?: number;
+}
+
+interface CanonicalRuntimeRegistry {
+  packId: string;
+  version?: string;
+  profile?: string;
+  assetCount: number;
+  assets: CanonicalRuntimeAsset[];
+  unresolved?: unknown[];
+  signature?: string;
+}
+
 export interface Pack99RuntimeState {
   mode: Pack99RuntimeMode;
   reportedAssetCount: number;
@@ -51,9 +70,10 @@ export interface Pack99MissionAssetReference {
 export const PACK99_CORE_MIN_ASSET_COUNT = 597;
 export const PACK99_FULL_CANONICAL_ASSET_COUNT = 1037;
 export const PACK99_FULL_MIN_ASSET_COUNT = PACK99_FULL_CANONICAL_ASSET_COUNT;
-export const PACK99_FULL_MIN_MATERIALIZED_COUNT = 1850;
+export const PACK99_FULL_MIN_MATERIALIZED_COUNT = PACK99_FULL_CANONICAL_ASSET_COUNT;
 
-const INDEX_URL = "/assets/runtime/pack99/runtime-index.json";
+const REGISTRY_URL = "/assets/runtime/registry/assets-runtime.json";
+const RUNTIME_ROOT = "/assets/runtime";
 let indexPromise: Promise<Pack99RuntimeIndex> | null = null;
 
 function normalize(value: string): string {
@@ -70,6 +90,48 @@ function searchablePath(asset: Pack99RuntimeAsset): string {
 
 function canonicalId(asset: Pack99RuntimeAsset): string {
   return asset.canonicalId ?? asset.id.replace(/__(?:SHADOW|EMISSIVE|FACTION_MASK|SPRITESHEET|ATLAS|PREVIEW)$/, "");
+}
+
+function inferLayer(asset: CanonicalRuntimeAsset): Pack99RuntimeLayer {
+  const haystack = `${asset.id} ${asset.canonicalId ?? ""} ${asset.file ?? ""} ${asset._runtimeFile ?? ""}`.toUpperCase();
+  if (haystack.includes("SHADOW")) return "shadow";
+  if (haystack.includes("EMISSIVE")) return "emissive";
+  if (haystack.includes("FACTION_MASK")) return "faction-mask";
+  if (haystack.includes("SPRITESHEET") || haystack.includes("SHEET")) return "spritesheet";
+  if (haystack.includes("ATLAS")) return "atlas";
+  if (haystack.includes("PREVIEW")) return "preview";
+  return "base";
+}
+
+function adaptCanonicalRegistry(registry: CanonicalRuntimeRegistry): Pack99RuntimeIndex {
+  if (registry.packId !== "HOC_PACK_99_FINAL_RUNTIME") throw new Error("PACK99_REGISTRY_PACK_INVALID");
+  if (!Array.isArray(registry.assets) || registry.assets.length === 0) throw new Error("PACK99_REGISTRY_INVALID");
+
+  const assets = registry.assets.map((asset): Pack99RuntimeAsset => {
+    const sourcePath = String(asset._runtimeFile ?? asset.file ?? "").replace(/\\/g, "/");
+    if (!asset.id || !sourcePath) throw new Error("PACK99_REGISTRY_ASSET_INVALID");
+    return {
+      id: asset.id,
+      canonicalId: asset.canonicalId ?? asset.id,
+      category: asset.category ?? "runtime",
+      layer: inferLayer(asset),
+      sourcePath,
+      web: `${RUNTIME_ROOT}/${sourcePath}`,
+      bytes: asset.bytes,
+    };
+  });
+
+  return {
+    profile: registry.profile,
+    runtimeMode: registry.profile === "full" ? "full" : registry.profile === "core" ? "core" : undefined,
+    assetCount: registry.assetCount,
+    canonicalAssetCount: registry.assetCount,
+    materializedAssetCount: assets.length,
+    fallback: null,
+    assets,
+    version: registry.version,
+    signature: registry.signature,
+  };
 }
 
 function acceptsAsset(asset: Pack99RuntimeAsset, forbidden: string[]): boolean {
@@ -98,18 +160,14 @@ function declaredCanonicalAssetCount(index: Pack99RuntimeIndex): number {
 function hasCanonicalFullShape(index: Pack99RuntimeIndex): boolean {
   if ((index.runtimeMode ?? index.profile) !== "full") return false;
   if (index.fallback !== null) return false;
-  if (index.assetCount < PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
-  if (declaredCanonicalAssetCount(index) < PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
-  if (index.assets.length < PACK99_FULL_MIN_MATERIALIZED_COUNT) return false;
+  if (index.assetCount !== PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
+  if (declaredCanonicalAssetCount(index) !== PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
+  if (index.assets.length !== PACK99_FULL_MIN_MATERIALIZED_COUNT) return false;
 
-  const canonicalIds = new Set<string>();
   for (const asset of index.assets) {
-    if (!asset.canonicalId || !asset.sourcePath || !asset.sourcePath.replace(/\\/g, "/").startsWith("packages/")) {
-      return false;
-    }
-    canonicalIds.add(asset.canonicalId);
+    if (!asset.canonicalId || !asset.sourcePath || !asset.sourcePath.replace(/\\/g, "/").startsWith("packages/")) return false;
   }
-  return canonicalIds.size >= PACK99_FULL_CANONICAL_ASSET_COUNT;
+  return true;
 }
 
 export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99RuntimeState {
@@ -137,15 +195,10 @@ export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99Runt
 
 export async function loadPack99Index(): Promise<Pack99RuntimeIndex> {
   if (!indexPromise) {
-    indexPromise = fetch(INDEX_URL, { cache: "no-cache" })
+    indexPromise = fetch(REGISTRY_URL, { cache: "no-cache" })
       .then(async (response) => {
-        if (!response.ok) throw new Error(`PACK99_INDEX_HTTP_${response.status}`);
-        const parsed = await response.json() as Pack99RuntimeIndex;
-        if (!Array.isArray(parsed.assets) || parsed.assets.length === 0) throw new Error("PACK99_INDEX_INVALID");
-        if (parsed.assets.some((asset) => !asset.id || !asset.category || !asset.web)) {
-          throw new Error("PACK99_INDEX_ASSET_INVALID");
-        }
-        return parsed;
+        if (!response.ok) throw new Error(`PACK99_REGISTRY_HTTP_${response.status}`);
+        return adaptCanonicalRegistry(await response.json() as CanonicalRuntimeRegistry);
       })
       .catch((error) => {
         indexPromise = null;
