@@ -1,6 +1,6 @@
 param(
     [string]$RuntimeRoot = "client/web/public/assets/runtime",
-    [string]$Tag = "pack99-runtime-v1.0.2",
+    [string]$Tag = "pack99-runtime-v1.0.3",
     [string]$ArchiveName = "hoc-pack99-web-full.zip",
     [string]$Repository = "Tehkne-Solutions/hexa-octarina-conquer",
     [switch]$ReplaceExisting
@@ -19,6 +19,65 @@ function Fail([string]$Message) {
 function Require-Command([string]$Name) {
     if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
         Fail "Required command not found: $Name"
+    }
+}
+
+function New-PortableZip([string]$SourceRoot, [string]$Destination) {
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $SourceAbsolute = (Resolve-Path $SourceRoot).Path
+    $DestinationAbsolute = [System.IO.Path]::GetFullPath($Destination)
+    $FileStream = [System.IO.File]::Open($DestinationAbsolute, [System.IO.FileMode]::Create)
+    try {
+        $Archive = New-Object System.IO.Compression.ZipArchive(
+            $FileStream,
+            [System.IO.Compression.ZipArchiveMode]::Create,
+            $false
+        )
+        try {
+            Get-ChildItem $SourceAbsolute -Recurse -File | ForEach-Object {
+                $Relative = $_.FullName.Substring($SourceAbsolute.Length).TrimStart('\', '/')
+                $EntryName = $Relative.Replace('\', '/')
+                if ($EntryName.Contains('\')) {
+                    Fail "Portable ZIP entry contains a backslash: $EntryName"
+                }
+                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                    $Archive,
+                    $_.FullName,
+                    $EntryName,
+                    [System.IO.Compression.CompressionLevel]::Optimal
+                ) | Out-Null
+            }
+        } finally {
+            $Archive.Dispose()
+        }
+    } finally {
+        $FileStream.Dispose()
+    }
+}
+
+function Test-PortableZip([string]$ArchivePath, [string[]]$RequiredEntries) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $Zip = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
+    try {
+        $Names = @($Zip.Entries | ForEach-Object { $_.FullName })
+        $BackslashEntries = @($Names | Where-Object { $_ -match '\\' })
+        if ($BackslashEntries.Count -gt 0) {
+            Fail "Archive contains Windows-style entry names: $($BackslashEntries[0])"
+        }
+        foreach ($Required in $RequiredEntries) {
+            if ($Names -notcontains $Required) {
+                Fail "Archive required entry missing: $Required"
+            }
+        }
+        if ($Names.Count -lt 1037) {
+            Fail "Archive entry count is unexpectedly low: $($Names.Count)"
+        }
+        Write-Host "ARCHIVE_ENTRIES=$($Names.Count)"
+        Write-Host "ARCHIVE_PATH_STYLE=POSIX"
+    } finally {
+        $Zip.Dispose()
     }
 }
 
@@ -75,8 +134,6 @@ foreach ($Asset in $Assets) {
     }
 }
 
-# These four canonical mission assets are intentionally resolved by physical
-# fallback in the authoritative verifier. They are not registry aliases.
 $RequiredMissionFiles = @(
     "packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
     "packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
@@ -101,22 +158,22 @@ $ChecksumPath = "$ArchivePath.sha256"
 
 Remove-Item $ArchivePath, $ChecksumPath -Force -ErrorAction SilentlyContinue
 
-Write-Host "Compressing full Web runtime..."
-Compress-Archive -Path (Join-Path $ResolvedRuntime "*") -DestinationPath $ArchivePath -CompressionLevel Optimal
+Write-Host "Compressing full Web runtime as portable POSIX ZIP..."
+New-PortableZip -SourceRoot $ResolvedRuntime -Destination $ArchivePath
+
+$ArchiveRequiredEntries = @($RequiredFiles + $RequiredMissionFiles)
+Write-Host "Validating produced archive structure..."
+Test-PortableZip -ArchivePath $ArchivePath -RequiredEntries $ArchiveRequiredEntries
 
 $Hash = (Get-FileHash $ArchivePath -Algorithm SHA256).Hash.ToLowerInvariant()
 "$Hash  $ArchiveName" | Set-Content $ChecksumPath -Encoding ascii
 
-Write-Host "Validating produced archive..."
 node -e "const fs=require('node:fs'); const size=fs.statSync(process.argv[1]).size; if(size<=0) process.exit(2); console.log('ARCHIVE_BYTES='+size)" $ArchivePath
 if ($LASTEXITCODE -ne 0) { Fail "Archive validation failed" }
 
 & gh auth status
 if ($LASTEXITCODE -ne 0) { Fail "GitHub CLI is not authenticated. Run gh auth login." }
 
-# A missing release is an expected first-run condition. Windows PowerShell 5.1
-# turns native stderr into a terminating error when ErrorActionPreference=Stop,
-# so probe the release with Continue and inspect the process exit code instead.
 $ReleaseExists = $false
 $PreviousErrorActionPreference = $ErrorActionPreference
 try {
@@ -130,8 +187,8 @@ if ($ReleaseViewExitCode -eq 0) { $ReleaseExists = $true }
 
 if (-not $ReleaseExists) {
     Write-Host "Creating release $Tag..."
-    $Notes = "Full PACK 99 Web runtime. 1037 materialized assets, zero unresolved references. $Signature."
-    & gh release create $Tag --repo $Repository --title "HOC PACK 99 - Full Web Runtime 1.0.2" --notes $Notes
+    $Notes = "Portable full PACK 99 Web runtime. POSIX ZIP paths, 1037 materialized assets, zero unresolved references. $Signature."
+    & gh release create $Tag --repo $Repository --title "HOC PACK 99 - Full Web Runtime 1.0.3" --notes $Notes
     if ($LASTEXITCODE -ne 0) { Fail "GitHub Release creation failed" }
 }
 
@@ -153,5 +210,6 @@ Write-Host "PACK99_WEB_RELEASE=PASS"
 Write-Host "TAG=$Tag"
 Write-Host "ARCHIVE=$ArchivePath"
 Write-Host "SHA256=$Hash"
-Write-Host "NEXT=Request a manual Render deploy and run npm.cmd --prefix .\client\web run verify:production"
+Write-Host "ARCHIVE_FORMAT=POSIX"
+Write-Host "NEXT=Update production marker and Docker URLs to v1.0.3, then deploy Render"
 Write-Host $Signature
