@@ -438,6 +438,39 @@ export function strategicPreferredBuild(board: StrategicBoard, unitId: Strategic
   return scored[0]?.nodeId ?? null;
 }
 
+function strategicCellFrontierExposure(board: StrategicBoard, cell: StrategicCell, faction: StrategicFaction): number {
+  return cell.edgeIds.reduce((score, edgeId) => {
+    const neighbor = board.cells.find((candidate) => candidate.id !== cell.id && candidate.edgeIds.includes(edgeId));
+    return score + (neighbor && neighbor.owner !== faction ? 1 : 0);
+  }, 0);
+}
+
+export function strategicPreferredStructure(board: StrategicBoard, unitId: StrategicUnitId): string | null {
+  const unit = strategicUnit(board, unitId);
+  const targets = strategicStructureTargets(board, unitId);
+  if (targets.length === 0) return null;
+
+  if (unit.hp / unit.maxHp <= 0.4) return null;
+  if (strategicActionBudget(board, unit.faction) >= 5) return null;
+
+  const enemies = board.units.filter((candidate) => candidate.faction !== unit.faction && candidate.hp > 0);
+  const scored = targets.map((cellId) => {
+    const cell = board.cells.find((entry) => entry.id === cellId)!;
+    const enemyDistance = enemies.length > 0
+      ? Math.min(...cell.corners.flatMap((corner) => enemies.map((enemy) => strategicNodeDistance(board, corner, enemy.nodeId))))
+      : Number.POSITIVE_INFINITY;
+    const frontierExposure = strategicCellFrontierExposure(board, cell, unit.faction);
+
+    return { cellId, enemyDistance, frontierExposure };
+  });
+
+  scored.sort((a, b) => a.enemyDistance - b.enemyDistance
+    || b.frontierExposure - a.frontierExposure
+    || a.cellId.localeCompare(b.cellId));
+
+  return scored[0]?.cellId ?? null;
+}
+
 export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
   let next = board;
   const messages: string[] = [];
@@ -450,10 +483,10 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     let acted = false;
 
     for (const enemy of enemies) {
-      const structures = strategicStructureTargets(next, enemy.id);
-      if (structures.length > 0) {
-        next = strategicBuildStructure(next, enemy.id, structures[0], "watchtower");
-        messages.push(`${enemy.name} ergueu uma Torre de Vigília Rubra.`);
+      const selectedStructure = strategicPreferredStructure(next, enemy.id);
+      if (selectedStructure) {
+        next = strategicBuildStructure(next, enemy.id, selectedStructure, "watchtower");
+        messages.push(`${enemy.name} fortificou a fronteira Rubra com uma Torre de Vigília.`);
         acted = true;
         break;
       }
