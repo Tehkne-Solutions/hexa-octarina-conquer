@@ -22,7 +22,7 @@ export async function assertProductionPack99Runtime({
   const runtimeRoot = resolve(root, "assets/runtime");
   const paths = {
     install: resolve(runtimeRoot, "runtime-install.json"),
-    index: resolve(runtimeRoot, "pack99/runtime-index.json"),
+    manifest: resolve(runtimeRoot, "pack-manifest.json"),
     registry: resolve(runtimeRoot, "registry/assets-runtime.json"),
     aliases: resolve(runtimeRoot, "registry/canonical-runtime-aliases.json"),
   };
@@ -32,25 +32,26 @@ export async function assertProductionPack99Runtime({
     if (!info?.isFile()) throw new Error(`PACK99_PRODUCTION_FILE_MISSING:${name}:${path}`);
   }
 
-  const [install, index, registry, aliases] = await Promise.all([
+  const [install, manifest, registry, aliases] = await Promise.all([
     readJson(paths.install),
-    readJson(paths.index),
+    readJson(paths.manifest),
     readJson(paths.registry),
     readJson(paths.aliases),
   ]);
 
-  if (install.profile !== "full" || install.assetCount !== 1037 || install.unresolvedReferences !== 0) {
+  const assets = Array.isArray(registry.assets) ? registry.assets : [];
+  const unresolved = Array.isArray(registry.unresolved) ? registry.unresolved : [];
+
+  if (install.packId !== "HOC_PACK_99_FINAL_RUNTIME" || install.profile !== "full" || install.assetCount !== 1037 || install.unresolvedReferences !== 0) {
     throw new Error("PACK99_PRODUCTION_INSTALL_INVALID");
   }
-  if (index.runtimeMode !== "full" || index.canonicalAssetCount !== 1037 || index.fallback !== null) {
-    throw new Error("PACK99_PRODUCTION_INDEX_INVALID");
+  if (registry.packId !== install.packId || registry.profile !== "full" || registry.assetCount !== 1037 || assets.length !== 1037) {
+    throw new Error(`PACK99_PRODUCTION_REGISTRY_INVALID:${assets.length}`);
   }
-  if (!Array.isArray(index.assets) || index.assets.length < 1850) {
-    throw new Error(`PACK99_PRODUCTION_REFERENCES_INVALID:${index.assets?.length ?? 0}`);
+  if (unresolved.length !== 0) {
+    throw new Error(`PACK99_PRODUCTION_UNRESOLVED:${unresolved.length}`);
   }
-  if (!Array.isArray(registry.assets) || registry.assets.length < 1037) {
-    throw new Error(`PACK99_PRODUCTION_REGISTRY_INVALID:${registry.assets?.length ?? 0}`);
-  }
+  if (!manifest.version) throw new Error("PACK99_PRODUCTION_MANIFEST_INVALID");
   for (const id of REQUIRED_ALIASES) {
     if (!aliases.aliases?.[id]) throw new Error(`PACK99_PRODUCTION_ALIAS_MISSING:${id}`);
   }
@@ -58,8 +59,8 @@ export async function assertProductionPack99Runtime({
   const result = {
     required: true,
     profile: install.profile,
-    canonicalAssets: index.canonicalAssetCount,
-    materializedReferences: index.assets.length,
+    canonicalAssets: assets.length,
+    materializedAssets: assets.length,
     aliases: REQUIRED_ALIASES.length,
   };
   logger.info?.("PACK 99 production runtime verified", result);

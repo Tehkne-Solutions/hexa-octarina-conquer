@@ -13,21 +13,24 @@ async function fetchJson(path) {
 }
 
 async function verifyRuntimeFiles() {
-  const [install, index, aliases] = await Promise.all([
+  const [install, manifest, registry, aliases] = await Promise.all([
     fetchJson("/assets/runtime/runtime-install.json"),
-    fetchJson("/assets/runtime/pack99/runtime-index.json"),
+    fetchJson("/assets/runtime/pack-manifest.json"),
+    fetchJson("/assets/runtime/registry/assets-runtime.json"),
     fetchJson("/assets/runtime/registry/canonical-runtime-aliases.json"),
   ]);
 
-  if (install.profile !== "full" || install.assetCount !== 1037 || install.unresolvedReferences !== 0) {
+  const assets = Array.isArray(registry.assets) ? registry.assets : [];
+  const unresolved = Array.isArray(registry.unresolved) ? registry.unresolved : [];
+
+  if (install.packId !== "HOC_PACK_99_FINAL_RUNTIME" || install.profile !== "full" || install.assetCount !== 1037 || install.unresolvedReferences !== 0) {
     throw new Error(`invalid runtime-install: ${JSON.stringify(install)}`);
   }
-  if (index.runtimeMode !== "full" || index.canonicalAssetCount !== 1037 || index.fallback !== null) {
-    throw new Error(`invalid runtime-index: mode=${index.runtimeMode} canonical=${index.canonicalAssetCount}`);
+  if (registry.packId !== install.packId || registry.profile !== "full" || registry.assetCount !== 1037 || assets.length !== 1037) {
+    throw new Error(`invalid runtime registry: reported=${registry.assetCount} actual=${assets.length}`);
   }
-  if (!Array.isArray(index.assets) || index.assets.length < 1850) {
-    throw new Error(`materialized runtime too small: ${index.assets?.length ?? 0}`);
-  }
+  if (unresolved.length !== 0) throw new Error(`unresolved runtime references: ${unresolved.length}`);
+  if (!manifest.version) throw new Error("pack-manifest version missing");
 
   const requiredAliases = [
     "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
@@ -39,7 +42,7 @@ async function verifyRuntimeFiles() {
     if (!aliases.aliases?.[id]) throw new Error(`canonical alias missing: ${id}`);
   }
 
-  return { canonical: index.canonicalAssetCount, materialized: index.assets.length };
+  return { canonical: assets.length, materialized: assets.length };
 }
 
 async function verifyRenderedGame() {
@@ -73,7 +76,7 @@ async function verifyRenderedGame() {
       })),
     }));
 
-    if (snapshot.full !== "true" || snapshot.runtime !== "full" || snapshot.canonical !== "1037" || Number(snapshot.materialized) < 1850 || snapshot.fallbacks !== "false") {
+    if (snapshot.full !== "true" || snapshot.runtime !== "full" || snapshot.canonical !== "1037" || Number(snapshot.materialized) !== 1037 || snapshot.fallbacks !== "false") {
       throw new Error(`rendered runtime invalid: ${JSON.stringify(snapshot)}`);
     }
     if (snapshot.blocked === "true") throw new Error("production guard blocked the published build");

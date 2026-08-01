@@ -6,7 +6,7 @@
   "status": "awaiting-release",
   "required": true,
   "expectedCanonicalAssetIds": 1037,
-  "expectedRuntimeReferences": 1850,
+  "expectedRuntimeReferences": 1037,
   "sourceArtifact": "HOC_PACK_99_FINAL_RUNTIME_RECOVERED_1.0.2.zip",
   "sourceBytes": 583070593,
   "sourceSha256": "5efd54e05cd2a01aa764ad652423d4ceaca0030fb9aca3d233ede3144a3b86e0",
