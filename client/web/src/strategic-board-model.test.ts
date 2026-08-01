@@ -81,7 +81,7 @@ describe("META 08 readable road network", () => {
     const turn = strategicEnemyTurn(board);
 
     expect(turn.board).not.toEqual(board);
-    expect(turn.message.toLowerCase()).toContain("estrada");
+    expect(turn.message.toLowerCase()).toContain("rede rubra");
     expect(strategicActionBudget(board, "red")).toBe(3);
     expect(strategicRoadCount(turn.board, "red")).toBe(4);
     expect(strategicUnit(turn.board, "varg").nodeId).toBe("s-1-0");
