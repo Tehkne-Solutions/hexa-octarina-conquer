@@ -20,6 +20,21 @@ import {
   type StrategicUnitId,
 } from "./strategic-board-model";
 
+export type StrategicBalanceAiAction = "ATTACK" | "CONFRONT" | "BUILD" | "STRUCTURE" | "MOVE";
+
+export type StrategicBalanceAiActionCounts = Record<StrategicBalanceAiAction, number>;
+
+function emptyActionCounts(): StrategicBalanceAiActionCounts {
+  return { ATTACK: 0, CONFRONT: 0, BUILD: 0, STRUCTURE: 0, MOVE: 0 };
+}
+
+function addObservedAiActions(message: string, counts: StrategicBalanceAiActionCounts): void {
+  const pattern = /\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/g;
+  for (const match of message.matchAll(pattern)) {
+    counts[match[1] as StrategicBalanceAiAction] += 1;
+  }
+}
+
 export interface StrategicBalanceMatch {
   seed: number;
   result: StrategicResult;
@@ -30,6 +45,7 @@ export interface StrategicBalanceMatch {
   redStructures: number;
   blueCasualties: number;
   redCasualties: number;
+  redActionCounts: StrategicBalanceAiActionCounts;
 }
 
 export interface StrategicBalanceSummary {
@@ -42,6 +58,7 @@ export interface StrategicBalanceSummary {
   averageRedCells: number;
   averageBlueCasualties: number;
   averageRedCasualties: number;
+  redActionCounts: StrategicBalanceAiActionCounts;
 }
 
 function seeded(seed: number): () => number {
@@ -133,12 +150,15 @@ export function simulateStrategicMatch(seed: number, maxRounds = 24): StrategicB
   const random = seeded(seed);
   let board = createStrategicBoard();
   let rounds = 0;
+  const redActionCounts = emptyActionCounts();
 
   while (rounds < maxRounds && strategicResult(board) === "playing") {
     rounds += 1;
     board = blueTurn(board, random);
     if (strategicResult(board) !== "playing") break;
-    board = strategicEnemyTurnGlobal(board).board;
+    const redTurn = strategicEnemyTurnGlobal(board);
+    addObservedAiActions(redTurn.message, redActionCounts);
+    board = redTurn.board;
   }
 
   return {
@@ -151,12 +171,19 @@ export function simulateStrategicMatch(seed: number, maxRounds = 24): StrategicB
     redStructures: strategicStructureCount(board, "red"),
     blueCasualties: board.units.filter((unit) => unit.faction === "blue" && unit.hp <= 0).length,
     redCasualties: board.units.filter((unit) => unit.faction === "red" && unit.hp <= 0).length,
+    redActionCounts,
   };
 }
 
 export function simulateStrategicBalance(matches = 100, seedOffset = 1): StrategicBalanceSummary {
   const results = Array.from({ length: matches }, (_, index) => simulateStrategicMatch(seedOffset + index));
   const sum = (selector: (match: StrategicBalanceMatch) => number) => results.reduce((total, match) => total + selector(match), 0);
+  const redActionCounts = emptyActionCounts();
+  for (const match of results) {
+    for (const kind of Object.keys(redActionCounts) as StrategicBalanceAiAction[]) {
+      redActionCounts[kind] += match.redActionCounts[kind];
+    }
+  }
 
   return {
     matches,
@@ -168,5 +195,6 @@ export function simulateStrategicBalance(matches = 100, seedOffset = 1): Strateg
     averageRedCells: matches > 0 ? sum((match) => match.redCells) / matches : 0,
     averageBlueCasualties: matches > 0 ? sum((match) => match.blueCasualties) / matches : 0,
     averageRedCasualties: matches > 0 ? sum((match) => match.redCasualties) / matches : 0,
+    redActionCounts,
   };
 }
