@@ -76,12 +76,15 @@ describe("META 08 readable road network", () => {
     expect(strategicAttackTargets(board, "lyra")).toEqual([]);
   });
 
-  it("executes a deterministic enemy road expansion before combat", () => {
+  it("spends the enemy action budget on deterministic expansion and movement", () => {
     const board = createStrategicBoard();
     const turn = strategicEnemyTurn(board);
+
     expect(turn.board).not.toEqual(board);
     expect(turn.message.toLowerCase()).toContain("estrada");
-    expect(strategicRoadCount(turn.board, "red")).toBe(3);
+    expect(strategicActionBudget(board, "red")).toBe(3);
+    expect(strategicRoadCount(turn.board, "red")).toBe(4);
+    expect(strategicUnit(turn.board, "varg").nodeId).toBe("s-1-0");
   });
 
   it("does not declare victory from territory alone without a real confrontation", () => {
