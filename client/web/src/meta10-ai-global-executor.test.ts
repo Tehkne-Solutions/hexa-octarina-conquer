@@ -20,7 +20,7 @@ function withRoad(board: StrategicBoard, a: string, b: string): StrategicBoard {
 }
 
 describe("META 10.10B global AI executor", () => {
-  it("executes the globally highest-scored lethal attack", () => {
+  it("executes the globally highest-scored lethal attack and exposes its decision trace", () => {
     let board = createStrategicBoard();
     board = {
       ...board,
@@ -38,8 +38,9 @@ describe("META 10.10B global AI executor", () => {
 
     expect(strategicUnit(turn.board, "lyra").hp).toBe(0);
     expect(strategicResult(turn.board)).toBe("defeat");
-    expect(turn.message).toContain("Varg atacou Lyra");
+    expect(turn.message).toContain("[IA ATTACK · score 158]");
     expect(turn.message).toContain("finalização de alvo vulnerável");
+    expect(turn.message).toContain("Varg atacou Lyra");
   });
 
   it("keeps attack and movement limits across the whole action budget", () => {
@@ -59,5 +60,6 @@ describe("META 10.10B global AI executor", () => {
 
     expect(before - after).toBe(5);
     expect(turn.message.match(/Brakk atacou Lyra/g)?.length ?? 0).toBe(1);
+    expect(turn.message).toMatch(/\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/);
   });
 });
