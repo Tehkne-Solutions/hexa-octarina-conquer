@@ -148,12 +148,6 @@ export function createStrategicBoard(): StrategicBoard {
     }
   }
 
-  /*
-   * A fronteira começa incompleta de propósito.
-   * Orun possui duas estradas no lado oeste e a Legião duas no lado leste.
-   * O jogador precisa construir, mover e fechar a primeira região em três ações:
-   * P5 -> P8, mover para P8 e P8 -> P7.
-   */
   const edgeOwners = new Map<string, StrategicFaction>([
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(1, 1)), "blue"],
     [strategicEdgeId(strategicNodeId(0, 1), strategicNodeId(0, 2)), "blue"],
@@ -378,6 +372,36 @@ export function strategicResult(board: StrategicBoard): StrategicResult {
   return "playing";
 }
 
+function strategicNodeDistance(board: StrategicBoard, a: string, b: string): number {
+  const nodeA = board.nodes.find((node) => node.id === a);
+  const nodeB = board.nodes.find((node) => node.id === b);
+  if (!nodeA || !nodeB) return Number.POSITIVE_INFINITY;
+  return Math.abs(nodeA.col - nodeB.col) + Math.abs(nodeA.row - nodeB.row);
+}
+
+export function strategicPreferredMove(board: StrategicBoard, unitId: StrategicUnitId): string | null {
+  const unit = strategicUnit(board, unitId);
+  const moves = strategicMoveTargets(board, unitId);
+  if (moves.length === 0) return null;
+
+  const targets = board.units
+    .filter((candidate) => candidate.faction !== unit.faction && candidate.hp > 0)
+    .sort((a, b) => a.hp - b.hp || a.id.localeCompare(b.id));
+  if (targets.length === 0) return moves.sort()[0] ?? null;
+
+  const critical = unit.hp / unit.maxHp <= 0.4;
+  const scored = moves.map((nodeId) => ({
+    nodeId,
+    distance: Math.min(...targets.map((target) => strategicNodeDistance(board, nodeId, target.nodeId))),
+  }));
+
+  scored.sort((a, b) => critical
+    ? b.distance - a.distance || a.nodeId.localeCompare(b.nodeId)
+    : a.distance - b.distance || a.nodeId.localeCompare(b.nodeId));
+
+  return scored[0]?.nodeId ?? null;
+}
+
 export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
   let next = board;
   const messages: string[] = [];
@@ -389,7 +413,6 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     const enemies = next.units.filter((unit) => unit.faction === "red" && unit.hp > 0);
     let acted = false;
 
-    // Construções custam uma ação própria, assim como para o jogador.
     for (const enemy of enemies) {
       const structures = strategicStructureTargets(next, enemy.id);
       if (structures.length > 0) {
@@ -401,8 +424,6 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    // Cada unidade pode atacar no máximo uma vez por turno. Entre alvos válidos,
-    // a IA prioriza o menor HP atual para pressionar peças vulneráveis sem burst artificial.
     for (const enemy of enemies) {
       if (attackedUnits.has(enemy.id)) continue;
       const attacks = strategicAttackTargets(next, enemy.id)
@@ -418,8 +439,6 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    // Unidades adjacentes podem abrir uma rota de confronto sem ocupar o mesmo nó.
-    // Quando existem vários postos inimigos adjacentes, a IA conecta primeiro o alvo mais vulnerável.
     for (const enemy of enemies) {
       const confrontations = strategicConfrontationTargets(next, enemy.id)
         .map((nodeId) => ({ nodeId, target: strategicUnitAt(next, nodeId) }))
@@ -435,7 +454,6 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    // Antes de possuir território, a IA prioriza formar uma rede legível e fechar região.
     if (strategicOwnedCellCount(next, "red") < 1) {
       for (const enemy of enemies) {
         const builds = strategicBuildTargets(next, enemy.id);
@@ -460,14 +478,16 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    // Evita gastar o turno inteiro oscilando a mesma unidade entre dois nós.
     for (const enemy of enemies) {
       if (movedUnits.has(enemy.id)) continue;
-      const moves = strategicMoveTargets(next, enemy.id);
-      if (moves.length > 0) {
-        next = strategicMoveUnit(next, enemy.id, moves[0]);
+      const selectedMove = strategicPreferredMove(next, enemy.id);
+      if (selectedMove) {
+        const critical = enemy.hp / enemy.maxHp <= 0.4;
+        next = strategicMoveUnit(next, enemy.id, selectedMove);
         movedUnits.add(enemy.id);
-        messages.push(`${enemy.name} avançou pela estrada Rubra.`);
+        messages.push(critical
+          ? `${enemy.name} recuou para preservar a unidade.`
+          : `${enemy.name} avançou em direção ao alvo mais vulnerável.`);
         acted = true;
         break;
       }
