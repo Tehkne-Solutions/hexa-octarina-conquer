@@ -11,6 +11,7 @@ import {
   type StrategicBoard,
   type StrategicUnitId,
 } from "./strategic-board-model";
+import { strategicContestRoute, strategicContestTargets } from "./strategic-route-contest";
 import { strategicBestGlobalAction, type StrategicAiActionCandidate } from "./strategic-ai-global-action";
 
 function decisionTrace(action: StrategicAiActionCandidate): string {
@@ -47,11 +48,16 @@ export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn
 
     if (selected.kind === "build") {
       const beforeOwned = strategicOwnedCellCount(next, "red");
-      next = strategicClaimEdge(next, selected.unitId, selected.targetId);
+      const contesting = strategicContestTargets(next, selected.unitId).includes(selected.targetId);
+      next = contesting
+        ? strategicContestRoute(next, selected.unitId, selected.targetId)
+        : strategicClaimEdge(next, selected.unitId, selected.targetId);
       const closedTerritory = strategicOwnedCellCount(next, "red") > beforeOwned;
       messages.push(closedTerritory
         ? `${trace}. ${unit.name} fechou uma região para a Legião Rubra.`
-        : `${trace}. ${unit.name} expandiu a rede Rubra.`);
+        : contesting
+          ? `${trace}. ${unit.name} retomou uma rota disputada.`
+          : `${trace}. ${unit.name} expandiu a rede Rubra.`);
       continue;
     }
 
