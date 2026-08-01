@@ -81,6 +81,8 @@ function shuffled<T>(items: readonly T[], random: () => number): T[] {
 function blueTurn(board: StrategicBoard, random: () => number): StrategicBoard {
   let next = board;
   const budget = strategicActionBudget(board, "blue");
+  const attackedUnits = new Set<StrategicUnitId>();
+  const movedUnits = new Set<StrategicUnitId>();
 
   for (let action = 0; action < budget && strategicResult(next) === "playing"; action += 1) {
     const units = shuffled(
@@ -90,11 +92,13 @@ function blueTurn(board: StrategicBoard, random: () => number): StrategicBoard {
     let acted = false;
 
     for (const unitId of units) {
+      if (attackedUnits.has(unitId)) continue;
       const attacks = shuffled(strategicAttackTargets(next, unitId), random)
         .map((targetId) => strategicUnit(next, targetId))
         .sort((a, b) => a.hp - b.hp || a.id.localeCompare(b.id));
       if (attacks.length > 0) {
         next = strategicAttack(next, unitId, attacks[0].id);
+        attackedUnits.add(unitId);
         acted = true;
         break;
       }
@@ -132,9 +136,11 @@ function blueTurn(board: StrategicBoard, random: () => number): StrategicBoard {
     if (acted) continue;
 
     for (const unitId of units) {
+      if (movedUnits.has(unitId)) continue;
       const target = strategicPreferredMove(next, unitId);
       if (target) {
         next = strategicMoveUnit(next, unitId, target);
+        movedUnits.add(unitId);
         acted = true;
         break;
       }
