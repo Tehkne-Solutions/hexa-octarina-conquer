@@ -45,6 +45,7 @@ describe("META 10.6 AI tactical actions", () => {
         if (unit.id === "varg") return { ...unit, nodeId: "s-1-1" };
         if (unit.id === "kael") return { ...unit, nodeId: "s-1-0", hp: 16 };
         if (unit.id === "lyra") return { ...unit, nodeId: "s-1-2", hp: 8 };
+        if (unit.id === "brakk") return { ...unit, hp: 0 };
         return unit;
       }),
     };
