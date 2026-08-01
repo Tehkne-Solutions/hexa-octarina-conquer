@@ -135,7 +135,7 @@ export function strategicGlobalActionCandidates(
         kind: "structure",
         unitId: enemy.id,
         targetId: structureTarget,
-        score: 64,
+        score: 84,
         reason: "fortifica fronteira e amplia orçamento futuro",
       });
     }
