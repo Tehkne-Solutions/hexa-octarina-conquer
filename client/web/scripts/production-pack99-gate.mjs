@@ -4,6 +4,13 @@ const productionUrl = (process.env.HEXA_PRODUCTION_URL || "https://hexa-octarina
 const attempts = Number(process.env.HEXA_PRODUCTION_ATTEMPTS || 6);
 const delayMs = Number(process.env.HEXA_PRODUCTION_DELAY_MS || 15000);
 
+const REQUIRED_MISSION_FILES = [
+  "/assets/runtime/packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+  "/assets/runtime/packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+  "/assets/runtime/packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png",
+  "/assets/runtime/packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png",
+];
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function fetchJson(path) {
@@ -13,11 +20,10 @@ async function fetchJson(path) {
 }
 
 async function verifyRuntimeFiles() {
-  const [install, manifest, registry, aliases] = await Promise.all([
+  const [install, manifest, registry] = await Promise.all([
     fetchJson("/assets/runtime/runtime-install.json"),
     fetchJson("/assets/runtime/pack-manifest.json"),
     fetchJson("/assets/runtime/registry/assets-runtime.json"),
-    fetchJson("/assets/runtime/registry/canonical-runtime-aliases.json"),
   ]);
 
   const assets = Array.isArray(registry.assets) ? registry.assets : [];
@@ -32,14 +38,9 @@ async function verifyRuntimeFiles() {
   if (unresolved.length !== 0) throw new Error(`unresolved runtime references: ${unresolved.length}`);
   if (!manifest.version) throw new Error("pack-manifest version missing");
 
-  const requiredAliases = [
-    "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
-    "HERO_RANGER_01_IDLE_BASE_NE_01",
-    "UNIT_RECRUIT_01_IDLE_BASE_NW_01",
-    "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
-  ];
-  for (const id of requiredAliases) {
-    if (!aliases.aliases?.[id]) throw new Error(`canonical alias missing: ${id}`);
+  for (const path of REQUIRED_MISSION_FILES) {
+    const response = await fetch(`${productionUrl}${path}`, { redirect: "follow" });
+    if (!response.ok) throw new Error(`required mission asset ${path} returned HTTP ${response.status}`);
   }
 
   return { canonical: assets.length, materialized: assets.length };
