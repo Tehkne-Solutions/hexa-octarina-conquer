@@ -9,7 +9,6 @@ import {
   strategicBuildTargets,
   strategicCellRoadProgress,
   strategicClaimEdge,
-  strategicEnemyTurn,
   strategicMoveTargets,
   strategicMoveUnit,
   strategicOwnedCellCount,
@@ -26,6 +25,7 @@ import {
   type StrategicResult,
   type StrategicUnitId,
 } from "./strategic-board-model";
+import { strategicEnemyTurnGlobal } from "./strategic-ai-global-executor";
 import {
   emptyPack99StrategicCatalog,
   loadPack99StrategicCatalog,
@@ -335,7 +335,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
   function endTurn(): void {
     if (result !== "playing") return;
 
-    const enemy = strategicEnemyTurn(board);
+    const enemy = strategicEnemyTurnGlobal(board);
     setBoard(enemy.board);
     setRound((value) => value + 1);
     setActions(strategicActionBudget(enemy.board, "blue"));
