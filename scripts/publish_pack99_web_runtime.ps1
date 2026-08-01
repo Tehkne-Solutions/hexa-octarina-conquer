@@ -9,8 +9,7 @@ param(
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-# Keep this source file ASCII-safe for Windows PowerShell 5.1. Build the
-# official signature at runtime so the accented character is preserved.
+# Keep this source file ASCII-safe for Windows PowerShell 5.1.
 $Signature = "Tehkn$([char]0x00E9) Solutions"
 
 function Fail([string]$Message) {
@@ -40,8 +39,7 @@ Require-Command "node"
 $RequiredFiles = @(
     "runtime-install.json",
     "pack-manifest.json",
-    "registry/assets-runtime.json",
-    "registry/canonical-runtime-aliases.json"
+    "registry/assets-runtime.json"
 )
 
 foreach ($Relative in $RequiredFiles) {
@@ -54,7 +52,6 @@ foreach ($Relative in $RequiredFiles) {
 $Install = Get-Content (Join-Path $ResolvedRuntime "runtime-install.json") -Raw | ConvertFrom-Json
 $Manifest = Get-Content (Join-Path $ResolvedRuntime "pack-manifest.json") -Raw | ConvertFrom-Json
 $Registry = Get-Content (Join-Path $ResolvedRuntime "registry/assets-runtime.json") -Raw | ConvertFrom-Json
-$Aliases = Get-Content (Join-Path $ResolvedRuntime "registry/canonical-runtime-aliases.json") -Raw | ConvertFrom-Json
 
 $Assets = @($Registry.assets)
 $Unresolved = @($Registry.unresolved)
@@ -78,19 +75,18 @@ foreach ($Asset in $Assets) {
     }
 }
 
-$RequiredAliases = @(
-    "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
-    "HERO_RANGER_01_IDLE_BASE_NE_01",
-    "UNIT_RECRUIT_01_IDLE_BASE_NW_01",
-    "CHAMP_BERSERKER_01_IDLE_BASE_NW_01"
+# These four canonical mission assets are intentionally resolved by physical
+# fallback in the authoritative verifier. They are not registry aliases.
+$RequiredMissionFiles = @(
+    "packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+    "packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+    "packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png",
+    "packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png"
 )
-foreach ($Id in $RequiredAliases) {
-    if (-not $Aliases.aliases.PSObject.Properties[$Id]) {
-        Fail "Canonical alias missing: $Id"
-    }
-    $AliasTarget = Join-Path $ResolvedRuntime (($Aliases.aliases.$Id) -replace "/", "\")
-    if (-not (Test-Path $AliasTarget -PathType Leaf)) {
-        Fail "Canonical alias target missing: $Id -> $($Aliases.aliases.$Id)"
+foreach ($Relative in $RequiredMissionFiles) {
+    $Path = Join-Path $ResolvedRuntime ($Relative -replace "/", "\")
+    if (-not (Test-Path $Path -PathType Leaf)) {
+        Fail "Required physical mission asset missing: $Relative"
     }
 }
 
