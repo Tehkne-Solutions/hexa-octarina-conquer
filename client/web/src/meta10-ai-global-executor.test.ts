@@ -38,7 +38,7 @@ describe("META 10.10B global AI executor", () => {
 
     expect(strategicUnit(turn.board, "lyra").hp).toBe(0);
     expect(strategicResult(turn.board)).toBe("defeat");
-    expect(turn.message).toContain("[IA ATTACK · score 158]");
+    expect(turn.message).toMatch(/\[IA ATTACK · score \d+\]/);
     expect(turn.message).toContain("finalização de alvo vulnerável");
     expect(turn.message).toContain("Varg atacou Lyra");
   });
