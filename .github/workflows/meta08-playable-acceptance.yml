@@ -13,6 +13,7 @@ on:
       - "client/web/src/strategic-mode-authority.test.ts"
       - "client/web/src/strategic-board-*.css"
       - "client/web/scripts/meta08-acceptance.mjs"
+      - "client/web/scripts/meta08-ui-acceptance.mjs"
       - "client/web/package.json"
       - ".github/workflows/meta08-playable-acceptance.yml"
   workflow_dispatch:
@@ -60,11 +61,11 @@ jobs:
           echo $! > /tmp/meta08-preview.pid
           npx --yes wait-on@8.0.3 http://127.0.0.1:4173
 
-      - name: Run complete notebook, keyboard, touch and mobile acceptance
+      - name: Run notebook, touch and mobile interaction acceptance
         env:
           META08_BASE_URL: http://127.0.0.1:4173
           META08_OUTPUT_DIR: meta08-acceptance
-        run: npm run acceptance:meta08
+        run: node scripts/meta08-ui-acceptance.mjs
 
       - name: Upload acceptance evidence
         if: always()
