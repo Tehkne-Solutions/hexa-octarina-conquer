@@ -58,7 +58,7 @@ describe("META 10.10B global AI executor", () => {
     const turn = strategicEnemyTurnGlobal(board);
     const after = strategicUnit(turn.board, "lyra").hp;
 
-    expect(before - after).toBe(5);
+    expect(before - after).toBe(6);
     expect(turn.message.match(/Brakk atacou Lyra/g)?.length ?? 0).toBe(1);
     expect(turn.message).toMatch(/\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/);
   });

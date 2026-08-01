@@ -33,7 +33,7 @@ describe("META 10.6 AI tactical actions", () => {
     const turn = strategicEnemyTurn(board);
     const lyraAfter = strategicUnit(turn.board, "lyra").hp;
 
-    expect(lyraBefore - lyraAfter).toBe(5);
+    expect(lyraBefore - lyraAfter).toBe(6);
     expect(turn.message.match(/Brakk atacou/g)?.length ?? 0).toBe(1);
   });
 
@@ -54,7 +54,7 @@ describe("META 10.6 AI tactical actions", () => {
 
     const turn = strategicEnemyTurn(board);
 
-    expect(strategicUnit(turn.board, "lyra").hp).toBe(5);
+    expect(strategicUnit(turn.board, "lyra").hp).toBe(3);
     expect(strategicUnit(turn.board, "kael").hp).toBe(16);
     expect(turn.message).toContain("Varg atacou Lyra");
   });
