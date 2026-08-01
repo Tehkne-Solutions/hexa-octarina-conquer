@@ -19,6 +19,7 @@ import {
   type StrategicResult,
   type StrategicUnitId,
 } from "./strategic-board-model";
+import { strategicContestRoute, strategicContestTargets } from "./strategic-route-contest";
 
 export type StrategicBalanceAiAction = "ATTACK" | "CONFRONT" | "BUILD" | "STRUCTURE" | "MOVE";
 
@@ -119,6 +120,16 @@ function blueTurn(board: StrategicBoard, random: () => number): StrategicBoard {
       const confrontations = shuffled(strategicConfrontationTargets(next, unitId), random);
       if (confrontations.length > 0) {
         next = strategicClaimEdge(next, unitId, confrontations[0]);
+        acted = true;
+        break;
+      }
+    }
+    if (acted) continue;
+
+    for (const unitId of units) {
+      const contested = shuffled(strategicContestTargets(next, unitId), random);
+      if (contested.length > 0) {
+        next = strategicContestRoute(next, unitId, contested[0]);
         acted = true;
         break;
       }
