@@ -31,6 +31,25 @@ export interface Pack99RuntimeIndex {
   signature?: string;
 }
 
+interface CanonicalRuntimeAsset {
+  id: string;
+  canonicalId?: string;
+  category?: string;
+  file?: string;
+  _runtimeFile?: string;
+  bytes?: number;
+}
+
+interface CanonicalRuntimeRegistry {
+  packId: string;
+  version?: string;
+  profile?: string;
+  assetCount: number;
+  assets: CanonicalRuntimeAsset[];
+  unresolved?: unknown[];
+  signature?: string;
+}
+
 export interface Pack99RuntimeState {
   mode: Pack99RuntimeMode;
   reportedAssetCount: number;
@@ -51,17 +70,14 @@ export interface Pack99MissionAssetReference {
 export const PACK99_CORE_MIN_ASSET_COUNT = 597;
 export const PACK99_FULL_CANONICAL_ASSET_COUNT = 1037;
 export const PACK99_FULL_MIN_ASSET_COUNT = PACK99_FULL_CANONICAL_ASSET_COUNT;
-export const PACK99_FULL_MIN_MATERIALIZED_COUNT = 1850;
+export const PACK99_FULL_MIN_MATERIALIZED_COUNT = PACK99_FULL_CANONICAL_ASSET_COUNT;
 
-const INDEX_URL = "/assets/runtime/pack99/runtime-index.json";
+const REGISTRY_URL = "/assets/runtime/registry/assets-runtime.json";
+const RUNTIME_ROOT = "/assets/runtime";
 let indexPromise: Promise<Pack99RuntimeIndex> | null = null;
 
 function normalize(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\\/g, "/")
-    .toLowerCase();
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\\/g, "/").toLowerCase();
 }
 
 function searchablePath(asset: Pack99RuntimeAsset): string {
@@ -70,6 +86,49 @@ function searchablePath(asset: Pack99RuntimeAsset): string {
 
 function canonicalId(asset: Pack99RuntimeAsset): string {
   return asset.canonicalId ?? asset.id.replace(/__(?:SHADOW|EMISSIVE|FACTION_MASK|SPRITESHEET|ATLAS|PREVIEW)$/, "");
+}
+
+function inferLayer(asset: CanonicalRuntimeAsset): Pack99RuntimeLayer {
+  const haystack = `${asset.id} ${asset.canonicalId ?? ""} ${asset.file ?? ""} ${asset._runtimeFile ?? ""}`.toUpperCase();
+  if (haystack.includes("SHADOW")) return "shadow";
+  if (haystack.includes("EMISSIVE")) return "emissive";
+  if (haystack.includes("FACTION_MASK")) return "faction-mask";
+  if (haystack.includes("SPRITESHEET") || haystack.includes("SHEET")) return "spritesheet";
+  if (haystack.includes("ATLAS")) return "atlas";
+  if (haystack.includes("PREVIEW")) return "preview";
+  return "base";
+}
+
+function adaptCanonicalRegistry(registry: CanonicalRuntimeRegistry): Pack99RuntimeIndex {
+  if (registry.packId !== "HOC_PACK_99_FINAL_RUNTIME") throw new Error("PACK99_REGISTRY_PACK_INVALID");
+  if (!Array.isArray(registry.assets) || registry.assets.length === 0) throw new Error("PACK99_REGISTRY_INVALID");
+  if (Array.isArray(registry.unresolved) && registry.unresolved.length > 0) throw new Error("PACK99_REGISTRY_UNRESOLVED");
+
+  const assets = registry.assets.map((asset): Pack99RuntimeAsset => {
+    const sourcePath = String(asset._runtimeFile ?? asset.file ?? "").replace(/\\/g, "/");
+    if (!asset.id || !sourcePath) throw new Error("PACK99_REGISTRY_ASSET_INVALID");
+    return {
+      id: asset.id,
+      canonicalId: asset.canonicalId ?? asset.id,
+      category: asset.category ?? "runtime",
+      layer: inferLayer(asset),
+      sourcePath,
+      web: `${RUNTIME_ROOT}/${sourcePath}`,
+      bytes: asset.bytes,
+    };
+  });
+
+  return {
+    profile: registry.profile,
+    runtimeMode: registry.profile === "full" ? "full" : registry.profile === "core" ? "core" : undefined,
+    assetCount: registry.assetCount,
+    canonicalAssetCount: registry.assetCount,
+    materializedAssetCount: assets.length,
+    fallback: null,
+    assets,
+    version: registry.version,
+    signature: registry.signature,
+  };
 }
 
 function acceptsAsset(asset: Pack99RuntimeAsset, forbidden: string[]): boolean {
@@ -98,18 +157,13 @@ function declaredCanonicalAssetCount(index: Pack99RuntimeIndex): number {
 function hasCanonicalFullShape(index: Pack99RuntimeIndex): boolean {
   if ((index.runtimeMode ?? index.profile) !== "full") return false;
   if (index.fallback !== null) return false;
-  if (index.assetCount < PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
-  if (declaredCanonicalAssetCount(index) < PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
-  if (index.assets.length < PACK99_FULL_MIN_MATERIALIZED_COUNT) return false;
-
-  const canonicalIds = new Set<string>();
+  if (index.assetCount !== PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
+  if (declaredCanonicalAssetCount(index) !== PACK99_FULL_CANONICAL_ASSET_COUNT) return false;
+  if (index.assets.length !== PACK99_FULL_MIN_MATERIALIZED_COUNT) return false;
   for (const asset of index.assets) {
-    if (!asset.canonicalId || !asset.sourcePath || !asset.sourcePath.replace(/\\/g, "/").startsWith("packages/")) {
-      return false;
-    }
-    canonicalIds.add(asset.canonicalId);
+    if (!asset.canonicalId || !asset.sourcePath || !asset.sourcePath.replace(/\\/g, "/").startsWith("packages/")) return false;
   }
-  return canonicalIds.size >= PACK99_FULL_CANONICAL_ASSET_COUNT;
+  return true;
 }
 
 export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99RuntimeState {
@@ -118,34 +172,22 @@ export function inspectPack99RuntimeIndex(index: Pack99RuntimeIndex): Pack99Runt
   const materializedAssetCount = index.assets.length;
   const declaredMode = index.runtimeMode ?? index.profile;
   const fullByContract = hasCanonicalFullShape(index);
-  const coreByCount = reportedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT
-    && materializedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT;
-  const mode: Pack99RuntimeMode = fullByContract
-    ? "full"
-    : declaredMode === "core" || coreByCount
-      ? "core"
-      : "bootstrap";
-  return {
-    mode,
-    reportedAssetCount,
-    canonicalAssetCount,
-    materializedAssetCount,
-    isFullRuntime: fullByContract,
-    usesFallbacks: !fullByContract,
-  };
+  const coreByCount = reportedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT && materializedAssetCount >= PACK99_CORE_MIN_ASSET_COUNT;
+  const mode: Pack99RuntimeMode = fullByContract ? "full" : declaredMode === "core" || coreByCount ? "core" : "bootstrap";
+  return { mode, reportedAssetCount, canonicalAssetCount, materializedAssetCount, isFullRuntime: fullByContract, usesFallbacks: !fullByContract };
 }
 
 export async function loadPack99Index(): Promise<Pack99RuntimeIndex> {
   if (!indexPromise) {
-    indexPromise = fetch(INDEX_URL, { cache: "no-cache" })
+    indexPromise = fetch(REGISTRY_URL, { cache: "no-cache" })
       .then(async (response) => {
-        if (!response.ok) throw new Error(`PACK99_INDEX_HTTP_${response.status}`);
-        const parsed = await response.json() as Pack99RuntimeIndex;
-        if (!Array.isArray(parsed.assets) || parsed.assets.length === 0) throw new Error("PACK99_INDEX_INVALID");
-        if (parsed.assets.some((asset) => !asset.id || !asset.category || !asset.web)) {
-          throw new Error("PACK99_INDEX_ASSET_INVALID");
+        if (!response.ok) throw new Error(`PACK99_REGISTRY_HTTP_${response.status}`);
+        const parsed = await response.json() as CanonicalRuntimeRegistry | Pack99RuntimeIndex;
+        const injectedIndex = parsed as Pack99RuntimeIndex;
+        if (!("packId" in parsed) && Array.isArray(injectedIndex.assets) && injectedIndex.assets.every((asset) => typeof asset.web === "string")) {
+          return injectedIndex;
         }
-        return parsed;
+        return adaptCanonicalRegistry(parsed as CanonicalRuntimeRegistry);
       })
       .catch((error) => {
         indexPromise = null;
@@ -155,96 +197,47 @@ export async function loadPack99Index(): Promise<Pack99RuntimeIndex> {
   return indexPromise;
 }
 
-export function resetPack99RuntimeCache(): void {
-  indexPromise = null;
-}
+export function resetPack99RuntimeCache(): void { indexPromise = null; }
+export async function loadPack99RuntimeState(): Promise<Pack99RuntimeState> { return inspectPack99RuntimeIndex(await loadPack99Index()); }
 
-export async function loadPack99RuntimeState(): Promise<Pack99RuntimeState> {
-  return inspectPack99RuntimeIndex(await loadPack99Index());
-}
-
-export function findPack99CanonicalAsset(
-  index: Pack99RuntimeIndex,
-  requestedCanonicalId: string,
-  layer: Pack99RuntimeLayer = "base",
-): Pack99RuntimeAsset | null {
+export function findPack99CanonicalAsset(index: Pack99RuntimeIndex, requestedCanonicalId: string, layer: Pack99RuntimeLayer = "base"): Pack99RuntimeAsset | null {
   const matches = index.assets.filter((asset) => canonicalId(asset) === requestedCanonicalId);
-  if (layer === "base") {
-    return matches.find((asset) => asset.layer === "base")
-      ?? matches.find((asset) => asset.id === requestedCanonicalId)
-      ?? matches.find((asset) => !asset.layer)
-      ?? null;
-  }
+  if (layer === "base") return matches.find((asset) => asset.layer === "base") ?? matches.find((asset) => asset.id === requestedCanonicalId) ?? matches.find((asset) => !asset.layer) ?? null;
   const layerSuffix = layer.toUpperCase().replace(/-/g, "_");
-  return matches.find((asset) => asset.layer === layer)
-    ?? matches.find((asset) => asset.id === `${requestedCanonicalId}__${layerSuffix}`)
-    ?? null;
+  return matches.find((asset) => asset.layer === layer) ?? matches.find((asset) => asset.id === `${requestedCanonicalId}__${layerSuffix}`) ?? null;
 }
 
 function findPack99AssetBySuffix(index: Pack99RuntimeIndex, sourceSuffixes: string[], forbidden: string[] = []): Pack99RuntimeAsset | null {
   const suffixes = sourceSuffixes.map(normalize);
-  return index.assets.find((asset) => {
-    if (!acceptsAsset(asset, forbidden)) return false;
-    const candidate = normalize(searchablePath(asset));
-    return suffixes.some((suffix) => candidate.endsWith(suffix));
-  }) ?? null;
+  return index.assets.find((asset) => acceptsAsset(asset, forbidden) && suffixes.some((suffix) => normalize(searchablePath(asset)).endsWith(suffix))) ?? null;
 }
 
 function findPack99Asset(index: Pack99RuntimeIndex, required: string[], preferred: string[], forbidden: string[] = []): Pack99RuntimeAsset | null {
-  return index.assets
-    .filter((asset) => acceptsAsset(asset, forbidden))
-    .map((asset) => ({ asset, score: scoreAsset(asset, required, preferred) }))
-    .filter((entry) => entry.score >= 0)
-    .sort((left, right) => right.score - left.score || searchablePath(left.asset).localeCompare(searchablePath(right.asset)))[0]?.asset ?? null;
+  return index.assets.filter((asset) => acceptsAsset(asset, forbidden)).map((asset) => ({ asset, score: scoreAsset(asset, required, preferred) })).filter((entry) => entry.score >= 0).sort((left, right) => right.score - left.score || searchablePath(left.asset).localeCompare(searchablePath(right.asset)))[0]?.asset ?? null;
 }
 
-export async function resolvePack99Asset(required: string[], preferred: string[] = [], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> {
-  return findPack99Asset(await loadPack99Index(), required, preferred, forbidden);
-}
-
-export async function resolvePack99AssetBySuffix(sourceSuffixes: string[], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> {
-  return findPack99AssetBySuffix(await loadPack99Index(), sourceSuffixes, forbidden);
-}
+export async function resolvePack99Asset(required: string[], preferred: string[] = [], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> { return findPack99Asset(await loadPack99Index(), required, preferred, forbidden); }
+export async function resolvePack99AssetBySuffix(sourceSuffixes: string[], forbidden: string[] = []): Promise<Pack99RuntimeAsset | null> { return findPack99AssetBySuffix(await loadPack99Index(), sourceSuffixes, forbidden); }
 
 export async function resolvePack99MissionAsset(reference: Pack99MissionAssetReference): Promise<Pack99RuntimeAsset | null> {
   const index = await loadPack99Index();
   const forbidden = reference.forbidden ?? [];
-  const canonical = reference.canonicalId
-    ? findPack99CanonicalAsset(index, reference.canonicalId, "base")
-    : null;
-
+  const canonical = reference.canonicalId ? findPack99CanonicalAsset(index, reference.canonicalId, "base") : null;
   if (canonical && acceptsAsset(canonical, forbidden)) return canonical;
-
-  return findPack99AssetBySuffix(index, reference.sourceSuffixes, forbidden)
-    ?? findPack99Asset(index, reference.required, reference.preferred, forbidden);
+  return findPack99AssetBySuffix(index, reference.sourceSuffixes, forbidden) ?? findPack99Asset(index, reference.required, reference.preferred, forbidden);
 }
 
-export async function resolvePack99SiblingLayer(
-  baseAsset: Pack99RuntimeAsset | null,
-  layer: "shadow" | "emissive",
-): Promise<Pack99RuntimeAsset | null> {
+export async function resolvePack99SiblingLayer(baseAsset: Pack99RuntimeAsset | null, layer: "shadow" | "emissive"): Promise<Pack99RuntimeAsset | null> {
   if (!baseAsset) return null;
   const index = await loadPack99Index();
   const sibling = findPack99CanonicalAsset(index, canonicalId(baseAsset), layer);
   if (sibling) return sibling;
-
   const source = normalize(searchablePath(baseAsset));
   const extensionIndex = source.lastIndexOf(".");
   const stem = extensionIndex >= 0 ? source.slice(0, extensionIndex) : source;
   const extension = extensionIndex >= 0 ? source.slice(extensionIndex) : ".png";
-  const candidates = [
-    `${stem}_${layer}${extension}`,
-    `${stem.replace(/_base$/, "")}_${layer}${extension}`,
-    `${stem.replace(/_base_/, `_${layer}_`)}${extension}`,
-  ];
-
-  return index.assets.find((asset) => candidates.includes(normalize(searchablePath(asset))))
-    ?? findPack99Asset(
-      index,
-      canonicalId(baseAsset).split("_").filter(Boolean).slice(0, -1),
-      [layer],
-      layer === "shadow" ? ["emissive"] : ["shadow"],
-    );
+  const candidates = [`${stem}_${layer}${extension}`, `${stem.replace(/_base$/, "")}_${layer}${extension}`, `${stem.replace(/_base_/, `_${layer}_`)}${extension}`];
+  return index.assets.find((asset) => candidates.includes(normalize(searchablePath(asset)))) ?? findPack99Asset(index, canonicalId(baseAsset).split("_").filter(Boolean).slice(0, -1), [layer], layer === "shadow" ? ["emissive"] : ["shadow"]);
 }
 
 export function pack99PublicUrl(asset: Pack99RuntimeAsset | null): string | null {
@@ -255,11 +248,7 @@ export function pack99PublicUrl(asset: Pack99RuntimeAsset | null): string | null
   return markerIndex >= 0 ? normalized.slice(markerIndex + marker.length) : `/${normalized.replace(/^\/+/, "")}`;
 }
 
-export async function resolvePack99Layer(
-  required: string[],
-  layer: "base" | "shadow" | "emissive",
-  preferred: string[] = [],
-): Promise<string | null> {
+export async function resolvePack99Layer(required: string[], layer: "base" | "shadow" | "emissive", preferred: string[] = []): Promise<string | null> {
   const layerRequired = layer === "base" ? required : [...required, layer];
   const asset = await resolvePack99Asset(layerRequired, layer === "base" ? [...preferred, "base"] : preferred);
   return pack99PublicUrl(asset);
