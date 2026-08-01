@@ -53,6 +53,20 @@ describe("META 10.10 global AI action scoring", () => {
     expect(closingBuild?.score ?? 0).toBeGreaterThan(move?.score ?? 0);
   });
 
+  it("prefers movement that enables a territory closure on the next action", () => {
+    let board = createStrategicBoard();
+    board = withRoad(board, "s-2-1", "s-1-1");
+
+    const moves = strategicGlobalActionCandidates(board)
+      .filter((candidate) => candidate.kind === "move" && candidate.unitId === "varg");
+    const closureSetup = moves.find((candidate) => candidate.targetId === "s-1-0");
+    const alternatives = moves.filter((candidate) => candidate.targetId !== "s-1-0");
+
+    expect(closureSetup?.score).toBe(84);
+    expect(closureSetup?.reason).toContain("fechar território");
+    expect(alternatives.every((candidate) => (closureSetup?.score ?? 0) > candidate.score)).toBe(true);
+  });
+
   it("raises retreat priority for a critical unit when no attack is available", () => {
     let board = createStrategicBoard();
     board = {

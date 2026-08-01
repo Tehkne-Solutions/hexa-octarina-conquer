@@ -3,6 +3,8 @@ import {
   strategicCellRoadProgress,
   strategicClaimEdge,
   strategicConfrontationTargets,
+  strategicMoveTargets,
+  strategicMoveUnit,
   strategicOwnedCellCount,
   strategicPreferredBuild,
   strategicPreferredMove,
@@ -94,15 +96,34 @@ export function strategicGlobalActionCandidates(
     }
 
     if (!movedUnits.has(enemy.id)) {
-      const moveTarget = strategicPreferredMove(board, enemy.id);
-      if (moveTarget) {
-        const critical = enemy.hp / enemy.maxHp <= 0.4;
+      const critical = enemy.hp / enemy.maxHp <= 0.4;
+      const retreatTarget = critical ? strategicPreferredMove(board, enemy.id) : null;
+
+      for (const moveTarget of strategicMoveTargets(board, enemy.id)) {
+        if (critical) {
+          candidates.push({
+            kind: "move",
+            unitId: enemy.id,
+            targetId: moveTarget,
+            score: moveTarget === retreatTarget ? 72 : 30,
+            reason: moveTarget === retreatTarget ? "preserva unidade crítica" : "reposicionamento defensivo alternativo",
+          });
+          continue;
+        }
+
+        const projected = strategicMoveUnit(board, enemy.id, moveTarget);
+        const nextBuild = strategicPreferredBuild(projected, enemy.id);
+        const enablesClosure = Boolean(nextBuild && buildClosesTerritory(projected, enemy.id, nextBuild));
         candidates.push({
           kind: "move",
           unitId: enemy.id,
           targetId: moveTarget,
-          score: critical ? 72 : 38,
-          reason: critical ? "preserva unidade crítica" : "melhora posicionamento tático",
+          score: enablesClosure ? 84 : nextBuild ? 58 : 32,
+          reason: enablesClosure
+            ? "reposiciona para fechar território no próximo passo"
+            : nextBuild
+              ? "reposiciona para continuar expansão territorial"
+              : "melhora posicionamento tático",
         });
       }
     }
