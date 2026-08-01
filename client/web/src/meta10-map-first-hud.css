@@ -1,0 +1,248 @@
+/* META 10.2 — map-first HUD
+ * O tabuleiro é a interface primária. Painéis apoiam a decisão, não competem com ela.
+ */
+
+.strategic-slice .strategic-layout {
+  grid-template-columns: 164px minmax(0, 1fr) 184px;
+  gap: 6px;
+  padding: 6px;
+}
+
+.strategic-slice .strategic-board {
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 84px rgba(0, 0, 0, .5),
+    0 20px 50px rgba(0, 0, 0, .46);
+}
+
+.strategic-slice .strategic-roster,
+.strategic-slice .strategic-objectives {
+  padding: 8px;
+  border-color: rgba(205, 169, 82, .18);
+  background: linear-gradient(180deg, rgba(7, 14, 15, .9), rgba(4, 9, 10, .86));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
+  opacity: .82;
+  transition: opacity .18s ease, transform .18s ease, border-color .18s ease;
+}
+
+.strategic-slice .strategic-roster:hover,
+.strategic-slice .strategic-roster:focus-within,
+.strategic-slice .strategic-objectives:hover,
+.strategic-slice .strategic-objectives:focus-within {
+  opacity: 1;
+  border-color: rgba(205, 169, 82, .34);
+}
+
+.strategic-slice .strategic-roster h2,
+.strategic-slice .strategic-objectives h2 {
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+
+.strategic-slice .strategic-roster-card {
+  min-height: 40px;
+  padding: 5px 6px;
+  margin-bottom: 4px;
+  grid-template-columns: 24px 1fr auto;
+}
+
+.strategic-slice .strategic-roster-icon {
+  width: 22px;
+  height: 22px;
+  font-size: 10px;
+}
+
+.strategic-slice .strategic-actions {
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.strategic-slice .strategic-actions button {
+  min-height: 36px;
+  padding: 5px 23px 5px 6px;
+}
+
+.strategic-slice .strategic-help {
+  padding: 7px;
+  gap: 2px;
+  background: rgba(8, 20, 25, .5);
+}
+
+.strategic-slice .strategic-help p {
+  display: none;
+}
+
+.strategic-slice .strategic-command-banner {
+  top: 8px;
+  width: min(360px, 52%);
+  padding: 7px 11px;
+  backdrop-filter: blur(8px);
+}
+
+.strategic-slice .strategic-command-banner span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.strategic-slice .strategic-map-key {
+  opacity: .5;
+  transition: opacity .18s ease;
+}
+
+.strategic-slice .strategic-board:hover .strategic-map-key,
+.strategic-slice .strategic-board:focus-within .strategic-map-key {
+  opacity: .9;
+}
+
+.strategic-slice .strategic-progress {
+  display: grid;
+  gap: 5px;
+}
+
+.strategic-slice .strategic-objectives > p {
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.strategic-slice .strategic-objectives ol {
+  max-height: 94px;
+  overflow: auto;
+  margin-block: 6px;
+  padding-left: 18px;
+  font-size: 8px;
+  line-height: 1.35;
+}
+
+.strategic-slice .strategic-end-turn {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  min-height: 38px;
+  box-shadow: 0 -8px 18px rgba(0, 0, 0, .24);
+}
+
+/* Durante uma ação, o HUD lateral recua ainda mais e o tabuleiro assume a cena. */
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-roster,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-roster,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-roster,
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-objectives,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-objectives,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-objectives {
+  opacity: .68;
+}
+
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-roster:hover,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-roster:hover,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-roster:hover,
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-objectives:hover,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-objectives:hover,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-objectives:hover,
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-roster:focus-within,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-roster:focus-within,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-roster:focus-within,
+.strategic-slice:has(.strategic-edge.is-recommended) .strategic-objectives:focus-within,
+.strategic-slice:has(.strategic-node.is-recommended) .strategic-objectives:focus-within,
+.strategic-slice:has(.strategic-cell.is-build-target) .strategic-objectives:focus-within {
+  opacity: 1;
+}
+
+@media (max-width: 1180px) {
+  .strategic-slice .strategic-layout {
+    grid-template-columns: 148px minmax(0, 1fr) 164px;
+  }
+
+  .strategic-slice .strategic-title strong {
+    font-size: 14px;
+  }
+
+  .strategic-slice .strategic-command-banner {
+    width: min(320px, 58%);
+  }
+}
+
+@media (max-width: 900px) {
+  .strategic-slice .strategic-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 4px;
+  }
+
+  .strategic-slice .strategic-board {
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .strategic-slice .strategic-roster,
+  .strategic-slice .strategic-objectives {
+    position: absolute;
+    z-index: 120;
+    bottom: 6px;
+    width: min(46vw, 280px);
+    max-height: 38vh;
+    opacity: .92;
+    backdrop-filter: blur(10px);
+  }
+
+  .strategic-slice .strategic-roster {
+    left: 6px;
+  }
+
+  .strategic-slice .strategic-objectives {
+    right: 6px;
+  }
+
+  .strategic-slice .strategic-command-banner {
+    width: min(420px, 72%);
+  }
+}
+
+@media (max-width: 640px) {
+  .strategic-slice .strategic-topbar {
+    grid-template-columns: 36px 1fr auto;
+    gap: 7px;
+    padding-inline: 7px;
+  }
+
+  .strategic-slice .strategic-resources {
+    display: none;
+  }
+
+  .strategic-slice .strategic-turn {
+    min-width: 108px;
+    padding-inline: 10px;
+  }
+
+  .strategic-slice .strategic-roster,
+  .strategic-slice .strategic-objectives {
+    width: calc(50vw - 9px);
+    max-height: 31vh;
+    bottom: 4px;
+    padding: 6px;
+  }
+
+  .strategic-slice .strategic-roster {
+    left: 4px;
+  }
+
+  .strategic-slice .strategic-objectives {
+    right: 4px;
+  }
+
+  .strategic-slice .strategic-command-banner {
+    width: min(440px, 88%);
+    top: 5px;
+  }
+
+  .strategic-slice .strategic-map-key,
+  .strategic-slice .strategic-help,
+  .strategic-slice .strategic-objectives > p,
+  .strategic-slice .strategic-objectives ol {
+    display: none;
+  }
+
+  .strategic-slice .strategic-actions button {
+    min-height: 32px;
+    font-size: 8px;
+  }
+}
