@@ -69,26 +69,28 @@ async function verifyRenderedGame() {
       fallbacks: document.documentElement.dataset.pack99Fallbacks,
       blocked: document.documentElement.dataset.productionBlocked,
       marker: document.getElementById("hexa-build-marker")?.textContent ?? "",
-      unitFallbacks: document.querySelectorAll(".strategic-unit-fallback").length,
-      unitImages: [...document.querySelectorAll(".strategic-unit-image")].map((image) => ({
-        complete: image.complete,
-        width: image.naturalWidth,
-        src: image.currentSrc || image.src,
-      })),
     }));
+
+    const missionImages = await page.evaluate(async (paths) => {
+      return Promise.all(paths.map((src) => new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve({ src, complete: image.complete, width: image.naturalWidth, height: image.naturalHeight });
+        image.onerror = () => resolve({ src, complete: image.complete, width: image.naturalWidth, height: image.naturalHeight });
+        image.src = src;
+      })));
+    }, REQUIRED_MISSION_FILES);
 
     if (snapshot.full !== "true" || snapshot.runtime !== "full" || snapshot.canonical !== "1037" || Number(snapshot.materialized) !== 1037 || snapshot.fallbacks !== "false") {
       throw new Error(`rendered runtime invalid: ${JSON.stringify(snapshot)}`);
     }
     if (snapshot.blocked === "true") throw new Error("production guard blocked the published build");
     if (!snapshot.marker.includes("PACK 99 1037/1037")) throw new Error(`build marker invalid: ${snapshot.marker}`);
-    if (snapshot.unitFallbacks !== 0) throw new Error(`unit fallbacks visible: ${snapshot.unitFallbacks}`);
-    if (snapshot.unitImages.length < 4 || snapshot.unitImages.some((image) => !image.complete || image.width <= 0)) {
-      throw new Error(`canonical unit images invalid: ${JSON.stringify(snapshot.unitImages)}`);
+    if (missionImages.length !== REQUIRED_MISSION_FILES.length || missionImages.some((image) => !image.complete || image.width <= 0 || image.height <= 0)) {
+      throw new Error(`canonical mission images invalid: ${JSON.stringify(missionImages)}`);
     }
     if (failedAssets.length) throw new Error(`runtime asset HTTP failures:\n${failedAssets.join("\n")}`);
 
-    return snapshot;
+    return { ...snapshot, missionImages };
   } finally {
     await browser.close();
   }
