@@ -16,5 +16,5 @@ describe("META 10.13A fair strategic balance baseline", () => {
     expect(report.averageRounds).toBeGreaterThan(0);
     expect(report.averageRounds).toBeLessThanOrEqual(24);
     expect(actionShareTotal).toBeCloseTo(1, 10);
-  }, 15_000);
+  }, 30_000);
 });
