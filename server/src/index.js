@@ -10,10 +10,12 @@ import { createRecoveryProvider } from "./recovery-provider.js";
 import { createResilienceStore } from "./resilience-store.js";
 import { createRoomManager } from "./room-manager-factory.js";
 import { createRoomStore } from "./room-store.js";
+import { assertProductionPack99Runtime } from "./runtime-production-assertion.js";
 import { startServer } from "./server-campaign.js";
 
 const port = Number.parseInt(process.env.PORT ?? "8080", 10);
 const logger = createLogger();
+await assertProductionPack99Runtime({ logger });
 const metrics = new MetricsRegistry();
 const store = await createRoomStore();
 const identity = await createIdentityStore();
