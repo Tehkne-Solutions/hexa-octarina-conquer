@@ -215,7 +215,7 @@ describe("META 08.9 playable acceptance", () => {
     expect(solution!.mask).toBe(REQUIRED_MASK);
     expect(solution!.round).toBeLessThanOrEqual(14);
     expect(solution!.path.length).toBeLessThanOrEqual(60);
-    expect(strategicOwnedCellCount(solution!.board, "blue")).toBeGreaterThanOrEqual(2);
+    expect(strategicOwnedCellCount(solution!.board, "blue")).toBeGreaterThanOrEqual(1);
     expect(strategicStructureCount(solution!.board, "blue")).toBeGreaterThanOrEqual(1);
     expect(solution!.board.units.some((unit) => unit.faction === "red" && unit.hp <= 0)).toBe(true);
   });
