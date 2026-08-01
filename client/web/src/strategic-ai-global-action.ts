@@ -3,6 +3,7 @@ import {
   strategicCellRoadProgress,
   strategicClaimEdge,
   strategicConfrontationTargets,
+  strategicEdgeId,
   strategicMoveTargets,
   strategicMoveUnit,
   strategicOwnedCellCount,
@@ -30,6 +31,15 @@ function buildClosesTerritory(board: StrategicBoard, unitId: StrategicUnitId, ta
   const before = strategicOwnedCellCount(board, "red");
   const after = strategicClaimEdge(board, unitId, targetNodeId);
   return strategicOwnedCellCount(after, "red") > before;
+}
+
+function buildTerritorialProgress(board: StrategicBoard, unitId: StrategicUnitId, targetNodeId: string): number {
+  const unit = strategicUnit(board, unitId);
+  const edgeId = strategicEdgeId(unit.nodeId, targetNodeId);
+  const projected = strategicClaimEdge(board, unitId, targetNodeId);
+  return projected.cells
+    .filter((cell) => cell.edgeIds.includes(edgeId) && !cell.owner)
+    .reduce((best, cell) => Math.max(best, strategicCellRoadProgress(projected, cell.id, "red")), 0);
 }
 
 export function strategicGlobalActionCandidates(
@@ -70,17 +80,20 @@ export function strategicGlobalActionCandidates(
     const buildTarget = strategicPreferredBuild(board, enemy.id);
     if (buildTarget) {
       const closes = buildClosesTerritory(board, enemy.id, buildTarget);
-      const projected = strategicClaimEdge(board, enemy.id, buildTarget);
-      const progress = projected.cells.reduce(
-        (best, cell) => Math.max(best, strategicCellRoadProgress(projected, cell.id, "red")),
-        0,
-      );
+      const progress = buildTerritorialProgress(board, enemy.id, buildTarget);
+      const momentumScore = progress >= 3 ? 95 : progress === 2 ? 76 : progress === 1 ? 57 : 44;
       candidates.push({
         kind: "build",
         unitId: enemy.id,
         targetId: buildTarget,
-        score: closes ? 92 : 48 + progress * 4,
-        reason: closes ? "fecha território rubro" : "aproxima uma conquista territorial",
+        score: closes ? 118 : momentumScore,
+        reason: closes
+          ? "fecha território rubro"
+          : progress >= 3
+            ? "completa quase todo o perímetro territorial"
+            : progress === 2
+              ? "consolida metade do perímetro territorial"
+              : "aproxima uma conquista territorial",
       });
     }
 
@@ -118,7 +131,7 @@ export function strategicGlobalActionCandidates(
           kind: "move",
           unitId: enemy.id,
           targetId: moveTarget,
-          score: enablesClosure ? 84 : nextBuild ? 58 : 32,
+          score: enablesClosure ? 88 : nextBuild ? 54 : 28,
           reason: enablesClosure
             ? "reposiciona para fechar território no próximo passo"
             : nextBuild
