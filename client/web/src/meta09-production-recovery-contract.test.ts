@@ -17,7 +17,12 @@ const dockerfile = readFileSync(
 const release = JSON.parse(readFileSync(
   new URL("../../../runtime/packs/PACK_99_RECOVERED/production-release.json", import.meta.url),
   "utf8",
-)) as { required?: boolean; signature?: string };
+)) as {
+  required?: boolean;
+  signature?: string;
+  releaseTag?: string;
+  webArchiveSha256?: string;
+};
 
 describe("META 09-R production recovery", () => {
   it("restores the accepted META 08.9 visual authority", () => {
@@ -36,9 +41,14 @@ describe("META 09-R production recovery", () => {
 
   it("refuses bootstrap runtime in production", () => {
     expect(release.required).toBe(true);
+    expect(release.releaseTag).toBe("pack99-runtime-v1.0.3");
+    expect(release.webArchiveSha256).toBe("a0f7802f286590590dd5b6daec1ab4d2f8d4bd931ccf4e373cc63234d280dd7c");
     expect(dockerfile).toContain("ARG PACK99_WEB_RUNTIME_REQUIRED=true");
-    expect(dockerfile).toContain("PACK99_RELEASE_DOWNLOAD_FAILED");
-    expect(dockerfile).toContain("PACK99_CANONICAL_ALIAS_MISSING");
+    expect(dockerfile).toContain("pack99-runtime-v1.0.3/hoc-pack99-web-full.zip");
+    expect(dockerfile).toContain("PACK99_MARKER_SHA_MISMATCH");
+    expect(dockerfile).toContain("PACK99_REQUIRED_MISSION_FILE_MISSING");
+    expect(dockerfile).toContain("assets.length!==1037");
+    expect(dockerfile).not.toContain("PACK99_CANONICAL_ALIAS_MISSING");
   });
 
   it("preserves the Tehkné Solutions signature", () => {
