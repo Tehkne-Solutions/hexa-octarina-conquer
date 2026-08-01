@@ -197,8 +197,8 @@ export function createStrategicBoard(): StrategicBoard {
   const units: StrategicUnit[] = [
     { id: "kael", name: "Kael", role: "Guardião", faction: "blue", nodeId: strategicNodeId(1, 1), hp: 18, maxHp: 18 },
     { id: "lyra", name: "Lyra", role: "Arqueira", faction: "blue", nodeId: strategicNodeId(0, 2), hp: 14, maxHp: 14 },
-    { id: "varg", name: "Varg", role: "Batedor", faction: "red", nodeId: strategicNodeId(2, 0), hp: 12, maxHp: 12 },
-    { id: "brakk", name: "Brakk", role: "Campeão", faction: "red", nodeId: strategicNodeId(2, 2), hp: 16, maxHp: 16 },
+    { id: "varg", name: "Varg", role: "Batedor", faction: "red", nodeId: strategicNodeId(2, 0), hp: 14, maxHp: 14 },
+    { id: "brakk", name: "Brakk", role: "Campeão", faction: "red", nodeId: strategicNodeId(2, 2), hp: 18, maxHp: 18 },
   ];
 
   return { nodes, edges, cells: deriveCells(cells, edges), units };
@@ -290,7 +290,7 @@ export function strategicMoveUnit(board: StrategicBoard, unitId: StrategicUnitId
 export function strategicAttack(board: StrategicBoard, attackerId: StrategicUnitId, targetId: StrategicUnitId): StrategicBoard {
   if (!strategicAttackTargets(board, attackerId).includes(targetId)) return board;
   const attacker = strategicUnit(board, attackerId);
-  const damage = attacker.id === "kael" ? 6 : attacker.id === "lyra" ? 5 : attacker.id === "brakk" ? 5 : 3;
+  const damage = attacker.id === "kael" ? 6 : attacker.id === "lyra" ? 5 : attacker.id === "brakk" ? 6 : 5;
   return {
     ...board,
     units: board.units.map((unit) => unit.id === targetId ? { ...unit, hp: Math.max(0, unit.hp - damage) } : unit),
