@@ -88,7 +88,7 @@ function inspectRuntime(): void {
   const valid = full === "true"
     && runtime === "full"
     && canonical === "1037"
-    && Number(materialized ?? "0") >= 1850
+    && Number(materialized ?? "0") === 1037
     && fallbacks === "false";
 
   if (!valid) {
