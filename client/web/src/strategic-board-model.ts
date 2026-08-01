@@ -370,48 +370,82 @@ export function strategicResult(board: StrategicBoard): StrategicResult {
 }
 
 export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
-  const enemies = board.units.filter((unit) => unit.faction === "red" && unit.hp > 0);
+  let next = board;
+  const messages: string[] = [];
+  const movedUnits = new Set<StrategicUnitId>();
+  const budget = strategicActionBudget(board, "red");
 
-  // Primeiro a IA forma sua própria rede. Isso evita ataques precoces por conexões invisíveis.
-  if (strategicOwnedCellCount(board, "red") < 1) {
+  for (let action = 0; action < budget && strategicResult(next) === "playing"; action += 1) {
+    const enemies = next.units.filter((unit) => unit.faction === "red" && unit.hp > 0);
+    let acted = false;
+
+    // Construções custam uma ação própria, assim como para o jogador.
     for (const enemy of enemies) {
-      const builds = strategicBuildTargets(board, enemy.id);
-      if (builds.length > 0) {
-        let next = strategicClaimEdge(board, enemy.id, builds[0]);
-        const structures = strategicStructureTargets(next, enemy.id);
-        if (structures.length > 0) {
-          next = strategicBuildStructure(next, enemy.id, structures[0], "watchtower");
-        }
-        return { board: next, message: `${enemy.name} construiu uma estrada Rubra.` };
-      }
-    }
-  }
-
-  for (const enemy of enemies) {
-    const attacks = strategicAttackTargets(board, enemy.id);
-    if (attacks.length > 0) {
-      return { board: strategicAttack(board, enemy.id, attacks[0]), message: `${enemy.name} atacou por uma estrada construída.` };
-    }
-  }
-
-  for (const enemy of enemies) {
-    const builds = strategicBuildTargets(board, enemy.id);
-    if (builds.length > 0) {
-      let next = strategicClaimEdge(board, enemy.id, builds[0]);
       const structures = strategicStructureTargets(next, enemy.id);
       if (structures.length > 0) {
         next = strategicBuildStructure(next, enemy.id, structures[0], "watchtower");
+        messages.push(`${enemy.name} ergueu uma Torre de Vigília Rubra.`);
+        acted = true;
+        break;
       }
-      return { board: next, message: `${enemy.name} expandiu a rede de estradas Rubras.` };
     }
+    if (acted) continue;
+
+    // Antes de possuir território, a IA prioriza formar uma rede legível e fechar região.
+    if (strategicOwnedCellCount(next, "red") < 1) {
+      for (const enemy of enemies) {
+        const builds = strategicBuildTargets(next, enemy.id);
+        if (builds.length > 0) {
+          next = strategicClaimEdge(next, enemy.id, builds[0]);
+          messages.push(`${enemy.name} construiu uma estrada Rubra.`);
+          acted = true;
+          break;
+        }
+      }
+      if (acted) continue;
+    }
+
+    // Combate só acontece por uma estrada já materializada no tabuleiro.
+    for (const enemy of enemies) {
+      const attacks = strategicAttackTargets(next, enemy.id);
+      if (attacks.length > 0) {
+        next = strategicAttack(next, enemy.id, attacks[0]);
+        messages.push(`${enemy.name} atacou por uma estrada construída.`);
+        acted = true;
+        break;
+      }
+    }
+    if (acted) continue;
+
+    for (const enemy of enemies) {
+      const builds = strategicBuildTargets(next, enemy.id);
+      if (builds.length > 0) {
+        next = strategicClaimEdge(next, enemy.id, builds[0]);
+        messages.push(`${enemy.name} expandiu a rede de estradas Rubras.`);
+        acted = true;
+        break;
+      }
+    }
+    if (acted) continue;
+
+    // Evita gastar o turno inteiro oscilando a mesma unidade entre dois nós.
+    for (const enemy of enemies) {
+      if (movedUnits.has(enemy.id)) continue;
+      const moves = strategicMoveTargets(next, enemy.id);
+      if (moves.length > 0) {
+        next = strategicMoveUnit(next, enemy.id, moves[0]);
+        movedUnits.add(enemy.id);
+        messages.push(`${enemy.name} avançou pela estrada Rubra.`);
+        acted = true;
+        break;
+      }
+    }
+
+    if (!acted) break;
   }
 
-  for (const enemy of enemies) {
-    const moves = strategicMoveTargets(board, enemy.id);
-    if (moves.length > 0) {
-      return { board: strategicMoveUnit(board, enemy.id, moves[0]), message: `${enemy.name} avançou pela estrada Rubra.` };
-    }
-  }
-
-  return { board, message: "A Legião Rubra manteve posição." };
+  return {
+    board: next,
+    message: messages.length > 0 ? messages.join(" ") : "A Legião Rubra manteve posição.",
+  };
 }
