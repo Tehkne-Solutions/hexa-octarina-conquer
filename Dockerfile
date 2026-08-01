@@ -2,8 +2,8 @@ FROM node:24-bookworm-slim AS web-build
 
 ARG HEXA_RELEASE_VERSION=0.12.0
 ARG HEXA_RELEASE_SHA=unknown
-ARG PACK99_WEB_RUNTIME_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2/hoc-pack99-web-full.zip
-ARG PACK99_WEB_RUNTIME_SHA256_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2/hoc-pack99-web-full.zip.sha256
+ARG PACK99_WEB_RUNTIME_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.3/hoc-pack99-web-full.zip
+ARG PACK99_WEB_RUNTIME_SHA256_URL=https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.3/hoc-pack99-web-full.zip.sha256
 ARG PACK99_WEB_RUNTIME_REQUIRED=true
 ENV VITE_RELEASE_VERSION=${HEXA_RELEASE_VERSION} \
     VITE_RELEASE_SHA=${HEXA_RELEASE_SHA}
@@ -28,24 +28,15 @@ RUN set -eux; \
     if [ "${marker_required}" = "true" ]; then runtime_required="true"; fi; \
     echo "PACK99_PRODUCTION_MARKER=${marker_status} required=${runtime_required}"; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}"; \
-    if ! curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_URL}" -o "/tmp/${runtime_name}"; then \
-      echo "PACK99_RELEASE_DOWNLOAD_FAILED=${PACK99_WEB_RUNTIME_URL}" >&2; \
-      exit 2; \
-    fi; \
-    if ! curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_SHA256_URL}" -o "/tmp/${checksum_name}"; then \
-      echo "PACK99_CHECKSUM_DOWNLOAD_FAILED=${PACK99_WEB_RUNTIME_SHA256_URL}" >&2; \
-      exit 2; \
-    fi; \
+    curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_URL}" -o "/tmp/${runtime_name}"; \
+    curl --fail --location --silent --show-error --retry 3 "${PACK99_WEB_RUNTIME_SHA256_URL}" -o "/tmp/${checksum_name}"; \
     (cd /tmp && sha256sum --check "${checksum_name}"); \
     actual_sha="$(sha256sum "/tmp/${runtime_name}" | cut -d' ' -f1)"; \
-    if [ -n "${marker_sha}" ] && [ "${actual_sha}" != "${marker_sha}" ]; then \
-      echo "O archive Web diverge do SHA-256 promovido no marcador." >&2; \
-      exit 2; \
-    fi; \
+    if [ -n "${marker_sha}" ] && [ "${actual_sha}" != "${marker_sha}" ]; then echo "PACK99_MARKER_SHA_MISMATCH" >&2; exit 2; fi; \
     rm -rf /web/public/assets/runtime; \
     mkdir -p /web/public/assets/runtime; \
     unzip -oq "/tmp/${runtime_name}" -d /web/public/assets/runtime; \
-    node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const required=["runtime-install.json","pack-manifest.json","registry/assets-runtime.json","registry/canonical-runtime-aliases.json"]; for(const file of required){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_FILE_MISSING:"+file)} const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const manifest=JSON.parse(fs.readFileSync(root+"/pack-manifest.json","utf8")); const registry=JSON.parse(fs.readFileSync(root+"/registry/assets-runtime.json","utf8")); const aliases=JSON.parse(fs.readFileSync(root+"/registry/canonical-runtime-aliases.json","utf8")); const assets=Array.isArray(registry.assets)?registry.assets:[]; const unresolved=Array.isArray(registry.unresolved)?registry.unresolved:[]; const requiredAliases=["HERO_GUARDIAN_01_IDLE_BASE_SW_01","HERO_RANGER_01_IDLE_BASE_NE_01","UNIT_RECRUIT_01_IDLE_BASE_NW_01","CHAMP_BERSERKER_01_IDLE_BASE_NW_01"]; if(install.packId!=="HOC_PACK_99_FINAL_RUNTIME"||install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||registry.packId!==install.packId||registry.profile!=="full"||registry.assetCount!==1037||assets.length!==1037||unresolved.length!==0||!manifest.version){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; for(const id of requiredAliases){if(!aliases.aliases?.[id]) throw new Error("PACK99_CANONICAL_ALIAS_MISSING:"+id)} console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${assets.length} materialized=${assets.length} aliases=${requiredAliases.length}`);'; \
+    node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const required=["runtime-install.json","pack-manifest.json","registry/assets-runtime.json"]; for(const file of required){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_FILE_MISSING:"+file)} const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const manifest=JSON.parse(fs.readFileSync(root+"/pack-manifest.json","utf8")); const registry=JSON.parse(fs.readFileSync(root+"/registry/assets-runtime.json","utf8")); const assets=Array.isArray(registry.assets)?registry.assets:[]; const unresolved=Array.isArray(registry.unresolved)?registry.unresolved:[]; const requiredMission=["packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png","packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png","packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png","packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png"]; if(install.packId!=="HOC_PACK_99_FINAL_RUNTIME"||install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||registry.packId!==install.packId||registry.profile!=="full"||registry.assetCount!==1037||assets.length!==1037||unresolved.length!==0||!manifest.version){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; for(const file of requiredMission){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_MISSION_FILE_MISSING:"+file)} console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${assets.length} materialized=${assets.length} mission=${requiredMission.length}`);'; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}" /tmp/pack99-production-release.json
 
 RUN npm run build
