@@ -1,11 +1,11 @@
 import { readFile, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const REQUIRED_ALIASES = [
-  "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
-  "HERO_RANGER_01_IDLE_BASE_NE_01",
-  "UNIT_RECRUIT_01_IDLE_BASE_NW_01",
-  "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
+const REQUIRED_MISSION_FILES = [
+  "packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+  "packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+  "packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png",
+  "packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png",
 ];
 
 async function readJson(path) {
@@ -24,7 +24,6 @@ export async function assertProductionPack99Runtime({
     install: resolve(runtimeRoot, "runtime-install.json"),
     manifest: resolve(runtimeRoot, "pack-manifest.json"),
     registry: resolve(runtimeRoot, "registry/assets-runtime.json"),
-    aliases: resolve(runtimeRoot, "registry/canonical-runtime-aliases.json"),
   };
 
   for (const [name, path] of Object.entries(paths)) {
@@ -32,11 +31,10 @@ export async function assertProductionPack99Runtime({
     if (!info?.isFile()) throw new Error(`PACK99_PRODUCTION_FILE_MISSING:${name}:${path}`);
   }
 
-  const [install, manifest, registry, aliases] = await Promise.all([
+  const [install, manifest, registry] = await Promise.all([
     readJson(paths.install),
     readJson(paths.manifest),
     readJson(paths.registry),
-    readJson(paths.aliases),
   ]);
 
   const assets = Array.isArray(registry.assets) ? registry.assets : [];
@@ -52,8 +50,10 @@ export async function assertProductionPack99Runtime({
     throw new Error(`PACK99_PRODUCTION_UNRESOLVED:${unresolved.length}`);
   }
   if (!manifest.version) throw new Error("PACK99_PRODUCTION_MANIFEST_INVALID");
-  for (const id of REQUIRED_ALIASES) {
-    if (!aliases.aliases?.[id]) throw new Error(`PACK99_PRODUCTION_ALIAS_MISSING:${id}`);
+
+  for (const relative of REQUIRED_MISSION_FILES) {
+    const info = await stat(resolve(runtimeRoot, ...relative.split("/"))).catch(() => null);
+    if (!info?.isFile()) throw new Error(`PACK99_PRODUCTION_MISSION_FILE_MISSING:${relative}`);
   }
 
   const result = {
@@ -61,7 +61,7 @@ export async function assertProductionPack99Runtime({
     profile: install.profile,
     canonicalAssets: assets.length,
     materializedAssets: assets.length,
-    aliases: REQUIRED_ALIASES.length,
+    missionFiles: REQUIRED_MISSION_FILES.length,
   };
   logger.info?.("PACK 99 production runtime verified", result);
   return result;
