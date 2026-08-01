@@ -3,7 +3,7 @@
   "packId": "HOC_PACK_99_FINAL_RUNTIME",
   "sourceVersion": "1.0.2",
   "releaseTag": "pack99-runtime-v1.0.2",
-  "status": "awaiting-release",
+  "status": "released",
   "required": true,
   "expectedCanonicalAssetIds": 1037,
   "expectedRuntimeReferences": 1037,
@@ -13,10 +13,10 @@
   "webArchive": "hoc-pack99-web-full.zip",
   "godotArchive": "hoc-pack99-godot-full.zip",
   "productionUrl": "https://hexa-octarina-conquer.onrender.com",
-  "promotedAtUtc": null,
+  "promotedAtUtc": "2026-08-01T01:27:00Z",
   "productionVerifiedAtUtc": null,
-  "webArchiveSha256": null,
+  "webArchiveSha256": "4a5d6cf8e6bed81db2db96432f70c8e60c898e4996035a0deeff207d783071c4",
   "godotArchiveSha256": null,
-  "promotionReportPassed": false,
+  "promotionReportPassed": true,
   "signature": "Tehkné Solutions"
 }
