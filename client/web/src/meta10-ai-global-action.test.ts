@@ -50,7 +50,24 @@ describe("META 10.10 global AI action scoring", () => {
     const move = candidates.find((candidate) => candidate.kind === "move");
 
     expect(closingBuild).toBeDefined();
+    expect(closingBuild?.score).toBe(118);
     expect(closingBuild?.score ?? 0).toBeGreaterThan(move?.score ?? 0);
+  });
+
+  it("gives strong momentum to a road that advances a perimeter to three sides", () => {
+    let board = createStrategicBoard();
+    board = {
+      ...board,
+      units: board.units.map((unit) => unit.id === "varg"
+        ? { ...unit, nodeId: "s-2-1" }
+        : unit),
+    };
+
+    const candidates = strategicGlobalActionCandidates(board);
+    const build = candidates.find((candidate) => candidate.kind === "build" && candidate.unitId === "varg");
+
+    expect(build?.score).toBe(95);
+    expect(build?.reason).toContain("perímetro");
   });
 
   it("prefers movement that enables a territory closure on the next action", () => {
@@ -62,7 +79,7 @@ describe("META 10.10 global AI action scoring", () => {
     const closureSetup = moves.find((candidate) => candidate.targetId === "s-1-0");
     const alternatives = moves.filter((candidate) => candidate.targetId !== "s-1-0");
 
-    expect(closureSetup?.score).toBe(84);
+    expect(closureSetup?.score).toBe(88);
     expect(closureSetup?.reason).toContain("fechar território");
     expect(alternatives.every((candidate) => (closureSetup?.score ?? 0) > candidate.score)).toBe(true);
   });
