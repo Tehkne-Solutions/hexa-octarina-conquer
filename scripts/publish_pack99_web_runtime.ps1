@@ -114,9 +114,19 @@ if ($LASTEXITCODE -ne 0) { Fail "Archive validation failed" }
 & gh auth status
 if ($LASTEXITCODE -ne 0) { Fail "GitHub CLI is not authenticated. Run gh auth login." }
 
+# A missing release is an expected first-run condition. Windows PowerShell 5.1
+# turns native stderr into a terminating error when ErrorActionPreference=Stop,
+# so probe the release with Continue and inspect the process exit code instead.
 $ReleaseExists = $false
-& gh release view $Tag --repo $Repository *> $null
-if ($LASTEXITCODE -eq 0) { $ReleaseExists = $true }
+$PreviousErrorActionPreference = $ErrorActionPreference
+try {
+    $ErrorActionPreference = "Continue"
+    & gh release view $Tag --repo $Repository 1>$null 2>$null
+    $ReleaseViewExitCode = $LASTEXITCODE
+} finally {
+    $ErrorActionPreference = $PreviousErrorActionPreference
+}
+if ($ReleaseViewExitCode -eq 0) { $ReleaseExists = $true }
 
 if (-not $ReleaseExists) {
     Write-Host "Creating release $Tag..."
