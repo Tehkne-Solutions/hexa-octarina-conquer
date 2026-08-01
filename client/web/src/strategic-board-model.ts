@@ -402,6 +402,42 @@ export function strategicPreferredMove(board: StrategicBoard, unitId: StrategicU
   return scored[0]?.nodeId ?? null;
 }
 
+export function strategicPreferredBuild(board: StrategicBoard, unitId: StrategicUnitId): string | null {
+  const unit = strategicUnit(board, unitId);
+  const builds = strategicBuildTargets(board, unitId);
+  if (builds.length === 0) return null;
+
+  const enemies = board.units.filter((candidate) => candidate.faction !== unit.faction && candidate.hp > 0);
+  const scored = builds.map((nodeId) => {
+    const edgeId = strategicEdgeId(unit.nodeId, nodeId);
+    const affectedCells = board.cells.filter((cell) => cell.edgeIds.includes(edgeId));
+    const progress = affectedCells.reduce(
+      (best, cell) => Math.max(best, strategicCellRoadProgress(board, cell.id, unit.faction)),
+      0,
+    );
+    const closesCell = affectedCells.some(
+      (cell) => !cell.owner && strategicCellRoadProgress(board, cell.id, unit.faction) === 3,
+    );
+    const enemyDistance = enemies.length > 0
+      ? Math.min(...enemies.map((enemy) => strategicNodeDistance(board, nodeId, enemy.nodeId)))
+      : 0;
+
+    return {
+      nodeId,
+      closesCell,
+      progress,
+      enemyDistance,
+    };
+  });
+
+  scored.sort((a, b) => Number(b.closesCell) - Number(a.closesCell)
+    || b.progress - a.progress
+    || a.enemyDistance - b.enemyDistance
+    || a.nodeId.localeCompare(b.nodeId));
+
+  return scored[0]?.nodeId ?? null;
+}
+
 export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
   let next = board;
   const messages: string[] = [];
@@ -454,24 +490,15 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
-    if (strategicOwnedCellCount(next, "red") < 1) {
-      for (const enemy of enemies) {
-        const builds = strategicBuildTargets(next, enemy.id);
-        if (builds.length > 0) {
-          next = strategicClaimEdge(next, enemy.id, builds[0]);
-          messages.push(`${enemy.name} construiu uma estrada Rubra.`);
-          acted = true;
-          break;
-        }
-      }
-      if (acted) continue;
-    }
-
     for (const enemy of enemies) {
-      const builds = strategicBuildTargets(next, enemy.id);
-      if (builds.length > 0) {
-        next = strategicClaimEdge(next, enemy.id, builds[0]);
-        messages.push(`${enemy.name} expandiu a rede de estradas Rubras.`);
+      const selectedBuild = strategicPreferredBuild(next, enemy.id);
+      if (selectedBuild) {
+        const beforeOwned = strategicOwnedCellCount(next, "red");
+        next = strategicClaimEdge(next, enemy.id, selectedBuild);
+        const closedTerritory = strategicOwnedCellCount(next, "red") > beforeOwned;
+        messages.push(closedTerritory
+          ? `${enemy.name} fechou uma região para a Legião Rubra.`
+          : `${enemy.name} expandiu a rede Rubra em direção a um objetivo territorial.`);
         acted = true;
         break;
       }
