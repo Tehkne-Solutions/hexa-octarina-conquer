@@ -234,8 +234,17 @@ export function strategicBuildTargets(board: StrategicBoard, unitId: StrategicUn
 
   return strategicAdjacentNodeIds(board, unit.nodeId).filter((targetNodeId) => {
     const edge = strategicEdgeBetween(board, unit.nodeId, targetNodeId);
+    return edge?.state === "unbuilt";
+  });
+}
+
+export function strategicConfrontationTargets(board: StrategicBoard, unitId: StrategicUnitId): string[] {
+  const unit = strategicUnit(board, unitId);
+  if (unit.hp <= 0) return [];
+
+  return strategicBuildTargets(board, unitId).filter((targetNodeId) => {
     const targetUnit = strategicUnitAt(board, targetNodeId);
-    return edge?.state === "unbuilt" && (!targetUnit || targetUnit.faction === unit.faction);
+    return Boolean(targetUnit && targetUnit.faction !== unit.faction);
   });
 }
 
@@ -391,6 +400,31 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
     }
     if (acted) continue;
 
+    // Se já existe uma rota materializada para um posto inimigo, combate tem prioridade.
+    for (const enemy of enemies) {
+      const attacks = strategicAttackTargets(next, enemy.id);
+      if (attacks.length > 0) {
+        next = strategicAttack(next, enemy.id, attacks[0]);
+        messages.push(`${enemy.name} atacou por uma estrada construída.`);
+        acted = true;
+        break;
+      }
+    }
+    if (acted) continue;
+
+    // Unidades adjacentes podem abrir uma rota de confronto sem ocupar o mesmo nó.
+    for (const enemy of enemies) {
+      const confrontations = strategicConfrontationTargets(next, enemy.id);
+      if (confrontations.length > 0) {
+        const targetUnit = strategicUnitAt(next, confrontations[0]);
+        next = strategicClaimEdge(next, enemy.id, confrontations[0]);
+        messages.push(`${enemy.name} abriu uma rota de confronto contra ${targetUnit?.name ?? "Orun"}.`);
+        acted = true;
+        break;
+      }
+    }
+    if (acted) continue;
+
     // Antes de possuir território, a IA prioriza formar uma rede legível e fechar região.
     if (strategicOwnedCellCount(next, "red") < 1) {
       for (const enemy of enemies) {
@@ -404,18 +438,6 @@ export function strategicEnemyTurn(board: StrategicBoard): StrategicAiTurn {
       }
       if (acted) continue;
     }
-
-    // Combate só acontece por uma estrada já materializada no tabuleiro.
-    for (const enemy of enemies) {
-      const attacks = strategicAttackTargets(next, enemy.id);
-      if (attacks.length > 0) {
-        next = strategicAttack(next, enemy.id, attacks[0]);
-        messages.push(`${enemy.name} atacou por uma estrada construída.`);
-        acted = true;
-        break;
-      }
-    }
-    if (acted) continue;
 
     for (const enemy of enemies) {
       const builds = strategicBuildTargets(next, enemy.id);
