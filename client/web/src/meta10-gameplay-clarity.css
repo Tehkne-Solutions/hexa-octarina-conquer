@@ -1,0 +1,244 @@
+/* META 10.1 — Gameplay clarity layer
+ * The physical world remains intact; this layer only establishes a readable
+ * action hierarchy: selected unit -> actionable route -> destination -> region.
+ */
+
+.strategic-board {
+  --meta10-focus: #f1cd6f;
+  --meta10-road: #dcc58e;
+  --meta10-move: #70c8ff;
+  --meta10-build: #ffd86a;
+  --meta10-attack: #ff756e;
+}
+
+/* Keep the world readable while an action is armed. */
+.strategic-board:has(.strategic-edge.is-recommended) .strategic-edge:not(.is-recommended):not(.state-road),
+.strategic-board:has(.strategic-cell.is-build-target) .strategic-edge:not(.state-road) {
+  opacity: .28;
+}
+
+.strategic-board:has(.strategic-edge.is-recommended) .strategic-node:not(.is-origin):not(.is-recommended),
+.strategic-board:has(.strategic-cell.is-build-target) .strategic-node:not(.is-origin) {
+  opacity: .48;
+}
+
+/* Selected unit is the unmistakable origin of the current action. */
+.strategic-unit.is-selected {
+  z-index: 96;
+  filter: drop-shadow(0 13px 12px rgba(0, 0, 0, .48));
+}
+
+.strategic-unit.is-selected .strategic-unit-ring {
+  transform: translate(-50%, -50%) scale(1.2);
+  border-width: 3px;
+  box-shadow: 0 0 0 5px rgba(241, 205, 111, .13), 0 0 25px rgba(241, 205, 111, .48);
+}
+
+.strategic-node.is-origin {
+  z-index: 82;
+}
+
+.strategic-node.is-origin::after {
+  content: "ORIGEM";
+  position: absolute;
+  left: 50%;
+  top: -16px;
+  transform: translateX(-50%);
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(241, 205, 111, .65);
+  background: rgba(7, 12, 11, .94);
+  color: #ffe9a8;
+  font: 800 7px/1 system-ui, sans-serif;
+  letter-spacing: .12em;
+  pointer-events: none;
+}
+
+/* The recommended route becomes a physical lane, not a thin abstract line. */
+.strategic-edge.is-recommended {
+  z-index: 74;
+  opacity: 1;
+  overflow: visible;
+  cursor: pointer;
+}
+
+.strategic-edge.is-recommended::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 30px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(241, 205, 111, .24), transparent 70%);
+  box-shadow: 0 0 24px rgba(241, 205, 111, .28);
+  pointer-events: none;
+}
+
+.strategic-edge.is-recommended .strategic-road-bed,
+.strategic-edge.is-recommended .strategic-road-stones,
+.strategic-edge.is-recommended .strategic-edge-asset {
+  filter: brightness(1.25) saturate(1.12) drop-shadow(0 4px 5px rgba(0, 0, 0, .5));
+}
+
+.strategic-edge.is-road-target.is-recommended {
+  outline: 2px dashed rgba(241, 205, 111, .8);
+  outline-offset: 5px;
+}
+
+.strategic-edge.is-move-route.is-recommended {
+  outline: 3px solid rgba(112, 200, 255, .76);
+  outline-offset: 5px;
+}
+
+.strategic-edge.is-recommended > b {
+  min-width: 78px;
+  padding: 7px 10px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  background: rgba(7, 13, 12, .96);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, .42);
+  color: #ffe89b;
+  font: 900 9px/1 system-ui, sans-serif;
+  letter-spacing: .1em;
+}
+
+.strategic-edge.is-move-route.is-recommended > b {
+  color: #a7e2ff;
+}
+
+/* Recommended destination behaves like a board-space button. */
+.strategic-node.is-recommended {
+  z-index: 88;
+  opacity: 1 !important;
+  cursor: pointer;
+}
+
+.strategic-node.is-recommended .strategic-node-pad {
+  transform: translate(-50%, -50%) scale(1.34);
+  border: 3px solid var(--meta10-focus);
+  box-shadow: 0 0 0 7px rgba(241, 205, 111, .12), 0 0 30px rgba(241, 205, 111, .5);
+  animation: meta10TargetPulse 1.05s ease-in-out infinite;
+}
+
+.strategic-node.is-move-target.is-recommended .strategic-node-pad {
+  border-color: var(--meta10-move);
+  box-shadow: 0 0 0 7px rgba(112, 200, 255, .12), 0 0 30px rgba(112, 200, 255, .48);
+}
+
+.strategic-node.is-recommended::before {
+  content: "CLIQUE AQUI";
+  position: absolute;
+  left: 50%;
+  bottom: -23px;
+  transform: translateX(-50%);
+  min-width: 78px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #0b1211;
+  border: 1px solid var(--meta10-focus);
+  color: #ffe7a0;
+  font: 900 7px/1 system-ui, sans-serif;
+  letter-spacing: .08em;
+  pointer-events: none;
+}
+
+.strategic-node.is-move-target.is-recommended::before {
+  border-color: var(--meta10-move);
+  color: #a8e4ff;
+}
+
+/* Secondary legal options stay visible but stop competing with the recommended route. */
+.strategic-edge.is-secondary-target {
+  opacity: .54;
+}
+
+.strategic-node.is-road-target:not(.is-recommended),
+.strategic-node.is-move-target:not(.is-recommended) {
+  opacity: .72 !important;
+}
+
+/* Closing a cell is a visual event; construction slot becomes the next obvious click. */
+.strategic-cell.is-build-target {
+  z-index: 65;
+  opacity: 1 !important;
+  transform: translate(-50%, -50%) scale(1.035);
+  outline: 3px solid rgba(255, 216, 106, .78);
+  outline-offset: -11px;
+  box-shadow: inset 0 0 46px rgba(255, 216, 106, .2), 0 0 32px rgba(255, 216, 106, .3);
+}
+
+.strategic-cell.is-build-target > b {
+  position: absolute;
+  z-index: 20;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  min-width: 122px;
+  padding: 9px 12px;
+  border: 2px solid #ffe08a;
+  border-radius: 999px;
+  background: rgba(11, 18, 15, .94);
+  color: #fff0b6;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .45), 0 0 18px rgba(255, 216, 106, .3);
+  font: 900 8px/1 system-ui, sans-serif;
+  letter-spacing: .08em;
+}
+
+.strategic-building-slot {
+  border-style: solid !important;
+  border-width: 2px !important;
+}
+
+/* Attack targets use a different vocabulary so movement and combat are never confused. */
+.strategic-unit.is-attack-target {
+  z-index: 98;
+}
+
+.strategic-unit.is-attack-target .strategic-unit-ring {
+  border-color: var(--meta10-attack);
+  box-shadow: 0 0 0 6px rgba(255, 117, 110, .12), 0 0 28px rgba(255, 117, 110, .55);
+  animation: meta10AttackPulse .9s ease-in-out infinite;
+}
+
+/* Reduce panel competition: board remains the primary interaction surface. */
+.strategic-roster,
+.strategic-objectives {
+  opacity: .92;
+}
+
+.strategic-command-banner {
+  z-index: 100;
+  width: min(500px, 66%);
+  border-width: 2px;
+}
+
+.strategic-command-banner strong {
+  font-size: 13px;
+}
+
+.strategic-map-key {
+  opacity: .7;
+}
+
+@keyframes meta10TargetPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1.22); }
+  50% { transform: translate(-50%, -50%) scale(1.42); }
+}
+
+@keyframes meta10AttackPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.14); }
+}
+
+@media (max-width: 980px) {
+  .strategic-command-banner {
+    width: min(540px, 82%);
+  }
+
+  .strategic-edge.is-recommended > b {
+    min-width: 68px;
+    font-size: 8px;
+  }
+}
