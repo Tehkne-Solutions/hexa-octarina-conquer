@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import {
   createStrategicBoard,
   strategicAttack,
-  strategicClaimEdge,
   strategicUnit,
 } from "./strategic-board-model";
 
@@ -19,7 +18,10 @@ describe("META 10.15 combat stat symmetry", () => {
 
   it("pairs Brakk with Kael and Varg with Lyra for base damage", () => {
     let kaelBoard = createStrategicBoard();
-    kaelBoard = strategicClaimEdge(kaelBoard, "kael", "s-2-1");
+    kaelBoard = {
+      ...kaelBoard,
+      units: kaelBoard.units.map((unit) => unit.id === "brakk" ? { ...unit, nodeId: "s-0-1" } : unit),
+    };
     const brakkBefore = strategicUnit(kaelBoard, "brakk").hp;
     const afterKael = strategicAttack(kaelBoard, "kael", "brakk");
     expect(brakkBefore - strategicUnit(afterKael, "brakk").hp).toBe(6);
@@ -27,7 +29,7 @@ describe("META 10.15 combat stat symmetry", () => {
     let brakkBoard = createStrategicBoard();
     brakkBoard = {
       ...brakkBoard,
-      units: brakkBoard.units.map((unit) => unit.id === "brakk" ? { ...unit, nodeId: "s-1-1" } : unit),
+      units: brakkBoard.units.map((unit) => unit.id === "brakk" ? { ...unit, nodeId: "s-0-1" } : unit),
     };
     const kaelBefore = strategicUnit(brakkBoard, "kael").hp;
     const afterBrakk = strategicAttack(brakkBoard, "brakk", "kael");
@@ -36,7 +38,7 @@ describe("META 10.15 combat stat symmetry", () => {
     let vargBoard = createStrategicBoard();
     vargBoard = {
       ...vargBoard,
-      units: vargBoard.units.map((unit) => unit.id === "varg" ? { ...unit, nodeId: "s-0-2" } : unit),
+      units: vargBoard.units.map((unit) => unit.id === "varg" ? { ...unit, nodeId: "s-0-1" } : unit),
     };
     const lyraBefore = strategicUnit(vargBoard, "lyra").hp;
     const afterVarg = strategicAttack(vargBoard, "varg", "lyra");
