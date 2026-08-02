@@ -1,0 +1,44 @@
+/* VERTICAL SLICE 09 — player surface cleanup
+   Tehkné Solutions */
+
+.campaign-hero-art .hero-figure {
+  -webkit-mask-image: radial-gradient(ellipse 54% 76% at 50% 52%, #000 44%, rgba(0,0,0,.96) 56%, rgba(0,0,0,.46) 70%, transparent 88%);
+  mask-image: radial-gradient(ellipse 54% 76% at 50% 52%, #000 44%, rgba(0,0,0,.96) 56%, rgba(0,0,0,.46) 70%, transparent 88%);
+}
+
+.campaign-hero-art .hero-kael {
+  left: 17%;
+  width: 194px;
+  height: 292px;
+  background-position: 50% 40% !important;
+  background-size: 226% auto !important;
+}
+
+.campaign-hero-art .hero-lyra {
+  left: 43%;
+  width: 166px;
+  height: 264px;
+  background-position: 50% 39% !important;
+  background-size: 232% auto !important;
+}
+
+.campaign-hero-art::after {
+  background:
+    linear-gradient(90deg, transparent 0 58%, rgba(20, 24, 18, .17) 74%, rgba(20, 24, 18, .62) 100%),
+    radial-gradient(ellipse 46% 23% at 35% 87%, rgba(188, 145, 76, .15), transparent 72%),
+    linear-gradient(180deg, transparent 0 65%, rgba(9, 12, 9, .54) 100%);
+}
+
+@media (max-width: 820px) {
+  .campaign-hero-art .hero-kael {
+    left: 13%;
+    width: 174px;
+    height: 260px;
+  }
+
+  .campaign-hero-art .hero-lyra {
+    left: 45%;
+    width: 148px;
+    height: 236px;
+  }
+}
