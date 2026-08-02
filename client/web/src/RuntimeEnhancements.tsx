@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import { Pack99InterfaceCleanup } from "./Pack99InterfaceCleanup";
 import { installIntentPrefetch, prefetchGameScreen } from "./screen-prefetch";
 import { installViewportProfile } from "./viewport-profile";
 
@@ -77,5 +78,5 @@ export function RuntimeEnhancements() {
     };
   }, []);
 
-  return null;
+  return <Pack99InterfaceCleanup />;
 }

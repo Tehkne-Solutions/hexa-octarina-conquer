@@ -33,13 +33,21 @@ function cleanText(value: string): string {
   return value.replace(/\s+/g, " ").trim().slice(0, 220);
 }
 
-export function Pack99InterfaceCleanup({ rootRef }: { rootRef: RefObject<HTMLDivElement | null> }) {
+function noticePayloadText(selector: string, node: HTMLElement): string {
+  if (selector === ".living-notice") {
+    const payload = node.querySelector<HTMLElement>("p");
+    return cleanText(payload?.textContent ?? node.textContent ?? "");
+  }
+  return cleanText(node.textContent ?? "");
+}
+
+export function Pack99InterfaceCleanup({ rootRef }: { rootRef?: RefObject<HTMLDivElement | null> }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<NoticeItem[]>([]);
   const seen = useRef(new Set<string>());
 
   useEffect(() => {
-    const root = rootRef.current;
+    const root = rootRef?.current ?? document.querySelector<HTMLDivElement>("#game-main");
     if (!root) return undefined;
     let frame = 0;
 
@@ -50,7 +58,7 @@ export function Pack99InterfaceCleanup({ rootRef }: { rootRef: RefObject<HTMLDiv
         NOTICE_SELECTORS.forEach((selector) => {
           root.querySelectorAll<HTMLElement>(selector).forEach((node) => {
             if (node.closest(".pack99-notification-dock")) return;
-            const text = cleanText(node.textContent ?? "");
+            const text = noticePayloadText(selector, node);
             if (!text || text.length < 3) return;
             const signature = text;
             if (HIDE_SOURCE_SELECTORS.has(selector)) node.classList.add("pack99-notice-source");
