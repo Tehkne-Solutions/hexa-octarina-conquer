@@ -49,6 +49,23 @@ async function buildFirstAvailableRoad(page) {
   return label;
 }
 
+async function tapFirstAvailableRoad(page) {
+  const edge = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)').first();
+  await edge.waitFor({ state: "visible", timeout: 10_000 });
+  const label = await edge.getAttribute("aria-label");
+  const size = await edge.evaluate((element) => ({
+    width: element.clientWidth,
+    height: element.clientHeight,
+  }));
+  await edge.tap({
+    position: {
+      x: Math.max(4, Math.min(size.width - 4, size.width * 0.16)),
+      y: Math.max(4, size.height / 2),
+    },
+  });
+  return label;
+}
+
 async function endTurn(page) {
   const button = page.getByRole("button", { name: "ENCERRAR TURNO" });
   await button.waitFor({ state: "visible", timeout: 10_000 });
@@ -96,12 +113,9 @@ async function runMobile(browser) {
     if (geometry.boardHeight < 560) throw new Error(`mobile strategic board is too short: ${JSON.stringify(geometry)}`);
 
     await expectText(page, "Estradas 0/6");
-    const edge = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)').first();
-    await edge.waitFor({ state: "visible", timeout: 10_000 });
-    const road = await edge.getAttribute("aria-label");
-    await edge.tap();
+    const road = await tapFirstAvailableRoad(page);
     await expectText(page, "Estradas 1/6");
-    record("mobile touch builds the first road from the neutral opening without horizontal overflow", { ...geometry, road });
+    record("mobile touch builds the first road from a free route segment without horizontal overflow", { ...geometry, road });
     await capture(page, "05-balanced-road-mobile.png");
   } finally {
     await context.close();
