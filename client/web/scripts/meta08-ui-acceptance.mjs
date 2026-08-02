@@ -49,21 +49,33 @@ async function buildFirstAvailableRoad(page) {
   return label;
 }
 
-async function tapFirstAvailableRoad(page) {
-  const edge = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)').first();
-  await edge.waitFor({ state: "visible", timeout: 10_000 });
-  const label = await edge.getAttribute("aria-label");
-  const size = await edge.evaluate((element) => ({
-    width: element.clientWidth,
-    height: element.clientHeight,
-  }));
-  await edge.tap({
-    position: {
-      x: Math.max(4, Math.min(size.width - 4, size.width * 0.16)),
-      y: Math.max(4, size.height / 2),
-    },
-  });
-  return label;
+async function tapVisibleRoadPoint(page) {
+  const candidates = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)');
+  const count = await candidates.count();
+  if (count <= 0) throw new Error("no buildable road is available on mobile");
+
+  for (let index = 0; index < count; index += 1) {
+    const edge = candidates.nth(index);
+    const label = await edge.getAttribute("aria-label");
+    const point = await edge.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const samples = [0.12, 0.24, 0.36, 0.5, 0.64, 0.76, 0.88];
+      for (const xRatio of samples) {
+        for (const yRatio of [0.35, 0.5, 0.65]) {
+          const x = rect.left + rect.width * xRatio;
+          const y = rect.top + rect.height * yRatio;
+          const hit = document.elementFromPoint(x, y);
+          if (hit && (hit === element || element.contains(hit))) return { x, y };
+        }
+      }
+      return null;
+    });
+    if (!point) continue;
+    await page.touchscreen.tap(point.x, point.y);
+    return { label, point };
+  }
+
+  throw new Error("all buildable mobile roads are fully occluded");
 }
 
 async function endTurn(page) {
@@ -113,9 +125,9 @@ async function runMobile(browser) {
     if (geometry.boardHeight < 560) throw new Error(`mobile strategic board is too short: ${JSON.stringify(geometry)}`);
 
     await expectText(page, "Estradas 0/6");
-    const road = await tapFirstAvailableRoad(page);
+    const road = await tapVisibleRoadPoint(page);
     await expectText(page, "Estradas 1/6");
-    record("mobile touch builds the first road from a free route segment without horizontal overflow", { ...geometry, road });
+    record("mobile touch builds a road through an actually tappable visible segment", { ...geometry, road });
     await capture(page, "05-balanced-road-mobile.png");
   } finally {
     await context.close();
