@@ -45,13 +45,34 @@ jobs:
           (cd /tmp && sha256sum --check "${checksum_name}")
           rm -rf public/assets/runtime
           mkdir -p public/assets/runtime
-          unzip -oq "/tmp/${runtime_name}" -d public/assets/runtime
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+
+          archive = Path('/tmp/hoc-pack99-web-full.zip')
+          destination = Path('public/assets/runtime').resolve()
+          with ZipFile(archive) as zf:
+              for info in zf.infolist():
+                  normalized = info.filename.replace('\\', '/')
+                  parts = [part for part in PurePosixPath(normalized).parts if part not in ('', '.')]
+                  if not parts or '..' in parts:
+                      raise SystemExit(f'PACK99_UNSAFE_ZIP_ENTRY:{info.filename}')
+                  target = destination.joinpath(*parts).resolve()
+                  if destination not in target.parents and target != destination:
+                      raise SystemExit(f'PACK99_ZIP_ESCAPE:{info.filename}')
+                  if info.is_dir() or normalized.endswith('/'):
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with zf.open(info) as source, target.open('wb') as sink:
+                          sink.write(source.read())
+          PY
           node - <<'NODE'
           const fs = require('node:fs');
           const root = 'public/assets/runtime';
           const install = JSON.parse(fs.readFileSync(`${root}/runtime-install.json`, 'utf8'));
           const index = JSON.parse(fs.readFileSync(`${root}/pack99/runtime-index.json`, 'utf8'));
-          const aliases = JSON.parse(fs.readFileSync(`${root}/registry/canonical-runtime-aliases.json`, 'utf8'));
+          const aliases = JSON.parse(fs.readFileSync('public/canonical-runtime-aliases.json', 'utf8'));
           const required = [
             'HERO_GUARDIAN_01_IDLE_BASE_SW_01',
             'HERO_RANGER_01_IDLE_BASE_NE_01',
@@ -61,7 +82,7 @@ jobs:
           if (install.profile !== 'full' || install.assetCount !== 1037 || install.unresolvedReferences !== 0) throw new Error('PACK99_VISUAL_INSTALL_INVALID');
           if (index.runtimeMode !== 'full' || index.canonicalAssetCount !== 1037 || !Array.isArray(index.assets) || index.assets.length < 1850 || index.fallback !== null) throw new Error('PACK99_VISUAL_INDEX_INVALID');
           for (const id of required) if (!aliases.aliases?.[id]) throw new Error(`PACK99_VISUAL_ALIAS_MISSING:${id}`);
-          console.log(`PACK99_VISUAL_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length}`);
+          console.log(`PACK99_VISUAL_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length} aliases=${required.length}`);
           NODE
 
       - name: Test and build with canonical runtime
