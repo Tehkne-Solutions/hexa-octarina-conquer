@@ -435,3 +435,193 @@
     transform: translate(-50%, -68%) scale(.88);
   }
 }
+
+/* VERTICAL SLICE 20 — Battle Readability & Cinematic Scale */
+.meta08-physical-world .strategic-layout {
+  grid-template-columns: 150px minmax(0, 1fr) 176px;
+  gap: 6px;
+  padding: 6px;
+}
+
+.meta08-physical-world .strategic-roster,
+.meta08-physical-world .strategic-objectives {
+  border-color: rgba(205, 169, 82, .16);
+  background: linear-gradient(180deg, rgba(7, 14, 13, .91), rgba(4, 9, 9, .88));
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .25);
+  padding: 8px;
+}
+
+.meta08-physical-world .strategic-board {
+  border-color: rgba(205, 169, 82, .18);
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(111, 151, 91, .18), transparent 58%),
+    radial-gradient(ellipse at 22% 57%, rgba(34, 104, 139, .09), transparent 32%),
+    linear-gradient(180deg, #193020 0%, #0a1710 72%, #07100d 100%);
+  box-shadow: inset 0 0 70px rgba(0, 0, 0, .5), 0 16px 36px rgba(0, 0, 0, .3);
+}
+
+.meta08-physical-world .strategic-board::before {
+  opacity: 0;
+}
+
+.meta08-physical-world .strategic-world-depth {
+  background:
+    radial-gradient(ellipse at 50% 77%, rgba(0, 0, 0, .16), transparent 53%),
+    linear-gradient(90deg, rgba(0, 0, 0, .1), transparent 10%, transparent 90%, rgba(0, 0, 0, .1));
+}
+
+.meta08-physical-world .strategic-cell {
+  width: 40.5%;
+  height: 36%;
+  filter: saturate(1.06) brightness(.91) contrast(1.03);
+  box-shadow: 0 13px 22px rgba(0, 0, 0, .24);
+}
+
+.meta08-physical-world .strategic-cell::before {
+  inset: 1%;
+  background: linear-gradient(145deg, rgba(255, 244, 200, .05), transparent 36%, rgba(0, 0, 0, .12));
+  box-shadow: none;
+}
+
+.meta08-physical-world .strategic-cell.biome-water {
+  filter: saturate(1.08) brightness(.96) contrast(1.01);
+}
+
+.meta08-physical-world .strategic-cell.biome-forest,
+.meta08-physical-world .strategic-cell.biome-rock {
+  filter: saturate(1.04) brightness(.87) contrast(1.04);
+}
+
+.meta08-physical-world .strategic-region-badge {
+  opacity: .64;
+  transform: translateX(-50%) scale(.9);
+}
+
+.meta08-physical-world .strategic-scenery-prop,
+.meta08-physical-world .strategic-scenery-prop.biome-forest,
+.meta08-physical-world .strategic-scenery-prop.biome-rock {
+  width: 122px;
+  height: 122px;
+  opacity: .9;
+}
+
+.meta08-physical-world .strategic-scenery-prop.biome-water {
+  width: 158px;
+  height: 88px;
+}
+
+.meta08-physical-world .strategic-node {
+  width: 84px;
+  height: 88px;
+  transform: translate(-50%, -62%);
+}
+
+.meta08-physical-world .strategic-node-pad {
+  width: 52px;
+  height: 18px;
+  bottom: 3px;
+  opacity: .72;
+}
+
+.meta08-physical-world .strategic-node img {
+  width: 44px;
+  height: 60px;
+  bottom: 7px;
+  opacity: .78;
+}
+
+.meta08-physical-world .strategic-node.is-occupied img {
+  opacity: .16;
+  transform: translateX(-50%) scale(.72);
+}
+
+.meta08-physical-world .strategic-node em {
+  top: 73px;
+  opacity: .68;
+}
+
+.meta08-physical-world .strategic-unit {
+  width: 132px;
+  height: 164px;
+  transform: translate(-50%, -88%);
+}
+
+.meta08-physical-world .strategic-unit-ring {
+  bottom: 20px;
+  width: 74px;
+  height: 20px;
+  border-width: 1px;
+  opacity: .72;
+  background: radial-gradient(ellipse, color-mix(in srgb, currentColor 13%, transparent), transparent 70%);
+}
+
+.meta08-physical-world .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-varg .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  top: -5px;
+  width: 122px;
+  height: 122px;
+  object-fit: contain;
+  object-position: center bottom;
+  background: transparent;
+  filter: saturate(1.08) contrast(1.05) brightness(1.04) drop-shadow(0 17px 10px rgba(0, 0, 0, .72));
+}
+
+.meta08-physical-world .strategic-unit.owner-blue .strategic-unit-image {
+  filter: saturate(1.1) contrast(1.05) brightness(1.04) drop-shadow(0 0 5px rgba(73, 173, 232, .2)) drop-shadow(0 17px 10px rgba(0, 0, 0, .72));
+}
+
+.meta08-physical-world .strategic-unit.owner-red .strategic-unit-image {
+  filter: saturate(1.1) contrast(1.05) brightness(1.08) drop-shadow(0 0 5px rgba(218, 70, 63, .18)) drop-shadow(0 17px 10px rgba(0, 0, 0, .72));
+}
+
+.meta08-physical-world .strategic-unit > b {
+  top: 116px;
+  padding: 2px 9px;
+  background: rgba(4, 8, 8, .78);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .38);
+}
+
+.meta08-physical-world .strategic-unit > small {
+  top: 135px;
+  transform: translateX(-50%) scale(.92);
+}
+
+.meta08-physical-world .strategic-command-banner {
+  top: 7px;
+  width: min(360px, 48%);
+  padding: 6px 11px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(12, 20, 18, .91), rgba(5, 11, 10, .88));
+}
+
+.meta08-physical-world .strategic-command-banner span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta08-physical-world .strategic-map-key {
+  opacity: .58;
+}
+
+@media (max-width: 1180px) {
+  .meta08-physical-world .strategic-layout {
+    grid-template-columns: 132px minmax(0, 1fr) 158px;
+  }
+
+  .meta08-physical-world .strategic-unit {
+    transform: translate(-50%, -86%) scale(.9);
+  }
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit {
+    transform: translate(-50%, -84%) scale(.82);
+  }
+
+  .meta08-physical-world .strategic-node {
+    transform: translate(-50%, -61%) scale(.86);
+  }
+}
