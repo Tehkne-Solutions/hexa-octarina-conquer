@@ -86,9 +86,10 @@ jobs:
           PY
           node - <<'NODE'
           const fs = require('node:fs');
+          const path = require('node:path');
           const root = 'public/assets/runtime';
           const install = JSON.parse(fs.readFileSync(`${root}/runtime-install.json`, 'utf8'));
-          const index = JSON.parse(fs.readFileSync(`${root}/pack99/runtime-index.json`, 'utf8'));
+          const registry = JSON.parse(fs.readFileSync(`${root}/registry/assets-runtime.json`, 'utf8'));
           const aliases = JSON.parse(fs.readFileSync('public/canonical-runtime-aliases.json', 'utf8'));
           const required = [
             'HERO_GUARDIAN_01_IDLE_BASE_SW_01',
@@ -96,10 +97,24 @@ jobs:
             'UNIT_RECRUIT_01_IDLE_BASE_NW_01',
             'CHAMP_BERSERKER_01_IDLE_BASE_NW_01',
           ];
+          const countFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).reduce((total, entry) => {
+            const current = path.join(dir, entry.name);
+            return total + (entry.isDirectory() ? countFiles(current) : 1);
+          }, 0);
+          const materializedFileCount = countFiles(root);
           if (install.profile !== 'full' || install.assetCount !== 1037 || install.unresolvedReferences !== 0) throw new Error('PACK99_VISUAL_INSTALL_INVALID');
-          if (index.runtimeMode !== 'full' || index.canonicalAssetCount !== 1037 || !Array.isArray(index.assets) || index.assets.length < 1850 || index.fallback !== null) throw new Error('PACK99_VISUAL_INDEX_INVALID');
+          if (registry.profile !== 'full' || registry.assetCount !== 1037 || !Array.isArray(registry.assets) || registry.assets.length !== 1037 || !Array.isArray(registry.unresolved) || registry.unresolved.length !== 0) throw new Error('PACK99_VISUAL_REGISTRY_INVALID');
+          if (materializedFileCount < 1850) throw new Error(`PACK99_VISUAL_MATERIALIZED=${materializedFileCount}`);
           for (const id of required) if (!aliases.aliases?.[id]) throw new Error(`PACK99_VISUAL_ALIAS_MISSING:${id}`);
-          console.log(`PACK99_VISUAL_RUNTIME=full canonical=${index.canonicalAssetCount} materialized=${index.assets.length} aliases=${required.length}`);
+          const contract = {
+            profile: install.profile,
+            canonicalAssetCount: registry.assets.length,
+            materializedFileCount,
+            unresolvedReferences: install.unresolvedReferences,
+            aliasesValidated: required.length,
+          };
+          fs.writeFileSync(`${root}/visual-gate-contract.json`, JSON.stringify(contract, null, 2) + '\n');
+          console.log(`PACK99_VISUAL_RUNTIME=full canonical=${contract.canonicalAssetCount} materialized=${contract.materializedFileCount} aliases=${required.length}`);
           NODE
 
       - name: Test and build with canonical runtime
