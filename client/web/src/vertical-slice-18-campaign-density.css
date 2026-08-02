@@ -1,0 +1,66 @@
+/* VERTICAL SLICE 18 — compact campaign journey density
+   Tehkné Solutions */
+
+@media (min-width: 981px) {
+  .campaign-map-layout {
+    align-items: start !important;
+    gap: 16px !important;
+  }
+
+  .campaign-chapter-list {
+    display: grid !important;
+    gap: 12px !important;
+  }
+
+  .campaign-chapter {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 14px 16px 16px !important;
+    overflow: hidden !important;
+  }
+
+  .campaign-chapter > .campaign-narrative-art.narrative-chapter {
+    min-height: 112px !important;
+    height: 112px !important;
+    margin: -14px -16px 12px !important;
+  }
+
+  .campaign-chapter > header {
+    min-height: 0 !important;
+    margin-bottom: 10px !important;
+    gap: 12px !important;
+  }
+
+  .campaign-chapter > header h2 {
+    margin-block: 2px 3px !important;
+  }
+
+  .campaign-chapter > header p {
+    margin: 0 !important;
+    line-height: 1.35 !important;
+  }
+
+  .campaign-mission-track {
+    min-height: 0 !important;
+    padding: 8px 0 0 !important;
+    gap: 8px !important;
+  }
+
+  .campaign-mission-node {
+    min-height: 68px !important;
+    padding-block: 9px !important;
+  }
+
+  .campaign-selected-panel {
+    position: sticky !important;
+    top: calc(var(--game-header-height) + 14px) !important;
+    align-self: start !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .campaign-chapter {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
