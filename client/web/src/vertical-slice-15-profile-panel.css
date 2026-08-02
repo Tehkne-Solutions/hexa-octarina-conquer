@@ -1,0 +1,46 @@
+/* VERTICAL SLICE 15 — compact Home profile rail
+   Tehkné Solutions */
+
+@media (min-width: 1024px) {
+  .unified-home {
+    grid-template-columns: minmax(0, 1fr) 228px !important;
+    column-gap: 12px !important;
+  }
+
+  .home-chronicle {
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 18px 16px !important;
+    gap: 8px !important;
+  }
+
+  .home-chronicle .chronicle-profile {
+    padding-bottom: 12px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .home-chronicle .chronicle-profile strong {
+    font-size: 1.55rem !important;
+    line-height: 1.05 !important;
+  }
+
+  .home-chronicle .chronicle-stat {
+    min-height: 58px !important;
+    display: grid !important;
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+    align-items: center !important;
+    padding: 8px 0 !important;
+    text-align: left !important;
+  }
+
+  .home-chronicle .chronicle-stat strong {
+    font-size: 1.45rem !important;
+    line-height: 1 !important;
+  }
+
+  .home-chronicle .chronicle-stat span {
+    justify-self: end !important;
+    font-size: .78rem !important;
+  }
+}

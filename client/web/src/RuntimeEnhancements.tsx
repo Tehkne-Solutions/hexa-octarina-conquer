@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import "./vertical-slice-15-profile-panel.css";
 import "./vertical-slice-14-hero-balance.css";
 import "./vertical-slice-13-hero-banners.css";
 import "./vertical-slice-12-status-card-compact.css";
