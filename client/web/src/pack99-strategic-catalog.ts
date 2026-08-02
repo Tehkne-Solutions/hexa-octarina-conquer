@@ -30,10 +30,7 @@ export type Pack99StrategicCatalog = Record<StrategicAssetKey, string | null>;
 interface CatalogEntry {
   id: string;
   field?: "file" | "spritesheet";
-  physicalFallback?: string;
 }
-
-const RUNTIME_ROOT = "/assets/runtime";
 
 export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = {
   grass: { id: "TILE_GRASS_FLAT_CENTER_A_01" },
@@ -51,25 +48,12 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   edgeBuiltNeSw: { id: "EDGE_STONE_BUILT_NE_SW_01" },
   edgeBuiltNwSe: { id: "EDGE_STONE_BUILT_NW_SE_01" },
 
-  // Estes quatro sprites existem fisicamente no runtime full, embora seus IDs
-  // canônicos não estejam materializados no registry. O fallback físico é parte
-  // do contrato de produção validado pelo publisher, Docker e production gate.
-  kael: {
-    id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01",
-    physicalFallback: "packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
-  },
-  lyra: {
-    id: "HERO_RANGER_01_IDLE_BASE_NE_01",
-    physicalFallback: "packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
-  },
-  varg: {
-    id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01",
-    physicalFallback: "packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png",
-  },
-  brakk: {
-    id: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01",
-    physicalFallback: "packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png",
-  },
+  // Unit visuals are canonical runtime IDs. The runtime alias registry owns the
+  // physical path mapping so the gameplay slice never bypasses PACK 99 resolution.
+  kael: { id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01" },
+  lyra: { id: "HERO_RANGER_01_IDLE_BASE_NE_01" },
+  varg: { id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01" },
+  brakk: { id: "CHAMP_BERSERKER_01_IDLE_BASE_NW_01" },
 
   bastion: { id: "TERR_OUTPOST_NEUTRAL_01" },
   watchtower: { id: "TERR_CAMP_NEUTRAL_01" },
@@ -82,8 +66,7 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
 export async function loadPack99StrategicCatalog(): Promise<Pack99StrategicCatalog> {
   const entries = await Promise.all(
     (Object.entries(PACK99_STRATEGIC_ASSETS) as Array<[StrategicAssetKey, CatalogEntry]>).map(async ([key, entry]) => {
-      const resolved = await runtimeAssetUrl(entry.id, entry.field ?? "file");
-      const url = resolved ?? (entry.physicalFallback ? `${RUNTIME_ROOT}/${entry.physicalFallback}` : null);
+      const url = await runtimeAssetUrl(entry.id, entry.field ?? "file");
       return [key, url] as const;
     }),
   );
