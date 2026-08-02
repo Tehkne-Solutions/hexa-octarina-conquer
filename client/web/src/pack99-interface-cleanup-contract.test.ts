@@ -16,7 +16,7 @@ describe("PACK 99 interface cleanup contract", () => {
 
   it("is mounted by the production runtime enhancements tree", () => {
     expect(RUNTIME).toContain('import { Pack99InterfaceCleanup } from "./Pack99InterfaceCleanup";');
-    expect(RUNTIME).toContain("return <Pack99InterfaceCleanup />;");
+    expect(RUNTIME).toContain("<Pack99InterfaceCleanup />");
     expect(SOURCE).toContain('document.querySelector<HTMLDivElement>("#game-main")');
   });
 
