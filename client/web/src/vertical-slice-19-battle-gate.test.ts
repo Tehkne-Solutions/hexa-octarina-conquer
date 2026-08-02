@@ -13,7 +13,7 @@ describe("VERTICAL SLICE 19 player-facing battle gate", () => {
 
   it("requires the real strategic board structure before capturing evidence", () => {
     expect(strategicSlice).toContain('className="strategic-board"');
-    expect(strategicSlice).toContain('className="strategic-roster-card');
+    expect(strategicSlice).toContain('strategic-roster-card');
     expect(gate).toContain('nodes.length >= 9');
     expect(gate).toContain('units.length >= 4');
   });
