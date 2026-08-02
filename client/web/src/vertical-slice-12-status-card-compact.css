@@ -1,0 +1,35 @@
+/* VERTICAL SLICE 12 — compact player-facing status card
+   Tehkné Solutions */
+
+@media (min-width: 821px) {
+  .unified-game-shell:not(.battle-active) .system-status-center {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    align-content: end;
+    justify-items: end;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .system-status-card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 220px !important;
+    align-self: end !important;
+    justify-self: end !important;
+    grid-auto-rows: min-content;
+    overflow: hidden;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .connection-status {
+    display: grid !important;
+    align-content: start;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .connection-status > div {
+    align-self: start;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .connection-status > button {
+    margin-top: 6px;
+  }
+}
