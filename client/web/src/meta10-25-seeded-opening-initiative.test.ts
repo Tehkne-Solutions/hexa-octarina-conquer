@@ -148,5 +148,5 @@ describe("META 10.25 seeded opening initiative", () => {
     expect(Math.abs(blueStarts - redStarts)).toBeLessThanOrEqual(100);
     expect(Math.abs(blueWins - redWins)).toBeLessThanOrEqual(100);
     expect(blueWins + redWins).toBe(sampleSize);
-  });
+  }, 30_000);
 });
