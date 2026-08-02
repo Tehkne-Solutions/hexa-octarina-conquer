@@ -1,0 +1,10 @@
+{
+  "packId": "HOC_PACK_99_FINAL_RUNTIME",
+  "version": "1.0.1",
+  "aliases": {
+    "HERO_GUARDIAN_01_IDLE_BASE_SW_01": "packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png",
+    "HERO_RANGER_01_IDLE_BASE_NE_01": "packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png",
+    "UNIT_RECRUIT_01_IDLE_BASE_NW_01": "packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png",
+    "CHAMP_BERSERKER_01_IDLE_BASE_NW_01": "packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png"
+  }
+}
