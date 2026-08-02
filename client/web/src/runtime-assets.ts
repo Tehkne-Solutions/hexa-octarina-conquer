@@ -32,6 +32,7 @@ interface RuntimeAliasRegistry {
 const RUNTIME_ROOT = "/assets/runtime";
 const REGISTRY_URL = `${RUNTIME_ROOT}/registry/assets-runtime.json`;
 const ALIAS_REGISTRY_URL = `${RUNTIME_ROOT}/registry/canonical-runtime-aliases.json`;
+const BOOTSTRAP_ALIAS_REGISTRY_URL = "/canonical-runtime-aliases.json";
 
 let registryPromise: Promise<RuntimeAssetRegistry | null> | null = null;
 let aliasPromise: Promise<RuntimeAliasRegistry | null> | null = null;
@@ -54,23 +55,36 @@ function indexAsset(index: Map<string, RuntimeAsset>, key: unknown, asset: Runti
   index.set(normalizeAssetKey(key), asset);
 }
 
+async function fetchRuntimeAliasRegistry(url: string): Promise<RuntimeAliasRegistry | null> {
+  try {
+    const response = await fetch(url, { cache: "no-cache" });
+    if (!response.ok) return null;
+    const registry = await response.json() as RuntimeAliasRegistry;
+    return registry.packId === "HOC_PACK_99_FINAL_RUNTIME" ? registry : null;
+  } catch {
+    return null;
+  }
+}
+
+function indexRuntimeAliases(registry: RuntimeAliasRegistry): void {
+  aliasIndex = new Map<string, string>();
+  for (const [assetId, relativePath] of Object.entries(registry.aliases ?? {})) {
+    if (typeof relativePath !== "string" || relativePath.length === 0) continue;
+    aliasIndex.set(assetId, relativePath);
+    aliasIndex.set(assetId.toUpperCase(), relativePath);
+    aliasIndex.set(normalizeAssetKey(assetId), relativePath);
+  }
+}
+
 async function loadRuntimeAliasRegistry(): Promise<RuntimeAliasRegistry | null> {
   if (!aliasPromise) {
-    aliasPromise = fetch(ALIAS_REGISTRY_URL, { cache: "no-cache" })
-      .then(async (response) => {
-        if (!response.ok) return null;
-        const registry = await response.json() as RuntimeAliasRegistry;
-        if (registry.packId !== "HOC_PACK_99_FINAL_RUNTIME") return null;
-        aliasIndex = new Map<string, string>();
-        for (const [assetId, relativePath] of Object.entries(registry.aliases ?? {})) {
-          if (typeof relativePath !== "string" || relativePath.length === 0) continue;
-          aliasIndex.set(assetId, relativePath);
-          aliasIndex.set(assetId.toUpperCase(), relativePath);
-          aliasIndex.set(normalizeAssetKey(assetId), relativePath);
-        }
-        return registry;
-      })
-      .catch(() => null);
+    aliasPromise = (async () => {
+      const registry = await fetchRuntimeAliasRegistry(ALIAS_REGISTRY_URL)
+        ?? await fetchRuntimeAliasRegistry(BOOTSTRAP_ALIAS_REGISTRY_URL);
+      if (!registry) return null;
+      indexRuntimeAliases(registry);
+      return registry;
+    })();
   }
   return aliasPromise;
 }
