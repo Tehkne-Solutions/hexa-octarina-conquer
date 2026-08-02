@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import "./vertical-slice-12-status-card-compact.css";
 import "./vertical-slice-11-status-tray.css";
 import "./vertical-slice-10-status-layout.css";
 import { Pack99HomeHeroArt } from "./Pack99HomeHeroArt";
