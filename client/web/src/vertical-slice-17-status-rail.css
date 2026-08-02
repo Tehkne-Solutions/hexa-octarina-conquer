@@ -1,0 +1,25 @@
+/* VERTICAL SLICE 17 — align player status tray with compact profile rail
+   Tehkné Solutions */
+
+@media (min-width: 1024px) {
+  .unified-game-shell:not(.battle-active) .system-status-center {
+    right: 43px !important;
+    width: 228px !important;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .system-status-card {
+    width: 228px !important;
+    max-width: 228px !important;
+  }
+
+  .unified-game-shell:not(.battle-active) .system-status-center .system-status-card p {
+    max-width: 176px !important;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 821px) {
+  .unified-game-shell:not(.battle-active) .system-status-center {
+    right: 10px !important;
+    width: min(250px, calc(100vw - 20px)) !important;
+  }
+}
