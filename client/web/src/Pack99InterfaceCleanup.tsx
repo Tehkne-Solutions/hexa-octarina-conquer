@@ -10,11 +10,16 @@ interface NoticeItem {
 const NOTICE_SELECTORS = [
   ".living-notice",
   ".ai-turn-summary",
-  ".battle-coach-card",
   ".event-timeline p",
   ".phase-banner",
   ".compact-objectives .current",
 ];
+
+const HIDE_SOURCE_SELECTORS = new Set([
+  ".living-notice",
+  ".event-timeline p",
+  ".compact-objectives .current",
+]);
 
 function classifyNotice(text: string): NoticeItem["kind"] {
   const normalized = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -47,8 +52,8 @@ export function Pack99InterfaceCleanup({ rootRef }: { rootRef: RefObject<HTMLDiv
             if (node.closest(".pack99-notification-dock")) return;
             const text = cleanText(node.textContent ?? "");
             if (!text || text.length < 3) return;
-            const signature = `${selector}:${text}`;
-            node.classList.add("pack99-notice-source");
+            const signature = text;
+            if (HIDE_SOURCE_SELECTORS.has(selector)) node.classList.add("pack99-notice-source");
             if (seen.current.has(signature)) return;
             seen.current.add(signature);
             additions.push({ id: `${Date.now()}-${seen.current.size}`, text, kind: classifyNotice(text), createdAt: Date.now() });
