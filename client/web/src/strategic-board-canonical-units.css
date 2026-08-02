@@ -171,6 +171,23 @@
   filter: saturate(1.34) contrast(1.25) brightness(1.62);
 }
 
+/* Canonical roster thumbnails use the same cropped-canvas treatment as map tokens.
+ * !important intentionally overrides the temporary inline contain style from the
+ * player-facing roster so 1024x1024 source canvases stay recognizable at 26px. */
+.meta08-physical-world .strategic-roster-icon {
+  overflow: hidden;
+}
+
+.meta08-physical-world .strategic-roster-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: 50% 38%;
+  transform: scale(1.5);
+  transform-origin: 50% 38%;
+  filter: saturate(1.16) contrast(1.12);
+}
+
 .meta08-physical-world .strategic-unit.is-selected::before {
   box-shadow:
     0 0 0 2px #fff2bd,
