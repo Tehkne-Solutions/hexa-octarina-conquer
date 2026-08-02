@@ -230,8 +230,6 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
   const blueStructures = strategicStructureCount(board, "blue");
   const blueRoads = strategicRoadCount(board, "blue");
   const defeatedEnemies = board.units.filter((unit) => unit.faction === "red" && unit.hp <= 0).length;
-  const resolvedAssets = Object.values(catalog).filter(Boolean).length;
-  const assetTotal = Object.keys(catalog).length;
 
   const preferredNodeTarget = useMemo(() => {
     const candidates = mode === "road" ? [...roadTargets] : mode === "move" ? [...moveTargets] : [];
@@ -387,7 +385,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
     <header className="strategic-topbar">
       <button type="button" className="strategic-menu" onClick={onBack} aria-label="Voltar">☰</button>
       <div className="strategic-title">
-        <small>META 08 · REDE E TERRITÓRIO</small>
+        <small>CAMPANHA · REDE E TERRITÓRIO</small>
         <strong>Fronteira da Convergência</strong>
       </div>
       <div className="strategic-turn">
@@ -409,7 +407,16 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
           className={`strategic-roster-card owner-${unit.faction} ${selectedUnitId === unit.id ? "is-selected" : ""}`}
           onClick={() => selectUnit(unit.id)}
         >
-          <span className="strategic-roster-icon">{unit.name.slice(0, 1)}</span>
+          <span className="strategic-roster-icon">
+            {catalog[UNIT_ASSET_KEY[unit.id]]
+              ? <img
+                src={catalog[UNIT_ASSET_KEY[unit.id]]!}
+                alt=""
+                draggable={false}
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />
+              : unit.name.slice(0, 1)}
+          </span>
           <span><b>{unit.name}</b><small>{unit.role}</small></span>
           <em>{unit.hp}/{unit.maxHp}</em>
         </button>)}
@@ -445,7 +452,7 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
         </div>
       </aside>
 
-      <section className="strategic-board" aria-label="Tabuleiro estratégico META 08">
+      <section className="strategic-board" aria-label="Tabuleiro estratégico da Fronteira da Convergência">
         <div className="strategic-world-light" />
         <div className="strategic-world-depth" aria-hidden="true" />
 
@@ -627,10 +634,6 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
               {attackable ? <em>ATACAR</em> : null}
             </button>;
           })}
-        </div>
-
-        <div className={`strategic-board-status ${resolvedAssets === assetTotal ? "is-ready" : "is-incomplete"}`}>
-          PACK 99 · {resolvedAssets}/{assetTotal}
         </div>
 
         {result !== "playing" ? <div className={`strategic-result is-${result}`}>
