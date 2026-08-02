@@ -1,0 +1,81 @@
+/* VERTICAL SLICE 13 — diegetic canonical hero banners
+   Tehkné Solutions */
+
+/* The PACK 99 hero source art includes its own illustrated background. Instead of
+   pretending these are transparent cut-outs, present them as intentional campaign
+   banners embedded in the scene. */
+.campaign-hero-art .hero-figure {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(223, 187, 103, .52) !important;
+  border-radius: 8px 8px 18px 18px !important;
+  background-color: rgba(31, 27, 19, .94) !important;
+  box-shadow:
+    0 18px 28px rgba(0, 0, 0, .5),
+    0 0 0 3px rgba(55, 42, 23, .78),
+    inset 0 0 0 1px rgba(255, 230, 167, .1) !important;
+  transform-origin: 50% 100%;
+}
+
+.campaign-hero-art .hero-figure::before {
+  position: absolute;
+  inset: 7px;
+  z-index: 3;
+  border: 1px solid rgba(244, 214, 142, .22);
+  border-radius: 4px 4px 13px 13px;
+  content: "";
+  pointer-events: none;
+}
+
+.campaign-hero-art .hero-figure::after {
+  right: -10px !important;
+  bottom: -16px !important;
+  left: -10px !important;
+  height: 34px !important;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .62), transparent 70%) !important;
+  filter: blur(7px) !important;
+}
+
+.campaign-hero-art .hero-kael {
+  left: 27% !important;
+  bottom: 26px !important;
+  width: 150px !important;
+  height: 224px !important;
+  background-position: 50% 42% !important;
+  background-size: 150% auto !important;
+  transform: rotate(-4deg) !important;
+  filter: saturate(1.05) contrast(1.05) brightness(.92) !important;
+}
+
+.campaign-hero-art .hero-lyra {
+  left: 49% !important;
+  bottom: 24px !important;
+  width: 142px !important;
+  height: 214px !important;
+  background-position: 50% 42% !important;
+  background-size: 154% auto !important;
+  transform: rotate(3deg) !important;
+  filter: saturate(1.02) contrast(1.06) brightness(.88) !important;
+}
+
+.campaign-hero-art::before {
+  background:
+    linear-gradient(180deg, transparent 0 62%, rgba(7, 9, 7, .16) 72%, rgba(7, 9, 7, .72) 100%),
+    radial-gradient(circle at 37% 74%, rgba(218, 177, 92, .12), transparent 22%),
+    radial-gradient(circle at 57% 74%, rgba(218, 177, 92, .08), transparent 20%) !important;
+}
+
+@media (max-width: 820px) {
+  .campaign-hero-art .hero-kael {
+    left: 22% !important;
+    width: 132px !important;
+    height: 196px !important;
+  }
+
+  .campaign-hero-art .hero-lyra {
+    left: 50% !important;
+    width: 124px !important;
+    height: 188px !important;
+  }
+}
