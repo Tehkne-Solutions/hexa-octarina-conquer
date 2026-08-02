@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Pack99HomeHeroArt } from "./Pack99HomeHeroArt";
 import { Pack99InterfaceCleanup } from "./Pack99InterfaceCleanup";
+import { Pack99PlayerSurfaceCleanup } from "./Pack99PlayerSurfaceCleanup";
 import { installIntentPrefetch, prefetchGameScreen } from "./screen-prefetch";
 import { installViewportProfile } from "./viewport-profile";
 
@@ -79,5 +80,5 @@ export function RuntimeEnhancements() {
     };
   }, []);
 
-  return <><Pack99HomeHeroArt /><Pack99InterfaceCleanup /></>;
+  return <><Pack99HomeHeroArt /><Pack99InterfaceCleanup /><Pack99PlayerSurfaceCleanup /></>;
 }
