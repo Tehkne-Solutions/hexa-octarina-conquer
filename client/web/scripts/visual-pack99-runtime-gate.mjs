@@ -119,6 +119,60 @@ async function main() {
     await page.waitForTimeout(3500);
     await page.screenshot({ path: new URL("campaign-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
+    // VERTICAL SLICE 19 — prove the real strategic battle surface, not the
+    // synthetic Sprint UI 14 mock. QA only supplies a deterministic campaign
+    // catalog; the launched mission is the production StrategicBoardSlice.
+    const briefingButton = page.locator(".campaign-selected-panel .fantasy-button.primary");
+    await briefingButton.waitFor({ state: "visible", timeout: 30000 });
+    await briefingButton.click();
+    await page.locator("main.campaign-briefing-screen").waitFor({ state: "visible", timeout: 30000 });
+
+    const missionStart = page.locator(".briefing-start");
+    await missionStart.waitFor({ state: "visible", timeout: 30000 });
+    assert(await missionStart.isEnabled(), "PACK99_BATTLE_START_DISABLED");
+    await missionStart.click();
+
+    await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
+    await page.waitForFunction(() => {
+      const slice = document.querySelector("main.strategic-slice");
+      const board = document.querySelector(".strategic-board");
+      const nodes = document.querySelectorAll(".strategic-node");
+      const units = document.querySelectorAll(".strategic-roster-card");
+      return Boolean(slice && board && nodes.length >= 9 && units.length >= 4);
+    }, { timeout: 30000 });
+    await page.waitForFunction(() => {
+      const runtimeImages = Array.from(document.querySelectorAll("main.strategic-slice img"));
+      return runtimeImages.some((image) => image.getAttribute("src")?.includes("/assets/runtime/"));
+    }, { timeout: 30000 });
+    await page.waitForTimeout(900);
+
+    const battleSurface = await page.evaluate(() => {
+      const slice = document.querySelector("main.strategic-slice");
+      const board = document.querySelector(".strategic-board");
+      const runtimeImages = Array.from(document.querySelectorAll("main.strategic-slice img"))
+        .map((image) => image.getAttribute("src") ?? "")
+        .filter((src) => src.includes("/assets/runtime/"));
+      const rect = (node) => {
+        if (!node) return null;
+        const bounds = node.getBoundingClientRect();
+        return { width: Math.round(bounds.width), height: Math.round(bounds.height) };
+      };
+      return {
+        slice: rect(slice),
+        board: rect(board),
+        nodes: document.querySelectorAll(".strategic-node").length,
+        units: document.querySelectorAll(".strategic-roster-card").length,
+        runtimeImages: runtimeImages.length,
+      };
+    });
+
+    assert(battleSurface.slice, "PACK99_BATTLE_SLICE_MISSING");
+    assert(battleSurface.board, "PACK99_BATTLE_BOARD_MISSING");
+    assert(battleSurface.nodes >= 9, `PACK99_BATTLE_NODES=${battleSurface.nodes}`);
+    assert(battleSurface.units >= 4, `PACK99_BATTLE_UNITS=${battleSurface.units}`);
+    assert(battleSurface.runtimeImages > 0, `PACK99_BATTLE_RUNTIME_IMAGES=${battleSurface.runtimeImages}`);
+    await page.screenshot({ path: new URL("battle-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: false });
+
     assert(runtimeFailures.length === 0, `PACK99_RUNTIME_HTTP_FAILURES=${runtimeFailures.join(" | ")}`);
 
     const manifest = [
@@ -130,12 +184,17 @@ async function main() {
       `hero Kael: ${heroArt.kael.marker}`,
       `hero Lyra: ${heroArt.lyra.marker}`,
       "player-facing technical badge: hidden",
+      `battle strategic nodes: ${battleSurface.nodes}`,
+      `battle roster units: ${battleSurface.units}`,
+      `battle runtime images: ${battleSurface.runtimeImages}`,
+      `battle slice: ${battleSurface.slice.width}x${battleSurface.slice.height}`,
+      `battle board: ${battleSurface.board.width}x${battleSurface.board.height}`,
       "Tehkné Solutions",
       "",
     ].join("\n");
     await writeFile(new URL("manifest.txt", outputDir), manifest, "utf8");
 
-    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount}`);
+    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount} battleNodes=${battleSurface.nodes} battleRuntimeImages=${battleSurface.runtimeImages}`);
   } finally {
     await browser.close();
   }
