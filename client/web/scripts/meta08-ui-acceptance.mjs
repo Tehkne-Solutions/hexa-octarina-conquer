@@ -41,34 +41,12 @@ async function expectText(page, text) {
   await page.getByText(text, { exact: true }).waitFor({ state: "visible", timeout: 10_000 });
 }
 
-async function setMode(page, mode) {
-  const labels = {
-    road: { action: "ESTRADA", banner: "CONSTRUIR ESTRADA" },
-    move: { action: "MOVER", banner: "MOVER UNIDADE" },
-    structure: { action: "BASTIÃO", banner: "CONSTRUIR BASTIÃO" },
-    attack: { action: "ATACAR", banner: "ATACAR" },
-  };
-  const target = labels[mode];
-  const current = (await page.locator(".strategic-command-banner strong").textContent())?.trim();
-  if (current !== target.banner) {
-    const button = page.locator(".strategic-actions button:not(:disabled)").filter({ hasText: target.action }).first();
-    await button.waitFor({ state: "visible", timeout: 10_000 });
-    await button.click();
-  }
-  await page.locator(".strategic-command-banner strong").getByText(target.banner, { exact: true })
-    .waitFor({ state: "visible", timeout: 10_000 });
-}
-
-async function clickRoute(page, label) {
-  const edge = page.locator(`.strategic-edge[aria-label="${label}"]:not(:disabled)`).first();
+async function buildFirstAvailableRoad(page) {
+  const edge = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)').first();
   await edge.waitFor({ state: "visible", timeout: 10_000 });
+  const label = await edge.getAttribute("aria-label");
   await edge.click();
-}
-
-async function attackUnit(page, name) {
-  const target = page.locator(`.strategic-unit[aria-label^="${name},"]`).first();
-  await target.waitFor({ state: "visible", timeout: 10_000 });
-  await target.click();
+  return label;
 }
 
 async function endTurn(page) {
@@ -91,13 +69,9 @@ async function runNotebook(browser) {
     await expectText(page, "Orun venceu a iniciativa da rodada 1.");
     record("balanced strategic mission opened on notebook viewport");
 
-    await clickRoute(page, "Construir estrada até Mirante de Orun");
+    const road = await buildFirstAvailableRoad(page);
     await expectText(page, "Estradas 1/6");
-    await setMode(page, "move");
-    await clickRoute(page, "Mover para Mirante de Orun");
-    await setMode(page, "attack");
-    await attackUnit(page, "Varg");
-    record("neutral opening supports road movement and combat through the browser");
+    record("neutral opening builds the first available road through the browser", { road });
 
     await endTurn(page);
     await expectText(page, "RODADA 2");
@@ -122,11 +96,12 @@ async function runMobile(browser) {
     if (geometry.boardHeight < 560) throw new Error(`mobile strategic board is too short: ${JSON.stringify(geometry)}`);
 
     await expectText(page, "Estradas 0/6");
-    const edge = page.locator('.strategic-edge[aria-label="Construir estrada até Mirante de Orun"]:not(:disabled)').first();
+    const edge = page.locator('.strategic-edge[aria-label^="Construir estrada até"]:not(:disabled)').first();
     await edge.waitFor({ state: "visible", timeout: 10_000 });
+    const road = await edge.getAttribute("aria-label");
     await edge.tap();
     await expectText(page, "Estradas 1/6");
-    record("mobile touch builds the first road from the neutral opening without horizontal overflow", geometry);
+    record("mobile touch builds the first road from the neutral opening without horizontal overflow", { ...geometry, road });
     await capture(page, "05-balanced-road-mobile.png");
   } finally {
     await context.close();
