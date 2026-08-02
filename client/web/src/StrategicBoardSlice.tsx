@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import {
-  createStrategicBoard,
   strategicActionBudget,
   strategicAttack,
   strategicAttackTargets,
@@ -25,7 +24,13 @@ import {
   type StrategicResult,
   type StrategicUnitId,
 } from "./strategic-board-model";
-import { strategicEnemyTurnGlobal } from "./strategic-ai-global-executor";
+import {
+  createBalancedStrategicBoard,
+  createStrategicMatchSeed,
+  strategicStarterFromSeed,
+  type StrategicRoundStarter,
+} from "./strategic-balanced-opening";
+import { strategicBeginRound, strategicEndPlayerTurn } from "./strategic-turn-order";
 import {
   emptyPack99StrategicCatalog,
   loadPack99StrategicCatalog,
@@ -43,7 +48,6 @@ interface StrategicBoardSliceProps {
 type ActionMode = "road" | "move" | "structure" | "attack";
 type EdgeOrientation = "ne-sw" | "nw-se";
 
-const FRIENDLY_UNITS: StrategicUnitId[] = ["kael", "lyra"];
 const UNIT_ASSET_KEY: Record<StrategicUnitId, "kael" | "lyra" | "varg" | "brakk"> = {
   kael: "kael",
   lyra: "lyra",
@@ -172,17 +176,37 @@ function sceneryAsset(cell: StrategicCell): StrategicAssetKey {
   return "sanctuary";
 }
 
+function createOpeningState() {
+  const starter = strategicStarterFromSeed(createStrategicMatchSeed());
+  return {
+    starter,
+    transition: strategicBeginRound(createBalancedStrategicBoard(), 1, starter),
+  };
+}
+
+function openingMessages(starter: StrategicRoundStarter, enemyMessage: string | null): string[] {
+  const initiative = starter === "blue"
+    ? "Orun venceu a iniciativa da rodada 1."
+    : "A Legião Rubra venceu a iniciativa da rodada 1.";
+  const messages = [initiative, "Abertura balanceada: nenhuma estrada começa construída."];
+  if (enemyMessage) messages.unshift(enemyMessage);
+  return messages.slice(0, 3);
+}
+
 export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceProps) {
-  const initialBoard = useMemo(() => createStrategicBoard(), []);
+  const initialOpening = useMemo(() => createOpeningState(), []);
+  const initialBoard = initialOpening.transition.board;
   const [board, setBoard] = useState<StrategicBoard>(initialBoard);
   const [catalog, setCatalog] = useState<Pack99StrategicCatalog>(emptyPack99StrategicCatalog());
-  const [selectedUnitId, setSelectedUnitId] = useState<StrategicUnitId>("kael");
-  const [mode, setMode] = useState<ActionMode>("road");
-  const [round, setRound] = useState(1);
-  const [actions, setActions] = useState(3);
-  const [messages, setMessages] = useState<string[]>([
-    "Rota recomendada: construa a estrada do Entroncamento Central ao Vau Octarino.",
-  ]);
+  const [selectedUnitId, setSelectedUnitId] = useState<StrategicUnitId>(initialOpening.transition.selectedUnitId);
+  const [mode, setMode] = useState<ActionMode>(() => recommendedAction(initialBoard, initialOpening.transition.selectedUnitId));
+  const [round, setRound] = useState(initialOpening.transition.nextRound);
+  const [roundStarter, setRoundStarter] = useState<StrategicRoundStarter>(initialOpening.transition.nextStarter);
+  const [actions, setActions] = useState(initialOpening.transition.playerActions);
+  const [messages, setMessages] = useState<string[]>(() => openingMessages(
+    initialOpening.transition.nextStarter,
+    initialOpening.transition.enemyMessage,
+  ));
 
   useEffect(() => {
     let active = true;
@@ -335,24 +359,28 @@ export function StrategicBoardSlice({ playerName, onBack }: StrategicBoardSliceP
   function endTurn(): void {
     if (result !== "playing") return;
 
-    const enemy = strategicEnemyTurnGlobal(board);
-    setBoard(enemy.board);
-    setRound((value) => value + 1);
-    setActions(strategicActionBudget(enemy.board, "blue"));
+    const transition = strategicEndPlayerTurn(board, round, roundStarter);
+    setBoard(transition.board);
+    setRound(transition.nextRound);
+    setRoundStarter(transition.nextStarter);
+    setActions(transition.playerActions);
+    setSelectedUnitId(transition.selectedUnitId);
+    setMode(recommendedAction(transition.board, transition.selectedUnitId));
 
-    const survivor = FRIENDLY_UNITS.find((id) => strategicUnit(enemy.board, id).hp > 0) ?? "kael";
-    setSelectedUnitId(survivor);
-    setMode(recommendedAction(enemy.board, survivor));
-    pushMessage(`${enemy.message} Rodada ${round + 1}: ${strategicActionBudget(enemy.board, "blue")} ações.`);
+    const initiative = transition.nextStarter === "blue" ? "Orun" : "Rubra";
+    const enemyLog = transition.enemyMessage ? `${transition.enemyMessage} ` : "";
+    pushMessage(`${enemyLog}Rodada ${transition.nextRound}: ${transition.playerActions} ações. Iniciativa ${initiative}.`);
   }
 
   function restart(): void {
-    setBoard(initialBoard);
-    setSelectedUnitId("kael");
-    setMode("road");
-    setRound(1);
-    setActions(3);
-    setMessages(["Rota recomendada: construa a estrada do Entroncamento Central ao Vau Octarino."]);
+    const opening = createOpeningState();
+    setBoard(opening.transition.board);
+    setSelectedUnitId(opening.transition.selectedUnitId);
+    setMode(recommendedAction(opening.transition.board, opening.transition.selectedUnitId));
+    setRound(opening.transition.nextRound);
+    setRoundStarter(opening.transition.nextStarter);
+    setActions(opening.transition.playerActions);
+    setMessages(openingMessages(opening.transition.nextStarter, opening.transition.enemyMessage));
   }
 
   return <main className="strategic-slice meta08-roads meta08-physical-world">
