@@ -10,23 +10,26 @@ function assert(condition, message) {
 
 async function runtimeContract(page) {
   return page.evaluate(async () => {
-    const [installResponse, indexResponse] = await Promise.all([
+    const [installResponse, registryResponse, visualResponse] = await Promise.all([
       fetch("/assets/runtime/runtime-install.json", { cache: "no-store" }),
-      fetch("/assets/runtime/pack99/runtime-index.json", { cache: "no-store" }),
+      fetch("/assets/runtime/registry/assets-runtime.json", { cache: "no-store" }),
+      fetch("/assets/runtime/visual-gate-contract.json", { cache: "no-store" }),
     ]);
-    if (!installResponse.ok || !indexResponse.ok) {
-      throw new Error(`PACK99_RUNTIME_HTTP install=${installResponse.status} index=${indexResponse.status}`);
+    if (!installResponse.ok || !registryResponse.ok || !visualResponse.ok) {
+      throw new Error(`PACK99_RUNTIME_HTTP install=${installResponse.status} registry=${registryResponse.status} visual=${visualResponse.status}`);
     }
     const install = await installResponse.json();
-    const index = await indexResponse.json();
+    const registry = await registryResponse.json();
+    const visual = await visualResponse.json();
     return {
       profile: install.profile,
       assetCount: install.assetCount,
       unresolvedReferences: install.unresolvedReferences,
-      runtimeMode: index.runtimeMode,
-      canonicalAssetCount: index.canonicalAssetCount,
-      materializedAssetCount: Array.isArray(index.assets) ? index.assets.length : 0,
-      fallback: index.fallback,
+      registryProfile: registry.profile,
+      canonicalAssetCount: Array.isArray(registry.assets) ? registry.assets.length : 0,
+      registryUnresolved: Array.isArray(registry.unresolved) ? registry.unresolved.length : -1,
+      materializedFileCount: visual.materializedFileCount,
+      aliasesValidated: visual.aliasesValidated,
     };
   });
 }
@@ -49,10 +52,11 @@ async function main() {
     assert(runtime.profile === "full", `PACK99_VISUAL_PROFILE=${runtime.profile}`);
     assert(runtime.assetCount === 1037, `PACK99_VISUAL_CANONICAL=${runtime.assetCount}`);
     assert(runtime.unresolvedReferences === 0, `PACK99_VISUAL_UNRESOLVED=${runtime.unresolvedReferences}`);
-    assert(runtime.runtimeMode === "full", `PACK99_VISUAL_MODE=${runtime.runtimeMode}`);
-    assert(runtime.canonicalAssetCount === 1037, `PACK99_VISUAL_INDEX_CANONICAL=${runtime.canonicalAssetCount}`);
-    assert(runtime.materializedAssetCount >= 1850, `PACK99_VISUAL_MATERIALIZED=${runtime.materializedAssetCount}`);
-    assert(runtime.fallback === null, `PACK99_VISUAL_FALLBACK=${JSON.stringify(runtime.fallback)}`);
+    assert(runtime.registryProfile === "full", `PACK99_VISUAL_REGISTRY_PROFILE=${runtime.registryProfile}`);
+    assert(runtime.canonicalAssetCount === 1037, `PACK99_VISUAL_REGISTRY_CANONICAL=${runtime.canonicalAssetCount}`);
+    assert(runtime.registryUnresolved === 0, `PACK99_VISUAL_REGISTRY_UNRESOLVED=${runtime.registryUnresolved}`);
+    assert(runtime.materializedFileCount >= 1850, `PACK99_VISUAL_MATERIALIZED=${runtime.materializedFileCount}`);
+    assert(runtime.aliasesValidated === 4, `PACK99_VISUAL_ALIASES=${runtime.aliasesValidated}`);
 
     await page.waitForFunction(() => {
       const kael = document.querySelector(".campaign-hero-art .hero-kael");
@@ -92,7 +96,7 @@ async function main() {
       "Hexa Octarina Conquer — PACK 99 Visual Runtime Gate",
       `runtime profile: ${runtime.profile}`,
       `canonical assets: ${runtime.canonicalAssetCount}`,
-      `materialized assets: ${runtime.materializedAssetCount}`,
+      `materialized files: ${runtime.materializedFileCount}`,
       `unresolved references: ${runtime.unresolvedReferences}`,
       `hero Kael: ${heroArt.kael.marker}`,
       `hero Lyra: ${heroArt.lyra.marker}`,
@@ -101,7 +105,7 @@ async function main() {
     ].join("\n");
     await writeFile(new URL("manifest.txt", outputDir), manifest, "utf8");
 
-    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedAssetCount}`);
+    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount}`);
   } finally {
     await browser.close();
   }
