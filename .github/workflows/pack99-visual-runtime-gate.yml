@@ -45,7 +45,29 @@ jobs:
           (cd /tmp && sha256sum --check "${checksum_name}")
           rm -rf public/assets/runtime
           mkdir -p public/assets/runtime
-          unzip -oq "/tmp/${runtime_name}" -d public/assets/runtime
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          import zipfile
+
+          archive = Path('/tmp/hoc-pack99-web-full.zip')
+          target = Path('public/assets/runtime').resolve()
+
+          with zipfile.ZipFile(archive) as zf:
+              for info in zf.infolist():
+                  normalized = info.filename.replace('\\', '/').lstrip('/')
+                  if not normalized:
+                      continue
+                  destination = (target / normalized).resolve()
+                  if destination != target and target not in destination.parents:
+                      raise RuntimeError(f'PACK99_ZIP_PATH_ESCAPE:{info.filename}')
+                  if info.is_dir() or normalized.endswith('/'):
+                      destination.mkdir(parents=True, exist_ok=True)
+                      continue
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with zf.open(info) as source, destination.open('wb') as output:
+                      shutil.copyfileobj(source, output)
+          PY
           node - <<'NODE'
           const fs = require('node:fs');
           const root = 'public/assets/runtime';
