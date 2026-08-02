@@ -20,6 +20,7 @@ describe("VERTICAL SLICE 18 campaign map density", () => {
   });
 
   it("reduces chapter artwork and mission whitespace on desktop", () => {
+    expect(densityCss).toContain("@media (min-width: 981px)");
     expect(densityCss).toContain("height: 112px !important");
     expect(densityCss).toContain("min-height: 68px !important");
     expect(densityCss).toContain("gap: 12px !important");
@@ -28,5 +29,9 @@ describe("VERTICAL SLICE 18 campaign map density", () => {
   it("keeps the selected mission panel visible while scrolling the denser map", () => {
     expect(densityCss).toContain("position: sticky !important");
     expect(densityCss).toContain("top: calc(var(--game-header-height) + 14px) !important");
+  });
+
+  it("does not override the canonical mobile chapter sizing", () => {
+    expect(densityCss).not.toContain("@media (max-width: 980px)");
   });
 });
