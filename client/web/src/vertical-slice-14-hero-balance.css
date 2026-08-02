@@ -1,0 +1,44 @@
+/* VERTICAL SLICE 14 — canonical hero banner balance
+   Tehkné Solutions */
+
+/* Preserve the diegetic-banner concept from VS13 while giving the scene more air. */
+.campaign-hero-art .hero-kael {
+  left: 29% !important;
+  bottom: 28px !important;
+  width: 136px !important;
+  height: 204px !important;
+  transform: rotate(-3deg) !important;
+}
+
+.campaign-hero-art .hero-lyra {
+  left: 50% !important;
+  bottom: 26px !important;
+  width: 128px !important;
+  height: 194px !important;
+  transform: rotate(2deg) !important;
+}
+
+.campaign-hero-art .hero-moon {
+  opacity: .94;
+}
+
+.campaign-hero-art::before {
+  background:
+    linear-gradient(180deg, transparent 0 66%, rgba(7, 9, 7, .14) 76%, rgba(7, 9, 7, .68) 100%),
+    radial-gradient(circle at 37% 76%, rgba(218, 177, 92, .09), transparent 20%),
+    radial-gradient(circle at 57% 76%, rgba(218, 177, 92, .06), transparent 18%) !important;
+}
+
+@media (max-width: 820px) {
+  .campaign-hero-art .hero-kael {
+    left: 23% !important;
+    width: 120px !important;
+    height: 178px !important;
+  }
+
+  .campaign-hero-art .hero-lyra {
+    left: 51% !important;
+    width: 112px !important;
+    height: 170px !important;
+  }
+}
