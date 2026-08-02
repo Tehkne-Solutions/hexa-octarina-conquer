@@ -86,6 +86,35 @@ async function main() {
 
     await page.screenshot({ path: new URL("home-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
+    // Separate QA evidence from the actual player-facing surface. Diagnostics are
+    // intentionally preserved in ?qa=1, but must disappear for a normal player.
+    await page.goto(`${baseUrl}/`, { waitUntil: "networkidle", timeout: 120000 });
+    await page.waitForFunction(() => {
+      const kael = document.querySelector(".campaign-hero-art .hero-kael");
+      const lyra = document.querySelector(".campaign-hero-art .hero-lyra");
+      return kael?.dataset.pack99HeroArt === "kael" && lyra?.dataset.pack99HeroArt === "lyra";
+    }, { timeout: 30000 });
+    await page.waitForTimeout(350);
+
+    const visibleTechnicalBadges = await page.evaluate(() => {
+      const pattern = /BUILD\s+.+PACK\s*99\s+\d+\s*\/\s*1037/i;
+      return Array.from(document.querySelectorAll("body *"))
+        .filter((node) => {
+          const text = node.textContent?.replace(/\s+/g, " ").trim() ?? "";
+          if (!pattern.test(text)) return false;
+          const style = getComputedStyle(node);
+          const rect = node.getBoundingClientRect();
+          return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
+        })
+        .map((node) => ({
+          tag: node.tagName,
+          className: node.className || "",
+          text: node.textContent?.replace(/\s+/g, " ").trim() ?? "",
+        }));
+    });
+    assert(visibleTechnicalBadges.length === 0, `PACK99_PLAYER_TECH_BADGE_VISIBLE=${JSON.stringify(visibleTechnicalBadges)}`);
+    await page.screenshot({ path: new URL("home-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: true });
+
     await page.goto(`${baseUrl}/?qa=1&stable=1&screen=campaign`, { waitUntil: "networkidle", timeout: 120000 });
     await page.waitForTimeout(3500);
     await page.screenshot({ path: new URL("campaign-pack99-1366x768.png", outputDir).pathname, fullPage: true });
@@ -100,6 +129,7 @@ async function main() {
       `unresolved references: ${runtime.unresolvedReferences}`,
       `hero Kael: ${heroArt.kael.marker}`,
       `hero Lyra: ${heroArt.lyra.marker}`,
+      "player-facing technical badge: hidden",
       "Tehkné Solutions",
       "",
     ].join("\n");
