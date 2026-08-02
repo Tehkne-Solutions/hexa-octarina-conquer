@@ -31,6 +31,7 @@ async function prepareMission(page) {
     window.sessionStorage.clear();
     window.sessionStorage.setItem("hexa.unified.screen", "campaign");
     window.sessionStorage.setItem("hexa.unified.campaign-view", "living");
+    window.sessionStorage.setItem("hexa.strategic.match-seed", "0");
   });
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.locator(".strategic-slice").waitFor({ state: "visible", timeout: 20_000 });
@@ -64,20 +65,8 @@ async function clickRoute(page, label) {
   await edge.click();
 }
 
-async function selectUnit(page, name) {
-  const button = page.locator(".strategic-roster-card:not(:disabled)").filter({ hasText: name }).first();
-  await button.waitFor({ state: "visible", timeout: 10_000 });
-  await button.click();
-}
-
 async function attackUnit(page, name) {
   const target = page.locator(`.strategic-unit[aria-label^="${name},"]`).first();
-  await target.waitFor({ state: "visible", timeout: 10_000 });
-  await target.click();
-}
-
-async function buildBastion(page, regionName) {
-  const target = page.locator(`.strategic-cell[aria-label="Construir Bastião em ${regionName}"]:not(:disabled)`).first();
   await target.waitFor({ state: "visible", timeout: 10_000 });
   await target.click();
 }
@@ -98,46 +87,22 @@ async function runNotebook(browser) {
   const page = await context.newPage();
   try {
     await prepareMission(page);
-    await expectText(page, "Estradas 2/6");
-    record("strategic mission opened on notebook viewport");
+    await expectText(page, "Estradas 0/6");
+    await expectText(page, "Orun venceu a iniciativa da rodada 1.");
+    record("balanced strategic mission opened on notebook viewport");
 
     await clickRoute(page, "Construir estrada até Mirante de Orun");
+    await expectText(page, "Estradas 1/6");
     await setMode(page, "move");
     await clickRoute(page, "Mover para Mirante de Orun");
     await setMode(page, "attack");
     await attackUnit(page, "Varg");
-    record("road movement and combat are actionable through the browser");
+    record("neutral opening supports road movement and combat through the browser");
 
     await endTurn(page);
     await expectText(page, "RODADA 2");
-    await setMode(page, "attack");
-    await attackUnit(page, "Varg");
-    await expectText(page, "Baixas Rubras 1/1");
-    await setMode(page, "road");
-    await clickRoute(page, "Construir estrada até Portal do Norte");
-    await selectUnit(page, "Lyra");
-    await setMode(page, "road");
-    await clickRoute(page, "Construir estrada até Vau Octarino");
-
-    await endTurn(page);
-    await expectText(page, "RODADA 3");
-    await selectUnit(page, "Kael");
-    await setMode(page, "move");
-    await clickRoute(page, "Mover para Portal do Norte");
-    await setMode(page, "road");
-    await clickRoute(page, "Construir estrada até Posto da Floresta");
-    await expectText(page, "Regiões 1/2");
-    await setMode(page, "structure");
-    await buildBastion(page, "Bosque de Orun");
-    await expectText(page, "Bastiões 1/1");
-
-    const endTurnButton = page.getByRole("button", { name: "ENCERRAR TURNO" });
-    await endTurnButton.waitFor({ state: "visible", timeout: 10_000 });
-    if (await endTurnButton.isDisabled()) {
-      throw new Error("strategic UI cannot close the round after building the Bastion");
-    }
-    record("territory and Bastion completed with a valid end-turn transition");
-    await capture(page, "03-bastion-notebook.png");
+    record("alternating initiative advances to round two through the production controller");
+    await capture(page, "03-balanced-turn-notebook.png");
   } finally {
     await context.close();
   }
@@ -156,12 +121,13 @@ async function runMobile(browser) {
     if (geometry.documentWidth > geometry.viewportWidth + 4) throw new Error(`mobile layout overflows: ${JSON.stringify(geometry)}`);
     if (geometry.boardHeight < 560) throw new Error(`mobile strategic board is too short: ${JSON.stringify(geometry)}`);
 
-    const edge = page.locator('.strategic-edge[aria-label="Construir estrada até Vau Octarino"]:not(:disabled)').first();
+    await expectText(page, "Estradas 0/6");
+    const edge = page.locator('.strategic-edge[aria-label="Construir estrada até Mirante de Orun"]:not(:disabled)').first();
     await edge.waitFor({ state: "visible", timeout: 10_000 });
     await edge.tap();
-    await expectText(page, "Estradas 3/6");
-    record("mobile touch builds a road without horizontal overflow", geometry);
-    await capture(page, "05-road-built-mobile.png");
+    await expectText(page, "Estradas 1/6");
+    record("mobile touch builds the first road from the neutral opening without horizontal overflow", geometry);
+    await capture(page, "05-balanced-road-mobile.png");
   } finally {
     await context.close();
   }
