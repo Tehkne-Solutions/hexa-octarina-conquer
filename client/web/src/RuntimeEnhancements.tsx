@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+import "./vertical-slice-18-campaign-density.css";
 import "./vertical-slice-17-status-rail.css";
 import "./vertical-slice-16-home-grid-balance.css";
 import "./vertical-slice-15-profile-panel.css";
