@@ -1,0 +1,150 @@
+.meta08-physical-world .strategic-layout {
+  grid-template-columns: 176px minmax(0, 1fr) 196px;
+  gap: 7px;
+  padding: 7px;
+}
+
+.meta08-physical-world .strategic-roster,
+.meta08-physical-world .strategic-objectives {
+  border-color: rgba(205, 169, 82, .18);
+  background: linear-gradient(180deg, rgba(9, 17, 18, .88), rgba(5, 10, 11, .86));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .24);
+  backdrop-filter: blur(8px);
+}
+
+.meta08-physical-world .strategic-board {
+  border-color: rgba(205, 169, 82, .18);
+  border-radius: 20px;
+}
+
+.meta08-physical-world .strategic-board::before {
+  opacity: .07;
+  mask-image: radial-gradient(ellipse 72% 64% at 50% 50%, #000 22%, transparent 88%);
+}
+
+.meta08-physical-world .strategic-cell {
+  width: 41%;
+  height: 37%;
+  filter: saturate(1.02) brightness(.9) contrast(1.02);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, .22);
+}
+
+.meta08-physical-world .strategic-cell::before {
+  opacity: .55;
+  box-shadow: inset 0 0 0 1px rgba(224, 205, 149, .05);
+}
+
+.meta08-physical-world .strategic-region-badge {
+  opacity: .42;
+  transform: translateX(-50%) scale(.92);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.meta08-physical-world .strategic-cell:hover .strategic-region-badge,
+.meta08-physical-world .strategic-cell.is-build-target .strategic-region-badge,
+.meta08-physical-world .strategic-cell.owner-blue .strategic-region-badge,
+.meta08-physical-world .strategic-cell.owner-red .strategic-region-badge {
+  opacity: .9;
+  transform: translateX(-50%) scale(1);
+}
+
+.meta08-physical-world .strategic-node {
+  width: 82px;
+  height: 92px;
+}
+
+.meta08-physical-world .strategic-node img {
+  width: 40px;
+  height: 56px;
+  opacity: .22;
+  filter: saturate(.72) brightness(.72) drop-shadow(0 7px 5px rgba(0, 0, 0, .54));
+  transition: opacity .18s ease, filter .18s ease, transform .18s ease;
+}
+
+.meta08-physical-world .strategic-node.is-origin img,
+.meta08-physical-world .strategic-node.is-recommended img,
+.meta08-physical-world .strategic-node.is-road-target img,
+.meta08-physical-world .strategic-node.is-move-target img,
+.meta08-physical-world .strategic-node.owner-blue img,
+.meta08-physical-world .strategic-node.owner-red img {
+  opacity: .92;
+}
+
+.meta08-physical-world .strategic-node.is-occupied img {
+  opacity: .08;
+}
+
+.meta08-physical-world .strategic-node em {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-3px);
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+.meta08-physical-world .strategic-node:hover em,
+.meta08-physical-world .strategic-node.is-origin em,
+.meta08-physical-world .strategic-node.is-recommended em,
+.meta08-physical-world .strategic-node.is-road-target em,
+.meta08-physical-world .strategic-node.is-move-target em {
+  opacity: .9;
+  transform: translateX(-50%) translateY(0);
+}
+
+.meta08-physical-world .strategic-edge.state-unbuilt .strategic-edge-asset {
+  opacity: .045;
+}
+
+.meta08-physical-world .strategic-edge.is-secondary-target .strategic-edge-asset {
+  opacity: .18;
+}
+
+.meta08-physical-world .strategic-edge.is-recommended .strategic-edge-asset,
+.meta08-physical-world .strategic-edge.state-road .strategic-edge-asset {
+  opacity: 1;
+}
+
+.meta08-physical-world .strategic-command-banner {
+  width: min(370px, 50%);
+  padding: 6px 12px;
+  border-color: rgba(225, 189, 91, .32);
+  background: linear-gradient(180deg, rgba(13, 22, 21, .84), rgba(6, 13, 12, .8));
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .32);
+  backdrop-filter: blur(7px);
+}
+
+.meta08-physical-world .strategic-map-key {
+  opacity: .48;
+  transform: scale(.92);
+  transform-origin: bottom right;
+}
+
+.meta08-physical-world .strategic-help {
+  border-color: rgba(76, 167, 224, .16);
+  background: rgba(10, 25, 31, .48);
+}
+
+.meta08-physical-world .strategic-actions button {
+  min-height: 40px;
+  background: rgba(16, 25, 26, .72);
+}
+
+.meta08-physical-world .strategic-progress div,
+.meta08-physical-world .strategic-score,
+.meta08-physical-world .strategic-objectives ol {
+  opacity: .86;
+}
+
+@media (max-width: 1180px) {
+  .meta08-physical-world .strategic-layout {
+    grid-template-columns: 166px minmax(0, 1fr) 184px;
+  }
+}
+
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-command-banner {
+    width: min(420px, 70%);
+  }
+
+  .meta08-physical-world .strategic-map-key {
+    display: none;
+  }
+}
