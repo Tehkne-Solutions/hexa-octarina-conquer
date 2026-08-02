@@ -84,11 +84,11 @@ async function main() {
       assert(art.backgroundImage.includes("/assets/runtime/"), `PACK99_HOME_HERO_NON_RUNTIME=${name}:${art.backgroundImage}`);
     }
 
-    await page.screenshot({ path: new URL("home-pack99-1366x768.png", outputDir), fullPage: true });
+    await page.screenshot({ path: new URL("home-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
     await page.goto(`${baseUrl}/?qa=1&stable=1&screen=campaign`, { waitUntil: "networkidle", timeout: 120000 });
     await page.waitForTimeout(3500);
-    await page.screenshot({ path: new URL("campaign-pack99-1366x768.png", outputDir), fullPage: true });
+    await page.screenshot({ path: new URL("campaign-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
     assert(runtimeFailures.length === 0, `PACK99_RUNTIME_HTTP_FAILURES=${runtimeFailures.join(" | ")}`);
 
