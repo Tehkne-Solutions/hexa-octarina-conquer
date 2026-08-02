@@ -38,6 +38,18 @@ export function strategicNextRoundStarter(starter: StrategicRoundStarter): Strat
 }
 
 export function createStrategicMatchSeed(now = Date.now(), entropy = Math.random()): number {
+  if (typeof window !== "undefined") {
+    try {
+      const forcedSeed = window.sessionStorage.getItem("hexa.strategic.match-seed");
+      if (forcedSeed !== null && forcedSeed.trim() !== "") {
+        const parsed = Number(forcedSeed);
+        if (Number.isFinite(parsed)) return parsed >>> 0;
+      }
+    } catch {
+      // Storage can be unavailable in hardened browser contexts; fall back to runtime entropy.
+    }
+  }
+
   const entropyBits = Math.floor(entropy * 0x7fffffff);
   return ((now >>> 0) ^ entropyBits) >>> 0;
 }
