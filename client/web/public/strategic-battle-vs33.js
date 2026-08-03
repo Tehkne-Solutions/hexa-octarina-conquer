@@ -26,9 +26,11 @@ function readActionBudget(root) {
 }
 
 function phaseFromDom(root) {
-  const text = normalizedText(root).toUpperCase();
-  if (text.includes("LEGIÃO RUBRA") || root.querySelector(".strategic-enemy-turn-indicator")) return "enemy";
-  if (text.includes("SEU TURNO")) return "player";
+  const explicitPlayerTurn = findByText(root, /^SEU TURNO$/i);
+  if (explicitPlayerTurn) return "player";
+  if (root.querySelector(".strategic-enemy-turn-indicator")) return "enemy";
+  const explicitEnemyTurn = findByText(root, /^(TURNO DA RUBRA|TURNO RUBRA|LEGIÃO RUBRA)$/i);
+  if (explicitEnemyTurn) return "enemy";
   return "unknown";
 }
 
@@ -97,7 +99,9 @@ function renderTurnLoop() {
       hint,
       phase === "player"
         ? "Conclua suas ações e encerre o turno quando estiver pronto."
-        : "A Legião Rubra está resolvendo sua fase.",
+        : phase === "enemy"
+          ? "A Legião Rubra está resolvendo sua fase."
+          : "Aguardando confirmação da fase atual.",
     );
   } finally {
     renderingTurnLoop = false;
