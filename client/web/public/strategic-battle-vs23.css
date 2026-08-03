@@ -1,0 +1,52 @@
+/* VERTICAL SLICE 23 — Brakk Tactical Portrait Recovery */
+
+/*
+ * The canonical CHAMP_BERSERKER directional PNG is materially darker than the
+ * other unit canvases. Brightness alone cannot recover information from the
+ * near-black source. Render Brakk as an intentional engraved command portrait,
+ * still using the exact PACK 99 runtime image, until a transparent production
+ * sprite is available.
+ */
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  width: 94px;
+  height: 106px;
+  object-fit: cover;
+  object-position: 50% 44%;
+  transform: translateX(-50%) scale(2.15);
+  transform-origin: 50% 44%;
+  mix-blend-mode: normal;
+  background: #20160f;
+  filter:
+    grayscale(1)
+    invert(.86)
+    sepia(.82)
+    saturate(1.55)
+    hue-rotate(338deg)
+    brightness(1.12)
+    contrast(1.18)
+    drop-shadow(0 14px 10px rgba(0, 0, 0, .72));
+}
+
+.meta08-physical-world .strategic-unit.unit-brakk::before {
+  opacity: .72;
+  background:
+    linear-gradient(145deg, rgba(255, 225, 166, .16), transparent 32%),
+    linear-gradient(180deg, #6d3327, #241310 72%);
+  box-shadow:
+    0 0 0 2px rgba(239, 202, 136, .72),
+    0 0 0 5px rgba(72, 25, 22, .94),
+    0 0 18px rgba(216, 82, 64, .18),
+    0 16px 13px rgba(0, 0, 0, .74);
+}
+
+.meta08-physical-world .strategic-unit.unit-brakk > b {
+  border-color: rgba(224, 112, 88, .7);
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+    width: 88px;
+    height: 98px;
+    transform: translateX(-50%) scale(1.95);
+  }
+}
