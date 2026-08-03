@@ -1,0 +1,22 @@
+.strategic-board { position: relative; }
+.strategic-action-fx-layer { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:8; }
+.strategic-action-fx { position:absolute; width:10px; height:10px; transform:translate(-50%,-50%); pointer-events:none; }
+.strategic-action-fx i { position:absolute; inset:0; display:block; border:2px solid rgba(244,220,154,.88); border-radius:999px; animation:strategic-action-ring .72s ease-out forwards; }
+.strategic-action-fx-impact i:nth-child(2){animation-delay:.08s}.strategic-action-fx-impact i:nth-child(3){animation-delay:.16s}
+.strategic-action-fx-road i { border-radius:2px; border-width:1px; transform:rotate(30deg); animation-name:strategic-action-road; }
+.strategic-action-fx-road i:nth-child(2){animation-delay:.1s}
+.strategic-action-fx-build i { border-radius:3px; border-color:rgba(220,190,116,.92); animation-name:strategic-action-build; }
+.strategic-action-fx-move i { border-color:rgba(180,218,202,.9); animation-name:strategic-action-move; }
+.strategic-action-fx-defeat i { border-color:rgba(178,70,56,.92); animation-name:strategic-action-defeat; }
+.strategic-unit-token.strategic-action-pulse { animation:strategic-token-action .62s cubic-bezier(.2,.75,.25,1); transform-origin:center bottom; }
+.strategic-unit-token[data-action-fx="impact"] { filter:drop-shadow(0 0 7px rgba(223,174,103,.72)); }
+.strategic-unit-token[data-action-fx="defeat"] { filter:drop-shadow(0 0 8px rgba(151,51,45,.76)); }
+.strategic-board[data-action-fx="impact"]::after,.strategic-board[data-action-fx="build"]::after { content:""; position:absolute; inset:0; pointer-events:none; z-index:7; box-shadow:inset 0 0 38px rgba(190,139,70,.12); animation:strategic-board-breath .62s ease-out forwards; }
+@keyframes strategic-action-ring { from{opacity:.92;transform:scale(.35)} to{opacity:0;transform:scale(7)} }
+@keyframes strategic-action-road { from{opacity:.82;transform:rotate(30deg) scale(.4)} to{opacity:0;transform:rotate(30deg) scale(6,2)} }
+@keyframes strategic-action-build { 0%{opacity:.9;transform:scale(.35) rotate(45deg)} 70%{opacity:.45;transform:scale(5) rotate(45deg)} 100%{opacity:0;transform:scale(5.8) rotate(45deg)} }
+@keyframes strategic-action-move { from{opacity:.8;transform:translateY(8px) scale(.5)} to{opacity:0;transform:translateY(-28px) scale(4.8)} }
+@keyframes strategic-action-defeat { from{opacity:.9;transform:scale(.4)} to{opacity:0;transform:scale(5.5) rotate(25deg)} }
+@keyframes strategic-token-action { 0%{transform:translateY(0) scale(1)} 32%{transform:translateY(-5px) scale(1.06)} 68%{transform:translateY(2px) scale(.98)} 100%{transform:translateY(0) scale(1)} }
+@keyframes strategic-board-breath { from{opacity:1} to{opacity:0} }
+@media (prefers-reduced-motion:reduce){.strategic-action-fx,.strategic-action-fx i,.strategic-unit-token.strategic-action-pulse,.strategic-board[data-action-fx]::after{animation:none!important}.strategic-action-fx{display:none}}
