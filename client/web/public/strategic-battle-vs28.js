@@ -4,8 +4,8 @@ const NARRATIVE_SELECTOR = ".strategic-field-narrative";
 
 function eventKind(message) {
   const value = message.toLowerCase();
-  if (value.includes("atacou") || value.includes("atacado") || value.includes("dano")) return "impact";
   if (value.includes("derrot") || value.includes("eliminad")) return "defeat";
+  if (value.includes("atacou") || value.includes("atacado") || value.includes("dano")) return "impact";
   if (value.includes("bastião") || value.includes("região fechada")) return "build";
   if (value.includes("estrada") || value.includes("corredor")) return "road";
   if (value.includes("ocupou") || value.includes("movimento") || value.includes("moveu")) return "move";
@@ -24,8 +24,8 @@ function ensureFxLayer(board) {
 
 function actorToken(root, speaker) {
   if (!speaker) return null;
-  const tokens = [...root.querySelectorAll(".strategic-unit-token")];
-  return tokens.find((token) => token.getAttribute("aria-label")?.includes(speaker)) ?? null;
+  const units = [...root.querySelectorAll(".strategic-unit")];
+  return units.find((unit) => unit.getAttribute("aria-label")?.startsWith(`${speaker},`)) ?? null;
 }
 
 function pulseToken(token, kind) {
