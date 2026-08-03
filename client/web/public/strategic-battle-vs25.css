@@ -1,0 +1,78 @@
+/* VERTICAL SLICE 25 — Brakk direct physical source window */
+
+/*
+ * VS24 proved the canonical bitmap is correct but `object-position` still let
+ * the generic token crop win in the rendered player surface. VS25 stops asking
+ * the replaced element to crop itself. Instead, the 1024x1024 source is scaled
+ * deterministically and physically translated so only the audited Berserker
+ * portrait window is visible.
+ *
+ * Audited useful source bounds:
+ *   x = 455..581
+ *   y = 779..893
+ * Source display scale below: 666 / 1024 ~= 0.65039.
+ * The visible portrait therefore lands around 82x74px inside the tactical frame.
+ */
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image[src*="CHAMP_BERSERKER_01_IDLE_BASE_NW_01"] {
+  position: absolute !important;
+  left: calc(50% - 337px) !important;
+  top: -499px !important;
+  width: 666px !important;
+  height: 666px !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: fill !important;
+  object-position: 50% 50% !important;
+  transform: none !important;
+  transform-origin: 0 0 !important;
+  mix-blend-mode: normal !important;
+  background: transparent !important;
+  filter: drop-shadow(0 14px 10px rgba(0, 0, 0, .72)) !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  clip-path: polygon(
+    50.59% 76.10%,
+    55.05% 77.61%,
+    56.73% 81.65%,
+    54.04% 85.86%,
+    50.59% 87.21%,
+    47.14% 85.86%,
+    44.44% 81.65%,
+    46.13% 77.61%
+  ) !important;
+}
+
+/* The roster uses the same physical source, but at a smaller deterministic
+ * scale. The circular 26px icon becomes the viewport and hides the black canvas.
+ */
+.meta08-physical-world .strategic-roster-icon:has(img[src*="CHAMP_BERSERKER_01_IDLE_BASE_NW_01"]) {
+  position: relative;
+  overflow: hidden !important;
+  background: #0a1112;
+}
+
+.meta08-physical-world .strategic-roster-icon img[src*="CHAMP_BERSERKER_01_IDLE_BASE_NW_01"] {
+  position: absolute !important;
+  left: -100px !important;
+  top: -171px !important;
+  width: 225px !important;
+  height: 225px !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: fill !important;
+  object-position: 50% 50% !important;
+  transform: none !important;
+  transform-origin: 0 0 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  clip-path: none !important;
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image[src*="CHAMP_BERSERKER_01_IDLE_BASE_NW_01"] {
+    left: calc(50% - 320px) !important;
+    top: -473px !important;
+    width: 632px !important;
+    height: 632px !important;
+  }
+}
