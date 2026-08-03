@@ -15,7 +15,7 @@ describe("VS35 legal target clarity", () => {
   it("derives targets only from existing enabled controls", () => {
     expect(js).toContain("button:disabled");
     expect(js).toContain("aria-disabled='true'");
-    expect(js).toContain("data.legalTarget");
+    expect(js).toContain("dataset.legalTarget");
     expect(js).not.toMatch(/fetch\(|click\(|dispatch\(|setState|pathfind|range\s*=|cost\s*=/i);
   });
 
