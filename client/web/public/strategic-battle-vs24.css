@@ -1,0 +1,38 @@
+/* VERTICAL SLICE 24 — Brakk canonical source crop recovery */
+
+/*
+ * PACK 99 audit proved that CHAMP_BERSERKER_01_IDLE_BASE_NW_01 is a valid
+ * 1024x1024 bitmap whose actual portrait occupies only the lower source window
+ * (roughly x=454..584 / y=779..894). `object-fit: none` keeps the canonical
+ * pixels at native resolution and makes the img box a deterministic source
+ * window. This removes the opaque black canvas without recoloring the asset.
+ *
+ * The canonical-units stylesheet is emitted by the Vite bundle after public
+ * stylesheets. The source-window properties below are therefore intentionally
+ * authoritative so that its generic token crop cannot override Brakk's audited
+ * physical bounds.
+ */
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  top: 0 !important;
+  width: 115px !important;
+  height: 130px !important;
+  object-fit: none !important;
+  object-position: 50.82% 86.35% !important;
+  transform: translateX(-50%) scale(.82) !important;
+  transform-origin: 50% 50% !important;
+  mix-blend-mode: normal !important;
+  background: transparent !important;
+  filter: drop-shadow(0 14px 10px rgba(0, 0, 0, .72)) !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  clip-path: polygon(50% 0, 88% 14%, 100% 50%, 78% 91%, 50% 100%, 22% 91%, 0 50%, 12% 14%) !important;
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+    width: 115px !important;
+    height: 130px !important;
+    object-position: 50.82% 86.35% !important;
+    transform: translateX(-50%) scale(.74) !important;
+  }
+}
