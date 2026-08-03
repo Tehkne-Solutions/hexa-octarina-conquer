@@ -28,11 +28,22 @@ function resolveUnit(root, activeName) {
     .find((node) => new RegExp(`\\b${activeName}\\b`, "i").test(text(node))) || null;
 }
 
-function resolveContext(unit, activeName) {
+function readUnitHp(unit, activeName, root) {
+  let node = unit;
+  for (let depth = 0; node && node !== root && depth < 4; depth += 1, node = node.parentElement) {
+    const value = text(node);
+    if (!new RegExp(`\\b${activeName}\\b`, "i").test(value)) continue;
+    const hp = value.match(/(\d+)\s*\/\s*(\d+)/);
+    if (hp) return `${hp[1]}/${hp[2]}`;
+  }
+  return null;
+}
+
+function resolveContext(unit, activeName, root) {
   if (!unit || !activeName) return null;
-  const hp = text(unit).match(/(\d+)\s*\/\s*(\d+)/);
+  const hp = readUnitHp(unit, activeName, root);
   if (!hp) return null;
-  return { name: activeName, role: UNIT_ROLES[activeName], hp: `${hp[1]}/${hp[2]}` };
+  return { name: activeName, role: UNIT_ROLES[activeName], hp };
 }
 
 function ensureCard(root) {
@@ -66,7 +77,7 @@ function render() {
     if (!root) return;
     const activeName = readActiveName(root);
     const unit = resolveUnit(root, activeName);
-    const context = resolveContext(unit, activeName);
+    const context = resolveContext(unit, activeName, root);
     const card = ensureCard(root);
 
     if (!unit || !context) {
