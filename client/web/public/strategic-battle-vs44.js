@@ -1,28 +1,15 @@
 const ROOT_SELECTOR = ".strategic-slice.meta08-physical-world";
-const KNOWN_UNITS = ["Kael", "Lyra", "Varg", "Brakk"];
+const UNIT_ROLES = { Kael: "GUARDIÃO", Lyra: "ARQUEIRA", Varg: "BATEDOR", Brakk: "CAMPEÃO" };
+const KNOWN_UNITS = Object.keys(UNIT_ROLES);
 let rendering = false;
 
 function text(node) {
   return (node?.textContent || "").replace(/\s+/g, " ").trim();
 }
 
-function parseRosterContext(node, expectedName) {
-  const value = text(node);
-  if (!value) return null;
-  const name = KNOWN_UNITS.find((item) => new RegExp(`\\b${item}\\b`, "i").test(value));
-  const hp = value.match(/(\d+)\s*\/\s*(\d+)/);
-  if (!name || !hp || (expectedName && name !== expectedName)) return null;
-  const nameIndex = value.toLowerCase().indexOf(name.toLowerCase());
-  const hpIndex = value.indexOf(hp[0], Math.max(0, nameIndex));
-  const between = hpIndex > nameIndex ? value.slice(nameIndex + name.length, hpIndex).trim() : "";
-  const role = between.replace(/[·|]/g, " ").replace(/\s+/g, " ").trim() || "UNIDADE";
-  return { name, role: role.toUpperCase(), hp: `${hp[1]}/${hp[2]}` };
-}
-
 function readActiveName(root) {
   const fromDataset = root.dataset.activeUnitFocus;
   if (KNOWN_UNITS.includes(fromDataset)) return fromDataset;
-
   const nodes = [...root.querySelectorAll("div, span, p, strong")];
   const label = nodes.find((node) => /UNIDADE ATIVA/i.test(text(node)));
   if (!label) return null;
@@ -41,21 +28,11 @@ function resolveUnit(root, activeName) {
     .find((node) => new RegExp(`\\b${activeName}\\b`, "i").test(text(node))) || null;
 }
 
-function resolveRosterContext(root, activeName) {
-  if (!activeName) return null;
-  const candidates = [...root.querySelectorAll("div, button, li, article, section")]
-    .filter((node) => !node.closest(".strategic-active-unit-context"))
-    .filter((node) => !node.classList.contains("strategic-unit") && !node.closest(".strategic-unit"))
-    .map((node) => ({ node, value: text(node) }))
-    .filter(({ value }) => value.length > 0 && value.length <= 120)
-    .filter(({ value }) => new RegExp(`\\b${activeName}\\b`, "i").test(value) && /\d+\s*\/\s*\d+/.test(value))
-    .sort((a, b) => a.value.length - b.value.length);
-
-  for (const { node } of candidates) {
-    const parsed = parseRosterContext(node, activeName);
-    if (parsed) return parsed;
-  }
-  return null;
+function resolveContext(unit, activeName) {
+  if (!unit || !activeName) return null;
+  const hp = text(unit).match(/(\d+)\s*\/\s*(\d+)/);
+  if (!hp) return null;
+  return { name: activeName, role: UNIT_ROLES[activeName], hp: `${hp[1]}/${hp[2]}` };
 }
 
 function ensureCard(root) {
@@ -89,10 +66,10 @@ function render() {
     if (!root) return;
     const activeName = readActiveName(root);
     const unit = resolveUnit(root, activeName);
-    const context = resolveRosterContext(root, activeName);
+    const context = resolveContext(unit, activeName);
     const card = ensureCard(root);
 
-    if (!activeName || !unit || !context) {
+    if (!unit || !context) {
       card.hidden = true;
       return;
     }
