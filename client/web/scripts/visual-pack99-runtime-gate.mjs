@@ -59,7 +59,10 @@ async function launchCampaignMission(page, query) {
 }
 
 async function runPlaythroughGate(page) {
-  await launchCampaignMission(page, "qa=1&stable=1&screen=campaign&hocPlaytest=1");
+  await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event("hoc:playtest-start"));
+  });
 
   await page.waitForFunction(() => {
     const root = document.querySelector("main.strategic-slice");
