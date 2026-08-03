@@ -1,0 +1,10 @@
+.strategic-board { position: relative; }
+.strategic-action-link { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:9; opacity:0; transition:opacity .14s ease; overflow:visible; }
+.strategic-action-link[data-visible="true"] { opacity:1; }
+.strategic-action-link-line { stroke:rgba(232,205,121,.72); stroke-width:2.25; stroke-dasharray:7 7; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 3px rgba(0,0,0,.72)); animation:strategic-action-link-flow .9s linear infinite; }
+.strategic-action-link-origin { fill:rgba(183,221,209,.92); stroke:rgba(10,18,16,.9); stroke-width:2; vector-effect:non-scaling-stroke; }
+.strategic-action-link-target { fill:rgba(232,205,121,.96); stroke:rgba(22,18,8,.92); stroke-width:2; vector-effect:non-scaling-stroke; }
+.strategic-unit[data-action-link-origin="true"] { filter:drop-shadow(0 0 6px rgba(183,221,209,.58)); }
+@keyframes strategic-action-link-flow { to { stroke-dashoffset:-14; } }
+@media (prefers-reduced-motion: reduce) { .strategic-action-link { transition:none; } .strategic-action-link-line { animation:none; } }
+@media (max-width: 720px) { .strategic-action-link-line { stroke-width:1.75; stroke-dasharray:5 6; } }
