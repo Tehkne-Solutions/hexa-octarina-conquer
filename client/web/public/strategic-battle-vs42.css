@@ -1,0 +1,6 @@
+.strategic-turn-renewal-feedback { position:absolute; left:50%; top:82px; transform:translate(-50%,-8px); z-index:15; display:flex; align-items:center; gap:10px; padding:8px 12px; border:1px solid rgba(207,178,104,.42); border-radius:8px; background:rgba(8,15,14,.88); box-shadow:0 8px 20px rgba(0,0,0,.28); color:#e8d6a1; opacity:0; pointer-events:none; transition:opacity .18s ease,transform .18s ease; }
+.strategic-turn-renewal-feedback span { font-size:10px; letter-spacing:.14em; color:#bca66d; }
+.strategic-turn-renewal-feedback strong { font-size:12px; letter-spacing:.05em; color:#f1dda1; }
+.strategic-turn-renewal-feedback.is-visible { opacity:1; transform:translate(-50%,0); }
+@media (max-width:700px){.strategic-turn-renewal-feedback{top:68px;max-width:calc(100% - 28px);padding:7px 10px}.strategic-turn-renewal-feedback strong{font-size:11px}}
+@media (prefers-reduced-motion:reduce){.strategic-turn-renewal-feedback{transition:none}}
