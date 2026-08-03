@@ -34,6 +34,68 @@ async function runtimeContract(page) {
   });
 }
 
+async function launchCampaignMission(page, query) {
+  await page.goto(`${baseUrl}/?${query}`, { waitUntil: "networkidle", timeout: 120000 });
+  await page.waitForTimeout(3500);
+
+  const briefingButton = page.locator(".campaign-selected-panel .fantasy-button.primary");
+  await briefingButton.waitFor({ state: "visible", timeout: 30000 });
+  await briefingButton.click();
+  await page.locator("main.campaign-briefing-screen").waitFor({ state: "visible", timeout: 30000 });
+
+  const missionStart = page.locator(".briefing-start");
+  await missionStart.waitFor({ state: "visible", timeout: 30000 });
+  assert(await missionStart.isEnabled(), "PACK99_BATTLE_START_DISABLED");
+  await missionStart.click();
+
+  await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
+  await page.waitForFunction(() => {
+    const slice = document.querySelector("main.strategic-slice");
+    const board = document.querySelector(".strategic-board");
+    const nodes = document.querySelectorAll(".strategic-node");
+    const units = document.querySelectorAll(".strategic-roster-card");
+    return Boolean(slice && board && nodes.length >= 9 && units.length >= 4);
+  }, { timeout: 30000 });
+}
+
+async function runPlaythroughGate(page) {
+  await launchCampaignMission(page, "qa=1&stable=1&screen=campaign&hocPlaytest=1");
+
+  await page.waitForFunction(() => {
+    const root = document.querySelector("main.strategic-slice");
+    return root?.dataset.playtestRunner === "running" || root?.dataset.playtestRunner === "complete";
+  }, { timeout: 30000 });
+
+  await page.waitForFunction(() => {
+    const root = document.querySelector("main.strategic-slice");
+    return root?.dataset.playtestRunner === "complete" && root?.dataset.missionPlaythrough === "complete";
+  }, { timeout: 60000, polling: 200 });
+
+  const result = await page.evaluate(() => {
+    const root = document.querySelector("main.strategic-slice");
+    if (!root) return null;
+    return {
+      runner: root.dataset.playtestRunner || null,
+      terminal: root.dataset.playtestRunnerTerminal || null,
+      runnerState: root.dataset.playtestRunnerState || null,
+      runnerStep: Number(root.dataset.playtestRunnerStep || "0"),
+      missionPlaythrough: root.dataset.missionPlaythrough || null,
+      missionPath: root.dataset.missionPlaythroughPath || null,
+      lifecycle: root.dataset.missionLifecycleState || null,
+    };
+  });
+
+  assert(result, "PACK99_PLAYTHROUGH_ROOT_MISSING");
+  assert(result.runner === "complete", `PACK99_PLAYTHROUGH_RUNNER=${result.runner}`);
+  assert(result.missionPlaythrough === "complete", `PACK99_PLAYTHROUGH_TRACE=${result.missionPlaythrough}`);
+  assert(["victory", "defeat", "resolved"].includes(result.terminal), `PACK99_PLAYTHROUGH_TERMINAL=${result.terminal}`);
+  assert(result.missionPath?.includes("player"), `PACK99_PLAYTHROUGH_PLAYER_PATH=${result.missionPath}`);
+  assert(result.missionPath?.includes("enemy"), `PACK99_PLAYTHROUGH_ENEMY_PATH=${result.missionPath}`);
+
+  await page.screenshot({ path: new URL("battle-playthrough-final-pack99-1366x768.png", outputDir).pathname, fullPage: false });
+  return result;
+}
+
 async function main() {
   await mkdir(outputDir, { recursive: true });
   const browser = await chromium.launch({ headless: true });
@@ -86,8 +148,6 @@ async function main() {
 
     await page.screenshot({ path: new URL("home-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
-    // Separate QA evidence from the actual player-facing surface. Diagnostics are
-    // intentionally preserved in ?qa=1, but must disappear for a normal player.
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle", timeout: 120000 });
     await page.waitForFunction(() => {
       const kael = document.querySelector(".campaign-hero-art .hero-kael");
@@ -115,31 +175,7 @@ async function main() {
     assert(visibleTechnicalBadges.length === 0, `PACK99_PLAYER_TECH_BADGE_VISIBLE=${JSON.stringify(visibleTechnicalBadges)}`);
     await page.screenshot({ path: new URL("home-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
-    await page.goto(`${baseUrl}/?qa=1&stable=1&screen=campaign`, { waitUntil: "networkidle", timeout: 120000 });
-    await page.waitForTimeout(3500);
-    await page.screenshot({ path: new URL("campaign-pack99-1366x768.png", outputDir).pathname, fullPage: true });
-
-    // VERTICAL SLICE 19 — prove the real strategic battle surface, not the
-    // synthetic Sprint UI 14 mock. QA only supplies a deterministic campaign
-    // catalog; the launched mission is the production StrategicBoardSlice.
-    const briefingButton = page.locator(".campaign-selected-panel .fantasy-button.primary");
-    await briefingButton.waitFor({ state: "visible", timeout: 30000 });
-    await briefingButton.click();
-    await page.locator("main.campaign-briefing-screen").waitFor({ state: "visible", timeout: 30000 });
-
-    const missionStart = page.locator(".briefing-start");
-    await missionStart.waitFor({ state: "visible", timeout: 30000 });
-    assert(await missionStart.isEnabled(), "PACK99_BATTLE_START_DISABLED");
-    await missionStart.click();
-
-    await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
-    await page.waitForFunction(() => {
-      const slice = document.querySelector("main.strategic-slice");
-      const board = document.querySelector(".strategic-board");
-      const nodes = document.querySelectorAll(".strategic-node");
-      const units = document.querySelectorAll(".strategic-roster-card");
-      return Boolean(slice && board && nodes.length >= 9 && units.length >= 4);
-    }, { timeout: 30000 });
+    await launchCampaignMission(page, "qa=1&stable=1&screen=campaign");
     await page.waitForFunction(() => {
       const runtimeImages = Array.from(document.querySelectorAll("main.strategic-slice img"));
       return runtimeImages.some((image) => image.getAttribute("src")?.includes("/assets/runtime/"));
@@ -173,6 +209,7 @@ async function main() {
     assert(battleSurface.runtimeImages > 0, `PACK99_BATTLE_RUNTIME_IMAGES=${battleSurface.runtimeImages}`);
     await page.screenshot({ path: new URL("battle-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: false });
 
+    const playthrough = await runPlaythroughGate(page);
     assert(runtimeFailures.length === 0, `PACK99_RUNTIME_HTTP_FAILURES=${runtimeFailures.join(" | ")}`);
 
     const manifest = [
@@ -189,12 +226,16 @@ async function main() {
       `battle runtime images: ${battleSurface.runtimeImages}`,
       `battle slice: ${battleSurface.slice.width}x${battleSurface.slice.height}`,
       `battle board: ${battleSurface.board.width}x${battleSurface.board.height}`,
+      `playthrough runner: ${playthrough.runner}`,
+      `playthrough terminal: ${playthrough.terminal}`,
+      `playthrough steps: ${playthrough.runnerStep}`,
+      `playthrough path: ${playthrough.missionPath}`,
       "Tehkné Solutions",
       "",
     ].join("\n");
     await writeFile(new URL("manifest.txt", outputDir), manifest, "utf8");
 
-    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount} battleNodes=${battleSurface.nodes} battleRuntimeImages=${battleSurface.runtimeImages}`);
+    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount} battleNodes=${battleSurface.nodes} battleRuntimeImages=${battleSurface.runtimeImages} playthrough=${playthrough.terminal} steps=${playthrough.runnerStep}`);
   } finally {
     await browser.close();
   }
