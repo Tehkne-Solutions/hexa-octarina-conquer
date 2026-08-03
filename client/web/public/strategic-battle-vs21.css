@@ -1,0 +1,78 @@
+/* VERTICAL SLICE 21 — Battle Continuity & Unit Cleanup */
+
+.meta08-physical-world .strategic-cell {
+  width: 42%;
+  height: 37.5%;
+  transform: translate(-50%, -50%) scale(1.045);
+  box-shadow: none;
+  filter: saturate(1.04) brightness(.93) contrast(1.01);
+}
+
+.meta08-physical-world .strategic-cell::before {
+  inset: 0;
+  opacity: .45;
+  background: linear-gradient(145deg, rgba(255, 245, 210, .025), transparent 44%, rgba(0, 0, 0, .06));
+}
+
+.meta08-physical-world .strategic-cell::after {
+  background: radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(5, 12, 8, .13) 100%);
+  box-shadow: none;
+}
+
+.meta08-physical-world .strategic-scenery-prop {
+  z-index: 5;
+  opacity: .96;
+}
+
+.meta08-physical-world .strategic-scenery-prop img {
+  filter: saturate(1.02) contrast(1.02) brightness(1.03) drop-shadow(0 12px 8px rgba(0, 0, 0, .55));
+}
+
+.meta08-physical-world .strategic-unit-image {
+  width: 132px;
+  height: 132px;
+  object-fit: contain;
+  object-position: center bottom;
+  -webkit-mask-image: radial-gradient(ellipse 46% 50% at 50% 52%, #000 62%, rgba(0,0,0,.92) 74%, rgba(0,0,0,.28) 91%, transparent 100%);
+  mask-image: radial-gradient(ellipse 46% 50% at 50% 52%, #000 62%, rgba(0,0,0,.92) 74%, rgba(0,0,0,.28) 91%, transparent 100%);
+}
+
+.meta08-physical-world .strategic-unit.unit-lyra .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-varg .strategic-unit-image {
+  mix-blend-mode: lighten;
+  filter: saturate(1.14) brightness(1.13) contrast(.98) drop-shadow(0 15px 9px rgba(0,0,0,.68));
+}
+
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  width: 136px;
+  height: 136px;
+  mix-blend-mode: screen;
+  filter: saturate(1.18) brightness(1.42) contrast(.88) drop-shadow(0 14px 9px rgba(0,0,0,.62));
+}
+
+.meta08-physical-world .strategic-unit.unit-kael .strategic-unit-image {
+  filter: saturate(1.08) brightness(1.08) contrast(1.02) drop-shadow(0 15px 9px rgba(0,0,0,.68));
+}
+
+.meta08-physical-world .strategic-unit-ring {
+  opacity: .42;
+  width: 68px;
+  height: 16px;
+}
+
+.meta08-physical-world .strategic-node.is-occupied .strategic-node-pad,
+.meta08-physical-world .strategic-node.is-occupied img {
+  opacity: .08;
+}
+
+.meta08-physical-world .strategic-region-badge {
+  opacity: .48;
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit-image,
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+    width: 116px;
+    height: 116px;
+  }
+}
