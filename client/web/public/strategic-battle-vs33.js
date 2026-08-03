@@ -1,12 +1,19 @@
 const ROOT_SELECTOR = ".strategic-slice.meta08-physical-world";
 const BOARD_SELECTOR = ".strategic-board";
+let renderingTurnLoop = false;
 
 function normalizedText(node) {
   return (node?.textContent || "").replace(/\s+/g, " ").trim();
 }
 
 function findByText(root, matcher) {
-  return [...root.querySelectorAll("button, [role=button], div, span")].find((node) => matcher.test(normalizedText(node)));
+  return [...root.querySelectorAll("button, [role=button], div, span")]
+    .filter((node) => !node.closest(".strategic-turn-loop-dock") && node.id !== "strategic-turn-loop-hint")
+    .find((node) => matcher.test(normalizedText(node)));
+}
+
+function setText(node, value) {
+  if (node && node.textContent !== value) node.textContent = value;
 }
 
 function readActionBudget(root) {
@@ -20,8 +27,9 @@ function readActionBudget(root) {
 
 function phaseFromDom(root) {
   const text = normalizedText(root).toUpperCase();
-  if (text.includes("LEGIÃO RUBRA") || root.querySelector(".strategic-enemy-turn-indicator")) return "enemy";
   if (text.includes("SEU TURNO")) return "player";
+  if (root.querySelector(".strategic-enemy-turn-indicator")) return "enemy";
+  if (text.includes("TURNO DA RUBRA") || text.includes("TURNO RUBRA") || text.includes("LEGIÃO RUBRA")) return "enemy";
   return "unknown";
 }
 
@@ -47,42 +55,68 @@ function nextAction(root) {
 }
 
 function renderTurnLoop() {
-  const root = document.querySelector(ROOT_SELECTOR);
-  const board = root?.querySelector(BOARD_SELECTOR);
-  if (!root || !board) return;
+  if (renderingTurnLoop) return;
+  renderingTurnLoop = true;
+  try {
+    const root = document.querySelector(ROOT_SELECTOR);
+    const board = root?.querySelector(BOARD_SELECTOR);
+    if (!root || !board) return;
 
-  const phase = phaseFromDom(root);
-  const dock = ensureDock(board);
-  const budget = readActionBudget(root);
-  const endTurn = findByText(root, /^ENCERRAR TURNO$/i);
-  const result = root.querySelector(".strategic-result");
+    const phase = phaseFromDom(root);
+    const dock = ensureDock(board);
+    const budget = readActionBudget(root);
+    const endTurn = findByText(root, /^ENCERRAR TURNO$/i);
+    const result = root.querySelector(".strategic-result");
 
-  dock.dataset.phase = phase;
-  dock.hidden = Boolean(result);
-  dock.querySelector(".strategic-turn-loop-phase").textContent = phase === "enemy" ? "FASE RUBRA" : phase === "player" ? "SUA FASE" : "FASE";
-  dock.querySelector(".strategic-turn-loop-step").textContent = phase === "enemy" ? "Acompanhe a resolução inimiga" : nextAction(root);
-  dock.querySelector(".strategic-turn-loop-budget").textContent = budget.length
-    ? budget.map((item) => `${item.label} ${item.value}`).join(" · ")
-    : phase === "enemy" ? "AGUARDANDO RETORNO DO CONTROLE" : "ORÇAMENTO DO TURNO";
+    if (dock.dataset.phase !== phase) dock.dataset.phase = phase;
+    if (dock.hidden !== Boolean(result)) dock.hidden = Boolean(result);
+    setText(dock.querySelector(".strategic-turn-loop-phase"), phase === "enemy" ? "FASE RUBRA" : phase === "player" ? "SUA FASE" : "FASE");
+    setText(dock.querySelector(".strategic-turn-loop-step"), phase === "enemy" ? "Acompanhe a resolução inimiga" : nextAction(root));
+    setText(
+      dock.querySelector(".strategic-turn-loop-budget"),
+      budget.length
+        ? budget.map((item) => `${item.label} ${item.value}`).join(" · ")
+        : phase === "enemy" ? "AGUARDANDO RETORNO DO CONTROLE" : "ORÇAMENTO DO TURNO",
+    );
 
-  if (endTurn) {
-    endTurn.dataset.turnLoopReady = phase === "player" ? "true" : "false";
-    endTurn.setAttribute("aria-describedby", "strategic-turn-loop-hint");
+    if (endTurn) {
+      const ready = phase === "player" ? "true" : "false";
+      if (endTurn.dataset.turnLoopReady !== ready) endTurn.dataset.turnLoopReady = ready;
+      if (endTurn.getAttribute("aria-describedby") !== "strategic-turn-loop-hint") {
+        endTurn.setAttribute("aria-describedby", "strategic-turn-loop-hint");
+      }
+    }
+
+    let hint = root.querySelector("#strategic-turn-loop-hint");
+    if (!hint) {
+      hint = document.createElement("span");
+      hint.id = "strategic-turn-loop-hint";
+      hint.className = "strategic-turn-loop-sr";
+      root.appendChild(hint);
+    }
+    setText(
+      hint,
+      phase === "player"
+        ? "Conclua suas ações e encerre o turno quando estiver pronto."
+        : phase === "enemy"
+          ? "A Legião Rubra está resolvendo sua fase."
+          : "Aguardando confirmação da fase atual.",
+    );
+  } finally {
+    renderingTurnLoop = false;
   }
-
-  let hint = root.querySelector("#strategic-turn-loop-hint");
-  if (!hint) {
-    hint = document.createElement("span");
-    hint.id = "strategic-turn-loop-hint";
-    hint.className = "strategic-turn-loop-sr";
-    root.appendChild(hint);
-  }
-  hint.textContent = phase === "player"
-    ? "Conclua suas ações e encerre o turno quando estiver pronto."
-    : "A Legião Rubra está resolvendo sua fase.";
 }
 
-const observer = new MutationObserver(renderTurnLoop);
+function shouldRenderFromMutations(mutations) {
+  return mutations.some((mutation) => {
+    const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+    return !target?.closest(".strategic-turn-loop-dock") && target?.id !== "strategic-turn-loop-hint";
+  });
+}
+
+const observer = new MutationObserver((mutations) => {
+  if (shouldRenderFromMutations(mutations)) renderTurnLoop();
+});
 observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["class", "data-phase", "data-tone"] });
 window.addEventListener("DOMContentLoaded", renderTurnLoop, { once: true });
 renderTurnLoop();

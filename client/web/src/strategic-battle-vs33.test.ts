@@ -31,6 +31,24 @@ describe("VS33 complete turn loop", () => {
 
   it("hides the turn dock when the real battle result exists", () => {
     expect(js).toContain('.strategic-result');
-    expect(js).toContain('dock.hidden = Boolean(result)');
+    expect(js).toContain('dock.hidden !== Boolean(result)');
+  });
+
+  it("does not react indefinitely to mutations produced by its own dock", () => {
+    expect(js).toContain("function setText");
+    expect(js).toContain("shouldRenderFromMutations");
+    expect(js).toContain('closest(".strategic-turn-loop-dock")');
+    expect(js).toContain("renderingTurnLoop");
+  });
+
+  it("prioritizes the same current-player signal already approved in VS32", () => {
+    const textRead = js.indexOf("const text = normalizedText(root).toUpperCase()");
+    const playerCheck = js.indexOf('text.includes("SEU TURNO")');
+    const enemyIndicatorCheck = js.indexOf('root.querySelector(".strategic-enemy-turn-indicator")');
+    const rubraCheck = js.indexOf('text.includes("LEGIÃO RUBRA")');
+    expect(textRead).toBeGreaterThan(-1);
+    expect(playerCheck).toBeGreaterThan(textRead);
+    expect(enemyIndicatorCheck).toBeGreaterThan(playerCheck);
+    expect(rubraCheck).toBeGreaterThan(enemyIndicatorCheck);
   });
 });
