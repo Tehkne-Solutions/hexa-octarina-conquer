@@ -43,11 +43,19 @@ function resolveUnit(root, activeName) {
 
 function resolveRosterContext(root, activeName) {
   if (!activeName) return null;
-  const candidates = [...root.querySelectorAll("aside div, aside button, [class*='roster'] div, [class*='roster'] button")];
-  return candidates
-    .map((candidate) => parseRosterContext(candidate, activeName))
-    .filter(Boolean)
-    .sort((a, b) => a.role.length - b.role.length)[0] || null;
+  const candidates = [...root.querySelectorAll("div, button, li, article, section")]
+    .filter((node) => !node.closest(".strategic-active-unit-context"))
+    .filter((node) => !node.classList.contains("strategic-unit") && !node.closest(".strategic-unit"))
+    .map((node) => ({ node, value: text(node) }))
+    .filter(({ value }) => value.length > 0 && value.length <= 120)
+    .filter(({ value }) => new RegExp(`\\b${activeName}\\b`, "i").test(value) && /\d+\s*\/\s*\d+/.test(value))
+    .sort((a, b) => a.value.length - b.value.length);
+
+  for (const { node } of candidates) {
+    const parsed = parseRosterContext(node, activeName);
+    if (parsed) return parsed;
+  }
+  return null;
 }
 
 function ensureCard(root) {
