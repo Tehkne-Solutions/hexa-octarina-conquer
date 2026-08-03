@@ -8,7 +8,14 @@ describe("VS48 canonical complete playthrough gate", () => {
     expect(gate).toContain("launchCampaignMission");
     expect(gate).toContain("runPlaythroughGate");
     expect(gate).toContain('new Event("hoc:playtest-start")');
-    expect(gate.indexOf('launchCampaignMission(page, "qa=1&stable=1&screen=campaign")')).toBeLessThan(gate.indexOf("runPlaythroughGate(page)"));
+
+    const mainStart = gate.indexOf("async function main()");
+    const mainBody = gate.slice(mainStart);
+    const missionLaunch = mainBody.indexOf('launchCampaignMission(page, "qa=1&stable=1&screen=campaign")');
+    const playthroughRun = mainBody.indexOf("runPlaythroughGate(page)");
+    expect(mainStart).toBeGreaterThan(-1);
+    expect(missionLaunch).toBeGreaterThan(-1);
+    expect(playthroughRun).toBeGreaterThan(missionLaunch);
   });
 
   it("requires both runner completion and complete mission trace", () => {
