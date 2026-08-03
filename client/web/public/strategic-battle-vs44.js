@@ -28,11 +28,14 @@ function resolveUnit(root, activeName) {
     .find((node) => new RegExp(`\\b${activeName}\\b`, "i").test(text(node))) || null;
 }
 
-function resolveContext(unit, activeName) {
+function resolveContext(unit, activeName, root) {
   if (!unit || !activeName) return null;
-  const hp = text(unit).match(/(\d+)\s*\/\s*(\d+)/);
-  if (!hp) return null;
-  return { name: activeName, role: UNIT_ROLES[activeName], hp: `${hp[1]}/${hp[2]}` };
+  let scope = unit;
+  for (let depth = 0; scope && depth < 4 && scope !== root; depth += 1, scope = scope.parentElement) {
+    const hp = text(scope).match(/(\d+)\s*\/\s*(\d+)/);
+    if (hp) return { name: activeName, role: UNIT_ROLES[activeName], hp: `${hp[1]}/${hp[2]}` };
+  }
+  return null;
 }
 
 function ensureCard(root) {
@@ -66,7 +69,7 @@ function render() {
     if (!root) return;
     const activeName = readActiveName(root);
     const unit = resolveUnit(root, activeName);
-    const context = resolveContext(unit, activeName);
+    const context = resolveContext(unit, activeName, root);
     const card = ensureCard(root);
 
     if (!unit || !context) {
