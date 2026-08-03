@@ -1,0 +1,116 @@
+/* VERTICAL SLICE 26 — contextual battle narrative */
+
+.meta08-physical-world .strategic-field-narrative {
+  --narrative-accent: #d9b766;
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  z-index: 60;
+  width: min(470px, calc(100% - 36px));
+  transform: translateX(-50%);
+  pointer-events: none;
+  padding: 10px 16px 11px 18px;
+  border: 1px solid color-mix(in srgb, var(--narrative-accent) 58%, transparent);
+  border-left: 4px solid var(--narrative-accent);
+  border-radius: 4px 14px 14px 4px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.035), transparent 34%),
+    linear-gradient(180deg, rgba(12, 20, 18, .95), rgba(5, 10, 9, .94));
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, .55),
+    inset 0 0 0 1px rgba(255,255,255,.025);
+  backdrop-filter: blur(8px);
+}
+
+.meta08-physical-world .strategic-field-narrative::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  bottom: -9px;
+  width: 16px;
+  height: 16px;
+  transform: rotate(45deg);
+  border-right: 1px solid color-mix(in srgb, var(--narrative-accent) 48%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--narrative-accent) 48%, transparent);
+  background: #07100e;
+}
+
+.meta08-physical-world .strategic-field-narrative[data-tone="combat"],
+.meta08-physical-world .strategic-field-narrative[data-tone="enemy"] {
+  --narrative-accent: #d86758;
+}
+
+.meta08-physical-world .strategic-field-narrative[data-tone="build"] {
+  --narrative-accent: #d6b15e;
+}
+
+.meta08-physical-world .strategic-field-narrative[data-tone="road"],
+.meta08-physical-world .strategic-field-narrative[data-tone="move"] {
+  --narrative-accent: #62b4dc;
+}
+
+.meta08-physical-world .strategic-field-narrative[data-tone="round"] {
+  --narrative-accent: #a88bd8;
+}
+
+.meta08-physical-world .strategic-field-narrative-label {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--narrative-accent);
+  font: 800 8px/1 system-ui, sans-serif;
+  letter-spacing: .16em;
+}
+
+.meta08-physical-world .strategic-field-narrative-speaker {
+  display: block;
+  color: #f1dfaa;
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.meta08-physical-world .strategic-field-narrative-copy {
+  margin: 4px 0 0;
+  color: #d9ddd3;
+  font: 10px/1.35 system-ui, sans-serif;
+}
+
+.meta08-physical-world .strategic-field-narrative.is-entering {
+  animation: vs26NarrativeEnter .34s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes vs26NarrativeEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-field-narrative {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    transform: none;
+  }
+
+  .meta08-physical-world .strategic-field-narrative.is-entering {
+    animation-name: vs26NarrativeEnterMobile;
+  }
+
+  @keyframes vs26NarrativeEnterMobile {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meta08-physical-world .strategic-field-narrative.is-entering {
+    animation: none;
+  }
+}
