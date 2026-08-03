@@ -42,6 +42,10 @@ function record(root, action, detail = "") {
   if (detail) root.dataset.playtestRunnerDetail = detail.slice(0, 96);
 }
 
+function markRunning(root) {
+  if (root.dataset.playtestRunner !== "running") root.dataset.playtestRunner = "running";
+}
+
 function finish(root, state) {
   running = false;
   window.clearTimeout(timer);
@@ -68,6 +72,7 @@ function step() {
   if (!running) return;
   const root = rootNode();
   if (!root) return schedule();
+  markRunning(root);
 
   const state = lifecycle(root);
   if (TERMINAL_STATES.has(state)) return finish(root, state);
@@ -104,7 +109,7 @@ function start() {
   stepCount = 0;
   const root = rootNode();
   if (root) {
-    root.dataset.playtestRunner = "running";
+    markRunning(root);
     record(root, "started", lifecycle(root));
   }
   schedule();
