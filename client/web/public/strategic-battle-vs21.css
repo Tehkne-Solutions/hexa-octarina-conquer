@@ -69,10 +69,72 @@
   opacity: .48;
 }
 
+/* VERTICAL SLICE 22 — deterministic portrait crop for baked-background runtime PNGs */
+.meta08-physical-world .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-kael .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-lyra .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-varg .strategic-unit-image,
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  top: 0;
+  width: 92px;
+  height: 104px;
+  object-fit: cover;
+  object-position: 50% 38%;
+  clip-path: polygon(50% 0, 88% 14%, 100% 50%, 78% 91%, 50% 100%, 22% 91%, 0 50%, 12% 14%);
+  -webkit-mask-image: none;
+  mask-image: none;
+  mix-blend-mode: normal;
+  transform: translateX(-50%) scale(1.42);
+  transform-origin: 50% 42%;
+  background: #171d1b;
+  filter: saturate(1.16) contrast(1.09) brightness(1.08) drop-shadow(0 14px 10px rgba(0,0,0,.72));
+}
+
+.meta08-physical-world .strategic-unit.unit-kael .strategic-unit-image {
+  object-position: 49% 34%;
+  transform: translateX(-50%) scale(1.5);
+}
+
+.meta08-physical-world .strategic-unit.unit-lyra .strategic-unit-image {
+  object-position: 51% 36%;
+  transform: translateX(-50%) scale(1.62);
+  filter: saturate(1.12) contrast(1.06) brightness(1.16) drop-shadow(0 14px 10px rgba(0,0,0,.72));
+}
+
+.meta08-physical-world .strategic-unit.unit-varg .strategic-unit-image {
+  object-position: 50% 33%;
+  transform: translateX(-50%) scale(1.7);
+  filter: saturate(1.18) contrast(1.07) brightness(1.12) drop-shadow(0 14px 10px rgba(0,0,0,.72));
+}
+
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  object-position: 50% 46%;
+  transform: translateX(-50%) scale(2.35);
+  background: #30231d;
+  filter: saturate(1.28) contrast(.82) brightness(1.9) drop-shadow(0 14px 10px rgba(0,0,0,.68));
+}
+
+.meta08-physical-world .strategic-unit::before {
+  opacity: .34;
+  transform: translateX(-50%) scale(.92);
+}
+
+.meta08-physical-world .strategic-unit > b {
+  top: 114px;
+}
+
+.meta08-physical-world .strategic-unit > small {
+  top: 135px;
+}
+
 @media (max-height: 760px) {
   .meta08-physical-world .strategic-unit-image,
   .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
-    width: 116px;
-    height: 116px;
+    width: 86px;
+    height: 96px;
+  }
+
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+    transform: translateX(-50%) scale(2.15);
   }
 }
