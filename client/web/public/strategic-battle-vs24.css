@@ -1,0 +1,37 @@
+/* VERTICAL SLICE 24 — Brakk canonical source crop recovery */
+
+/*
+ * PACK 99 audit proved that CHAMP_BERSERKER_01_IDLE_BASE_NW_01 is a valid
+ * 1024x1024 bitmap whose actual portrait occupies only the lower source window
+ * (roughly x=454..584 / y=779..894). `object-fit: none` keeps the canonical
+ * pixels at native resolution and makes the img box a deterministic source
+ * window. This removes the opaque black canvas without recoloring the asset.
+ */
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  top: 0;
+  width: 115px;
+  height: 130px;
+  object-fit: none;
+  object-position: 50.82% 86.35%;
+  transform: translateX(-50%) scale(.82);
+  transform-origin: 50% 50%;
+  mix-blend-mode: normal;
+  background: transparent;
+  filter: drop-shadow(0 14px 10px rgba(0, 0, 0, .72));
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* Keep the existing tactical silhouette while showing only real Berserker pixels. */
+.meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+  clip-path: polygon(50% 0, 88% 14%, 100% 50%, 78% 91%, 50% 100%, 22% 91%, 0 50%, 12% 14%);
+}
+
+@media (max-height: 760px) {
+  .meta08-physical-world .strategic-unit.unit-brakk .strategic-unit-image {
+    width: 115px;
+    height: 130px;
+    object-position: 50.82% 86.35%;
+    transform: translateX(-50%) scale(.74);
+  }
+}
