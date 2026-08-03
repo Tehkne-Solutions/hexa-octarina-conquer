@@ -22,8 +22,14 @@ describe("VS34 mission progress feedback", () => {
   });
 
   it("snapshots initial state and only reports positive progress", () => {
-    expect(js.indexOf("if (!initialized)")).toBeLessThan(js.indexOf("showProgress(board"));
-    expect(js).toContain("objective.current <= previous");
+    const renderStart = js.indexOf("function renderMissionProgress");
+    const renderBody = js.slice(renderStart);
+    const initGuard = renderBody.indexOf("if (!initialized)");
+    const progressCall = renderBody.indexOf("showProgress(board");
+    expect(renderStart).toBeGreaterThan(-1);
+    expect(initGuard).toBeGreaterThan(-1);
+    expect(progressCall).toBeGreaterThan(initGuard);
+    expect(renderBody).toContain("objective.current <= previous");
   });
 
   it("ignores mutations produced by its own transient layer", () => {
