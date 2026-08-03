@@ -41,11 +41,14 @@ describe("VS33 complete turn loop", () => {
     expect(js).toContain("renderingTurnLoop");
   });
 
-  it("uses explicit current-turn labels instead of historical narrative mentions", () => {
-    const playerCheck = js.indexOf('findByText(root, /^SEU TURNO$/i)');
+  it("prioritizes the same current-player signal already approved in VS32", () => {
+    const textRead = js.indexOf("const text = normalizedText(root).toUpperCase()");
+    const playerCheck = js.indexOf('text.includes("SEU TURNO")');
     const enemyIndicatorCheck = js.indexOf('root.querySelector(".strategic-enemy-turn-indicator")');
-    expect(playerCheck).toBeGreaterThan(-1);
+    const rubraCheck = js.indexOf('text.includes("LEGIÃO RUBRA")');
+    expect(textRead).toBeGreaterThan(-1);
+    expect(playerCheck).toBeGreaterThan(textRead);
     expect(enemyIndicatorCheck).toBeGreaterThan(playerCheck);
-    expect(js).not.toContain('text.includes("LEGIÃO RUBRA")');
+    expect(rubraCheck).toBeGreaterThan(enemyIndicatorCheck);
   });
 });
