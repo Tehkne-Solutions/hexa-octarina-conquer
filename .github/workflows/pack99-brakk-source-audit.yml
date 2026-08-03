@@ -1,0 +1,86 @@
+name: PACK 99 Brakk Source Audit
+
+on:
+  pull_request:
+    paths:
+      - "client/web/scripts/audit-brakk-pack99-source.mjs"
+      - ".github/workflows/pack99-brakk-source-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-brakk-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: client/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Materialize official PACK 99 runtime
+        run: |
+          set -euo pipefail
+          runtime_name="hoc-pack99-web-full.zip"
+          checksum_name="hoc-pack99-web-full.zip.sha256"
+          release_base="https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2"
+          curl --fail --location --silent --show-error --retry 3 "${release_base}/${runtime_name}" -o "/tmp/${runtime_name}"
+          curl --fail --location --silent --show-error --retry 3 "${release_base}/${checksum_name}" -o "/tmp/${checksum_name}"
+          (cd /tmp && sha256sum --check "${checksum_name}")
+          rm -rf public/assets/runtime
+          mkdir -p public/assets/runtime
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+
+          archive = Path('/tmp/hoc-pack99-web-full.zip')
+          destination = Path('public/assets/runtime').resolve()
+          with ZipFile(archive) as zf:
+              entries = []
+              runtime_roots = []
+              for info in zf.infolist():
+                  normalized = info.filename.replace('\\', '/')
+                  parts = [part for part in PurePosixPath(normalized).parts if part not in ('', '.')]
+                  if not parts or '..' in parts:
+                      raise SystemExit(f'PACK99_UNSAFE_ZIP_ENTRY:{info.filename}')
+                  entries.append((info, normalized, parts))
+                  if parts[-1] == 'runtime-install.json':
+                      runtime_roots.append(parts[:-1])
+              if len(runtime_roots) != 1:
+                  raise SystemExit(f'PACK99_RUNTIME_ROOT_AMBIGUOUS:{runtime_roots}')
+              root_prefix = runtime_roots[0]
+              for info, normalized, parts in entries:
+                  if root_prefix and parts[:len(root_prefix)] == root_prefix:
+                      parts = parts[len(root_prefix):]
+                  if not parts:
+                      continue
+                  target = destination.joinpath(*parts).resolve()
+                  if destination not in target.parents and target != destination:
+                      raise SystemExit(f'PACK99_ZIP_ESCAPE:{info.filename}')
+                  if info.is_dir() or normalized.endswith('/'):
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with zf.open(info) as source, target.open('wb') as sink:
+                          sink.write(source.read())
+          PY
+
+      - name: Audit Brakk source family
+        run: node scripts/audit-brakk-pack99-source.mjs
+
+      - name: Upload Brakk source audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: hexa-octarina-pack99-brakk-source-audit
+          path: client/web/visual-qa-pack99/brakk-source-audit
+          retention-days: 30
+          if-no-files-found: error
