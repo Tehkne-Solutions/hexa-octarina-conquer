@@ -109,5 +109,11 @@ function start() {
   schedule();
 }
 
+function forceStart() {
+  window.__HOC_PLAYTEST__ = true;
+  start();
+}
+
+window.addEventListener("hoc:playtest-start", forceStart);
 window.addEventListener("DOMContentLoaded", start, { once: true });
 start();
