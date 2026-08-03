@@ -40,4 +40,12 @@ describe("VS33 complete turn loop", () => {
     expect(js).toContain('closest(".strategic-turn-loop-dock")');
     expect(js).toContain("renderingTurnLoop");
   });
+
+  it("uses explicit current-turn labels instead of historical narrative mentions", () => {
+    const playerCheck = js.indexOf('findByText(root, /^SEU TURNO$/i)');
+    const enemyIndicatorCheck = js.indexOf('root.querySelector(".strategic-enemy-turn-indicator")');
+    expect(playerCheck).toBeGreaterThan(-1);
+    expect(enemyIndicatorCheck).toBeGreaterThan(playerCheck);
+    expect(js).not.toContain('text.includes("LEGIÃO RUBRA")');
+  });
 });
