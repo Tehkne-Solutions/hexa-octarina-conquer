@@ -50,8 +50,14 @@ function ensureCard(root) {
 function placeCard(card, unit, root) {
   const rootRect = root.getBoundingClientRect();
   const rect = unit.getBoundingClientRect();
-  card.style.left = `${rect.left - rootRect.left + rect.width / 2}px`;
-  card.style.top = `${Math.max(10, rect.top - rootRect.top - 48)}px`;
+  const centerX = rect.left - rootRect.left + rect.width / 2;
+  const unitTop = rect.top - rootRect.top;
+  const unitBottom = rect.bottom - rootRect.top;
+  const placeBelow = unitTop < 120;
+
+  card.dataset.anchor = placeBelow ? "below" : "above";
+  card.style.left = `${Math.max(78, Math.min(rootRect.width - 78, centerX))}px`;
+  card.style.top = `${placeBelow ? unitBottom + 12 : Math.max(58, unitTop - 12)}px`;
 }
 
 function render() {
