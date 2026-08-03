@@ -19,7 +19,7 @@ function readActiveName(root) {
     .find((node) => /UNIDADE ATIVA/i.test(text(node)));
   if (!label) return null;
   let scope = label;
-  for (let depth = 0; scope && depth < 4; depth += 1, scope = scope.parentElement) {
+  for (let depth = 0; scope && depth < 5; depth += 1, scope = scope.parentElement) {
     const value = text(scope);
     const match = KNOWN_UNITS.find((name) => exactName(value, name));
     if (match) return match;
@@ -29,17 +29,24 @@ function readActiveName(root) {
 
 function resolvePanel(root, activeName) {
   if (!activeName) return null;
-  return [...root.querySelectorAll("div, section, article")]
-    .filter((node) => !node.closest(".strategic-active-unit-inline-context"))
-    .map((node) => ({ node, value: text(node) }))
-    .filter(({ value }) => value.length <= 220 && /UNIDADE ATIVA/i.test(value) && exactName(value, activeName))
-    .sort((a, b) => a.value.length - b.value.length)[0]?.node || null;
+  const labels = [...root.querySelectorAll("div, span, p, strong")]
+    .filter((node) => /UNIDADE ATIVA/i.test(text(node)));
+
+  for (const label of labels) {
+    let scope = label;
+    for (let depth = 0; scope && depth < 6; depth += 1, scope = scope.parentElement) {
+      const value = text(scope);
+      if (value.length <= 260 && /UNIDADE ATIVA/i.test(value) && exactName(value, activeName) && /PRÓXIMA AÇÃO/i.test(value)) {
+        return scope;
+      }
+    }
+  }
+  return null;
 }
 
 function resolveHp(root, activeName) {
   if (!activeName) return null;
   const candidates = [...root.querySelectorAll("div, button, li, section")]
-    .filter((node) => !node.closest(".strategic-active-unit-inline-context"))
     .map((node) => ({ node, value: text(node) }))
     .filter(({ value }) => value.length > 0 && value.length <= 120 && exactName(value, activeName) && /\d+\s*\/\s*\d+/.test(value))
     .sort((a, b) => a.value.length - b.value.length);
@@ -47,14 +54,10 @@ function resolveHp(root, activeName) {
   return hp ? `${hp[1]}/${hp[2]}` : null;
 }
 
-function ensureInline(panel) {
-  let meta = panel.querySelector(":scope > .strategic-active-unit-inline-context");
-  if (meta) return meta;
-  meta = document.createElement("div");
-  meta.className = "strategic-active-unit-inline-context";
-  meta.setAttribute("aria-live", "polite");
-  panel.appendChild(meta);
-  return meta;
+function clearPrevious(root, current) {
+  root.querySelectorAll("[data-active-unit-inline-context]").forEach((node) => {
+    if (node !== current) delete node.dataset.activeUnitInlineContext;
+  });
 }
 
 function render() {
@@ -67,9 +70,9 @@ function render() {
     const panel = resolvePanel(root, activeName);
     if (!activeName || !panel) return;
     const hp = resolveHp(root, activeName);
-    const meta = ensureInline(panel);
-    const next = `${UNIT_ROLES[activeName]} · HP ${hp || "—"}`;
-    if (meta.textContent !== next) meta.textContent = next;
+    const next = `STATUS · ${UNIT_ROLES[activeName]} · HP ${hp || "—"}`;
+    clearPrevious(root, panel);
+    if (panel.dataset.activeUnitInlineContext !== next) panel.dataset.activeUnitInlineContext = next;
   } finally {
     rendering = false;
   }
@@ -78,10 +81,10 @@ function render() {
 const observer = new MutationObserver((mutations) => {
   const relevant = mutations.some((mutation) => {
     const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
-    return !target?.closest?.(".strategic-active-unit-inline-context");
+    return !target?.hasAttribute?.("data-active-unit-inline-context");
   });
   if (relevant) render();
 });
-observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["class"] });
 window.addEventListener("DOMContentLoaded", render, { once: true });
 render();
