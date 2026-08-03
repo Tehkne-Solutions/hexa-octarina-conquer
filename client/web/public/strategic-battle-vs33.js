@@ -26,11 +26,10 @@ function readActionBudget(root) {
 }
 
 function phaseFromDom(root) {
-  const explicitPlayerTurn = findByText(root, /^SEU TURNO$/i);
-  if (explicitPlayerTurn) return "player";
+  const text = normalizedText(root).toUpperCase();
+  if (text.includes("SEU TURNO")) return "player";
   if (root.querySelector(".strategic-enemy-turn-indicator")) return "enemy";
-  const explicitEnemyTurn = findByText(root, /^(TURNO DA RUBRA|TURNO RUBRA|LEGIÃO RUBRA)$/i);
-  if (explicitEnemyTurn) return "enemy";
+  if (text.includes("TURNO DA RUBRA") || text.includes("TURNO RUBRA") || text.includes("LEGIÃO RUBRA")) return "enemy";
   return "unknown";
 }
 
