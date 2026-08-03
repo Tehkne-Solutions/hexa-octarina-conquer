@@ -7,55 +7,54 @@ function text(node) {
   return (node?.textContent || "").replace(/\s+/g, " ").trim();
 }
 
+function exactName(value, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|\\s)${escaped}($|\\s)`, "i").test(value);
+}
+
 function readActiveName(root) {
   const fromDataset = root.dataset.activeUnitFocus;
   if (KNOWN_UNITS.includes(fromDataset)) return fromDataset;
-  const nodes = [...root.querySelectorAll("div, span, p, strong")];
-  const label = nodes.find((node) => /UNIDADE ATIVA/i.test(text(node)));
+  const label = [...root.querySelectorAll("div, span, p, strong")]
+    .find((node) => /UNIDADE ATIVA/i.test(text(node)));
   if (!label) return null;
   let scope = label;
   for (let depth = 0; scope && depth < 4; depth += 1, scope = scope.parentElement) {
     const value = text(scope);
-    const match = KNOWN_UNITS.find((name) => new RegExp(`\\b${name}\\b`, "i").test(value));
+    const match = KNOWN_UNITS.find((name) => exactName(value, name));
     if (match) return match;
   }
   return null;
 }
 
-function resolveUnit(root, activeName) {
+function resolvePanel(root, activeName) {
   if (!activeName) return null;
-  return [...root.querySelectorAll(".strategic-unit")]
-    .find((node) => new RegExp(`\\b${activeName}\\b`, "i").test(text(node))) || null;
+  return [...root.querySelectorAll("div, section, article")]
+    .filter((node) => !node.closest(".strategic-active-unit-inline-context"))
+    .map((node) => ({ node, value: text(node) }))
+    .filter(({ value }) => value.length <= 220 && /UNIDADE ATIVA/i.test(value) && exactName(value, activeName))
+    .sort((a, b) => a.value.length - b.value.length)[0]?.node || null;
 }
 
-function resolveContext(unit, activeName) {
-  if (!unit || !activeName) return null;
-  const hp = text(unit).match(/(\d+)\s*\/\s*(\d+)/);
-  if (!hp) return null;
-  return { name: activeName, role: UNIT_ROLES[activeName], hp: `${hp[1]}/${hp[2]}` };
+function resolveHp(root, activeName) {
+  if (!activeName) return null;
+  const candidates = [...root.querySelectorAll("div, button, li, section")]
+    .filter((node) => !node.closest(".strategic-active-unit-inline-context"))
+    .map((node) => ({ node, value: text(node) }))
+    .filter(({ value }) => value.length > 0 && value.length <= 120 && exactName(value, activeName) && /\d+\s*\/\s*\d+/.test(value))
+    .sort((a, b) => a.value.length - b.value.length);
+  const hp = candidates[0]?.value.match(/(\d+)\s*\/\s*(\d+)/);
+  return hp ? `${hp[1]}/${hp[2]}` : null;
 }
 
-function ensureCard(root) {
-  let card = root.querySelector(".strategic-active-unit-context");
-  if (card) return card;
-  card = document.createElement("div");
-  card.className = "strategic-active-unit-context";
-  card.setAttribute("aria-live", "polite");
-  card.innerHTML = '<span class="strategic-active-unit-context-kicker">UNIDADE ATIVA</span><strong></strong><span class="strategic-active-unit-context-meta"></span>';
-  root.appendChild(card);
-  return card;
-}
-
-function placeCard(card, unit, root) {
-  const rootRect = root.getBoundingClientRect();
-  const rect = unit.getBoundingClientRect();
-  const centerX = rect.left - rootRect.left + rect.width / 2;
-  const unitTop = rect.top - rootRect.top;
-  const unitBottom = rect.bottom - rootRect.top;
-  const placeBelow = unitTop < 130;
-  card.dataset.anchor = placeBelow ? "below" : "above";
-  card.style.left = `${Math.max(82, Math.min(rootRect.width - 82, centerX))}px`;
-  card.style.top = `${placeBelow ? unitBottom + 14 : Math.max(64, unitTop - 14)}px`;
+function ensureInline(panel) {
+  let meta = panel.querySelector(":scope > .strategic-active-unit-inline-context");
+  if (meta) return meta;
+  meta = document.createElement("div");
+  meta.className = "strategic-active-unit-inline-context";
+  meta.setAttribute("aria-live", "polite");
+  panel.appendChild(meta);
+  return meta;
 }
 
 function render() {
@@ -65,32 +64,24 @@ function render() {
     const root = document.querySelector(ROOT_SELECTOR);
     if (!root) return;
     const activeName = readActiveName(root);
-    const unit = resolveUnit(root, activeName);
-    const context = resolveContext(unit, activeName);
-    const card = ensureCard(root);
-
-    if (!unit || !context) {
-      card.hidden = true;
-      return;
-    }
-
-    const signature = `${context.name}|${context.role}|${context.hp}`;
-    if (card.dataset.signature !== signature) {
-      card.querySelector("strong").textContent = context.name;
-      card.querySelector(".strategic-active-unit-context-meta").textContent = `${context.role} · HP ${context.hp}`;
-      card.dataset.signature = signature;
-    }
-    card.hidden = false;
-    placeCard(card, unit, root);
+    const panel = resolvePanel(root, activeName);
+    if (!activeName || !panel) return;
+    const hp = resolveHp(root, activeName);
+    const meta = ensureInline(panel);
+    const next = `${UNIT_ROLES[activeName]} · HP ${hp || "—"}`;
+    if (meta.textContent !== next) meta.textContent = next;
   } finally {
     rendering = false;
   }
 }
 
 const observer = new MutationObserver((mutations) => {
-  if (mutations.some((mutation) => !mutation.target.parentElement?.closest?.(".strategic-active-unit-context"))) render();
+  const relevant = mutations.some((mutation) => {
+    const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+    return !target?.closest?.(".strategic-active-unit-inline-context");
+  });
+  if (relevant) render();
 });
-observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["class"] });
-window.addEventListener("resize", render);
+observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
 window.addEventListener("DOMContentLoaded", render, { once: true });
 render();
