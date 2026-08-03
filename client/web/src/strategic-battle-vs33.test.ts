@@ -31,6 +31,13 @@ describe("VS33 complete turn loop", () => {
 
   it("hides the turn dock when the real battle result exists", () => {
     expect(js).toContain('.strategic-result');
-    expect(js).toContain('dock.hidden = Boolean(result)');
+    expect(js).toContain('dock.hidden !== Boolean(result)');
+  });
+
+  it("does not react indefinitely to mutations produced by its own dock", () => {
+    expect(js).toContain("function setText");
+    expect(js).toContain("shouldRenderFromMutations");
+    expect(js).toContain('closest(".strategic-turn-loop-dock")');
+    expect(js).toContain("renderingTurnLoop");
   });
 });
