@@ -15,6 +15,27 @@ function parseRosterContext(node) {
   return { name, role: role.toUpperCase(), hp: `${hp[1]}/${hp[2]}` };
 }
 
+function resolveRosterContext(root) {
+  const focused = root.querySelector(".strategic-active-roster-focus");
+  if (!focused) return null;
+
+  let node = focused;
+  const aside = focused.closest("aside");
+  while (node && node !== root && node !== aside?.parentElement) {
+    const parsed = parseRosterContext(node);
+    if (parsed) return parsed;
+    if (node === aside) break;
+    node = node.parentElement;
+  }
+
+  const activeName = root.dataset.activeUnitFocus;
+  if (!activeName) return null;
+  const candidates = [...root.querySelectorAll("aside div, aside button, [class*='roster'] div, [class*='roster'] button")];
+  return candidates
+    .map((candidate) => parseRosterContext(candidate))
+    .find((parsed) => parsed?.name === activeName) || null;
+}
+
 function ensureCard(root) {
   let card = root.querySelector(".strategic-active-unit-context");
   if (card) return card;
@@ -40,8 +61,7 @@ function render() {
     const root = document.querySelector(ROOT_SELECTOR);
     if (!root) return;
     const unit = root.querySelector(".strategic-unit.strategic-active-unit-focus");
-    const roster = root.querySelector(".strategic-active-roster-focus");
-    const context = parseRosterContext(roster);
+    const context = resolveRosterContext(root);
     const card = ensureCard(root);
 
     if (!unit || !context) {
