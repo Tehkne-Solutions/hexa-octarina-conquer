@@ -1,39 +1,53 @@
 const ROOT_SELECTOR = ".strategic-slice.meta08-physical-world";
+const KNOWN_UNITS = ["Kael", "Lyra", "Varg", "Brakk"];
 let rendering = false;
 
 function text(node) {
   return (node?.textContent || "").replace(/\s+/g, " ").trim();
 }
 
-function parseRosterContext(node) {
+function parseRosterContext(node, expectedName) {
   const value = text(node);
-  const name = ["Kael", "Lyra", "Varg", "Brakk"].find((item) => new RegExp(`\\b${item}\\b`, "i").test(value));
+  if (!value) return null;
+  const name = KNOWN_UNITS.find((item) => new RegExp(`\\b${item}\\b`, "i").test(value));
   const hp = value.match(/(\d+)\s*\/\s*(\d+)/);
-  if (!name || !hp) return null;
-  const afterName = value.slice(value.toLowerCase().indexOf(name.toLowerCase()) + name.length).trim();
-  const role = afterName.replace(/\d+\s*\/\s*\d+.*/, "").trim().split(/\s{2,}| · /)[0] || "UNIDADE";
+  if (!name || !hp || (expectedName && name !== expectedName)) return null;
+  const nameIndex = value.toLowerCase().indexOf(name.toLowerCase());
+  const hpIndex = value.indexOf(hp[0], Math.max(0, nameIndex));
+  const between = hpIndex > nameIndex ? value.slice(nameIndex + name.length, hpIndex).trim() : "";
+  const role = between.replace(/[·|]/g, " ").replace(/\s+/g, " ").trim() || "UNIDADE";
   return { name, role: role.toUpperCase(), hp: `${hp[1]}/${hp[2]}` };
 }
 
-function resolveRosterContext(root) {
-  const focused = root.querySelector(".strategic-active-roster-focus");
-  if (!focused) return null;
+function readActiveName(root) {
+  const fromDataset = root.dataset.activeUnitFocus;
+  if (KNOWN_UNITS.includes(fromDataset)) return fromDataset;
 
-  let node = focused;
-  const aside = focused.closest("aside");
-  while (node && node !== root && node !== aside?.parentElement) {
-    const parsed = parseRosterContext(node);
-    if (parsed) return parsed;
-    if (node === aside) break;
-    node = node.parentElement;
+  const nodes = [...root.querySelectorAll("div, span, p, strong")];
+  const label = nodes.find((node) => /UNIDADE ATIVA/i.test(text(node)));
+  if (!label) return null;
+  let scope = label;
+  for (let depth = 0; scope && depth < 4; depth += 1, scope = scope.parentElement) {
+    const value = text(scope);
+    const match = KNOWN_UNITS.find((name) => new RegExp(`\\b${name}\\b`, "i").test(value));
+    if (match) return match;
   }
+  return null;
+}
 
-  const activeName = root.dataset.activeUnitFocus;
+function resolveUnit(root, activeName) {
+  if (!activeName) return null;
+  return [...root.querySelectorAll(".strategic-unit")]
+    .find((node) => new RegExp(`\\b${activeName}\\b`, "i").test(text(node))) || null;
+}
+
+function resolveRosterContext(root, activeName) {
   if (!activeName) return null;
   const candidates = [...root.querySelectorAll("aside div, aside button, [class*='roster'] div, [class*='roster'] button")];
   return candidates
-    .map((candidate) => parseRosterContext(candidate))
-    .find((parsed) => parsed?.name === activeName) || null;
+    .map((candidate) => parseRosterContext(candidate, activeName))
+    .filter(Boolean)
+    .sort((a, b) => a.role.length - b.role.length)[0] || null;
 }
 
 function ensureCard(root) {
@@ -53,11 +67,10 @@ function placeCard(card, unit, root) {
   const centerX = rect.left - rootRect.left + rect.width / 2;
   const unitTop = rect.top - rootRect.top;
   const unitBottom = rect.bottom - rootRect.top;
-  const placeBelow = unitTop < 120;
-
+  const placeBelow = unitTop < 130;
   card.dataset.anchor = placeBelow ? "below" : "above";
-  card.style.left = `${Math.max(78, Math.min(rootRect.width - 78, centerX))}px`;
-  card.style.top = `${placeBelow ? unitBottom + 12 : Math.max(58, unitTop - 12)}px`;
+  card.style.left = `${Math.max(82, Math.min(rootRect.width - 82, centerX))}px`;
+  card.style.top = `${placeBelow ? unitBottom + 14 : Math.max(64, unitTop - 14)}px`;
 }
 
 function render() {
@@ -66,11 +79,12 @@ function render() {
   try {
     const root = document.querySelector(ROOT_SELECTOR);
     if (!root) return;
-    const unit = root.querySelector(".strategic-unit.strategic-active-unit-focus");
-    const context = resolveRosterContext(root);
+    const activeName = readActiveName(root);
+    const unit = resolveUnit(root, activeName);
+    const context = resolveRosterContext(root, activeName);
     const card = ensureCard(root);
 
-    if (!unit || !context) {
+    if (!activeName || !unit || !context) {
       card.hidden = true;
       return;
     }
