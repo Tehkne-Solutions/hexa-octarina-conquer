@@ -1,0 +1,69 @@
+/* VERTICAL SLICE 27 — narrative speaker identity */
+
+.meta08-physical-world .strategic-field-narrative.has-speaker-portrait {
+  padding-left: 72px;
+  min-height: 66px;
+}
+
+.meta08-physical-world .strategic-field-narrative-portrait {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  transform: translateY(-50%);
+  border: 1px solid color-mix(in srgb, var(--narrative-accent) 72%, #eadba8);
+  border-radius: 50%;
+  background: #0a1110;
+  color: var(--narrative-accent);
+  font: 800 18px/1 system-ui, sans-serif;
+  box-shadow:
+    0 0 0 3px rgba(3, 8, 7, .82),
+    0 0 15px color-mix(in srgb, var(--narrative-accent) 22%, transparent);
+}
+
+.meta08-physical-world .strategic-field-narrative-portrait .strategic-roster-icon {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.meta08-physical-world .strategic-field-narrative-portrait .strategic-roster-icon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.meta08-physical-world .strategic-field-narrative.speaker-red {
+  --narrative-accent: #d86758;
+}
+
+.meta08-physical-world .strategic-field-narrative.speaker-blue {
+  --narrative-accent: #62b4dc;
+}
+
+.meta08-physical-world .strategic-field-narrative.speaker-world {
+  --narrative-accent: #a88bd8;
+}
+
+@media (max-width: 900px) {
+  .meta08-physical-world .strategic-field-narrative.has-speaker-portrait {
+    padding-left: 64px;
+  }
+
+  .meta08-physical-world .strategic-field-narrative-portrait {
+    left: 11px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .meta08-physical-world .strategic-field-narrative-portrait .strategic-roster-icon {
+    width: 40px;
+    height: 40px;
+  }
+}
