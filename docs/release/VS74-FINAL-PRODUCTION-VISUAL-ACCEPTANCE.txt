@@ -1,0 +1,18 @@
+HOC — VS74 FINAL PRODUCTION & VISUAL ACCEPTANCE
+
+Objetivo:
+Formalizar o último gate player-facing antes do freeze de Release Candidate, sem alterar regras, IA, progressão, balanceamento, assets ou UI.
+
+Critérios obrigatórios:
+- Home, campanha, gameplay, seleção de combate, impacto e resultado permanecem representados na Visual QA Matrix.
+- A matriz cobre notebook 1366×768 e mobile 390×844 e publica artefato obrigatório.
+- PACK 99 em produção permanece em runtime full, com 1037 assets canônicos e zero referências não resolvidas.
+- Arquivos obrigatórios de missão continuam sendo verificados no deploy real.
+- Falhas de assets runtime e bloqueio de produção continuam observáveis pelo gate de produção.
+- VS71, VS72 e VS73 permanecem na cadeia de prova de objetivos, campanha completa e auditoria de RC.
+- A camada VS74 é somente de aceitação e não pode tornar-se autoridade de gameplay ou progresso.
+
+Critério de saída:
+Somente com os gates acionados pelo PR verdes a versão pode avançar para freeze de Release Candidate e validação final do deploy publicado.
+
+Tehkné Solutions
