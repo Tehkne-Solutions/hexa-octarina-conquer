@@ -1,0 +1,43 @@
+.strategic-unit.owner-red.has-enemy-intent::after {
+  content: attr(data-enemy-intent);
+  position: absolute;
+  left: 50%;
+  bottom: -1.6rem;
+  transform: translateX(-50%);
+  max-width: 9rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid rgba(178, 86, 61, 0.62);
+  border-radius: 999px;
+  background: rgba(24, 16, 14, 0.9);
+  color: #f1d2bd;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.055em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 8;
+  box-shadow: 0 0.3rem 0.75rem rgba(0, 0, 0, 0.32);
+}
+
+.strategic-unit.owner-red.has-enemy-intent .strategic-unit-ring {
+  outline: 1px solid rgba(201, 103, 72, 0.52);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .strategic-unit.owner-red.has-enemy-intent::after {
+    bottom: -1.35rem;
+    max-width: 7.5rem;
+    padding: 0.18rem 0.38rem;
+    font-size: 0.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strategic-unit.owner-red.has-enemy-intent,
+  .strategic-unit.owner-red.has-enemy-intent * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
