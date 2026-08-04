@@ -19,6 +19,8 @@ import {
   type StrategicAiActionKindCounts,
 } from "./strategic-ai-global-action";
 
+export type StrategicAiTurnWithTrace = StrategicAiTurn & { debugTrace?: string };
+
 function decisionTrace(action: StrategicAiActionCandidate): string {
   return `[IA ${action.kind.toUpperCase()} · score ${action.score}] ${action.reason}`;
 }
@@ -52,6 +54,20 @@ function roleReason(action: StrategicAiActionCandidate): string | null {
   return null;
 }
 
+function playerIntent(action: StrategicAiActionCandidate, unitName: string): string {
+  if (action.unitId === "varg") {
+    if (action.kind === "move") return `${unitName} procura uma nova linha de avanço.`;
+    if (action.kind === "confront") return `${unitName} abre uma frente contra Orun.`;
+  }
+
+  if (action.unitId === "brakk") {
+    if (action.kind === "structure") return `${unitName} fortalece a posição Rubra.`;
+    if (action.kind === "confront") return `${unitName} força uma linha de confronto.`;
+  }
+
+  return "";
+}
+
 export function strategicBestRoleAwareAction(
   board: StrategicBoard,
   attackedUnits: ReadonlySet<StrategicUnitId> = new Set(),
@@ -77,9 +93,10 @@ export function strategicBestRoleAwareAction(
       || a.targetId.localeCompare(b.targetId))[0] ?? null;
 }
 
-export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn {
+export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurnWithTrace {
   let next = board;
   const messages: string[] = [];
+  const debugTraces: string[] = [];
   const movedUnits = new Set<StrategicUnitId>();
   const attackedUnits = new Set<StrategicUnitId>();
   const actionKindCounts = emptyKindCounts();
@@ -91,19 +108,19 @@ export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn
 
     actionKindCounts[selected.kind] += 1;
     const unit = strategicUnit(next, selected.unitId);
-    const trace = decisionTrace(selected);
+    debugTraces.push(decisionTrace(selected));
 
     if (selected.kind === "attack") {
       const target = strategicUnit(next, selected.targetId as StrategicUnitId);
       next = strategicAttack(next, selected.unitId, target.id);
       attackedUnits.add(selected.unitId);
-      messages.push(`${trace}. ${unit.name} atacou ${target.name}.`);
+      messages.push(`${unit.name} ataca ${target.name}.`);
       continue;
     }
 
     if (selected.kind === "confront") {
       next = strategicClaimEdge(next, selected.unitId, selected.targetId);
-      messages.push(`${trace}. ${unit.name} abriu uma rota de confronto.`);
+      messages.push(playerIntent(selected, unit.name) || `${unit.name} abre uma rota de confronto.`);
       continue;
     }
 
@@ -115,26 +132,27 @@ export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn
         : strategicClaimEdge(next, selected.unitId, selected.targetId);
       const closedTerritory = strategicOwnedCellCount(next, "red") > beforeOwned;
       messages.push(closedTerritory
-        ? `${trace}. ${unit.name} fechou uma região para a Legião Rubra.`
+        ? `${unit.name} fecha uma região para a Legião Rubra.`
         : contesting
-          ? `${trace}. ${unit.name} retomou uma rota disputada.`
-          : `${trace}. ${unit.name} expandiu a rede Rubra.`);
+          ? `${unit.name} retoma uma rota disputada.`
+          : `${unit.name} expande a rede Rubra.`);
       continue;
     }
 
     if (selected.kind === "structure") {
       next = strategicBuildStructure(next, selected.unitId, selected.targetId, "watchtower");
-      messages.push(`${trace}. ${unit.name} fortificou a fronteira Rubra.`);
+      messages.push(playerIntent(selected, unit.name) || `${unit.name} fortifica a fronteira Rubra.`);
       continue;
     }
 
     next = strategicMoveUnit(next, selected.unitId, selected.targetId);
     movedUnits.add(selected.unitId);
-    messages.push(`${trace}. ${unit.name} reposicionou-se.`);
+    messages.push(playerIntent(selected, unit.name) || `${unit.name} se reposiciona.`);
   }
 
   return {
     board: next,
     message: messages.length > 0 ? messages.join(" ") : "A Legião Rubra manteve posição.",
+    debugTrace: debugTraces.length > 0 ? debugTraces.join(" | ") : undefined,
   };
 }
