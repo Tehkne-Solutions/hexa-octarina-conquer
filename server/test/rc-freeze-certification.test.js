@@ -9,6 +9,13 @@ async function readRepoFile(path) {
   return readFile(new URL(path, rootUrl), "utf8");
 }
 
+function stripStringLiterals(source) {
+  return source
+    .replace(/`(?:\\.|[^`])*`/gs, "``")
+    .replace(/"(?:\\.|[^"\\])*"/g, '""')
+    .replace(/'(?:\\.|[^'\\])*'/g, "''");
+}
+
 test("VS75 freezes the release candidate on the accepted VS74 commit", async () => {
   const freeze = await readRepoFile("docs/release/VS75-RC-FREEZE-PRODUCTION-CERTIFICATION.txt");
   assert.equal(freeze.includes(FROZEN_SHA), true);
@@ -32,7 +39,14 @@ test("VS75 keeps production certification chained to PACK 99 and visual acceptan
 
 test("VS75 remains a release guardrail and does not become gameplay authority", async () => {
   const source = await readRepoFile("server/test/rc-freeze-certification.test.js");
-  for (const forbidden of ["mergeCampaignResult(", "createCampaignRoom(", "applyCommand(", "rewardXp ="]) {
-    assert.equal(source.includes(forbidden), false, `freeze gate must not contain ${forbidden}`);
+  const executable = stripStringLiterals(source);
+
+  for (const forbidden of [
+    /\bmergeCampaignResult\s*\(/,
+    /\bcreateCampaignRoom\s*\(/,
+    /\bapplyCommand\s*\(/,
+    /\brewardXp\s*=/,
+  ]) {
+    assert.equal(forbidden.test(executable), false, `freeze gate must not match ${forbidden}`);
   }
 });
