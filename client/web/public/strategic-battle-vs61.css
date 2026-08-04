@@ -1,0 +1,23 @@
+.strategic-command-banner.is-vs61-redundant {
+  display: none !important;
+}
+
+.strategic-objectives ol li.is-vs61-muted-log {
+  display: none !important;
+}
+
+main.strategic-slice[data-gameplay-quality-closure='active'] .strategic-objectives ol {
+  max-height: 86px;
+  overflow: hidden;
+}
+
+main.strategic-slice[data-gameplay-quality-closure='active'] .strategic-objectives ol li {
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+@media (max-width: 760px) {
+  main.strategic-slice[data-gameplay-quality-closure='active'] .strategic-objectives ol {
+    max-height: 68px;
+  }
+}
