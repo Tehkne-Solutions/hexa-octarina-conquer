@@ -52,8 +52,7 @@ new MutationObserver(scheduleCombatOpportunity).observe(document.documentElement
   subtree: true,
   childList: true,
   characterData: true,
-  attributes: true,
-  attributeFilter: ['class'],
 });
+document.addEventListener('click', scheduleCombatOpportunity, true);
 window.addEventListener('hoc:combat-opportunity-refresh', scheduleCombatOpportunity);
 scheduleCombatOpportunity();
