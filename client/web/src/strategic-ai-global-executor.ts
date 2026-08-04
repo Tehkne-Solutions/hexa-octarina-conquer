@@ -12,10 +12,18 @@ import {
   type StrategicUnitId,
 } from "./strategic-board-model";
 import { strategicContestRoute, strategicContestTargets } from "./strategic-route-contest";
-import { strategicBestGlobalAction, type StrategicAiActionCandidate } from "./strategic-ai-global-action";
+import {
+  strategicBestGlobalAction,
+  type StrategicAiActionCandidate,
+  type StrategicAiActionKind,
+} from "./strategic-ai-global-action";
 
 function decisionTrace(action: StrategicAiActionCandidate): string {
   return `[IA ${action.kind.toUpperCase()} · score ${action.score}] ${action.reason}`;
+}
+
+function emptyKindCounts(): Record<StrategicAiActionKind, number> {
+  return { attack: 0, confront: 0, build: 0, structure: 0, move: 0 };
 }
 
 export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn {
@@ -23,12 +31,14 @@ export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn
   const messages: string[] = [];
   const movedUnits = new Set<StrategicUnitId>();
   const attackedUnits = new Set<StrategicUnitId>();
+  const actionKindCounts = emptyKindCounts();
   const budget = strategicActionBudget(board, "red");
 
   for (let actionIndex = 0; actionIndex < budget && strategicResult(next) === "playing"; actionIndex += 1) {
-    const selected = strategicBestGlobalAction(next, attackedUnits, movedUnits);
+    const selected = strategicBestGlobalAction(next, attackedUnits, movedUnits, actionKindCounts);
     if (!selected) break;
 
+    actionKindCounts[selected.kind] += 1;
     const unit = strategicUnit(next, selected.unitId);
     const trace = decisionTrace(selected);
 
