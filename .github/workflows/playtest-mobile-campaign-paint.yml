@@ -1,0 +1,71 @@
+name: Playtest Mobile Campaign Paint
+
+on:
+  pull_request:
+    paths:
+      - "client/web/**"
+      - ".github/workflows/playtest-mobile-campaign-paint.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playtest-mobile-campaign-paint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile-campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: client/web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install web dependencies
+        run: npm install
+
+      - name: Build production PWA
+        run: npm run check
+
+      - name: Install Playwright test runner and Chromium
+        run: |
+          npm install --no-save @playwright/test@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Start production preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/hexa-playtest-preview.log 2>&1 &
+          echo $! > /tmp/hexa-playtest-preview.pid
+          npx --yes wait-on@8.0.3 http://127.0.0.1:4173
+
+      - name: Verify deferred campaign chapters paint on real mobile scroll
+        run: |
+          mkdir -p playtest-visual
+          npx playwright test tests/playtest-mobile-campaign-paint.spec.cjs --reporter=line --workers=1
+
+      - name: Upload mobile playtest evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playtest-mobile-campaign-paint
+          path: client/web/playtest-visual
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/hexa-playtest-preview.pid ]; then
+            kill "$(cat /tmp/hexa-playtest-preview.pid)" || true
+          fi
+          cat /tmp/hexa-playtest-preview.log || true
