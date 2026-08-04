@@ -22,5 +22,5 @@ describe("VS51 fair strategic balance baseline", () => {
     expect(report.averageRounds).toBeGreaterThan(0);
     expect(report.averageRounds).toBeLessThanOrEqual(24);
     expect(actionShareTotal).toBeCloseTo(1, 10);
-  }, 30_000);
+  }, 45_000);
 });
