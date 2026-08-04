@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 
 const gate = readFileSync(new URL("../scripts/visual-pack99-runtime-gate.mjs", import.meta.url), "utf8");
 
-describe("VS48 canonical complete playthrough gate", () => {
-  it("launches the real campaign and starts the opt-in runner only after battle load", () => {
+describe("VS49 canonical browser playthrough gate", () => {
+  it("launches the real campaign before driving the strategic board", () => {
     expect(gate).toContain("launchCampaignMission");
     expect(gate).toContain("runPlaythroughGate");
-    expect(gate).toContain('new Event("hoc:playtest-start")');
+    expect(gate).toContain("battleSnapshot");
 
     const mainStart = gate.indexOf("async function main()");
     const mainBody = gate.slice(mainStart);
@@ -18,23 +18,27 @@ describe("VS48 canonical complete playthrough gate", () => {
     expect(playthroughRun).toBeGreaterThan(missionLaunch);
   });
 
-  it("requires both runner completion and complete mission trace", () => {
-    expect(gate).toContain('root?.dataset.playtestRunner === "complete"');
-    expect(gate).toContain('root?.dataset.missionPlaythrough === "complete"');
-    expect(gate).toContain('result.runner === "complete"');
-    expect(gate).toContain('result.missionPlaythrough === "complete"');
+  it("uses only real enabled strategic controls", () => {
+    expect(gate).toContain(".strategic-unit.is-attack-target:not(:disabled)");
+    expect(gate).toContain(".strategic-edge.is-recommended:not(:disabled)");
+    expect(gate).toContain(".strategic-node.is-recommended:not(:disabled)");
+    expect(gate).toContain(".strategic-cell.is-build-target:not(:disabled)");
+    expect(gate).toContain(".strategic-end-turn:not(:disabled)");
   });
 
-  it("requires player, enemy and terminal lifecycle evidence", () => {
-    expect(gate).toContain('missionPath?.includes("player")');
-    expect(gate).toContain('missionPath?.includes("enemy")');
-    expect(gate).toContain('["victory", "defeat", "resolved"].includes(result.terminal)');
+  it("requires player activity, enemy execution and a terminal state", () => {
+    expect(gate).toContain('path.includes("player")');
+    expect(gate).toContain("endTurns > 0");
+    expect(gate).toContain("TERMINAL_STATES.has(snapshot.lifecycle)");
+    expect(gate).toContain('"enemy-executed"');
   });
 
-  it("captures final evidence and records diagnostics in the manifest", () => {
+  it("captures final evidence and bounded diagnostics", () => {
+    expect(gate).toContain("MAX_PLAYTHROUGH_STEPS = 96");
+    expect(gate).toContain("PACK99_PLAYTHROUGH_STALLED");
+    expect(gate).toContain("PACK99_PLAYTHROUGH_STEP_LIMIT");
     expect(gate).toContain("battle-playthrough-final-pack99-1366x768.png");
-    expect(gate).toContain("playthrough terminal:");
-    expect(gate).toContain("playthrough steps:");
+    expect(gate).toContain("playthrough enemy turns:");
     expect(gate).toContain("playthrough path:");
   });
 });
