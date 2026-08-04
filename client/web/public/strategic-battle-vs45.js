@@ -36,6 +36,9 @@ function currentPhase(root) {
 function readResult(root) {
   const result = root.querySelector(".strategic-result");
   if (!result) return null;
+  if (result.classList.contains("is-victory")) return "victory";
+  if (result.classList.contains("is-defeat")) return "defeat";
+
   const value = text(result).toUpperCase();
   if (/VIT[ÓO]RIA|VENDEU|CONQUISTOU|MISS[ÃA]O CONCLU[ÍI]DA/.test(value)) return "victory";
   if (/DERROTA|FRACASSO|MISS[ÃA]O FALHOU|RUBRA VENCEU/.test(value)) return "defeat";
