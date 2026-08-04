@@ -111,9 +111,16 @@ async function clickFirstVisible(page, locator) {
   const count = await locator.count();
   for (let index = 0; index < count; index += 1) {
     const candidate = locator.nth(index);
-    if (await candidate.isVisible() && await candidate.isEnabled()) {
-      await candidate.dispatchEvent("click");
-      return true;
+    try {
+      if (!await candidate.isVisible({ timeout: 750 }) || !await candidate.isEnabled({ timeout: 750 })) continue;
+      const clicked = await candidate.evaluate((element) => {
+        if (!(element instanceof HTMLElement) || element.hasAttribute("disabled")) return false;
+        element.click();
+        return true;
+      }, { timeout: 1500 });
+      if (clicked) return true;
+    } catch {
+      // React can replace a legal target between discovery and dispatch. Re-evaluate on the next candidate/step.
     }
   }
   return false;
