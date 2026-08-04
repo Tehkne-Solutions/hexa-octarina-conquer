@@ -7,6 +7,13 @@ async function readRepoFile(path: string) {
   return readFile(new URL(path, rootUrl), "utf8");
 }
 
+function stripStringLiterals(source: string) {
+  return source
+    .replace(/`(?:\\.|[^`])*`/gs, "``")
+    .replace(/"(?:\\.|[^"\\])*"/g, '""')
+    .replace(/'(?:\\.|[^'\\])*'/g, "''");
+}
+
 describe("VS74 final production and visual acceptance", () => {
   it("keeps the final player journey represented in the canonical Visual QA matrix", async () => {
     const workflow = await readRepoFile(".github/workflows/visual-qa.yml");
@@ -58,10 +65,11 @@ describe("VS74 final production and visual acceptance", () => {
 
   it("does not introduce gameplay or progress authority in the final acceptance layer", async () => {
     const source = await readRepoFile("client/web/src/vs74-final-production-visual-acceptance.test.ts");
+    const executable = stripStringLiterals(source);
 
-    expect(source).not.toContain("mergeCampaignResult(");
-    expect(source).not.toContain("createCampaignRoom(");
-    expect(source).not.toContain("applyCommand(");
-    expect(source).not.toContain("rewardXp =");
+    expect(executable).not.toMatch(/\bmergeCampaignResult\s*\(/);
+    expect(executable).not.toMatch(/\bcreateCampaignRoom\s*\(/);
+    expect(executable).not.toMatch(/\bapplyCommand\s*\(/);
+    expect(executable).not.toMatch(/\brewardXp\s*=/);
   });
 });
