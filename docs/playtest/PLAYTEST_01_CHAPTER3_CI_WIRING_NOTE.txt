@@ -1,0 +1,7 @@
+PLAYTEST 01 — CHAPTER 3 CI WIRING NOTE
+
+The Single Player Campaign workflow now executes the campaign objective integrity test and the advanced Chapter 3 lifecycle test explicitly.
+
+This closes a coverage gap where the tests existed in the repository but were not part of the workflow's explicit node --test file list.
+
+Tehkné Solutions
