@@ -1,0 +1,28 @@
+.campaign-mission-identity {
+  margin: 16px 0 18px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--chapter-accent, #c7a66b) 42%, transparent);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(31, 27, 22, .88), rgba(20, 18, 15, .92));
+  box-shadow: inset 0 1px rgba(255, 246, 220, .05);
+}
+
+.mission-identity-heading small,
+.mission-identity-heading strong { display: block; }
+.mission-identity-heading small { font-size: 9px; letter-spacing: .17em; color: #a99a80; }
+.mission-identity-heading strong { margin-top: 3px; font-size: 13px; letter-spacing: .06em; color: var(--chapter-accent-soft, #ead8b2); }
+.mission-identity-tags { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; margin-top: 10px; }
+.mission-identity-tags span { display: grid; gap: 2px; min-height: 52px; padding: 8px 10px; border: 1px solid rgba(214, 194, 157, .16); border-radius: 7px; background: rgba(10, 10, 8, .28); }
+.mission-identity-tags b { font-size: 10px; letter-spacing: .09em; color: #e2d4b8; }
+.mission-identity-tags em { font-size: 10px; font-style: normal; line-height: 1.35; color: #b9ad96; }
+.mission-identity-tags .identity-pressure { border-color: rgba(149, 65, 48, .42); }
+.mission-identity-tags .identity-fortification { border-color: rgba(137, 124, 83, .42); }
+.mission-identity-tags .identity-conquest { border-color: rgba(92, 132, 107, .42); }
+.mission-identity-tags .identity-tempo { border-color: rgba(174, 128, 67, .42); }
+.mission-identity-tags .identity-survival { border-color: rgba(124, 103, 139, .38); }
+
+@media (max-width: 760px) {
+  .campaign-mission-identity { margin: 12px 0 14px; padding: 10px 11px; }
+  .mission-identity-tags { grid-template-columns: 1fr; gap: 6px; }
+  .mission-identity-tags span { min-height: 0; }
+}
