@@ -1,0 +1,8 @@
+/* VS68 — Campaign replay & mastery loop */
+.campaign-screen .mission-node{position:relative}
+.campaign-screen .vs68-mastery-badge{display:none;position:absolute;top:8px;right:9px;padding:4px 7px;border-radius:3px;font-size:8px;font-weight:900;letter-spacing:.12em;pointer-events:none}
+.campaign-screen .mission-node[data-vs68-mastery="mastered"] .vs68-mastery-badge{display:block;border:1px solid rgba(190,156,91,.52);background:rgba(56,39,22,.88);color:#e8d39e}
+.campaign-screen .mission-node[data-vs68-mastery="replay"] .vs68-mastery-badge{display:block;border:1px solid rgba(126,112,78,.42);background:rgba(32,29,23,.86);color:#c4b998}
+.campaign-screen .mission-node[data-vs68-mastery="mastered"]{box-shadow:inset 0 0 0 1px rgba(211,174,97,.16)}
+.campaign-screen .mission-node[data-vs68-mastery="replay"]{box-shadow:inset 0 0 0 1px rgba(150,132,91,.09)}
+@media(max-width:720px){.campaign-screen .vs68-mastery-badge{top:6px;right:6px;font-size:7px;padding:3px 5px}}
