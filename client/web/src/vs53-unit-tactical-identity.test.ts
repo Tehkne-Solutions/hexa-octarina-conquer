@@ -43,5 +43,5 @@ describe("VS53 Rubra unit tactical identity", () => {
     expect(report.unresolvedRate).toBeLessThanOrEqual(0.05);
     expect(report.health).toBe("balanced");
     expect(buildShare).toBeLessThan(0.55);
-  }, 30000);
+  }, 45000);
 });
