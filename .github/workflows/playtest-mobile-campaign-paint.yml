@@ -51,7 +51,7 @@ jobs:
       - name: Verify deferred campaign chapters paint on real mobile scroll
         run: |
           mkdir -p playtest-visual
-          npx playwright test tests/playtest-mobile-campaign-paint.spec.cjs --reporter=line --workers=1
+          npx playwright test --config=playtest/playwright.mobile-campaign.config.cjs --reporter=line --workers=1
 
       - name: Upload mobile playtest evidence
         if: always()
