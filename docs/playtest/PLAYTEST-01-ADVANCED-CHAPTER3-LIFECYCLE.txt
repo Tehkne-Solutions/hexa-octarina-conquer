@@ -1,0 +1,16 @@
+HOC PLAYTEST 01 — ADVANCED CHAPTER 3 LIFECYCLE
+
+Target: c3-m2 — Trono Fragmentado
+Primary objective: captures >= 2
+
+This gate proves the advanced mission through the authoritative runtime and persistence chain:
+- prior campaign progression unlocks c3-m2;
+- enemy captures do not advance the human objective;
+- two resolved human captures finish the mission;
+- the authoritative campaign result is recorded by the campaign store;
+- c3-m3 unlocks after the persisted victory;
+- a later worse replay does not degrade the stored best star result.
+
+This is test/playtest coverage only. It does not modify gameplay rules, campaign data, balance, UI, assets, XP or server authority.
+
+Tehkné Solutions
