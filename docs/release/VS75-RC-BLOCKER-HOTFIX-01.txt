@@ -1,0 +1,15 @@
+HOC — VS75 RC BLOCKER HOTFIX 01
+
+Causa:
+Os guardrails VS74 e VS75 liam o próprio arquivo e procuravam strings proibidas que também apareciam dentro das próprias asserções, produzindo falso positivo na certificação.
+
+Correção:
+- remove a auto-referência textual ingênua;
+- ignora literais de string antes de procurar chamadas executáveis proibidas;
+- mantém o mesmo conjunto de operações vedadas;
+- não altera gameplay, IA, progressão, balanceamento, assets, UI ou runtime de produção.
+
+Freeze:
+O candidato congelado continua sendo derivado do VS74; este hotfix é permitido exclusivamente por corrigir um blocker comprovado de certificação.
+
+Tehkné Solutions
