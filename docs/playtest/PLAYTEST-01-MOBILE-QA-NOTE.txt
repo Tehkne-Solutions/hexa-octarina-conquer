@@ -1,0 +1,1 @@
+CI-only scope: this branch changes test placement/configuration and playtest documentation only. Tehkné Solutions.
