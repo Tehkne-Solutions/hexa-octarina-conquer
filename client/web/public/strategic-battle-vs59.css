@@ -1,0 +1,41 @@
+.strategic-endgame-pressure {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(187, 164, 119, .32);
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(31, 27, 22, .88), rgba(21, 18, 15, .92));
+  box-shadow: inset 0 1px rgba(255, 240, 203, .04);
+  pointer-events: none;
+}
+
+.strategic-endgame-pressure[hidden] { display: none !important; }
+.strategic-endgame-pressure small,
+.strategic-endgame-pressure strong,
+.strategic-endgame-pressure span { display: block; }
+.strategic-endgame-pressure small { color: #a99a7e; font-size: 9px; letter-spacing: .12em; }
+.strategic-endgame-pressure strong { margin-top: 2px; color: #e7dbc0; font-size: 12px; letter-spacing: .05em; }
+.strategic-endgame-pressure span { margin-top: 3px; color: #bdae93; font-size: 9px; line-height: 1.35; }
+
+.strategic-endgame-pressure.is-orun-pressure {
+  border-color: rgba(119, 137, 86, .56);
+  background: linear-gradient(180deg, rgba(41, 48, 30, .9), rgba(23, 27, 20, .94));
+}
+.strategic-endgame-pressure.is-orun-pressure strong { color: #d6ddb1; }
+
+.strategic-endgame-pressure.is-rubra-pressure {
+  border-color: rgba(151, 65, 50, .64);
+  background: linear-gradient(180deg, rgba(65, 30, 25, .92), rgba(30, 20, 17, .95));
+}
+.strategic-endgame-pressure.is-rubra-pressure strong { color: #e8b49e; }
+
+.strategic-endgame-pressure.is-dual-pressure {
+  border-color: rgba(172, 130, 65, .58);
+  background: linear-gradient(180deg, rgba(55, 42, 25, .92), rgba(28, 23, 18, .95));
+}
+.strategic-endgame-pressure.is-dual-pressure strong { color: #e5c98f; }
+
+@media (max-width: 760px) {
+  .strategic-endgame-pressure { margin-top: 8px; padding: 8px 10px; }
+  .strategic-endgame-pressure strong { font-size: 11px; }
+  .strategic-endgame-pressure span { font-size: 8px; }
+}
