@@ -1,0 +1,31 @@
+HOC — RELEASE CANDIDATE PRODUCTION CERTIFICATION
+
+Status: CERTIFIED
+Date: 2026-08-04
+Certified main SHA: 38b3c59890f6efaadac1d43f10a0410640b7b0e6
+Production URL: https://hexa-octarina-conquer.onrender.com
+
+Evidence
+--------
+After updating the local checkout from origin/main to 38b3c59890f6efaadac1d43f10a0410640b7b0e6, the canonical production verification command was executed:
+
+npm.cmd --prefix .\client\web run verify:production
+
+Observed result:
+PRODUCTION_GATE_ATTEMPT=1/6 url=https://hexa-octarina-conquer.onrender.com
+PRODUCTION_GATE=PASS canonical=1037 materialized=1037 marker=BUILD unknown · PACK 99 1037/1037
+
+Certification
+-------------
+- published production endpoint passed the canonical PACK 99 production gate;
+- canonical asset count: 1037/1037;
+- materialized asset count: 1037/1037;
+- no RC blocker was reported by the production gate;
+- the RC blocker hotfix was already integrated in the certified main SHA;
+- the pre-production RC matrix had completed green before this production proof.
+
+Release policy
+--------------
+The Release Candidate is certified. Feature development remains frozen for this RC. Any subsequent modification to the certified candidate must be handled as an explicit release blocker/hotfix and must repeat the affected certification gates.
+
+Tehkné Solutions
