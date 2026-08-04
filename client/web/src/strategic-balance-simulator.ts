@@ -38,9 +38,9 @@ function emptyActionCounts(): StrategicBalanceAiActionCounts {
   return { ATTACK: 0, CONFRONT: 0, BUILD: 0, STRUCTURE: 0, MOVE: 0 };
 }
 
-function addObservedAiActions(message: string, counts: StrategicBalanceAiActionCounts): void {
+function addObservedAiActions(debugTrace: string, counts: StrategicBalanceAiActionCounts): void {
   const pattern = /\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/g;
-  for (const match of message.matchAll(pattern)) counts[match[1] as StrategicBalanceAiAction] += 1;
+  for (const match of debugTrace.matchAll(pattern)) counts[match[1] as StrategicBalanceAiAction] += 1;
 }
 
 export interface StrategicBalanceMatch {
@@ -166,7 +166,7 @@ function blueTurn(board: StrategicBoard, _random: () => number): StrategicBoard 
 
 function redTurn(board: StrategicBoard, counts: StrategicBalanceAiActionCounts): StrategicBoard {
   const result = strategicEnemyTurnGlobal(board);
-  addObservedAiActions(result.message, counts);
+  addObservedAiActions(result.debugTrace, counts);
   return result.board;
 }
 
