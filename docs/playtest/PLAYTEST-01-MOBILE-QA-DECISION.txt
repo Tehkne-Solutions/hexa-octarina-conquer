@@ -1,0 +1,7 @@
+PLAYTEST 01 MOBILE QA DECISION
+
+The mobile chapter visual finding remains a P1 candidate only. No product hotfix is authorized from the original full-page screenshot.
+
+The immediate blocker is CI isolation in the playtest gate itself. Once repaired, the scroll-based Playwright gate will determine whether Chapter 2 and Chapter 3 paint correctly in a real 390x844 viewport.
+
+Tehkné Solutions
