@@ -20,7 +20,7 @@ function withRoad(board: StrategicBoard, a: string, b: string): StrategicBoard {
 }
 
 describe("META 10.10B global AI executor", () => {
-  it("executes the globally highest-scored lethal attack and exposes its decision trace", () => {
+  it("executes the globally highest-scored lethal attack while keeping score out of player copy", () => {
     let board = createStrategicBoard();
     board = {
       ...board,
@@ -38,12 +38,14 @@ describe("META 10.10B global AI executor", () => {
 
     expect(strategicUnit(turn.board, "lyra").hp).toBe(0);
     expect(strategicResult(turn.board)).toBe("defeat");
-    expect(turn.message).toMatch(/\[IA ATTACK · score \d+\]/);
-    expect(turn.message).toContain("finalização de alvo vulnerável");
-    expect(turn.message).toContain("Varg atacou Lyra");
+    expect(turn.message).not.toContain("score");
+    expect(turn.message).not.toContain("[IA ");
+    expect(turn.message).toContain("Varg ataca Lyra");
+    expect(turn.debugTrace).toMatch(/\[IA ATTACK · score \d+\]/);
+    expect(turn.debugTrace).toContain("finalização de alvo vulnerável");
   });
 
-  it("keeps attack and movement limits across the whole action budget", () => {
+  it("keeps attack and movement limits across the whole action budget without leaking debug copy", () => {
     let board = createStrategicBoard();
     board = {
       ...board,
@@ -59,7 +61,8 @@ describe("META 10.10B global AI executor", () => {
     const after = strategicUnit(turn.board, "lyra").hp;
 
     expect(before - after).toBe(6);
-    expect(turn.message.match(/Brakk atacou Lyra/g)?.length ?? 0).toBe(1);
-    expect(turn.message).toMatch(/\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/);
+    expect(turn.message.match(/Brakk ataca Lyra/g)?.length ?? 0).toBe(1);
+    expect(turn.message).not.toContain("score");
+    expect(turn.debugTrace).toMatch(/\[IA (ATTACK|CONFRONT|BUILD|STRUCTURE|MOVE) · score \d+\]/);
   });
 });
