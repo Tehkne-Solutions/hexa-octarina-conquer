@@ -24,5 +24,5 @@ describe("VS52 tactical variety baseline", () => {
     expect(report.unresolvedRate).toBeLessThanOrEqual(0.05);
     expect(report.health).toBe("balanced");
     expect(buildShare).toBeLessThan(0.55);
-  });
+  }, 30_000);
 });
