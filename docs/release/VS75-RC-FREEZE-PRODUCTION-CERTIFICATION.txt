@@ -1,0 +1,25 @@
+HOC — VS75 RC FREEZE & PRODUCTION CERTIFICATION
+
+Candidato congelado:
+5acfa1e07e0f01b8080242d615693c701b94e56d
+
+Escopo congelado:
+- campanha completa;
+- gameplay e balanceamento validados;
+- PACK 99 runtime full;
+- Web/PWA;
+- Visual QA desktop e mobile;
+- produção e runtime autoritativo.
+
+Regras do freeze:
+- nenhuma nova feature entra no RC;
+- nenhuma alteração de balanceamento entra sem evidência de blocker;
+- nenhuma troca de asset entra sem falha comprovada de produção;
+- mudanças permitidas somente para blockers reais de release;
+- servidor permanece autoridade de gameplay e progressão;
+- certificação depende dos gates automáticos e da verificação do deploy publicado.
+
+Critério de saída:
+O RC pode ser certificado quando o SHA congelado, ou um hotfix explicitamente derivado dele para blocker de release, passar a matriz final e o gate de produção PACK 99.
+
+Tehkné Solutions
