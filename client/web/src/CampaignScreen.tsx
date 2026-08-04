@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { campaignCompletionSummary } from "./campaign-completion";
+import "./campaign-completion.css";
 import type { CampaignCatalog, CampaignMission } from "./protocol";
 
 interface CampaignScreenProps {
@@ -26,6 +28,7 @@ export function CampaignScreen({ catalog, loading, playerName, onStart, onBack }
   const storedMission = catalog.missions.find((mission) => mission.id === storedSelectedId && mission.unlocked);
   const [selectedId, setSelectedId] = useState(storedMission?.id ?? firstUnlocked?.id ?? "");
   const selected = useMemo(() => catalog.missions.find((mission) => mission.id === selectedId) ?? firstUnlocked, [catalog, selectedId, firstUnlocked]);
+  const completion = useMemo(() => campaignCompletionSummary(catalog), [catalog]);
 
   useEffect(() => {
     if (selected?.id) window.sessionStorage.setItem("hexa.campaign.selected-mission", selected.id);
@@ -38,6 +41,25 @@ export function CampaignScreen({ catalog, loading, playerName, onStart, onBack }
         <div className="campaign-brand"><strong>CAMPANHA OCTARINA</strong><span>{playerName}</span></div>
         <div className="campaign-total"><strong>{catalog.totals.stars} ★</strong><span>{catalog.totals.completed}/{catalog.missions.length} missões</span></div>
       </header>
+
+      {completion.complete && (
+        <section className="campaign-epilogue glass" data-campaign-complete="true" aria-label="Conclusão da Campanha Octarina">
+          <div className="campaign-epilogue__heading">
+            <div><small>CAMPANHA CONCLUÍDA</small><h1>Octarina Absoluta</h1></div>
+            {completion.legend && (
+              <div className="campaign-epilogue__legend" title="Conquista registrada pela campanha autoritativa">
+                <b>{completion.legend.icon}</b><span>{completion.legend.title}</span>
+              </div>
+            )}
+          </div>
+          <p>Os três capítulos e as doze missões foram vencidos. O mapa permanece aberto para revisitar confrontos, aperfeiçoar estrelas e consolidar o domínio de cada frente.</p>
+          <div className="campaign-epilogue__stats">
+            <span><small>MISSÕES VENCIDAS</small><strong>{completion.completed}/{completion.total}</strong></span>
+            <span><small>ESTRELAS REGISTRADAS</small><strong>{completion.stars}</strong></span>
+            <span><small>MISSÕES DOMINADAS</small><strong>{completion.mastered}/{completion.total}</strong></span>
+          </div>
+        </section>
+      )}
 
       <section className="campaign-layout">
         <div className="chapter-map">
