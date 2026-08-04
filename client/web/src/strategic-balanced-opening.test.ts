@@ -8,14 +8,14 @@ import {
   strategicStarterFromSeed,
 } from "./strategic-balanced-opening";
 
-describe("META 10.26 balanced gameplay opening", () => {
-  it("starts from the validated zero-bias geometry with no prebuilt roads", () => {
+describe("VS51 balanced gameplay opening", () => {
+  it("starts from mirrored west-east fronts with no prebuilt roads", () => {
     const board = createBalancedStrategicBoard();
 
     expect(strategicUnit(board, "kael").nodeId).toBe("s-0-0");
-    expect(strategicUnit(board, "lyra").nodeId).toBe("s-1-2");
+    expect(strategicUnit(board, "lyra").nodeId).toBe("s-0-2");
+    expect(strategicUnit(board, "varg").nodeId).toBe("s-2-0");
     expect(strategicUnit(board, "brakk").nodeId).toBe("s-2-2");
-    expect(strategicUnit(board, "varg").nodeId).toBe("s-1-0");
     expect(strategicRoadCount(board, "blue")).toBe(0);
     expect(strategicRoadCount(board, "red")).toBe(0);
   });
