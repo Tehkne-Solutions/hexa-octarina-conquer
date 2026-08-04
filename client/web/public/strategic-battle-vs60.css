@@ -1,0 +1,27 @@
+.strategic-decision-priority.is-consolidated {
+  max-width: 460px;
+}
+
+.strategic-decision-priority.is-consolidated span {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.strategic-decision-priority.is-endgame {
+  border-color: rgba(162, 111, 61, .72);
+  background: linear-gradient(180deg, rgba(66, 43, 27, .95), rgba(30, 23, 18, .97));
+}
+
+.strategic-decision-priority.is-endgame strong {
+  color: #f1d1a0;
+}
+
+.strategic-endgame-pressure[aria-hidden="true"] {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .strategic-decision-priority.is-consolidated {
+    width: min(360px, calc(100% - 20px));
+  }
+}
