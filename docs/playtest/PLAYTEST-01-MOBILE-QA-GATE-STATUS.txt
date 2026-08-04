@@ -1,0 +1,7 @@
+PLAYTEST 01 MOBILE QA GATE STATUS
+
+Status: HOTFIX PENDING VALIDATION
+
+The product RC remains certified. Current work is limited to restoring CI isolation for the playtest-only Playwright gate introduced after certification.
+
+Tehkné Solutions
