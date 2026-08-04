@@ -1,0 +1,18 @@
+HOC PLAYTEST 01 — MOBILE QA GATE HOTFIX
+
+Cause
+-----
+The first mobile campaign paint gate used a file named `*.spec.cjs` under client/web/tests. Vitest collected that file during every normal web check before @playwright/test was installed, causing CI failures unrelated to gameplay.
+
+Fix
+---
+- remove the Playwright file from Vitest's test collection;
+- move it under client/web/playtest with a non-Vitest filename;
+- add an explicit Playwright config that matches only this E2E case;
+- keep the product runtime and UI unchanged.
+
+Scope
+-----
+Infrastructure/playtest only. No gameplay, campaign, UI, asset, balance or server authority changes.
+
+Tehkné Solutions
