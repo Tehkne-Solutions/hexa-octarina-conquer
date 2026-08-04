@@ -109,7 +109,7 @@ test("PostgreSQL stores campaign results, migrated guest progress and XP idempot
 test("PLAYTEST 01 persists campaign progress across a fresh PostgreSQL store and never degrades mastery", { skip: !databaseUrl }, async () => {
   const identity = await PostgresIdentityStore.connect({ connectionString: databaseUrl });
   let store = await new PostgresCampaignStore({ connectionString: databaseUrl }).initialize();
-  const handle = `pg-campaign-reload-${Date.now()}`;
+  const handle = `pgreload_${String(Date.now()).slice(-12)}`;
   let accountId = null;
 
   try {
