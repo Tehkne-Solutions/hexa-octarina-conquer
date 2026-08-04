@@ -1,0 +1,33 @@
+.strategic-unit.owner-red.has-combat-opportunity::before {
+  content: attr(data-combat-opportunity);
+  position: absolute;
+  left: 50%;
+  top: -1.55rem;
+  transform: translateX(-50%);
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(203, 126, 82, 0.68);
+  border-radius: 999px;
+  background: rgba(27, 17, 14, 0.92);
+  color: #f2d0b3;
+  font-size: 0.6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.strategic-unit.owner-red.is-lethal-opportunity::before {
+  border-color: rgba(216, 92, 70, 0.82);
+  color: #ffd5cc;
+  font-weight: 900;
+}
+
+@media (max-width: 760px) {
+  .strategic-unit.owner-red.has-combat-opportunity::before {
+    top: -1.25rem;
+    padding: 0.16rem 0.34rem;
+    font-size: 0.53rem;
+  }
+}
