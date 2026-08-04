@@ -38,7 +38,10 @@ async function prepareMission(page) {
 }
 
 async function expectText(page, text) {
-  await page.getByText(text, { exact: true }).waitFor({ state: "visible", timeout: 10_000 });
+  const matches = page.getByText(text, { exact: true });
+  const count = await matches.count();
+  if (count <= 0) throw new Error(`expected visible text not found: ${text}`);
+  await matches.first().waitFor({ state: "visible", timeout: 10_000 });
 }
 
 async function buildFirstAvailableRoad(page) {

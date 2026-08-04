@@ -8,13 +8,21 @@ import {
 
 export type StrategicRoundStarter = StrategicFaction;
 
+/**
+ * Canonical first-playable opening.
+ *
+ * Both factions start on mirrored west/east fronts with no prebuilt roads.
+ * The geometry was selected from the exhaustive neutral-opening search because
+ * it resolves under either initiative direction instead of privileging Blue
+ * through the original asymmetric roads/central placement.
+ */
 export function createBalancedStrategicBoard(): StrategicBoard {
   const base = createStrategicBoard();
   const nodes: Record<StrategicUnitId, string> = {
     kael: strategicNodeId(0, 0),
-    lyra: strategicNodeId(1, 2),
+    lyra: strategicNodeId(0, 2),
+    varg: strategicNodeId(2, 0),
     brakk: strategicNodeId(2, 2),
-    varg: strategicNodeId(1, 0),
   };
 
   return {

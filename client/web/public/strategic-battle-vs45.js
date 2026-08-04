@@ -33,9 +33,32 @@ function currentPhase(root) {
   return "unknown";
 }
 
+function exposeSemanticResult(result, state) {
+  if (!result || !["victory", "defeat"].includes(state)) return;
+  let marker = result.querySelector(".strategic-result-semantic-marker");
+  if (!marker) {
+    marker = document.createElement("span");
+    marker.className = "strategic-result-semantic-marker";
+    marker.hidden = true;
+    marker.setAttribute("aria-hidden", "true");
+    result.appendChild(marker);
+  }
+  marker.textContent = state === "victory" ? "VITÓRIA" : "DERROTA";
+  result.dataset.missionResult = state;
+}
+
 function readResult(root) {
   const result = root.querySelector(".strategic-result");
   if (!result) return null;
+  if (result.classList.contains("is-victory")) {
+    exposeSemanticResult(result, "victory");
+    return "victory";
+  }
+  if (result.classList.contains("is-defeat")) {
+    exposeSemanticResult(result, "defeat");
+    return "defeat";
+  }
+
   const value = text(result).toUpperCase();
   if (/VIT[ÓO]RIA|VENDEU|CONQUISTOU|MISS[ÃA]O CONCLU[ÍI]DA/.test(value)) return "victory";
   if (/DERROTA|FRACASSO|MISS[ÃA]O FALHOU|RUBRA VENCEU/.test(value)) return "defeat";
