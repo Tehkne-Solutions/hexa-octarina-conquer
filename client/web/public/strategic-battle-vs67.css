@@ -1,0 +1,10 @@
+/* VS67 — Tactical debrief guidance */
+.vs67-tactical-debrief{margin:14px 0;padding:14px 15px;border:1px solid rgba(176,138,79,.34);border-radius:8px;background:linear-gradient(135deg,rgba(39,29,20,.94),rgba(18,16,14,.96));box-shadow:inset 0 0 0 1px rgba(255,255,255,.025)}
+.vs67-tactical-debrief__eyebrow{margin-bottom:9px;color:#b99158;font-size:9px;font-weight:900;letter-spacing:.18em}
+.vs67-tactical-debrief__body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+.vs67-tactical-debrief__body>div strong{display:block;color:#ead6a7;font-family:Georgia,serif;font-size:17px;letter-spacing:.02em}
+.vs67-tactical-debrief__body p{margin:5px 0 0;color:#b8aa94;font-size:11px;line-height:1.5;max-width:62ch}
+.vs67-tactical-debrief__body>span{min-width:168px;padding:9px 11px;border-left:1px solid rgba(201,161,95,.3);display:grid;gap:3px}
+.vs67-tactical-debrief__body small{color:#847663;font-size:8px;font-weight:800;letter-spacing:.12em}
+.vs67-tactical-debrief__body b{color:#d4b87b;font-size:11px}
+@media(max-width:720px){.vs67-tactical-debrief__body{grid-template-columns:1fr;gap:10px}.vs67-tactical-debrief__body>span{min-width:0;border-left:0;border-top:1px solid rgba(201,161,95,.22);padding:9px 0 0}}
