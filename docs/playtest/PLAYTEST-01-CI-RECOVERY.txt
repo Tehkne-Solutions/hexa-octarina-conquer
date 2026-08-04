@@ -1,0 +1,9 @@
+HOC PLAYTEST 01 — CI RECOVERY
+
+The first mobile campaign paint gate used a Playwright file named `*.spec.cjs` under `client/web/tests`. Vitest collected that file during normal web checks before `@playwright/test` was installed, causing CI-only failures after the actual game tests had passed.
+
+Recovery: Vitest now explicitly excludes the playtest-only Playwright spec. The existing Playwright workflow continues to own and execute that case after installing its own runner.
+
+No gameplay, campaign, UI, asset, balance, runtime or server-authority behavior changed.
+
+Tehkné Solutions
