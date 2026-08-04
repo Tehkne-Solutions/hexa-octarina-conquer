@@ -1,0 +1,10 @@
+/* VS69 — Campaign Command Focus
+   Presentation-only guidance derived from authoritative mission state. */
+.vs69-command-focus{margin:0 0 14px;padding:12px 13px;border:1px solid rgba(178,143,82,.28);border-radius:8px;background:linear-gradient(135deg,rgba(53,37,22,.78),rgba(22,19,16,.94));display:grid;gap:6px}
+.vs69-command-focus__eyebrow{color:#b89b68;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+.vs69-command-focus__title{color:#ead9b0;font-family:Georgia,serif;font-size:17px;font-weight:700}
+.vs69-command-focus__copy{color:#aaa08e;font-size:11px;line-height:1.45}
+.vs69-command-focus[data-state="advance"]{border-color:rgba(109,146,86,.34)}
+.vs69-command-focus[data-state="mastery"]{border-color:rgba(188,145,69,.42)}
+.vs69-command-focus[data-state="complete"]{border-color:rgba(205,172,103,.5);box-shadow:inset 0 0 0 1px rgba(240,213,151,.05)}
+@media(max-width:720px){.vs69-command-focus{padding:10px 11px}.vs69-command-focus__title{font-size:15px}}
