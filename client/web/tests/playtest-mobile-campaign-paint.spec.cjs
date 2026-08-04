@@ -25,6 +25,6 @@ test('mobile campaign paints deferred chapters when the player scrolls them into
   await page.goto(`${BASE_URL}/?qa=1&stable=1&screen=campaign`, { waitUntil: 'networkidle' });
   await expect(page.locator('.campaign-journey-screen')).toBeVisible();
 
-  await assertChapterPaints(page, 'chapter-2', 'A CONVERGÊNCIA ALQUÍMICA', 'campaign-mobile-chapter-2.png');
-  await assertChapterPaints(page, 'chapter-3', 'ASCENSÃO MAGITECH', 'campaign-mobile-chapter-3.png');
+  await assertChapterPaints(page, 'chapter-2', 'A Convergência Alquímica', 'campaign-mobile-chapter-2.png');
+  await assertChapterPaints(page, 'chapter-3', 'Ascensão Magitech', 'campaign-mobile-chapter-3.png');
 });
