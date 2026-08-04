@@ -1,0 +1,18 @@
+HOC PLAYTEST 01 — CAMPAIGN PERSISTENCE GATE
+
+Parent: #268
+
+Goal:
+Prove the certified RC campaign progress survives a fresh PostgreSQL campaign-store instance, equivalent to reopening/reloading the authoritative persistence layer.
+
+Required behavior:
+- complete c1-m1 and persist stars/progress;
+- close the original PostgresCampaignStore;
+- create a fresh PostgresCampaignStore against the same database;
+- confirm c1-m1 completion, stars, totals and c1-m2 unlock survive;
+- replay c1-m1 with a worse result through the fresh store;
+- confirm the best star count does not regress while attempts advance.
+
+This is a test-only playtest gate. No gameplay, campaign rule, UI, asset, balance or runtime-authority behavior is changed.
+
+Tehkné Solutions
