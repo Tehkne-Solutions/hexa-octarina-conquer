@@ -1,0 +1,5 @@
+PLAYTEST 01 MOBILE QA RECOVERY
+
+This recovery exists only because the first Playwright gate was accidentally collected by Vitest. The RC product code remains untouched.
+
+Tehkné Solutions
