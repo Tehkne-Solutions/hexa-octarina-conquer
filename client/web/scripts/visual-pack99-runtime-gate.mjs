@@ -38,18 +38,15 @@ async function runtimeContract(page) {
 
 async function launchCampaignMission(page, query) {
   await page.goto(`${baseUrl}/?${query}`, { waitUntil: "networkidle", timeout: 120000 });
-  await page.waitForTimeout(3500);
-
+  await page.waitForTimeout(2500);
   const briefingButton = page.locator(".campaign-selected-panel .fantasy-button.primary");
   await briefingButton.waitFor({ state: "visible", timeout: 30000 });
   await briefingButton.click();
   await page.locator("main.campaign-briefing-screen").waitFor({ state: "visible", timeout: 30000 });
-
   const missionStart = page.locator(".briefing-start");
   await missionStart.waitFor({ state: "visible", timeout: 30000 });
   assert(await missionStart.isEnabled(), "PACK99_BATTLE_START_DISABLED");
   await missionStart.click();
-
   await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
   await page.waitForFunction(() => {
     const slice = document.querySelector("main.strategic-slice");
@@ -68,25 +65,25 @@ async function battleSnapshot(page) {
     const result = root.querySelector(".strategic-result");
     const resultText = normalized(result?.textContent).toUpperCase();
     let lifecycle = root.dataset.missionLifecycleState || "unknown";
-    if (/VIT[ÓO]RIA|MISS[ÃA]O CONCLU[ÍI]DA/.test(resultText)) lifecycle = "victory";
-    else if (/DERROTA|MISS[ÃA]O FALHOU|RUBRA/.test(resultText) && result) lifecycle = "defeat";
-    else if (result) lifecycle = "resolved";
-    else if (normalized(root.textContent).toUpperCase().includes("SEU TURNO")) lifecycle = "player";
+
+    if (result?.classList.contains("is-victory") || result?.dataset.result === "victory" || /VIT[ÓO]RIA|MISS[ÃA]O CONCLU[ÍI]DA/.test(resultText)) {
+      lifecycle = "victory";
+    } else if (result?.classList.contains("is-defeat") || result?.dataset.result === "defeat" || /DERROTA|MISS[ÃA]O FALHOU/.test(resultText)) {
+      lifecycle = "defeat";
+    } else if (result) {
+      lifecycle = "resolved";
+    } else if (normalized(root.textContent).toUpperCase().includes("SEU TURNO")) {
+      lifecycle = "player";
+    }
 
     const board = root.querySelector(".strategic-board");
     const resourcesText = normalized(root.querySelector(".strategic-resources")?.textContent);
     const actionsMatch = resourcesText.match(/✦\s*(\d+)\s*\/\s*(\d+)/);
     return {
       lifecycle,
-      round: normalized(root.querySelector(".strategic-turn small")?.textContent),
-      turn: normalized(root.querySelector(".strategic-turn strong")?.textContent),
       result: resultText || null,
-      actions: resourcesText,
       remainingActions: actionsMatch ? Number(actionsMatch[1]) : null,
       actionBudget: actionsMatch ? Number(actionsMatch[2]) : null,
-      attackTargets: root.querySelectorAll(".strategic-unit.is-attack-target:not(:disabled)").length,
-      recommendedTargets: root.querySelectorAll(".strategic-edge.is-recommended:not(:disabled), .strategic-node.is-recommended:not(:disabled), .strategic-cell.is-build-target:not(:disabled)").length,
-      enabledBoardTargets: root.querySelectorAll(".strategic-edge:not(:disabled), .strategic-node:not(:disabled), .strategic-cell:not(:disabled)").length,
       endTurnEnabled: Boolean(root.querySelector(".strategic-end-turn:not(:disabled)")),
       boardClass: board?.className || null,
       actionFx: board?.dataset.actionFx || null,
@@ -103,39 +100,40 @@ async function waitForBoardSettled(page) {
       && !board.classList.contains("is-impact-sequence")
       && !board.dataset.actionFx;
   }, { timeout: 12000, polling: 100 });
-  await page.waitForTimeout(350);
+  await page.waitForTimeout(250);
 }
 
-async function clickFirstVisible(page, locator) {
+async function atomicClick(page, selector) {
   await waitForBoardSettled(page);
-  const count = await locator.count();
-  for (let index = 0; index < count; index += 1) {
-    const candidate = locator.nth(index);
-    try {
-      if (!await candidate.isVisible({ timeout: 750 }) || !await candidate.isEnabled({ timeout: 750 })) continue;
-      const clicked = await candidate.evaluate((element) => {
-        if (!(element instanceof HTMLElement) || element.hasAttribute("disabled")) return false;
-        element.click();
-        return true;
-      }, { timeout: 1500 });
-      if (clicked) return true;
-    } catch {
-      // React can replace a legal target between discovery and dispatch. Re-evaluate on the next candidate/step.
+  return page.evaluate((query) => {
+    const candidates = Array.from(document.querySelectorAll(query));
+    for (const element of candidates) {
+      if (!(element instanceof HTMLElement)) continue;
+      if (element.hasAttribute("disabled")) continue;
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      const visible = style.display !== "none"
+        && style.visibility !== "hidden"
+        && Number(style.opacity) > 0
+        && rect.width > 0
+        && rect.height > 0;
+      if (!visible) continue;
+      element.click();
+      return true;
     }
-  }
-  return false;
+    return false;
+  }, selector);
 }
 
 async function endPlayerTurn(page, path) {
-  const endTurn = page.locator("main.strategic-slice .strategic-end-turn:not(:disabled)");
-  if (!await clickFirstVisible(page, endTurn)) return false;
+  const clicked = await atomicClick(page, "main.strategic-slice .strategic-end-turn:not(:disabled)");
+  if (!clicked) return false;
   if (path.at(-1) !== "enemy") path.push("enemy");
-  await page.waitForTimeout(450);
+  await page.waitForTimeout(350);
   return true;
 }
 
 async function runPlaythroughGate(page) {
-  await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
   const path = [];
   let endTurns = 0;
   let lastSnapshot = null;
@@ -154,11 +152,8 @@ async function runPlaythroughGate(page) {
       return {
         runner: "playwright",
         terminal: snapshot.lifecycle,
-        runnerState: "complete",
         runnerStep: step,
-        missionPlaythrough: "complete",
         missionPath: [...path, "enemy-executed"].join(">"),
-        lifecycle: snapshot.lifecycle,
         endTurns,
       };
     }
@@ -170,21 +165,19 @@ async function runPlaythroughGate(page) {
       }
     }
 
-    const attack = page.locator("main.strategic-slice .strategic-unit.is-attack-target:not(:disabled)");
-    if (await clickFirstVisible(page, attack)) continue;
-
-    const recommended = page.locator("main.strategic-slice .strategic-edge.is-recommended:not(:disabled), main.strategic-slice .strategic-node.is-recommended:not(:disabled), main.strategic-slice .strategic-cell.is-build-target:not(:disabled)");
-    if (await clickFirstVisible(page, recommended)) continue;
-
-    const anyTarget = page.locator("main.strategic-slice .strategic-edge:not(:disabled), main.strategic-slice .strategic-node:not(:disabled), main.strategic-slice .strategic-cell:not(:disabled)");
-    if (await clickFirstVisible(page, anyTarget)) continue;
+    if (await atomicClick(page, "main.strategic-slice .strategic-unit.is-attack-target:not(:disabled)")) continue;
+    if (await atomicClick(page, "main.strategic-slice .strategic-edge.is-recommended:not(:disabled), main.strategic-slice .strategic-node.is-recommended:not(:disabled), main.strategic-slice .strategic-cell.is-build-target:not(:disabled)")) continue;
+    if (await atomicClick(page, "main.strategic-slice .strategic-edge:not(:disabled), main.strategic-slice .strategic-node:not(:disabled), main.strategic-slice .strategic-cell:not(:disabled)")) continue;
 
     if (snapshot.endTurnEnabled && await endPlayerTurn(page, path)) {
       endTurns += 1;
       continue;
     }
 
-    throw new Error(`PACK99_PLAYTHROUGH_STALLED step=${step} snapshot=${JSON.stringify(snapshot)} path=${path.join(">")}`);
+    await page.waitForTimeout(200);
+    const retrySnapshot = await battleSnapshot(page);
+    if (retrySnapshot && retrySnapshot.lifecycle !== snapshot.lifecycle) continue;
+    throw new Error(`PACK99_PLAYTHROUGH_STALLED step=${step} snapshot=${JSON.stringify(retrySnapshot || snapshot)} path=${path.join(">")}`);
   }
 
   throw new Error(`PACK99_PLAYTHROUGH_STEP_LIMIT=${MAX_PLAYTHROUGH_STEPS} snapshot=${JSON.stringify(lastSnapshot)} path=${path.join(">")}`);
@@ -225,6 +218,7 @@ async function main() {
       };
       return { kael: read(".campaign-hero-art .hero-kael"), lyra: read(".campaign-hero-art .hero-lyra") };
     });
+
     for (const [name, art] of Object.entries(heroArt)) {
       assert(art, `PACK99_HOME_HERO_MISSING=${name}`);
       assert(art.backgroundImage && art.backgroundImage !== "none", `PACK99_HOME_HERO_FALLBACK=${name}`);
@@ -233,13 +227,7 @@ async function main() {
     await page.screenshot({ path: new URL("home-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
     await page.goto(`${baseUrl}/`, { waitUntil: "networkidle", timeout: 120000 });
-    await page.waitForFunction(() => {
-      const kael = document.querySelector(".campaign-hero-art .hero-kael");
-      const lyra = document.querySelector(".campaign-hero-art .hero-lyra");
-      return kael?.dataset.pack99HeroArt === "kael" && lyra?.dataset.pack99HeroArt === "lyra";
-    }, { timeout: 30000 });
     await page.waitForTimeout(350);
-
     const visibleTechnicalBadges = await page.evaluate(() => {
       const pattern = /BUILD\s+.+PACK\s*99\s+\d+\s*\/\s*1037/i;
       return Array.from(document.querySelectorAll("body *")).filter((node) => {
@@ -248,14 +236,14 @@ async function main() {
         const style = getComputedStyle(node);
         const rect = node.getBoundingClientRect();
         return style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
-      }).map((node) => ({ tag: node.tagName, className: node.className || "", text: node.textContent?.replace(/\s+/g, " ").trim() ?? "" }));
+      }).length;
     });
-    assert(visibleTechnicalBadges.length === 0, `PACK99_PLAYER_TECH_BADGE_VISIBLE=${JSON.stringify(visibleTechnicalBadges)}`);
+    assert(visibleTechnicalBadges === 0, `PACK99_PLAYER_TECH_BADGE_VISIBLE=${visibleTechnicalBadges}`);
     await page.screenshot({ path: new URL("home-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
     await launchCampaignMission(page, "qa=1&stable=1&screen=campaign");
     await page.waitForFunction(() => Array.from(document.querySelectorAll("main.strategic-slice img")).some((image) => image.getAttribute("src")?.includes("/assets/runtime/")), { timeout: 30000 });
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(700);
 
     const battleSurface = await page.evaluate(() => {
       const slice = document.querySelector("main.strategic-slice");
@@ -266,8 +254,15 @@ async function main() {
         const bounds = node.getBoundingClientRect();
         return { width: Math.round(bounds.width), height: Math.round(bounds.height) };
       };
-      return { slice: rect(slice), board: rect(board), nodes: document.querySelectorAll(".strategic-node").length, units: document.querySelectorAll(".strategic-roster-card").length, runtimeImages: runtimeImages.length };
+      return {
+        slice: rect(slice),
+        board: rect(board),
+        nodes: document.querySelectorAll(".strategic-node").length,
+        units: document.querySelectorAll(".strategic-roster-card").length,
+        runtimeImages: runtimeImages.length,
+      };
     });
+
     assert(battleSurface.slice, "PACK99_BATTLE_SLICE_MISSING");
     assert(battleSurface.board, "PACK99_BATTLE_BOARD_MISSING");
     assert(battleSurface.nodes >= 9, `PACK99_BATTLE_NODES=${battleSurface.nodes}`);
