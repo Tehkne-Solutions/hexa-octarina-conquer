@@ -73,14 +73,21 @@ describe("campaign journey", () => {
     expect(chapters[1].missions).toHaveLength(2);
   });
 
+  it("keeps authoritative chapters locked until the living prologue is won", () => {
+    const chapters = createCampaignJourney(catalog, progress);
+    expect(chapters[1].missions.every((mission) => mission.unlocked === false)).toBe(true);
+  });
+
   it("recommends the active living mission before server missions", () => {
     const recommended = recommendedCampaignMission(createCampaignJourney(catalog, progress));
     expect(recommended?.id).toBe("bridge-of-ashes");
   });
 
-  it("moves the recommendation to the first unfinished server mission after the prologue", () => {
+  it("restores server unlocks and moves recommendation after the prologue victory", () => {
     const completedProgress = { ...progress, status: "victory" as const, percent: 100 };
-    const recommended = recommendedCampaignMission(createCampaignJourney(catalog, completedProgress));
+    const chapters = createCampaignJourney(catalog, completedProgress);
+    expect(chapters[1].missions.every((mission) => mission.unlocked)).toBe(true);
+    const recommended = recommendedCampaignMission(chapters);
     expect(recommended?.id).toBe("c1-m2");
   });
 
