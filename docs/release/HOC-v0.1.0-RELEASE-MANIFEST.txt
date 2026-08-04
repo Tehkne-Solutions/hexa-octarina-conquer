@@ -1,0 +1,28 @@
+HOC v0.1.0 — RELEASE MANIFEST
+
+Release line: v0.1.0
+Prepared: 2026-08-04
+Release branch: release/v0.1.0
+Pre-release-notes target main SHA: daa983a263e7892880ee5885c7cb8cae768352be
+Certified runtime baseline SHA: 38b3c59890f6efaadac1d43f10a0410640b7b0e6
+
+Readiness
+---------
+PLAYTEST 01: PASS / CLOSED
+Reproducible P0 product blockers: 0
+Reproducible P1 product blockers: 0
+PACK 99 certified production evidence: 1037 canonical / 1037 materialized
+Current production recheck: REQUIRED BEFORE TAG/PUBLISH
+
+Required final proof
+--------------------
+npm.cmd --prefix .\client\web run verify:production
+
+Expected terminal result:
+PRODUCTION_GATE=PASS canonical=1037 materialized=1037
+
+Release rule
+------------
+Do not create/publish the v0.1.0 tag/release if the final production proof is not PASS. Any product regression requires an isolated blocker hotfix and revalidation of affected gates.
+
+Tehkné Solutions
