@@ -1,0 +1,15 @@
+HOC — VS73 RELEASE CANDIDATE AUDIT
+
+Escopo consolidado de liberação:
+- Campanha autoritativa: 3 capítulos, 12 missões, 10 conquistas.
+- Progressão RC: unlock sequencial, 12/12, 36 estrelas, Lenda da Octarina autoritativa e replay idempotente.
+- Objetivos avançados: cell_lead, largest_province, duel_cards e captures cobertos por gate funcional.
+- PACK 99: runtime full, 1037 assets canônicos, zero referências não resolvidas e gate visual dedicado.
+- Produção: gate dedicado valida runtime, arquivos obrigatórios de missão, marcadores de build e bloqueio de produção.
+- Web/PWA: testes, build, verificação PACK 99 e verificação de produção permanecem conectados aos scripts do cliente.
+- Core runtime: servidor autoritativo continua sendo a única fonte de regras e progressão; este VS apenas consolida guardrails de release.
+
+Critério de saída:
+A release candidate só pode ser considerada pronta quando a matriz acionada pelo PR estiver verde. O VS73 não altera gameplay, IA, XP, balanceamento, assets ou UI.
+
+Tehkné Solutions
