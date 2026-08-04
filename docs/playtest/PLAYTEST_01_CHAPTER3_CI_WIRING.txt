@@ -1,0 +1,9 @@
+HOC PLAYTEST 01 — CHAPTER 3 CI WIRING
+
+The advanced Chapter 3 lifecycle gate for c3-m2 was already merged into main, but the Single Player Campaign workflow executed an explicit legacy list of test files and therefore did not run the new gate.
+
+This change wires both campaign objective integrity coverage and the advanced Chapter 3 lifecycle test into the authoritative Single Player Campaign CI command.
+
+No gameplay, campaign data, UI, assets, balance, XP, persistence logic or server authority are changed.
+
+Tehkné Solutions

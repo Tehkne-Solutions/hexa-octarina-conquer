@@ -63,7 +63,7 @@ jobs:
           node --check src/identity-postgres.js
       - name: Test campaign engine, XP and HTTP lifecycle
         working-directory: server
-        run: node --test test/campaign.test.js test/campaign-store.test.js test/campaign-xp.test.js test/campaign-http.test.js
+        run: node --test test/campaign.test.js test/campaign-store.test.js test/campaign-xp.test.js test/campaign-http.test.js test/campaign-objective-integrity.test.js test/campaign-advanced-playtest.test.js
       - name: Test PostgreSQL campaign progress and XP
         working-directory: server
         run: node --test --test-concurrency=1 test/postgres-campaign.test.js
