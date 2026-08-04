@@ -74,12 +74,16 @@ async function battleSnapshot(page) {
     else if (normalized(root.textContent).toUpperCase().includes("SEU TURNO")) lifecycle = "player";
 
     const board = root.querySelector(".strategic-board");
+    const resourcesText = normalized(root.querySelector(".strategic-resources")?.textContent);
+    const actionsMatch = resourcesText.match(/✦\s*(\d+)\s*\/\s*(\d+)/);
     return {
       lifecycle,
       round: normalized(root.querySelector(".strategic-turn small")?.textContent),
       turn: normalized(root.querySelector(".strategic-turn strong")?.textContent),
       result: resultText || null,
-      actions: normalized(root.querySelector(".strategic-resources")?.textContent),
+      actions: resourcesText,
+      remainingActions: actionsMatch ? Number(actionsMatch[1]) : null,
+      actionBudget: actionsMatch ? Number(actionsMatch[2]) : null,
       attackTargets: root.querySelectorAll(".strategic-unit.is-attack-target:not(:disabled)").length,
       recommendedTargets: root.querySelectorAll(".strategic-edge.is-recommended:not(:disabled), .strategic-node.is-recommended:not(:disabled), .strategic-cell.is-build-target:not(:disabled)").length,
       enabledBoardTargets: root.querySelectorAll(".strategic-edge:not(:disabled), .strategic-node:not(:disabled), .strategic-cell:not(:disabled)").length,
@@ -115,6 +119,14 @@ async function clickFirstVisible(page, locator) {
   return false;
 }
 
+async function endPlayerTurn(page, path) {
+  const endTurn = page.locator("main.strategic-slice .strategic-end-turn:not(:disabled)");
+  if (!await clickFirstVisible(page, endTurn)) return false;
+  if (path.at(-1) !== "enemy") path.push("enemy");
+  await page.waitForTimeout(450);
+  return true;
+}
+
 async function runPlaythroughGate(page) {
   await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
   const path = [];
@@ -144,6 +156,13 @@ async function runPlaythroughGate(page) {
       };
     }
 
+    if (snapshot.remainingActions === 0 && snapshot.endTurnEnabled) {
+      if (await endPlayerTurn(page, path)) {
+        endTurns += 1;
+        continue;
+      }
+    }
+
     const attack = page.locator("main.strategic-slice .strategic-unit.is-attack-target:not(:disabled)");
     if (await clickFirstVisible(page, attack)) continue;
 
@@ -153,11 +172,8 @@ async function runPlaythroughGate(page) {
     const anyTarget = page.locator("main.strategic-slice .strategic-edge:not(:disabled), main.strategic-slice .strategic-node:not(:disabled), main.strategic-slice .strategic-cell:not(:disabled)");
     if (await clickFirstVisible(page, anyTarget)) continue;
 
-    const endTurn = page.locator("main.strategic-slice .strategic-end-turn:not(:disabled)");
-    if (await clickFirstVisible(page, endTurn)) {
+    if (snapshot.endTurnEnabled && await endPlayerTurn(page, path)) {
       endTurns += 1;
-      if (path.at(-1) !== "enemy") path.push("enemy");
-      await page.waitForTimeout(450);
       continue;
     }
 
