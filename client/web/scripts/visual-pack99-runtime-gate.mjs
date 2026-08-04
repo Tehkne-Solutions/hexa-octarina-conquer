@@ -73,6 +73,7 @@ async function battleSnapshot(page) {
     else if (result) lifecycle = "resolved";
     else if (normalized(root.textContent).toUpperCase().includes("SEU TURNO")) lifecycle = "player";
 
+    const board = root.querySelector(".strategic-board");
     return {
       lifecycle,
       round: normalized(root.querySelector(".strategic-turn small")?.textContent),
@@ -83,16 +84,31 @@ async function battleSnapshot(page) {
       recommendedTargets: root.querySelectorAll(".strategic-edge.is-recommended:not(:disabled), .strategic-node.is-recommended:not(:disabled), .strategic-cell.is-build-target:not(:disabled)").length,
       enabledBoardTargets: root.querySelectorAll(".strategic-edge:not(:disabled), .strategic-node:not(:disabled), .strategic-cell:not(:disabled)").length,
       endTurnEnabled: Boolean(root.querySelector(".strategic-end-turn:not(:disabled)")),
+      boardClass: board?.className || null,
+      actionFx: board?.dataset.actionFx || null,
     };
   });
 }
 
-async function clickFirstVisible(locator) {
+async function waitForBoardSettled(page) {
+  await page.waitForFunction(() => {
+    const board = document.querySelector("main.strategic-slice .strategic-board");
+    if (!board) return false;
+    return !board.classList.contains("is-enemy-sequence")
+      && !board.classList.contains("is-action-sequence")
+      && !board.classList.contains("is-impact-sequence")
+      && !board.dataset.actionFx;
+  }, { timeout: 12000, polling: 100 });
+  await page.waitForTimeout(350);
+}
+
+async function clickFirstVisible(page, locator) {
+  await waitForBoardSettled(page);
   const count = await locator.count();
   for (let index = 0; index < count; index += 1) {
     const candidate = locator.nth(index);
     if (await candidate.isVisible() && await candidate.isEnabled()) {
-      await candidate.click();
+      await candidate.dispatchEvent("click");
       return true;
     }
   }
@@ -106,7 +122,7 @@ async function runPlaythroughGate(page) {
   let lastSnapshot = null;
 
   for (let step = 1; step <= MAX_PLAYTHROUGH_STEPS; step += 1) {
-    await page.waitForTimeout(220);
+    await waitForBoardSettled(page);
     const snapshot = await battleSnapshot(page);
     assert(snapshot, "PACK99_PLAYTHROUGH_ROOT_MISSING");
     lastSnapshot = snapshot;
@@ -129,19 +145,19 @@ async function runPlaythroughGate(page) {
     }
 
     const attack = page.locator("main.strategic-slice .strategic-unit.is-attack-target:not(:disabled)");
-    if (await clickFirstVisible(attack)) continue;
+    if (await clickFirstVisible(page, attack)) continue;
 
     const recommended = page.locator("main.strategic-slice .strategic-edge.is-recommended:not(:disabled), main.strategic-slice .strategic-node.is-recommended:not(:disabled), main.strategic-slice .strategic-cell.is-build-target:not(:disabled)");
-    if (await clickFirstVisible(recommended)) continue;
+    if (await clickFirstVisible(page, recommended)) continue;
 
     const anyTarget = page.locator("main.strategic-slice .strategic-edge:not(:disabled), main.strategic-slice .strategic-node:not(:disabled), main.strategic-slice .strategic-cell:not(:disabled)");
-    if (await clickFirstVisible(anyTarget)) continue;
+    if (await clickFirstVisible(page, anyTarget)) continue;
 
     const endTurn = page.locator("main.strategic-slice .strategic-end-turn:not(:disabled)");
-    if (await clickFirstVisible(endTurn)) {
+    if (await clickFirstVisible(page, endTurn)) {
       endTurns += 1;
       if (path.at(-1) !== "enemy") path.push("enemy");
-      await page.waitForTimeout(320);
+      await page.waitForTimeout(450);
       continue;
     }
 
