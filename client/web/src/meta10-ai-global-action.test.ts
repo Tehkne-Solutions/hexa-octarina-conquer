@@ -70,6 +70,44 @@ describe("META 10.10 global AI action scoring", () => {
     expect(build?.reason).toContain("três lados");
   });
 
+  it("applies tactical variety only after a category was already used", () => {
+    let board = createStrategicBoard();
+    board = {
+      ...board,
+      units: board.units.map((unit) => unit.id === "varg"
+        ? { ...unit, nodeId: "s-2-1" }
+        : unit),
+    };
+
+    const base = strategicGlobalActionCandidates(board)
+      .find((candidate) => candidate.kind === "build" && candidate.unitId === "varg");
+    const repeated = strategicGlobalActionCandidates(board, new Set(), new Set(), { build: 1 })
+      .find((candidate) => candidate.kind === "build" && candidate.unitId === "varg");
+
+    expect(base?.score).toBe(94);
+    expect(repeated?.score).toBe(86);
+  });
+
+  it("never penalizes an immediate attack because another attack happened earlier", () => {
+    let board = createStrategicBoard();
+    board = {
+      ...board,
+      units: board.units.map((unit) => {
+        if (unit.id === "varg") return { ...unit, nodeId: "s-1-1" };
+        if (unit.id === "kael") return { ...unit, nodeId: "s-1-0", hp: 10 };
+        return unit;
+      }),
+    };
+    board = withRoad(board, "s-1-1", "s-1-0");
+
+    const base = strategicBestGlobalAction(board);
+    const repeated = strategicBestGlobalAction(board, new Set(), new Set(), { attack: 2, build: 2 });
+
+    expect(base?.kind).toBe("attack");
+    expect(repeated?.kind).toBe("attack");
+    expect(repeated?.score).toBe(base?.score);
+  });
+
   it("prefers movement that enables a territory closure on the next action", () => {
     let board = createStrategicBoard();
     board = withRoad(board, "s-2-1", "s-1-1");
