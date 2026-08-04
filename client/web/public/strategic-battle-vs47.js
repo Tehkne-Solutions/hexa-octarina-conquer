@@ -1,4 +1,5 @@
 const ROOT_SELECTOR = ".strategic-slice.meta08-physical-world";
+const ROOT_FALLBACK_SELECTOR = "main.strategic-slice";
 const TARGET_SELECTOR = "[data-legal-target='true']";
 const TERMINAL_STATES = new Set(["victory", "defeat", "resolved"]);
 const MAX_STEPS = 64;
@@ -17,7 +18,7 @@ function normalizedText(node) {
 }
 
 function rootNode() {
-  return document.querySelector(ROOT_SELECTOR);
+  return document.querySelector(ROOT_SELECTOR) || document.querySelector(ROOT_FALLBACK_SELECTOR);
 }
 
 function lifecycle(root) {
@@ -39,6 +40,10 @@ function record(root, action, detail = "") {
   root.dataset.playtestRunnerState = action;
   root.dataset.playtestRunnerStep = String(stepCount);
   if (detail) root.dataset.playtestRunnerDetail = detail.slice(0, 96);
+}
+
+function markRunning(root) {
+  if (root.dataset.playtestRunner !== "running") root.dataset.playtestRunner = "running";
 }
 
 function finish(root, state) {
@@ -67,6 +72,7 @@ function step() {
   if (!running) return;
   const root = rootNode();
   if (!root) return schedule();
+  markRunning(root);
 
   const state = lifecycle(root);
   if (TERMINAL_STATES.has(state)) return finish(root, state);
@@ -103,11 +109,19 @@ function start() {
   stepCount = 0;
   const root = rootNode();
   if (root) {
-    root.dataset.playtestRunner = "running";
+    markRunning(root);
     record(root, "started", lifecycle(root));
   }
   schedule();
 }
 
+function forceStart() {
+  window.__HOC_PLAYTEST__ = true;
+  start();
+  return rootNode()?.dataset.playtestRunner || (running ? "running" : "not-started");
+}
+
+window.__HOC_START_PLAYTEST__ = forceStart;
+window.addEventListener("hoc:playtest-start", forceStart);
 window.addEventListener("DOMContentLoaded", start, { once: true });
 start();
