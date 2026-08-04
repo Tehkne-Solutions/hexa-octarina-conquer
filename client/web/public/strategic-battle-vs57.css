@@ -1,0 +1,43 @@
+.strategic-unit.has-threat-consequence::after {
+  content: attr(data-threat-consequence);
+  position: absolute;
+  left: 50%;
+  bottom: -2.15rem;
+  transform: translateX(-50%);
+  min-width: max-content;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(194, 130, 72, 0.7);
+  border-radius: 0.28rem;
+  background: rgba(35, 22, 16, 0.9);
+  color: #f2d2ae;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 8;
+  white-space: nowrap;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.32);
+}
+
+.strategic-unit.has-threat-consequence .strategic-unit-ring {
+  box-shadow: 0 0 0 2px rgba(194, 130, 72, 0.58), 0 5px 14px rgba(0, 0, 0, 0.38);
+}
+
+.strategic-unit.is-lethal-threat::after {
+  border-color: rgba(180, 58, 45, 0.9);
+  background: rgba(73, 20, 15, 0.94);
+  color: #ffd7ca;
+}
+
+.strategic-unit.is-lethal-threat .strategic-unit-ring {
+  box-shadow: 0 0 0 2px rgba(180, 58, 45, 0.78), 0 5px 14px rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 900px) {
+  .strategic-unit.has-threat-consequence::after {
+    bottom: -1.85rem;
+    font-size: 0.5rem;
+    padding: 0.18rem 0.34rem;
+  }
+}
