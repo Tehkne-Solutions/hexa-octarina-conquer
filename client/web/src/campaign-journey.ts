@@ -48,6 +48,7 @@ export function createCampaignJourney(
   catalog: CampaignCatalog | null,
   livingProgress: LivingCampaignProgress,
 ): CampaignJourneyChapter[] {
+  const prologueCompleted = livingProgress.status === "victory";
   const livingMission: CampaignJourneyMission = {
     id: LIVING_MISSION_ID,
     source: "living",
@@ -65,10 +66,10 @@ export function createCampaignJourney(
     primaryLabel: "Libertar Lyra e retomar o Moinho do Norte",
     bonusLabels: ["Fechar uma célula territorial", "Concluir sem perder todas as unidades"],
     unlocked: true,
-    stars: livingProgress.status === "victory" ? 3 : 0,
+    stars: prologueCompleted ? 3 : 0,
     attempts: livingProgress.attempts,
     progressPercent: livingProgress.percent,
-    completed: livingProgress.status === "victory",
+    completed: prologueCompleted,
   };
 
   const chapters: CampaignJourneyChapter[] = [{
@@ -104,7 +105,7 @@ export function createCampaignJourney(
           rewardXp: mission.rewardXp,
           primaryLabel: mission.primary.label,
           bonusLabels: mission.bonus.map((objective) => objective.label),
-          unlocked: mission.unlocked,
+          unlocked: prologueCompleted && mission.unlocked,
           stars: mission.progress?.stars ?? 0,
           attempts: mission.progress?.attempts ?? 0,
           progressPercent: serverProgressPercent(mission),
