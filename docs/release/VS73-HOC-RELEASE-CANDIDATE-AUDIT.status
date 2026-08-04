@@ -1,0 +1,4 @@
+VS73_STATUS=READY_FOR_CI
+HOC_RELEASE_SCOPE=campaign,gameplay,pack99,web,production,core-runtime
+AUTHORITY=server
+SIGNATURE=Tehkné Solutions
