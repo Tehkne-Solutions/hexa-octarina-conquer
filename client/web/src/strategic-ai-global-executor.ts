@@ -13,9 +13,10 @@ import {
 } from "./strategic-board-model";
 import { strategicContestRoute, strategicContestTargets } from "./strategic-route-contest";
 import {
-  strategicBestGlobalAction,
+  strategicGlobalActionCandidates,
   type StrategicAiActionCandidate,
   type StrategicAiActionKind,
+  type StrategicAiActionKindCounts,
 } from "./strategic-ai-global-action";
 
 function decisionTrace(action: StrategicAiActionCandidate): string {
@@ -24,6 +25,56 @@ function decisionTrace(action: StrategicAiActionCandidate): string {
 
 function emptyKindCounts(): Record<StrategicAiActionKind, number> {
   return { attack: 0, confront: 0, build: 0, structure: 0, move: 0 };
+}
+
+export function strategicRoleIdentityBonus(action: StrategicAiActionCandidate): number {
+  if (action.unitId === "varg") {
+    if (action.kind === "move") return 6;
+    if (action.kind === "confront") return 4;
+    return 0;
+  }
+
+  if (action.unitId === "brakk") {
+    if (action.kind === "structure") return 6;
+    if (action.kind === "attack") return 2;
+    if (action.kind === "confront") return 2;
+  }
+
+  return 0;
+}
+
+function roleReason(action: StrategicAiActionCandidate): string | null {
+  if (action.unitId === "varg" && action.kind === "move") return "Varg explora como batedor";
+  if (action.unitId === "varg" && action.kind === "confront") return "Varg abre frente como batedor";
+  if (action.unitId === "brakk" && action.kind === "structure") return "Brakk sustenta a linha como campeão";
+  if (action.unitId === "brakk" && action.kind === "attack") return "Brakk pressiona como campeão";
+  if (action.unitId === "brakk" && action.kind === "confront") return "Brakk força a linha de confronto";
+  return null;
+}
+
+export function strategicBestRoleAwareAction(
+  board: StrategicBoard,
+  attackedUnits: ReadonlySet<StrategicUnitId> = new Set(),
+  movedUnits: ReadonlySet<StrategicUnitId> = new Set(),
+  actionKindCounts: StrategicAiActionKindCounts = {},
+): StrategicAiActionCandidate | null {
+  const candidates = strategicGlobalActionCandidates(board, attackedUnits, movedUnits, actionKindCounts);
+  if (candidates.length === 0) return null;
+
+  return candidates
+    .map((candidate) => {
+      const bonus = strategicRoleIdentityBonus(candidate);
+      const identity = roleReason(candidate);
+      return {
+        ...candidate,
+        score: candidate.score + bonus,
+        reason: identity ? `${candidate.reason}; ${identity}` : candidate.reason,
+      };
+    })
+    .sort((a, b) => b.score - a.score
+      || a.kind.localeCompare(b.kind)
+      || a.unitId.localeCompare(b.unitId)
+      || a.targetId.localeCompare(b.targetId))[0] ?? null;
 }
 
 export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn {
@@ -35,7 +86,7 @@ export function strategicEnemyTurnGlobal(board: StrategicBoard): StrategicAiTurn
   const budget = strategicActionBudget(board, "red");
 
   for (let actionIndex = 0; actionIndex < budget && strategicResult(next) === "playing"; actionIndex += 1) {
-    const selected = strategicBestGlobalAction(next, attackedUnits, movedUnits, actionKindCounts);
+    const selected = strategicBestRoleAwareAction(next, attackedUnits, movedUnits, actionKindCounts);
     if (!selected) break;
 
     actionKindCounts[selected.kind] += 1;
