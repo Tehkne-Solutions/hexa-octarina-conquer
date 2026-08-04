@@ -1,5 +1,6 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { configDefaults } from "vitest/config";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -115,6 +116,12 @@ export default defineConfig({
       devOptions: { enabled: true },
     }),
   ],
+  test: {
+    exclude: [
+      ...configDefaults.exclude,
+      "tests/playtest-mobile-campaign-paint.spec.cjs",
+    ],
+  },
   build: {
     target: "es2022",
     sourcemap: true,
