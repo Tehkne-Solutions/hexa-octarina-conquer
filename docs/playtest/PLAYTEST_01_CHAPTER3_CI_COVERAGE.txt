@@ -1,9 +1,0 @@
-PLAYTEST 01 — CHAPTER 3 CI COVERAGE
-
-The Single Player Campaign workflow previously executed an explicit legacy list of campaign tests. As a result, the advanced Chapter 3 lifecycle test and campaign objective integrity test could exist in the repository without being executed by CI.
-
-The workflow now runs both files explicitly alongside the existing campaign engine, store, XP and HTTP lifecycle tests.
-
-No product runtime behavior changes.
-
-Tehkné Solutions
