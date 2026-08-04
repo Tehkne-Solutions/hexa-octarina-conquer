@@ -3,42 +3,33 @@ import { describe, expect, it } from "vitest";
 
 const gate = readFileSync(new URL("../scripts/visual-pack99-runtime-gate.mjs", import.meta.url), "utf8");
 
-describe("VS49 canonical browser playthrough gate", () => {
-  it("launches the real campaign before driving the strategic board", () => {
+describe("VS51 canonical visual/playable responsibility split", () => {
+  it("launches the real campaign and captures the strategic board with PACK 99", () => {
     expect(gate).toContain("launchCampaignMission");
-    expect(gate).toContain("runPlaythroughGate");
-    expect(gate).toContain("battleSnapshot");
-
-    const mainStart = gate.indexOf("async function main()");
-    const mainBody = gate.slice(mainStart);
-    const missionLaunch = mainBody.indexOf('launchCampaignMission(page, "qa=1&stable=1&screen=campaign")');
-    const playthroughRun = mainBody.indexOf("runPlaythroughGate(page)");
-    expect(mainStart).toBeGreaterThan(-1);
-    expect(missionLaunch).toBeGreaterThan(-1);
-    expect(playthroughRun).toBeGreaterThan(missionLaunch);
+    expect(gate).toContain('launchCampaignMission(page, "qa=1&stable=1&screen=campaign")');
+    expect(gate).toContain("battle-player-facing-pack99-1366x768.png");
+    expect(gate).toContain("battle runtime images:");
   });
 
-  it("uses only real enabled strategic controls", () => {
-    expect(gate).toContain(".strategic-unit.is-attack-target:not(:disabled)");
-    expect(gate).toContain(".strategic-edge.is-recommended:not(:disabled)");
-    expect(gate).toContain(".strategic-node.is-recommended:not(:disabled)");
-    expect(gate).toContain(".strategic-cell.is-build-target:not(:disabled)");
-    expect(gate).toContain(".strategic-end-turn:not(:disabled)");
+  it("keeps canonical runtime verification in the visual gate", () => {
+    expect(gate).toContain("canonical assets:");
+    expect(gate).toContain("materialized files:");
+    expect(gate).toContain("unresolved references:");
+    expect(gate).toContain("PACK99_VISUAL_GATE=PASS");
+    expect(gate).toContain("/assets/runtime/");
   });
 
-  it("requires player activity, enemy execution and a terminal state", () => {
-    expect(gate).toContain('path.includes("player")');
-    expect(gate).toContain("endTurns > 0");
-    expect(gate).toContain("TERMINAL_STATES.has(snapshot.lifecycle)");
-    expect(gate).toContain('"enemy-executed"');
+  it("delegates full playthrough authority to the dedicated acceptance gate", () => {
+    expect(gate).toContain("playthrough authority: META 08 Playable Acceptance");
+    expect(gate).toContain("visual gate scope: canonical assets + player-facing render evidence");
+    expect(gate).not.toContain("runPlaythroughGate(page)");
+    expect(gate).not.toContain("MAX_PLAYTHROUGH_STEPS");
   });
 
-  it("captures final evidence and bounded diagnostics", () => {
-    expect(gate).toContain("MAX_PLAYTHROUGH_STEPS = 96");
-    expect(gate).toContain("PACK99_PLAYTHROUGH_STALLED");
-    expect(gate).toContain("PACK99_PLAYTHROUGH_STEP_LIMIT");
-    expect(gate).toContain("battle-playthrough-final-pack99-1366x768.png");
-    expect(gate).toContain("playthrough enemy turns:");
-    expect(gate).toContain("playthrough path:");
+  it("preserves player-facing evidence without technical PACK 99 badges", () => {
+    expect(gate).toContain("PACK99_PLAYER_TECH_BADGE_VISIBLE");
+    expect(gate).toContain("home-pack99-1366x768.png");
+    expect(gate).toContain("home-player-facing-pack99-1366x768.png");
+    expect(gate).toContain("player-facing technical badge: hidden");
   });
 });
