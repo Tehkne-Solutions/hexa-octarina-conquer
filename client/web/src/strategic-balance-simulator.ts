@@ -1,6 +1,5 @@
 import { strategicEnemyTurnGlobal } from "./strategic-ai-global-executor";
 import {
-  createStrategicBoard,
   strategicActionBudget,
   strategicAttack,
   strategicAttackTargets,
@@ -24,10 +23,12 @@ import {
   type StrategicResult,
   type StrategicUnitId,
 } from "./strategic-board-model";
+import { createBalancedStrategicBoard } from "./strategic-balanced-opening";
 import { strategicContestRoute, strategicContestTargets } from "./strategic-route-contest";
 
 export type StrategicBalanceAiAction = "ATTACK" | "CONFRONT" | "BUILD" | "STRUCTURE" | "MOVE";
 export type StrategicFirstFaction = "blue" | "red";
+export type StrategicBalanceInitiativeMode = StrategicFirstFaction | "alternating";
 export type StrategicBalanceAiActionCounts = Record<StrategicBalanceAiAction, number>;
 
 type BlueCandidateKind = "attack" | "confront" | "build" | "structure" | "move";
@@ -171,7 +172,7 @@ function redTurn(board: StrategicBoard, counts: StrategicBalanceAiActionCounts):
 
 export function simulateStrategicMatch(seed: number, maxRounds = 24, firstFaction: StrategicFirstFaction = "blue"): StrategicBalanceMatch {
   const random = seeded(seed);
-  let board = createStrategicBoard();
+  let board = createBalancedStrategicBoard();
   let rounds = 0;
   const redActionCounts = emptyActionCounts();
   while (rounds < maxRounds && strategicResult(board) === "playing") {
@@ -196,8 +197,17 @@ export function simulateStrategicMatch(seed: number, maxRounds = 24, firstFactio
   };
 }
 
-export function simulateStrategicBalance(matches = 100, seedOffset = 1, firstFaction: StrategicFirstFaction = "blue"): StrategicBalanceSummary {
-  const results = Array.from({ length: matches }, (_, index) => simulateStrategicMatch(seedOffset + index, 24, firstFaction));
+export function simulateStrategicBalance(
+  matches = 100,
+  seedOffset = 1,
+  initiative: StrategicBalanceInitiativeMode = "alternating",
+): StrategicBalanceSummary {
+  const results = Array.from({ length: matches }, (_, index) => {
+    const firstFaction: StrategicFirstFaction = initiative === "alternating"
+      ? (index % 2 === 0 ? "blue" : "red")
+      : initiative;
+    return simulateStrategicMatch(seedOffset + index, 24, firstFaction);
+  });
   const sum = (selector: (match: StrategicBalanceMatch) => number) => results.reduce((total, match) => total + selector(match), 0);
   const redActionCounts = emptyActionCounts();
   for (const match of results) for (const kind of Object.keys(redActionCounts) as StrategicBalanceAiAction[]) redActionCounts[kind] += match.redActionCounts[kind];
