@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import { emptyPack99StrategicCatalog, loadPack99StrategicCatalog, type Pack99StrategicCatalog } from "../pack99-strategic-catalog";
 import "./card-combat.css";
 
 type CombatCard = { id: string; name: string; type: "attack"|"defense"|"tactic"|"formation"|"hero"|"octarina"; cost: number; priority: number; text: string };
@@ -15,10 +17,17 @@ const HAND: CombatCard[] = [
 export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<"select"|"resolve"|"result">("select");
+  const [assets, setAssets] = useState<Pack99StrategicCatalog>(() => emptyPack99StrategicCatalog());
   const startingEnergy = 7;
   const spent = useMemo(() => selected.reduce((sum,id)=>sum+(HAND.find(c=>c.id===id)?.cost??0),0), [selected]);
   const energy = startingEnergy - spent;
   const combo = selected.indexOf("feint") !== -1 && selected.indexOf("precise-strike") > selected.indexOf("feint");
+
+  useEffect(() => {
+    let active = true;
+    void loadPack99StrategicCatalog().then((catalog) => { if (active) setAssets(catalog); });
+    return () => { active = false; };
+  }, []);
 
   function toggle(id: string) {
     if (phase !== "select") return;
@@ -30,12 +39,18 @@ export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) =
     window.setTimeout(() => setPhase("result"), 650);
   }
 
+  const portrait = (src: string | null, initials: string, alt: string) => (
+    <div className="hoc2-portrait-frame">
+      {src ? <img src={src} alt={alt} className="hoc2-portrait-image"/> : <span className="hoc2-portrait-fallback">{initials}</span>}
+    </div>
+  );
+
   return <section className="hoc2-combat-screen" aria-label="Card Combat 2">
     <header className="hoc2-combat-header"><span>ENEMY CONTACT</span><strong>KAEL VORTHAN <em>VS</em> BRAKK NULGAR</strong><small>ROUND 1 · PLANÍCIE · Ressonância Arcana +1 energia</small></header>
     <div className="hoc2-combat-stage">
-      <article className="hoc2-combatant is-alliance"><div className="hoc2-portrait-placeholder">KV</div><h2>Kael Vorthan</h2><div className="hoc2-bars"><label>HP <span>24 / 24</span></label><progress max="24" value="24"/><label>ARMY <span>30 / 30</span></label><progress max="30" value="30"/></div><small>Guardas · Arqueiros · Cavalaria</small></article>
+      <article className="hoc2-combatant is-alliance">{portrait(assets.kael,"KV","Kael Vorthan — arte canônica PACK 99")}<h2>Kael Vorthan</h2><div className="hoc2-bars"><label>HP <span>24 / 24</span></label><progress max="24" value="24"/><label>ARMY <span>30 / 30</span></label><progress max="30" value="30"/></div><small>Guardas · Arqueiros · Cavalaria</small></article>
       <div className="hoc2-versus"><span>INTENT</span><strong>AGGRESSIVE</strong><small>Brakk prepara pressão frontal.</small></div>
-      <article className="hoc2-combatant is-rubra"><div className="hoc2-portrait-placeholder">BN</div><h2>Brakk Nulgar</h2><div className="hoc2-bars"><label>HP <span>26 / 26</span></label><progress max="26" value="26"/><label>ARMY <span>32 / 32</span></label><progress max="32" value="32"/></div><small>Brutos · Lanceiros · Arqueiros</small></article>
+      <article className="hoc2-combatant is-rubra">{portrait(assets.brakk,"BN","Brakk Nulgar — arte canônica PACK 99")}<h2>Brakk Nulgar</h2><div className="hoc2-bars"><label>HP <span>26 / 26</span></label><progress max="26" value="26"/><label>ARMY <span>32 / 32</span></label><progress max="32" value="32"/></div><small>Brutos · Lanceiros · Arqueiros</small></article>
     </div>
 
     {phase === "select" ? <>
