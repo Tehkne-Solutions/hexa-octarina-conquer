@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import "./card-combat.css";
 
 type CombatCard = { id: string; name: string; type: "attack"|"defense"|"tactic"|"formation"|"hero"|"octarina"; cost: number; priority: number; text: string };
+export type CombatExit = "retreat" | "victory";
 
 const HAND: CombatCard[] = [
   { id:"feint", name:"Feint", type:"tactic", cost:1, priority:9, text:"Aplica OPENING e expõe a defesa inimiga." },
@@ -11,7 +12,7 @@ const HAND: CombatCard[] = [
   { id:"octarina-guard", name:"Octarina Guard", type:"octarina", cost:3, priority:10, text:"7 de escudo e estado GUARDED." },
 ];
 
-export function CardCombatScreen({ onClose }: { onClose: () => void }) {
+export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<"select"|"resolve"|"result">("select");
   const startingEnergy = 7;
@@ -40,7 +41,7 @@ export function CardCombatScreen({ onClose }: { onClose: () => void }) {
     {phase === "select" ? <>
       <div className="hoc2-selected-sequence"><strong>SEQUÊNCIA</strong>{selected.length ? selected.map((id,index)=><span key={id}>{index+1}. {HAND.find(c=>c.id===id)?.name}</span>) : <span>Selecione de 1 a 3 cartas</span>}{combo?<b>COMBO · OPENING STRIKE</b>:null}</div>
       <div className="hoc2-card-hand">{HAND.map((card)=><button type="button" key={card.id} onClick={()=>toggle(card.id)} className={`hoc2-combat-card type-${card.type}${selected.includes(card.id)?" is-selected":""}`}><span>{card.type}</span><strong>{card.name}</strong><small>{card.text}</small><footer><b>{card.cost} EN</b><i>P{card.priority}</i></footer></button>)}</div>
-      <footer className="hoc2-combat-actions"><div><span>ENERGIA</span><strong>{Math.max(0,energy)} / {startingEnergy}</strong><small>Seleção simultânea · máximo 3 cartas</small></div><button type="button" className="secondary" onClick={onClose}>RETIRADA <small>disponível · 1 liberdade</small></button><button type="button" className="primary" disabled={!selected.length||energy<0} onClick={commit}>CONFIRMAR</button></footer>
-    </> : phase === "resolve" ? <div className="hoc2-combat-resolution"><strong>RESOLVENDO AÇÕES</strong><span>Prioridade → defesa → controle → ataque</span></div> : <div className="hoc2-combat-result"><strong>ROUND RESOLVED</strong><p>{combo ? "Feint abriu a guarda de Brakk e Precise Strike recebeu bônus de combo." : "A sequência foi resolvida pelo servidor autoritativo."}</p><button type="button" onClick={()=>{setPhase("select");setSelected([])}}>PRÓXIMA RODADA</button><button type="button" className="secondary" onClick={onClose}>VOLTAR AO MAPA</button></div>}
+      <footer className="hoc2-combat-actions"><div><span>ENERGIA</span><strong>{Math.max(0,energy)} / {startingEnergy}</strong><small>Seleção simultânea · máximo 3 cartas</small></div><button type="button" className="secondary" onClick={()=>onClose("retreat")}>RETIRADA <small>disponível · 1 liberdade</small></button><button type="button" className="primary" disabled={!selected.length||energy<0} onClick={commit}>CONFIRMAR</button></footer>
+    </> : phase === "resolve" ? <div className="hoc2-combat-resolution"><strong>RESOLVENDO AÇÕES</strong><span>Prioridade → defesa → controle → ataque</span></div> : <div className="hoc2-combat-result"><strong>COMBAT RESULT</strong><p>{combo ? "Feint abriu a guarda de Brakk e Precise Strike recebeu bônus de combo." : "A sequência foi resolvida pelo contrato autoritativo do HOC2."}</p><button type="button" onClick={()=>{setPhase("select");setSelected([])}}>PRÓXIMA RODADA</button><button type="button" className="primary" onClick={()=>onClose("victory")}>APLICAR RESULTADO AO MAPA</button></div>}
   </section>;
 }
