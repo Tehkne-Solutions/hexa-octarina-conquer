@@ -8,12 +8,13 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/verify-hoc2-playtest-build.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "acceptance:meta08": "node scripts/meta08-acceptance.mjs",
     "verify:pack99": "node ../../scripts/verify-web-pack99.mjs",
     "verify:production": "node scripts/production-pack99-gate.mjs",
+    "verify:hoc2-playtest": "node scripts/verify-hoc2-playtest-build.mjs",
     "check": "npm run verify:pack99 && npm run test && npm run build"
   },
   "dependencies": {
