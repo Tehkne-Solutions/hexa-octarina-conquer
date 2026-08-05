@@ -1,0 +1,72 @@
+name: HOC2 VS01-K Canonical Capture
+
+on:
+  pull_request:
+    paths:
+      - "client/web/**"
+      - ".github/workflows/hoc2-vs01-k-canonical-capture.yml"
+  workflow_dispatch:
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/web/package.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build HOC2 playtest candidate
+        run: npm run build
+
+      - name: Start production preview
+        run: |
+          npm run preview -- --port 4173 > /tmp/hoc2-vs01-k-preview.log 2>&1 &
+          echo $! > /tmp/hoc2-vs01-k-preview.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/hoc2.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/hoc2-vs01-k-preview.log
+          exit 1
+
+      - name: Capture 11 canonical states
+        run: node scripts/capture-hoc2-vs01-k.mjs
+
+      - name: Verify canonical matrix
+        run: |
+          test "$(find artifacts/hoc2-vs01-k -maxdepth 1 -name '*.png' | wc -l)" -eq 11
+          echo "HOC2_VS01_K_CAPTURE_GATE=PASS count=11"
+
+      - name: Upload HOC2 canonical captures
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc2-vs01-k-canonical-captures
+          path: client/web/artifacts/hoc2-vs01-k
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/hoc2-vs01-k-preview.pid ]; then
+            kill "$(cat /tmp/hoc2-vs01-k-preview.pid)" || true
+          fi
+          cat /tmp/hoc2-vs01-k-preview.log || true
