@@ -4,11 +4,11 @@ import { describe, expect, it } from "vitest";
 const gate = readFileSync(new URL("../scripts/visual-pack99-runtime-gate.mjs", import.meta.url), "utf8");
 
 describe("VS51 canonical visual/playable responsibility split", () => {
-  it("launches the real campaign and captures the strategic board with PACK 99", () => {
-    expect(gate).toContain("launchCampaignMission");
-    expect(gate).toContain('launchCampaignMission(page, "qa=1&stable=1&screen=campaign")');
-    expect(gate).toContain("battle-player-facing-pack99-1366x768.png");
-    expect(gate).toContain("battle runtime images:");
+  it("captures deterministic player-facing card combat with PACK 99", () => {
+    expect(gate).toContain("launchDeterministicCombatEvidence");
+    expect(gate).toContain("screen=ui14-combat-selection");
+    expect(gate).toContain("combat-player-facing-pack99-1366x768.png");
+    expect(gate).toContain("combat runtime images:");
   });
 
   it("keeps canonical runtime verification in the visual gate", () => {
@@ -19,9 +19,9 @@ describe("VS51 canonical visual/playable responsibility split", () => {
     expect(gate).toContain("/assets/runtime/");
   });
 
-  it("delegates full playthrough authority to the dedicated acceptance gate", () => {
-    expect(gate).toContain("playthrough authority: META 08 Playable Acceptance");
-    expect(gate).toContain("visual gate scope: canonical assets + player-facing render evidence");
+  it("delegates authoritative campaign lifecycle to Single Player Campaign", () => {
+    expect(gate).toContain("functional campaign authority: Single Player Campaign workflow");
+    expect(gate).toContain("visual gate scope: canonical assets + deterministic player-facing combat render evidence");
     expect(gate).not.toContain("runPlaythroughGate(page)");
     expect(gate).not.toContain("MAX_PLAYTHROUGH_STEPS");
   });
