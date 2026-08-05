@@ -39,9 +39,9 @@ export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) =
     window.setTimeout(() => setPhase("result"), 650);
   }
 
-  const portrait = (src: string | null, initials: string, alt: string) => (
+  const portrait = (src: string | null, initials: string, alt: string, tacticalFallback = false) => (
     <div className="hoc2-portrait-frame">
-      {src ? <img src={src} alt={alt} className="hoc2-portrait-image"/> : <span className="hoc2-portrait-fallback">{initials}</span>}
+      {src ? <img src={src} alt={alt} className="hoc2-portrait-image"/> : <span className={`hoc2-portrait-fallback${tacticalFallback ? " is-brakk" : ""}`} data-brakk-fallback={tacticalFallback ? "true" : undefined}><b>{initials}</b>{tacticalFallback ? <small>RUBRA · TACTICAL PROFILE</small> : null}</span>}
     </div>
   );
 
@@ -50,7 +50,7 @@ export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) =
     <div className="hoc2-combat-stage">
       <article className="hoc2-combatant is-alliance">{portrait(assets.kael,"KV","Kael Vorthan — arte canônica PACK 99")}<h2>Kael Vorthan</h2><div className="hoc2-bars"><label>HP <span>24 / 24</span></label><progress max="24" value="24"/><label>ARMY <span>30 / 30</span></label><progress max="30" value="30"/></div><small>Guardas · Arqueiros · Cavalaria</small></article>
       <div className="hoc2-versus"><span>INTENT</span><strong>AGGRESSIVE</strong><small>Brakk prepara pressão frontal.</small></div>
-      <article className="hoc2-combatant is-rubra">{portrait(assets.brakk,"BN","Brakk Nulgar — arte canônica PACK 99")}<h2>Brakk Nulgar</h2><div className="hoc2-bars"><label>HP <span>26 / 26</span></label><progress max="26" value="26"/><label>ARMY <span>32 / 32</span></label><progress max="32" value="32"/></div><small>Brutos · Lanceiros · Arqueiros</small></article>
+      <article className="hoc2-combatant is-rubra">{portrait(null,"BN","Brakk Nulgar — perfil tático temporário",true)}<h2>Brakk Nulgar</h2><div className="hoc2-bars"><label>HP <span>26 / 26</span></label><progress max="26" value="26"/><label>ARMY <span>32 / 32</span></label><progress max="32" value="32"/></div><small>Brutos · Lanceiros · Arqueiros</small></article>
     </div>
 
     {phase === "select" ? <>
