@@ -66,34 +66,35 @@ const catalog: CampaignCatalog = {
 };
 
 describe("campaign journey", () => {
-  it("keeps the living prologue as the first chapter and preserves its progress", () => {
+  it("uses only authoritative chapters when the server catalog is available", () => {
     const chapters = createCampaignJourney(catalog, progress);
-    expect(chapters[0].id).toBe("living-prologue");
-    expect(chapters[0].missions[0].progressPercent).toBe(48);
-    expect(chapters[1].missions).toHaveLength(2);
+    expect(chapters).toHaveLength(1);
+    expect(chapters[0].id).toBe("chapter-1");
+    expect(chapters[0].missions).toHaveLength(2);
+    expect(chapters[0].missions.every((mission) => mission.source === "server")).toBe(true);
   });
 
-  it("keeps authoritative chapters locked until the living prologue is won", () => {
+  it("preserves authoritative unlocks without gating them behind the living prologue", () => {
     const chapters = createCampaignJourney(catalog, progress);
-    expect(chapters[1].missions.every((mission) => mission.unlocked === false)).toBe(true);
+    expect(chapters[0].missions.every((mission) => mission.unlocked)).toBe(true);
   });
 
-  it("recommends the active living mission before server missions", () => {
+  it("recommends the first unlocked incomplete authoritative mission", () => {
     const recommended = recommendedCampaignMission(createCampaignJourney(catalog, progress));
-    expect(recommended?.id).toBe("bridge-of-ashes");
-  });
-
-  it("restores server unlocks and moves recommendation after the prologue victory", () => {
-    const completedProgress = { ...progress, status: "victory" as const, percent: 100 };
-    const chapters = createCampaignJourney(catalog, completedProgress);
-    expect(chapters[1].missions.every((mission) => mission.unlocked)).toBe(true);
-    const recommended = recommendedCampaignMission(chapters);
     expect(recommended?.id).toBe("c1-m2");
   });
 
-  it("calculates totals across the living and authoritative campaigns", () => {
+  it("keeps the living prologue only when no authoritative catalog is available", () => {
+    const chapters = createCampaignJourney(null, progress);
+    expect(chapters).toHaveLength(1);
+    expect(chapters[0].id).toBe("living-prologue");
+    expect(chapters[0].missions[0].id).toBe("bridge-of-ashes");
+    expect(chapters[0].missions[0].progressPercent).toBe(48);
+  });
+
+  it("calculates totals from the authoritative campaign when catalog data exists", () => {
     const completedProgress = { ...progress, status: "victory" as const, percent: 100 };
     const totals = campaignTotals(createCampaignJourney(catalog, completedProgress));
-    expect(totals).toEqual({ completed: 2, missions: 3, stars: 5, availableStars: 9 });
+    expect(totals).toEqual({ completed: 1, missions: 2, stars: 2, availableStars: 6 });
   });
 });
