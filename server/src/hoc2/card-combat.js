@@ -98,17 +98,23 @@ function validateSequence(combat, playerId, cardIds) {
   return total;
 }
 
+function consumeCards(hand, selected) {
+  const remaining = [...hand];
+  for (const cardId of selected) {
+    const index = remaining.indexOf(cardId);
+    if (index < 0) throw new Error(`card ${cardId} is not available in hand`);
+    remaining.splice(index, 1);
+  }
+  return remaining;
+}
+
 export function submitCardSequence(combat, playerId, cardIds) {
   if (combat.status === "resolved") throw new Error("combat already resolved");
   if (!combat.combatants[playerId]) throw new Error("player is not part of this combat");
   const cost = validateSequence(combat, playerId, cardIds);
   combat.submissions[playerId] = [...cardIds];
   combat.combatants[playerId].energy -= cost;
-  combat.hands[playerId] = combat.hands[playerId].filter((id, index, hand) => {
-    const usedBefore = cardIds.slice(0, cardIds.indexOf(id) + 1).filter((item) => item === id).length;
-    const seen = hand.slice(0, index + 1).filter((item) => item === id).length;
-    return seen > usedBefore || !cardIds.includes(id);
-  });
+  combat.hands[playerId] = consumeCards(combat.hands[playerId], cardIds);
   combat.status = Object.keys(combat.submissions).length === 2 ? "commit" : "select";
   return combat.status === "commit";
 }
