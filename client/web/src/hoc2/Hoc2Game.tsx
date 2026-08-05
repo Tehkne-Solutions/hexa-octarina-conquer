@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { HexaOverlay, type HexaFilter } from "./HexaOverlay";
-import { LivingMap, type Hoc2Hex, type StrategicEdgeView, type StrategicNodeView } from "./LivingMap";
+import { LivingMap, type Hoc2Hex, type OctarinaEdgeView, type OctarinaNodeView, type StrategicEdgeView, type StrategicNodeView } from "./LivingMap";
 import { useHoc2Camera } from "./MapCamera";
 import "./hoc2.css";
 
@@ -46,6 +46,18 @@ const NETWORK_EDGES: StrategicEdgeView[] = [
   { a: "core", b: "fortress", state: "blocked" },
 ];
 
+const OCTARINA_NODES: OctarinaNodeView[] = [
+  { id: "oct-core", q: 3, r: 1, kind: "core", owner: "alliance", state: "active" },
+  { id: "oct-north", q: 4, r: 0, kind: "source", owner: "alliance", state: "active", charge: 2 },
+  { id: "oct-east", q: 4, r: 1, kind: "source", owner: "alliance", state: "active", charge: 3 },
+  { id: "oct-south", q: 3, r: 2, kind: "source", owner: "alliance", state: "active", charge: 4 },
+];
+const OCTARINA_EDGES: OctarinaEdgeView[] = [
+  { a: "oct-core", b: "oct-north", state: "connected" },
+  { a: "oct-core", b: "oct-east", state: "connected" },
+  { a: "oct-core", b: "oct-south", state: "connected" },
+];
+
 export function Hoc2Game() {
   const camera = useHoc2Camera();
   const [hexaMode, setHexaMode] = useState(false);
@@ -54,11 +66,13 @@ export function Hoc2Game() {
     ? "INFLUÊNCIA · pressão Aliança:Rubra, liberdades e posições isoladas"
     : hexaFilter === "connections"
       ? "CONEXÕES · nós estratégicos, supply e trechos bloqueados sem poluir o mapa"
-      : "DOMÍNIO · Aliança, Rubra e território neutro sobre o mesmo Mapa Vivo";
+      : hexaFilter === "octarina"
+        ? "OCTARINA · fluxo energético independente · HEXA 3/6 · Ressonância Arcana ativa"
+        : "DOMÍNIO · Aliança, Rubra e território neutro sobre o mesmo Mapa Vivo";
   return <main className={`hoc2-shell${hexaMode ? " is-hexa-mode" : ""}`}>
-    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-E</span><strong>{hexaMode ? "Strategic Hexa View" : "Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
+    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-F</span><strong>{hexaMode ? "Strategic Hexa View" : "Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
     <section className="hoc2-map-viewport" {...camera.handlers}>
-      <div className="hoc2-map-camera" style={{ transform: camera.transform }}><LivingMap hexes={SANDBOX_HEXES} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} /></div>
+      <div className="hoc2-map-camera" style={{ transform: camera.transform }}><LivingMap hexes={SANDBOX_HEXES} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} octarinaNodes={OCTARINA_NODES} octarinaEdges={OCTARINA_EDGES} octarinaFormation={{ coreId: "oct-core", slots: 3, maxSlots: 6, flow: 9, resonance: true }} /></div>
       <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={() => setHexaMode((value) => !value)} onFilter={setHexaFilter} />
       <aside className="hoc2-camera-help" aria-label="Controles da câmera"><strong>{hexaMode ? "Visão estratégica" : "Câmera"}</strong><span>Roda: zoom</span><span>WASD / setas: navegar</span><span>Shift + arrastar ou botão do meio: pan</span><span>Bordas: edge scrolling</span><small>Zoom {camera.camera.zoom.toFixed(2)}×</small></aside>
       {hexaMode ? <div className="hoc2-mode-note" role="status">{hexaLabel}</div> : null}

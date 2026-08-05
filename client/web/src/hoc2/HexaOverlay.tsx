@@ -7,7 +7,7 @@ const FILTERS: Array<{ id: HexaFilter; label: string; enabled: boolean }> = [
   { id: "construction", label: "Construção", enabled: false },
   { id: "connections", label: "Conexões", enabled: true },
   { id: "resources", label: "Recursos", enabled: false },
-  { id: "octarina", label: "Octarina", enabled: false },
+  { id: "octarina", label: "Octarina", enabled: true },
 ];
 
 export function HexaOverlay({ active, filter, onToggle, onFilter }: {
@@ -24,14 +24,7 @@ export function HexaOverlay({ active, filter, onToggle, onFilter }: {
       {active ? (
         <nav className="hoc2-hexa-filters" aria-label="Filtros estratégicos">
           {FILTERS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              disabled={!item.enabled}
-              className={filter === item.id ? "is-active" : ""}
-              onClick={() => item.enabled && onFilter(item.id)}
-              title={item.enabled ? item.label : `${item.label} entra nas próximas etapas do VS01`}
-            >
+            <button key={item.id} type="button" disabled={!item.enabled} className={filter === item.id ? "is-active" : ""} onClick={() => item.enabled && onFilter(item.id)} title={item.enabled ? item.label : `${item.label} entra nas próximas etapas do VS01`}>
               {item.label}
             </button>
           ))}
