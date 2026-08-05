@@ -29,6 +29,15 @@ test("a player may commit one to three cards only and energy is authoritative", 
   assert.equal(combat.combatants.kael.energy, 3);
 });
 
+test("duplicate cards consume the exact selected multiplicity from the hand", () => {
+  const combat = makeCombat();
+  combat.hands.kael = ["precise-strike", "precise-strike", "shield-wall", "feint", "rally"];
+  combat.combatants.kael.energy = 6;
+  submitCardSequence(combat, "kael", ["precise-strike", "precise-strike"]);
+  assert.deepEqual(combat.hands.kael, ["shield-wall", "feint", "rally"]);
+  assert.equal(combat.combatants.kael.energy, 2);
+});
+
 test("both sides commit before a round can resolve", () => {
   const combat = makeCombat();
   submitCardSequence(combat, "kael", ["shield-wall"]);
