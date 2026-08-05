@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import "./card-combat.css";
 
 type CombatCard = { id: string; name: string; type: "attack"|"defense"|"tactic"|"formation"|"hero"|"octarina"; cost: number; priority: number; text: string };
 
