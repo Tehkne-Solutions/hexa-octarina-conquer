@@ -13,11 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: npm
-          cache-dependency-path: client/web/package-lock.json
       - name: Install web dependencies
         working-directory: client/web
-        run: npm ci
+        run: npm install
       - name: Verify and build Web/PWA
         working-directory: client/web
         run: npm run check
