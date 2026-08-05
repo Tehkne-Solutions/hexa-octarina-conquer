@@ -1,0 +1,94 @@
+/* HOC2 VS01-K — visual refinement after canonical capture review */
+
+/* Living Map: terrain first. The hard analytical hex grid belongs to Hexa Mode. */
+.hoc2-shell:not(.is-hexa-mode) .hoc2-terrain {
+  stroke: rgba(23, 29, 20, .06) !important;
+  stroke-width: .35 !important;
+  transform: scale(1.035);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hoc2-shell:not(.is-hexa-mode) .hoc2-terrain-inset {
+  opacity: 0 !important;
+}
+
+.hoc2-shell:not(.is-hexa-mode) .hoc2-living-map {
+  filter: saturate(1.03) contrast(1.02) brightness(1.03);
+}
+
+.hoc2-shell.is-hexa-mode .hoc2-terrain {
+  transform: none;
+}
+
+/* Army tokens: crop into tactical portraits instead of showing raw transparent canvas. */
+.hoc2-army-art {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.42);
+}
+
+.hoc2-army.owner-alliance .hoc2-army-art {
+  filter: saturate(1.08) contrast(1.08) brightness(1.06) drop-shadow(0 7px 6px rgba(0,0,0,.5));
+}
+
+.hoc2-army.owner-rubra .hoc2-army-art {
+  transform: scale(1.58);
+  filter:
+    grayscale(1)
+    invert(.86)
+    sepia(.82)
+    saturate(1.55)
+    hue-rotate(338deg)
+    brightness(1.12)
+    contrast(1.18)
+    drop-shadow(0 7px 6px rgba(0,0,0,.58));
+}
+
+/* Combat portraits: reuse the proven VS23 engraved Brakk treatment. */
+.hoc2-combatant.is-alliance .hoc2-portrait-image {
+  object-fit: cover !important;
+  object-position: 50% 46% !important;
+  transform: scale(1.18);
+  transform-origin: center;
+  filter: saturate(1.08) contrast(1.08) brightness(1.05) drop-shadow(0 12px 16px rgba(0,0,0,.45));
+}
+
+.hoc2-combatant.is-rubra .hoc2-portrait-frame {
+  background:
+    linear-gradient(145deg, rgba(255,225,166,.14), transparent 32%),
+    linear-gradient(180deg, #6d3327, #241310 72%);
+  box-shadow:
+    0 0 0 2px rgba(239,202,136,.24),
+    0 18px 42px rgba(0,0,0,.48);
+}
+
+.hoc2-combatant.is-rubra .hoc2-portrait-image {
+  object-fit: cover !important;
+  object-position: 50% 44% !important;
+  transform: scale(1.28);
+  transform-origin: center;
+  mix-blend-mode: normal;
+  background: #20160f;
+  filter:
+    grayscale(1)
+    invert(.86)
+    sepia(.82)
+    saturate(1.55)
+    hue-rotate(338deg)
+    brightness(1.12)
+    contrast(1.18)
+    drop-shadow(0 14px 10px rgba(0,0,0,.72));
+}
+
+/* POIs remain readable without looking like identical board pieces. */
+.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-base {
+  fill: rgba(36,37,29,.72);
+  stroke-width: 1.5;
+}
+
+.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-art {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.12);
+}
