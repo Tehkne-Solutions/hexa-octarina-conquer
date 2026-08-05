@@ -1,0 +1,108 @@
+name: Release Packages
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  web-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: client/web/package-lock.json
+      - name: Install web dependencies
+        working-directory: client/web
+        run: npm ci
+      - name: Verify and build Web/PWA
+        working-directory: client/web
+        run: npm run check
+      - name: Package Web/PWA
+        run: |
+          mkdir -p build/release
+          cd client/web/dist
+          zip -qr ../../../build/release/HOC-v0.1.0-Web-PWA.zip .
+      - name: Web checksum
+        run: sha256sum build/release/HOC-v0.1.0-Web-PWA.zip | tee build/release/HOC-v0.1.0-Web-PWA.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HOC-v0.1.0-Web-PWA
+          path: |
+            build/release/HOC-v0.1.0-Web-PWA.zip
+            build/release/HOC-v0.1.0-Web-PWA.sha256
+          if-no-files-found: error
+
+  godot-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install Android SDK 35 packages
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --sdk_root="$ANDROID_HOME" "platform-tools" "build-tools;35.0.1" "platforms;android-35"
+      - name: Download Godot 4.6.3 and export templates
+        run: |
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          chmod +x Godot_v4.6.3-stable_linux.x86_64
+          curl -fsSL -o templates.tpz https://github.com/godotengine/godot-builds/releases/download/4.6.3-stable/Godot_v4.6.3-stable_export_templates.tpz
+          mkdir -p "$HOME/.local/share/godot/export_templates/4.6.3.stable" template-unpack
+          unzip -q templates.tpz -d template-unpack
+          cp -R template-unpack/templates/. "$HOME/.local/share/godot/export_templates/4.6.3.stable/"
+      - name: Install Android Gradle template
+        run: bash scripts/install-godot-android-template.sh client/godot
+      - name: Configure Android development signing
+        run: |
+          mkdir -p "$HOME/.config/godot" "$HOME/.android" "$GITHUB_WORKSPACE/.ci"
+          if [ ! -f "$HOME/.android/debug.keystore" ]; then
+            keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Tehkne Solutions Android Development,O=Tehkne Solutions,C=BR"
+          fi
+          cp "$HOME/.android/debug.keystore" "$GITHUB_WORKSPACE/.ci/debug.keystore"
+          printf '%s\n' '[gd_resource type="EditorSettings" format=3]' '[resource]' "export/android/android_sdk_path = \"$ANDROID_HOME\"" "export/android/java_sdk_path = \"$JAVA_HOME\"" "export/android/debug_keystore = \"$HOME/.android/debug.keystore\"" 'export/android/debug_keystore_user = "androiddebugkey"' 'export/android/debug_keystore_pass = "android"' > "$HOME/.config/godot/editor_settings-4.6.tres"
+      - name: Import Godot project
+        run: ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --editor --quit-after 2
+      - name: Export Windows and Android packages
+        env:
+          GODOT_ANDROID_KEYSTORE_DEBUG_PATH: ${{ github.workspace }}/.ci/debug.keystore
+          GODOT_ANDROID_KEYSTORE_DEBUG_USER: androiddebugkey
+          GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD: android
+        run: |
+          mkdir -p build/windows build/android build/release
+          ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --export-release "Windows Desktop" "$PWD/build/windows/HexaOctarinaConquer-v0.1.0.exe"
+          ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --export-debug "Android" "$PWD/build/android/HexaOctarinaConquer-v0.1.0-arm64.apk"
+          ./Godot_v4.6.3-stable_linux.x86_64 --headless --path client/godot --export-debug "Android ARMv7" "$PWD/build/android/HexaOctarinaConquer-v0.1.0-armv7.apk"
+          test -s build/windows/HexaOctarinaConquer-v0.1.0.exe
+          test -s build/android/HexaOctarinaConquer-v0.1.0-arm64.apk
+          test -s build/android/HexaOctarinaConquer-v0.1.0-armv7.apk
+          cd build/windows
+          zip -q ../release/HOC-v0.1.0-Windows-x86_64.zip HexaOctarinaConquer-v0.1.0.exe
+          cd ../..
+          cp build/android/HexaOctarinaConquer-v0.1.0-arm64.apk build/release/HOC-v0.1.0-Android-arm64.apk
+          cp build/android/HexaOctarinaConquer-v0.1.0-armv7.apk build/release/HOC-v0.1.0-Android-armv7.apk
+      - name: Generate checksums and manifest
+        run: |
+          cd build/release
+          sha256sum HOC-v0.1.0-Windows-x86_64.zip HOC-v0.1.0-Android-arm64.apk HOC-v0.1.0-Android-armv7.apk | tee HOC-v0.1.0-Godot.sha256
+          printf '%s\n' 'HOC v0.1.0 distribution packages' 'Windows: x86_64' 'Android: arm64-v8a + armeabi-v7a' 'Engine: Godot 4.6.3' 'Signature: Tehkné Solutions' > HOC-v0.1.0-MANIFEST.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HOC-v0.1.0-Godot-Packages
+          path: |
+            build/release/HOC-v0.1.0-Windows-x86_64.zip
+            build/release/HOC-v0.1.0-Android-arm64.apk
+            build/release/HOC-v0.1.0-Android-armv7.apk
+            build/release/HOC-v0.1.0-Godot.sha256
+            build/release/HOC-v0.1.0-MANIFEST.txt
+          if-no-files-found: error
