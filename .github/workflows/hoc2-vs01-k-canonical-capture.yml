@@ -10,7 +10,7 @@ on:
 jobs:
   capture:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: client/web
@@ -27,6 +27,53 @@ jobs:
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Materialize PACK 99 full runtime
+        run: |
+          set -euo pipefail
+          runtime_name="hoc-pack99-web-full.zip"
+          checksum_name="hoc-pack99-web-full.zip.sha256"
+          release_base="https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2"
+          curl --fail --location --silent --show-error --retry 3 "${release_base}/${runtime_name}" -o "/tmp/${runtime_name}"
+          curl --fail --location --silent --show-error --retry 3 "${release_base}/${checksum_name}" -o "/tmp/${checksum_name}"
+          (cd /tmp && sha256sum --check "${checksum_name}")
+          rm -rf public/assets/runtime
+          mkdir -p public/assets/runtime
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+          archive = Path('/tmp/hoc-pack99-web-full.zip')
+          destination = Path('public/assets/runtime').resolve()
+          with ZipFile(archive) as zf:
+              entries = []
+              roots = []
+              for info in zf.infolist():
+                  normalized = info.filename.replace('\\', '/')
+                  parts = [p for p in PurePosixPath(normalized).parts if p not in ('', '.')]
+                  if not parts or '..' in parts:
+                      raise SystemExit(f'PACK99_UNSAFE_ZIP_ENTRY:{info.filename}')
+                  entries.append((info, normalized, parts))
+                  if parts[-1] == 'runtime-install.json':
+                      roots.append(parts[:-1])
+              if len(roots) != 1:
+                  raise SystemExit(f'PACK99_RUNTIME_ROOT_AMBIGUOUS:{roots}')
+              root = roots[0]
+              for info, normalized, parts in entries:
+                  if root and parts[:len(root)] == root:
+                      parts = parts[len(root):]
+                  if not parts:
+                      continue
+                  target = destination.joinpath(*parts).resolve()
+                  if destination not in target.parents and target != destination:
+                      raise SystemExit(f'PACK99_ZIP_ESCAPE:{info.filename}')
+                  if info.is_dir() or normalized.endswith('/'):
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      with zf.open(info) as source, target.open('wb') as sink:
+                          sink.write(source.read())
+          PY
+          node ../../scripts/verify-web-pack99.mjs
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
