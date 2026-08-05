@@ -21,7 +21,7 @@ async function assertRuntimeAssetsHealthy(label) {
   if (runtimeAssetErrors.length) {
     throw new Error(`HOC2_RUNTIME_ASSET_FAILURE:${label}:${runtimeAssetErrors.join(" | ")}`);
   }
-  const brokenHtmlImages = await page.locator("img[data-runtime-asset], .hoc2-combat-portrait img").evaluateAll((images) => images
+  const brokenHtmlImages = await page.locator("img[data-runtime-asset], .hoc2-combatant.is-alliance .hoc2-portrait-image").evaluateAll((images) => images
     .filter((image) => image instanceof HTMLImageElement && (!image.complete || image.naturalWidth === 0))
     .map((image) => image.getAttribute("data-runtime-asset") || image.getAttribute("alt") || image.getAttribute("src")));
   if (brokenHtmlImages.length) {
@@ -69,7 +69,8 @@ try {
 
   await page.getByRole("button", { name: "INICIAR CONFRONTO" }).click();
   await page.getByRole("region", { name: "Card Combat 2" }).waitFor();
-  await page.waitForFunction(() => [...document.querySelectorAll(".hoc2-combat-portrait img")].every((image) => image.complete && image.naturalWidth > 0));
+  await page.waitForFunction(() => [...document.querySelectorAll(".hoc2-combatant.is-alliance .hoc2-portrait-image")].every((image) => image.complete && image.naturalWidth > 0));
+  await page.locator('[data-brakk-fallback="true"]').waitFor();
   await capture("08-card-combat-initial");
 
   await page.getByRole("button", { name: /Feint/ }).click();
@@ -85,7 +86,7 @@ try {
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await capture("11-return-map-consequence");
 
-  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy");
+  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy brakkFallback=explicit");
 } finally {
   await browser.close();
 }
