@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import type { HexaFilter } from "./HexaOverlay";
+
 export type Hoc2Hex = {
   q: number;
   r: number;
@@ -34,7 +36,11 @@ function Landmark({ hex, x, y }: { hex: Hoc2Hex; x: number; y: number }) {
   );
 }
 
-export function LivingMap({ hexes }: { hexes: Hoc2Hex[] }) {
+export function LivingMap({ hexes, hexaMode = false, hexaFilter = "domain" }: {
+  hexes: Hoc2Hex[];
+  hexaMode?: boolean;
+  hexaFilter?: HexaFilter;
+}) {
   const size = 58;
   const geometry = useMemo(() => hexes.map((hex) => ({ hex, ...hexCenter(hex.q, hex.r, size) })), [hexes]);
   const minX = Math.min(...geometry.map((item) => item.x)) - 100;
@@ -43,7 +49,7 @@ export function LivingMap({ hexes }: { hexes: Hoc2Hex[] }) {
   const maxY = Math.max(...geometry.map((item) => item.y)) + 100;
 
   return (
-    <svg className="hoc2-living-map" viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} role="img" aria-label="Mapa vivo experimental do HOC2">
+    <svg className={`hoc2-living-map${hexaMode ? " is-hexa" : ""}`} data-hexa-filter={hexaFilter} viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} role="img" aria-label={hexaMode ? "Mapa estratégico em Modo Hexa" : "Mapa vivo experimental do HOC2"}>
       <defs>
         <linearGradient id="hoc2-ground" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#526244" />
@@ -67,6 +73,17 @@ export function LivingMap({ hexes }: { hexes: Hoc2Hex[] }) {
           <path key={`road-${hex.q},${hex.r}`} d={`M ${x - 42} ${y + 18} Q ${x} ${y - 8} ${x + 42} ${y - 18}`} className="hoc2-road" />
         ))}
       </g>
+      {hexaMode ? (
+        <g className={`hoc2-hexa-layer hoc2-hexa-${hexaFilter}`}>
+          {geometry.map(({ hex, x, y }) => (
+            <g key={`hexa-${hex.q},${hex.r}`} transform={`translate(${x} ${y})`} className={`hoc2-hexa-cell owner-${hex.owner ?? "neutral"}`}>
+              {hexaFilter === "domain" ? <polygon points={hexPoints(0, 0, size - 3)} className="hoc2-domain-fill" /> : null}
+              <polygon points={hexPoints(0, 0, size - 2)} className="hoc2-grid-outline" />
+              <text y="5" textAnchor="middle" className="hoc2-coordinate">{hex.q},{hex.r}</text>
+            </g>
+          ))}
+        </g>
+      ) : null}
       <g className="hoc2-landmark-layer" filter="url(#hoc2-soft-shadow)">
         {geometry.map(({ hex, x, y }) => <Landmark key={`landmark-${hex.q},${hex.r}`} hex={hex} x={x} y={y} />)}
       </g>
