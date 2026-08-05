@@ -9,45 +9,17 @@
   transform-origin: center;
 }
 
-.hoc2-shell:not(.is-hexa-mode) .hoc2-terrain-inset {
-  opacity: 0 !important;
-}
+.hoc2-shell:not(.is-hexa-mode) .hoc2-terrain-inset { opacity: 0 !important; }
+.hoc2-shell:not(.is-hexa-mode) .hoc2-living-map { filter: saturate(1.03) contrast(1.02) brightness(1.03); }
+.hoc2-shell.is-hexa-mode .hoc2-terrain { transform: none; }
 
-.hoc2-shell:not(.is-hexa-mode) .hoc2-living-map {
-  filter: saturate(1.03) contrast(1.02) brightness(1.03);
-}
+/* Army tokens: keep Kael real; do not display the invalid Brakk bitmap as character art. */
+.hoc2-army-art { transform-box: fill-box; transform-origin: center; transform: scale(1.42); }
+.hoc2-army.owner-alliance .hoc2-army-art { filter: saturate(1.08) contrast(1.08) brightness(1.06) drop-shadow(0 7px 6px rgba(0,0,0,.5)); }
+.hoc2-army.owner-rubra .hoc2-army-art { display: none; }
+.hoc2-army.owner-rubra circle { fill: #4b211d; stroke: #d98278; }
 
-.hoc2-shell.is-hexa-mode .hoc2-terrain {
-  transform: none;
-}
-
-/* Army tokens: crop into tactical portraits instead of showing raw transparent canvas. */
-.hoc2-army-art {
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(1.42);
-}
-
-.hoc2-army.owner-alliance .hoc2-army-art {
-  filter: saturate(1.08) contrast(1.08) brightness(1.06) drop-shadow(0 7px 6px rgba(0,0,0,.5));
-}
-
-.hoc2-army.owner-rubra .hoc2-army-art {
-  transform-box: fill-box;
-  transform-origin: 50% 88%;
-  transform: scale(5.2);
-  filter:
-    grayscale(1)
-    invert(.86)
-    sepia(.82)
-    saturate(1.55)
-    hue-rotate(338deg)
-    brightness(1.12)
-    contrast(1.18)
-    drop-shadow(0 7px 6px rgba(0,0,0,.58));
-}
-
-/* Combat portraits: reuse the proven VS23 engraved Brakk treatment. */
+/* Kael keeps canonical PACK 99 art. */
 .hoc2-combatant.is-alliance .hoc2-portrait-image {
   object-fit: cover !important;
   object-position: 50% 46% !important;
@@ -56,43 +28,31 @@
   filter: saturate(1.08) contrast(1.08) brightness(1.05) drop-shadow(0 12px 16px rgba(0,0,0,.45));
 }
 
+/* Brakk: explicit tactical fallback until a valid canonical portrait exists. */
 .hoc2-combatant.is-rubra .hoc2-portrait-frame {
   background:
-    linear-gradient(145deg, rgba(255,225,166,.14), transparent 32%),
-    linear-gradient(180deg, #6d3327, #241310 72%);
-  box-shadow:
-    0 0 0 2px rgba(239,202,136,.24),
-    0 18px 42px rgba(0,0,0,.48);
+    radial-gradient(circle at 50% 38%, rgba(202,112,93,.22), transparent 30%),
+    linear-gradient(145deg, rgba(255,225,166,.1), transparent 32%),
+    linear-gradient(180deg, #5a2b25, #1d100f 78%);
+  box-shadow: 0 0 0 2px rgba(239,202,136,.18), 0 18px 42px rgba(0,0,0,.48);
 }
-
-.hoc2-combatant.is-rubra .hoc2-portrait-image {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: 50% 90% !important;
-  transform: scale(6.4);
-  transform-origin: 50% 90%;
-  mix-blend-mode: normal;
-  background: #20160f;
-  filter:
-    grayscale(1)
-    invert(.86)
-    sepia(.82)
-    saturate(1.55)
-    hue-rotate(338deg)
-    brightness(1.12)
-    contrast(1.18)
-    drop-shadow(0 14px 10px rgba(0,0,0,.72));
+.hoc2-portrait-fallback.is-brakk {
+  width: 76%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 2px solid rgba(231,151,136,.78);
+  border-radius: 50%;
+  background: radial-gradient(circle, #7c342b 0 34%, #351816 35% 64%, #170e0d 65%);
+  box-shadow: inset 0 0 0 6px rgba(226,151,116,.08), 0 12px 28px rgba(0,0,0,.48);
+  color: #f0c29d;
+  text-align: center;
 }
+.hoc2-portrait-fallback.is-brakk b { font: 800 52px Georgia,serif; letter-spacing: .08em; }
+.hoc2-portrait-fallback.is-brakk small { max-width: 120px; font: 700 8px/1.25 Inter,system-ui,sans-serif; letter-spacing: .14em; color: #d89a88; }
 
 /* POIs remain readable without looking like identical board pieces. */
-.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-base {
-  fill: rgba(36,37,29,.72);
-  stroke-width: 1.5;
-}
-
-.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-art {
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(1.12);
-}
+.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-base { fill: rgba(36,37,29,.72); stroke-width: 1.5; }
+.hoc2-shell:not(.is-hexa-mode) .hoc2-landmark-art { transform-box: fill-box; transform-origin: center; transform: scale(1.12); }
