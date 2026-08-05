@@ -44,12 +44,9 @@ function serverProgressPercent(mission: CampaignMission): number {
   return 0;
 }
 
-export function createCampaignJourney(
-  catalog: CampaignCatalog | null,
-  livingProgress: LivingCampaignProgress,
-): CampaignJourneyChapter[] {
-  const prologueCompleted = livingProgress.status === "victory";
-  const livingMission: CampaignJourneyMission = {
+function livingFallbackChapter(livingProgress: LivingCampaignProgress): CampaignJourneyChapter {
+  const completed = livingProgress.status === "victory";
+  const mission: CampaignJourneyMission = {
     id: LIVING_MISSION_ID,
     source: "living",
     chapterId: "living-prologue",
@@ -66,25 +63,34 @@ export function createCampaignJourney(
     primaryLabel: "Libertar Lyra e retomar o Moinho do Norte",
     bonusLabels: ["Fechar uma célula territorial", "Concluir sem perder todas as unidades"],
     unlocked: true,
-    stars: prologueCompleted ? 3 : 0,
+    stars: completed ? 3 : 0,
     attempts: livingProgress.attempts,
     progressPercent: livingProgress.percent,
-    completed: prologueCompleted,
+    completed,
   };
 
-  const chapters: CampaignJourneyChapter[] = [{
+  return {
     id: "living-prologue",
     order: 0,
-    title: livingMission.chapterTitle,
-    subtitle: livingMission.chapterSubtitle,
-    missions: [livingMission],
-    completed: livingMission.completed ? 1 : 0,
-    stars: livingMission.stars,
-  }];
+    title: mission.chapterTitle,
+    subtitle: mission.chapterSubtitle,
+    missions: [mission],
+    completed: completed ? 1 : 0,
+    stars: mission.stars,
+  };
+}
 
-  if (!catalog) return chapters;
+export function createCampaignJourney(
+  catalog: CampaignCatalog | null,
+  livingProgress: LivingCampaignProgress,
+): CampaignJourneyChapter[] {
+  // The local "living" mission is a resilience fallback only. When the
+  // authoritative campaign catalog is available, the player must enter the
+  // real 12-mission campaign whose runtime preserves card duels, authoritative
+  // progression and server-owned combat results.
+  if (!catalog) return [livingFallbackChapter(livingProgress)];
 
-  const serverChapters = catalog.chapters
+  return catalog.chapters
     .map((chapter) => {
       const missions = catalog.missions
         .filter((mission) => mission.chapterId === chapter.id)
@@ -105,7 +111,7 @@ export function createCampaignJourney(
           rewardXp: mission.rewardXp,
           primaryLabel: mission.primary.label,
           bonusLabels: mission.bonus.map((objective) => objective.label),
-          unlocked: prologueCompleted && mission.unlocked,
+          unlocked: mission.unlocked,
           stars: mission.progress?.stars ?? 0,
           attempts: mission.progress?.attempts ?? 0,
           progressPercent: serverProgressPercent(mission),
@@ -122,9 +128,8 @@ export function createCampaignJourney(
         stars: missions.reduce((sum, mission) => sum + mission.stars, 0),
       } satisfies CampaignJourneyChapter;
     })
-    .filter((chapter) => chapter.missions.length > 0);
-
-  return [...chapters, ...serverChapters].sort((left, right) => left.order - right.order);
+    .filter((chapter) => chapter.missions.length > 0)
+    .sort((left, right) => left.order - right.order);
 }
 
 export function flattenCampaignJourney(chapters: CampaignJourneyChapter[]): CampaignJourneyMission[] {
