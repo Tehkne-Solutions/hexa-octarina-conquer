@@ -8,9 +8,29 @@ await mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+const runtimeAssetErrors = [];
+page.on("response", (response) => {
+  const url = response.url();
+  if (url.includes("/assets/runtime/") && response.status() >= 400) {
+    runtimeAssetErrors.push(`${response.status()} ${url}`);
+  }
+});
+
+async function assertRuntimeAssetsHealthy(label) {
+  await page.waitForTimeout(220);
+  if (runtimeAssetErrors.length) {
+    throw new Error(`HOC2_RUNTIME_ASSET_FAILURE:${label}:${runtimeAssetErrors.join(" | ")}`);
+  }
+  const brokenHtmlImages = await page.locator("img[data-runtime-asset], .hoc2-combat-portrait img").evaluateAll((images) => images
+    .filter((image) => image instanceof HTMLImageElement && (!image.complete || image.naturalWidth === 0))
+    .map((image) => image.getAttribute("data-runtime-asset") || image.getAttribute("alt") || image.getAttribute("src")));
+  if (brokenHtmlImages.length) {
+    throw new Error(`HOC2_RUNTIME_IMAGE_BROKEN:${label}:${brokenHtmlImages.join(",")}`);
+  }
+}
 
 async function capture(name) {
-  await page.waitForTimeout(180);
+  await assertRuntimeAssetsHealthy(name);
   await page.screenshot({ path: path.join(outputDir, `${name}.png`), fullPage: false });
   console.log(`HOC2_CAPTURE=${name}`);
 }
@@ -49,6 +69,7 @@ try {
 
   await page.getByRole("button", { name: "INICIAR CONFRONTO" }).click();
   await page.getByRole("region", { name: "Card Combat 2" }).waitFor();
+  await page.waitForFunction(() => [...document.querySelectorAll(".hoc2-combat-portrait img")].every((image) => image.complete && image.naturalWidth > 0));
   await capture("08-card-combat-initial");
 
   await page.getByRole("button", { name: /Feint/ }).click();
@@ -64,7 +85,7 @@ try {
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await capture("11-return-map-consequence");
 
-  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11");
+  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy");
 } finally {
   await browser.close();
 }
