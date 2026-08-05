@@ -1,7 +1,11 @@
 import react from "@vitejs/plugin-react";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import { configDefaults } from "vitest/config";
 import { VitePWA } from "vite-plugin-pwa";
+
+const rootDir = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
   plugins: [
@@ -128,6 +132,12 @@ export default defineConfig({
     cssCodeSplit: true,
     reportCompressedSize: true,
     chunkSizeWarningLimit: 500,
+    rollupOptions: {
+      input: {
+        main: resolve(rootDir, "index.html"),
+        hoc2: resolve(rootDir, "hoc2.html"),
+      },
+    },
   },
   server: {
     port: 4173,
