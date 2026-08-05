@@ -5,7 +5,7 @@ const FILTERS: Array<{ id: HexaFilter; label: string; enabled: boolean }> = [
   { id: "influence", label: "Influência", enabled: true },
   { id: "movement", label: "Movimento", enabled: false },
   { id: "construction", label: "Construção", enabled: false },
-  { id: "connections", label: "Conexões", enabled: false },
+  { id: "connections", label: "Conexões", enabled: true },
   { id: "resources", label: "Recursos", enabled: false },
   { id: "octarina", label: "Octarina", enabled: false },
 ];
