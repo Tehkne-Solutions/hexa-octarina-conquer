@@ -2,7 +2,7 @@ export type HexaFilter = "domain" | "influence" | "movement" | "construction" | 
 
 const FILTERS: Array<{ id: HexaFilter; label: string; enabled: boolean }> = [
   { id: "domain", label: "Domínio", enabled: true },
-  { id: "influence", label: "Influência", enabled: false },
+  { id: "influence", label: "Influência", enabled: true },
   { id: "movement", label: "Movimento", enabled: false },
   { id: "construction", label: "Construção", enabled: false },
   { id: "connections", label: "Conexões", enabled: false },
