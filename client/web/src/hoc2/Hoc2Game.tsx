@@ -1,3 +1,6 @@
+import { useState } from "react";
+
+import { HexaOverlay, type HexaFilter } from "./HexaOverlay";
 import { LivingMap, type Hoc2Hex } from "./LivingMap";
 import { useHoc2Camera } from "./MapCamera";
 import "./hoc2.css";
@@ -31,25 +34,30 @@ const SANDBOX_HEXES: Hoc2Hex[] = [
 
 export function Hoc2Game() {
   const camera = useHoc2Camera();
+  const [hexaMode, setHexaMode] = useState(false);
+  const [hexaFilter, setHexaFilter] = useState<HexaFilter>("domain");
+
   return (
-    <main className="hoc2-shell">
+    <main className={`hoc2-shell${hexaMode ? " is-hexa-mode" : ""}`}>
       <header className="hoc2-topbar">
         <div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div>
-        <div className="hoc2-phase"><span>HOC2 VS01-B</span><strong>Living Map Sandbox</strong></div>
+        <div className="hoc2-phase"><span>HOC2 VS01-C</span><strong>{hexaMode ? "Strategic Hexa View" : "Living Map Sandbox"}</strong></div>
         <button type="button" onClick={camera.focusCenter}>Centralizar</button>
       </header>
       <section className="hoc2-map-viewport" {...camera.handlers}>
         <div className="hoc2-map-camera" style={{ transform: camera.transform }}>
-          <LivingMap hexes={SANDBOX_HEXES} />
+          <LivingMap hexes={SANDBOX_HEXES} hexaMode={hexaMode} hexaFilter={hexaFilter} />
         </div>
+        <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={() => setHexaMode((value) => !value)} onFilter={setHexaFilter} />
         <aside className="hoc2-camera-help" aria-label="Controles da câmera">
-          <strong>Câmera</strong>
+          <strong>{hexaMode ? "Visão estratégica" : "Câmera"}</strong>
           <span>Roda: zoom</span>
           <span>WASD / setas: navegar</span>
           <span>Shift + arrastar ou botão do meio: pan</span>
           <span>Bordas: edge scrolling</span>
           <small>Zoom {camera.camera.zoom.toFixed(2)}×</small>
         </aside>
+        {hexaMode ? <div className="hoc2-mode-note" role="status">DOMÍNIO · Aliança, Rubra e território neutro sobre o mesmo Mapa Vivo</div> : null}
       </section>
       <footer className="hoc2-footer">Tehkné Solutions</footer>
     </main>
