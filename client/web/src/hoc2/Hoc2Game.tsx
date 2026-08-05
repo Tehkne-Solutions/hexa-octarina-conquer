@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { CardCombatScreen } from "./CardCombatScreen";
 import { EconomyOverlay } from "./EconomyOverlay";
 import { HexaOverlay, type HexaFilter } from "./HexaOverlay";
 import { LivingMap, type ArmyView, type Hoc2Hex, type MovementTargetView, type OctarinaEdgeView, type OctarinaNodeView, type StrategicEdgeView, type StrategicNodeView } from "./LivingMap";
@@ -35,7 +36,10 @@ const KAEL_MOVEMENT: MovementTargetView[] = [
 ];
 
 export function Hoc2Game() {
-  const camera=useHoc2Camera(); const [hexaMode,setHexaMode]=useState(false); const [hexaFilter,setHexaFilter]=useState<HexaFilter>("domain");
+  const camera=useHoc2Camera();
+  const [hexaMode,setHexaMode]=useState(false);
+  const [hexaFilter,setHexaFilter]=useState<HexaFilter>("domain");
+  const [combatOpen,setCombatOpen]=useState(false);
   const hexaLabel = hexaFilter === "movement" ? "MOVIMENTO · Kael 4 MP · terreno, ZoC e contato com Brakk calculados pelo servidor"
     : hexaFilter === "influence" ? "INFLUÊNCIA · pressão Aliança:Rubra, liberdades e posições isoladas"
     : hexaFilter === "connections" ? "CONEXÕES · nós estratégicos, supply e trechos bloqueados"
@@ -43,13 +47,16 @@ export function Hoc2Game() {
     : hexaFilter === "resources" ? "RECURSOS · produção por turno e Mina dependente de supply"
     : hexaFilter === "construction" ? "CONSTRUÇÃO · Posto Avançado, Estrada e Condutor em contexto"
     : "DOMÍNIO · Aliança, Rubra e território neutro";
+
+  if (combatOpen) return <CardCombatScreen onClose={()=>setCombatOpen(false)}/>;
+
   return <main className={`hoc2-shell${hexaMode?" is-hexa-mode":""}`}>
-    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-H</span><strong>{hexaMode?"Strategic Hexa View":"Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
+    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-I</span><strong>{hexaMode?"Strategic Hexa View":"Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
     <section className="hoc2-map-viewport" {...camera.handlers}>
       <div className="hoc2-map-camera" style={{transform:camera.transform}}><LivingMap hexes={SANDBOX_HEXES} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} octarinaNodes={OCTARINA_NODES} octarinaEdges={OCTARINA_EDGES} octarinaFormation={{coreId:"oct-core",slots:3,maxSlots:6,flow:9,resonance:true}} armies={ARMIES} movementTargets={hexaFilter==="movement"?KAEL_MOVEMENT:[]} /></div>
       <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={()=>setHexaMode(v=>!v)} onFilter={setHexaFilter}/>
       {hexaMode?<EconomyOverlay filter={hexaFilter}/>:null}
-      {hexaMode&&hexaFilter==="movement"?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em></aside>:null}
+      {hexaMode&&hexaFilter==="movement"?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em><button type="button" onClick={()=>setCombatOpen(true)}>INICIAR CONFRONTO</button></aside>:null}
       <aside className="hoc2-camera-help" aria-label="Controles da câmera"><strong>{hexaMode?"Visão estratégica":"Câmera"}</strong><span>Roda: zoom</span><span>WASD / setas: navegar</span><span>Shift + arrastar ou botão do meio: pan</span><span>Bordas: edge scrolling</span><small>Zoom {camera.camera.zoom.toFixed(2)}×</small></aside>
       {hexaMode?<div className="hoc2-mode-note" role="status">{hexaLabel}</div>:null}
     </section><footer className="hoc2-footer">Tehkné Solutions</footer>
