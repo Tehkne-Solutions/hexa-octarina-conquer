@@ -12,7 +12,6 @@ function scenario() {
     { q: 1, r: 0, terrain: "plain", ownerFactionId: "alliance", controllerFactionId: "alliance", armyId: "kael" },
     { q: 2, r: 0, terrain: "plain", ownerFactionId: "rubra", controllerFactionId: "rubra", armyId: "brakk", strategicNodeId: "fortress" },
     { q: 2, r: -1, terrain: "plain", ownerFactionId: "rubra", controllerFactionId: null },
-    { q: 1, r: -1, terrain: "plain", ownerFactionId: null, controllerFactionId: null },
     { q: 0, r: 0, terrain: "plain", ownerFactionId: "alliance", controllerFactionId: "alliance", octarinaNodeId: "oct-west" },
     { q: 0, r: 1, terrain: "plain", ownerFactionId: "alliance", controllerFactionId: "alliance", octarinaNodeId: "oct-core" },
     { q: 1, r: 1, terrain: "plain", ownerFactionId: "alliance", controllerFactionId: "alliance", octarinaNodeId: "oct-east" },
