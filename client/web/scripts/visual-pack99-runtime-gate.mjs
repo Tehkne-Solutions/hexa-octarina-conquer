@@ -34,27 +34,17 @@ async function runtimeContract(page) {
   });
 }
 
-async function launchCampaignMission(page, query) {
-  await page.goto(`${baseUrl}/?${query}`, { waitUntil: "networkidle", timeout: 120000 });
-  await page.waitForTimeout(3500);
-
-  const briefingButton = page.locator(".campaign-selected-panel .fantasy-button.primary");
-  await briefingButton.waitFor({ state: "visible", timeout: 30000 });
-  await briefingButton.click();
-  await page.locator("main.campaign-briefing-screen").waitFor({ state: "visible", timeout: 30000 });
-
-  const missionStart = page.locator(".briefing-start");
-  await missionStart.waitFor({ state: "visible", timeout: 30000 });
-  assert(await missionStart.isEnabled(), "PACK99_BATTLE_START_DISABLED");
-  await missionStart.click();
-
-  await page.locator("main.strategic-slice").waitFor({ state: "visible", timeout: 30000 });
+async function launchDeterministicCombatEvidence(page) {
+  await page.goto(`${baseUrl}/?qa=1&stable=1&screen=ui14-combat-selection`, { waitUntil: "networkidle", timeout: 120000 });
+  await page.locator("main.ui14-qa-combat").waitFor({ state: "visible", timeout: 30000 });
+  await page.locator(".living-battle-overlay").waitFor({ state: "visible", timeout: 30000 });
   await page.waitForFunction(() => {
-    const slice = document.querySelector("main.strategic-slice");
-    const board = document.querySelector(".strategic-board");
-    const nodes = document.querySelectorAll(".strategic-node");
-    const units = document.querySelectorAll(".strategic-roster-card");
-    return Boolean(slice && board && nodes.length >= 9 && units.length >= 4);
+    const combat = document.querySelector("main.ui14-qa-combat");
+    const overlay = document.querySelector(".living-battle-overlay");
+    const cards = document.querySelectorAll(".tcg-hand .living-card");
+    const fighters = document.querySelectorAll(".fighters .fighter");
+    const confirm = document.querySelector(".battle-actions .living-primary");
+    return Boolean(combat && overlay && cards.length >= 4 && fighters.length >= 2 && confirm);
   }, { timeout: 30000 });
 }
 
@@ -130,15 +120,19 @@ async function main() {
     assert(visibleTechnicalBadges.length === 0, `PACK99_PLAYER_TECH_BADGE_VISIBLE=${visibleTechnicalBadges.length}`);
     await page.screenshot({ path: new URL("home-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: true });
 
-    await launchCampaignMission(page, "qa=1&stable=1&screen=campaign");
-    await page.waitForFunction(() => Array.from(document.querySelectorAll("main.strategic-slice img"))
+    // The authoritative campaign now requires the server runtime. This visual-only
+    // gate runs against a static Vite preview, so use the deterministic combat QA
+    // scene for render evidence. Authoritative mission lifecycle remains covered by
+    // the Single Player Campaign workflow.
+    await launchDeterministicCombatEvidence(page);
+    await page.waitForFunction(() => Array.from(document.querySelectorAll("main.ui14-qa-combat img"))
       .some((image) => image.getAttribute("src")?.includes("/assets/runtime/")), { timeout: 30000 });
     await page.waitForTimeout(900);
 
     const battleSurface = await page.evaluate(() => {
-      const slice = document.querySelector("main.strategic-slice");
-      const board = document.querySelector(".strategic-board");
-      const runtimeImages = Array.from(document.querySelectorAll("main.strategic-slice img"))
+      const combat = document.querySelector("main.ui14-qa-combat");
+      const overlay = document.querySelector(".living-battle-overlay");
+      const runtimeImages = Array.from(document.querySelectorAll("main.ui14-qa-combat img"))
         .map((image) => image.getAttribute("src") ?? "")
         .filter((src) => src.includes("/assets/runtime/"));
       const rect = (node) => {
@@ -147,22 +141,24 @@ async function main() {
         return { width: Math.round(bounds.width), height: Math.round(bounds.height) };
       };
       return {
-        slice: rect(slice),
-        board: rect(board),
-        nodes: document.querySelectorAll(".strategic-node").length,
-        units: document.querySelectorAll(".strategic-roster-card").length,
+        combat: rect(combat),
+        overlay: rect(overlay),
+        cards: document.querySelectorAll(".tcg-hand .living-card").length,
+        fighters: document.querySelectorAll(".fighters .fighter").length,
+        selectedCards: document.querySelectorAll(".tcg-hand .living-card.selected").length,
         runtimeImages: runtimeImages.length,
       };
     });
 
-    assert(battleSurface.slice, "PACK99_BATTLE_SLICE_MISSING");
-    assert(battleSurface.board, "PACK99_BATTLE_BOARD_MISSING");
-    assert(battleSurface.nodes >= 9, `PACK99_BATTLE_NODES=${battleSurface.nodes}`);
-    assert(battleSurface.units >= 4, `PACK99_BATTLE_UNITS=${battleSurface.units}`);
-    assert(battleSurface.runtimeImages > 0, `PACK99_BATTLE_RUNTIME_IMAGES=${battleSurface.runtimeImages}`);
+    assert(battleSurface.combat, "PACK99_COMBAT_SCENE_MISSING");
+    assert(battleSurface.overlay, "PACK99_COMBAT_OVERLAY_MISSING");
+    assert(battleSurface.cards >= 4, `PACK99_COMBAT_CARDS=${battleSurface.cards}`);
+    assert(battleSurface.fighters >= 2, `PACK99_COMBAT_FIGHTERS=${battleSurface.fighters}`);
+    assert(battleSurface.selectedCards >= 1, `PACK99_COMBAT_SELECTED=${battleSurface.selectedCards}`);
+    assert(battleSurface.runtimeImages > 0, `PACK99_COMBAT_RUNTIME_IMAGES=${battleSurface.runtimeImages}`);
     assert(runtimeFailures.length === 0, `PACK99_RUNTIME_HTTP_FAILURES=${runtimeFailures.join(" | ")}`);
 
-    await page.screenshot({ path: new URL("battle-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: false });
+    await page.screenshot({ path: new URL("combat-player-facing-pack99-1366x768.png", outputDir).pathname, fullPage: false });
 
     const manifest = [
       "Hexa Octarina Conquer — PACK 99 Visual Runtime Gate",
@@ -173,19 +169,20 @@ async function main() {
       `hero Kael: ${heroArt.kael.marker}`,
       `hero Lyra: ${heroArt.lyra.marker}`,
       "player-facing technical badge: hidden",
-      `battle strategic nodes: ${battleSurface.nodes}`,
-      `battle roster units: ${battleSurface.units}`,
-      `battle runtime images: ${battleSurface.runtimeImages}`,
-      `battle slice: ${battleSurface.slice.width}x${battleSurface.slice.height}`,
-      `battle board: ${battleSurface.board.width}x${battleSurface.board.height}`,
-      "playthrough authority: META 08 Playable Acceptance",
-      "visual gate scope: canonical assets + player-facing render evidence",
+      `combat cards: ${battleSurface.cards}`,
+      `combat selected cards: ${battleSurface.selectedCards}`,
+      `combat fighters: ${battleSurface.fighters}`,
+      `combat runtime images: ${battleSurface.runtimeImages}`,
+      `combat scene: ${battleSurface.combat.width}x${battleSurface.combat.height}`,
+      `combat overlay: ${battleSurface.overlay.width}x${battleSurface.overlay.height}`,
+      "functional campaign authority: Single Player Campaign workflow",
+      "visual gate scope: canonical assets + deterministic player-facing combat render evidence",
       "Tehkné Solutions",
       "",
     ].join("\n");
     await writeFile(new URL("manifest.txt", outputDir), manifest, "utf8");
 
-    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount} battleNodes=${battleSurface.nodes} battleRuntimeImages=${battleSurface.runtimeImages}`);
+    console.log(`PACK99_VISUAL_GATE=PASS canonical=${runtime.canonicalAssetCount} materialized=${runtime.materializedFileCount} combatCards=${battleSurface.cards} combatRuntimeImages=${battleSurface.runtimeImages}`);
   } finally {
     await browser.close();
   }
