@@ -33,7 +33,9 @@
 }
 
 .hoc2-army.owner-rubra .hoc2-army-art {
-  transform: scale(1.58);
+  transform-box: fill-box;
+  transform-origin: 50% 88%;
+  transform: scale(5.2);
   filter:
     grayscale(1)
     invert(.86)
@@ -64,10 +66,12 @@
 }
 
 .hoc2-combatant.is-rubra .hoc2-portrait-image {
+  width: 100% !important;
+  height: 100% !important;
   object-fit: cover !important;
-  object-position: 50% 44% !important;
-  transform: scale(1.28);
-  transform-origin: center;
+  object-position: 50% 90% !important;
+  transform: scale(6.4);
+  transform-origin: 50% 90%;
   mix-blend-mode: normal;
   background: #20160f;
   filter:
