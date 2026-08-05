@@ -16,6 +16,9 @@ export type Hoc2Hex = {
 
 export type StrategicNodeView = { id: string; q: number; r: number; kind: string; owner?: "alliance" | "rubra" | "neutral"; state?: "active" | "broken" | "contested" };
 export type StrategicEdgeView = { a: string; b: string; state?: "connected" | "broken" | "blocked" | "contested" };
+export type OctarinaNodeView = { id: string; q: number; r: number; kind: "source" | "conductor" | "core"; owner?: "alliance" | "rubra" | "neutral"; state?: "active" | "contested" | "unstable" | "disabled"; charge?: number };
+export type OctarinaEdgeView = { a: string; b: string; state?: "connected" | "broken" | "contested" | "disabled" };
+export type OctarinaFormationView = { coreId: string; slots: number; maxSlots: number; flow: number; resonance: boolean };
 
 const SQRT3 = Math.sqrt(3);
 function hexCenter(q: number, r: number, size: number) { return { x: size * SQRT3 * (q + r / 2), y: size * 1.5 * r }; }
@@ -34,12 +37,20 @@ function InfluenceMark({ hex }: { hex: Hoc2Hex }) {
   return <g className={`hoc2-influence-mark influence-${dominant} status-${hex.goStatus ?? "stable"}`}>{intensity > 0 ? <circle r={18 + Math.min(intensity, 4) * 5} className="hoc2-influence-halo" /> : null}<text y="-4" textAnchor="middle" className="hoc2-influence-value">{alliance}:{rubra}</text>{hex.libertyCount !== undefined ? <text y="13" textAnchor="middle" className="hoc2-liberty-value">L {hex.libertyCount}</text> : null}</g>;
 }
 
-export function LivingMap({ hexes, hexaMode = false, hexaFilter = "domain", networkNodes = [], networkEdges = [] }: {
-  hexes: Hoc2Hex[]; hexaMode?: boolean; hexaFilter?: HexaFilter; networkNodes?: StrategicNodeView[]; networkEdges?: StrategicEdgeView[];
+export function LivingMap({ hexes, hexaMode = false, hexaFilter = "domain", networkNodes = [], networkEdges = [], octarinaNodes = [], octarinaEdges = [], octarinaFormation }: {
+  hexes: Hoc2Hex[];
+  hexaMode?: boolean;
+  hexaFilter?: HexaFilter;
+  networkNodes?: StrategicNodeView[];
+  networkEdges?: StrategicEdgeView[];
+  octarinaNodes?: OctarinaNodeView[];
+  octarinaEdges?: OctarinaEdgeView[];
+  octarinaFormation?: OctarinaFormationView;
 }) {
   const size = 58;
   const geometry = useMemo(() => hexes.map((hex) => ({ hex, ...hexCenter(hex.q, hex.r, size) })), [hexes]);
   const nodeGeometry = useMemo(() => new Map(networkNodes.map((node) => [node.id, { node, ...hexCenter(node.q, node.r, size) }])), [networkNodes]);
+  const octGeometry = useMemo(() => new Map(octarinaNodes.map((node) => [node.id, { node, ...hexCenter(node.q, node.r, size) }])), [octarinaNodes]);
   const minX = Math.min(...geometry.map((item) => item.x)) - 100, maxX = Math.max(...geometry.map((item) => item.x)) + 100;
   const minY = Math.min(...geometry.map((item) => item.y)) - 100, maxY = Math.max(...geometry.map((item) => item.y)) + 100;
   return <svg className={`hoc2-living-map${hexaMode ? " is-hexa" : ""}`} data-hexa-filter={hexaFilter} viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`} role="img" aria-label={hexaMode ? "Mapa estratégico em Modo Hexa" : "Mapa vivo experimental do HOC2"}>
@@ -47,7 +58,15 @@ export function LivingMap({ hexes, hexaMode = false, hexaFilter = "domain", netw
     <rect x={minX} y={minY} width={maxX - minX} height={maxY - minY} fill="url(#hoc2-ground)" />
     <g className="hoc2-world-layer">{geometry.map(({ hex, x, y }) => <g key={`${hex.q},${hex.r}`} transform={`translate(${x} ${y})`}><polygon points={hexPoints(0, 0, size - 1.5)} className={`hoc2-terrain hoc2-terrain-${hex.terrain}`} /><polygon points={hexPoints(0, 0, size - 5)} className="hoc2-terrain-inset" /></g>)}</g>
     <g className="hoc2-road-layer">{geometry.filter((item) => item.hex.terrain === "road").map(({ hex, x, y }) => <path key={`road-${hex.q},${hex.r}`} d={`M ${x - 42} ${y + 18} Q ${x} ${y - 8} ${x + 42} ${y - 18}`} className="hoc2-road" />)}</g>
+
     {hexaMode && hexaFilter === "connections" ? <g className="hoc2-network-layer">{networkEdges.map((edge) => { const a=nodeGeometry.get(edge.a), b=nodeGeometry.get(edge.b); if(!a||!b) return null; return <line key={`${edge.a}-${edge.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`hoc2-network-edge state-${edge.state ?? "connected"}`} />; })}{[...nodeGeometry.values()].map(({node,x,y}) => <g key={node.id} transform={`translate(${x} ${y})`} className={`hoc2-network-node owner-${node.owner ?? "neutral"} state-${node.state ?? "active"}`}><circle r="13"/><text y="4" textAnchor="middle">●</text><text y="28" textAnchor="middle" className="hoc2-network-label">{node.kind}</text></g>)}</g> : null}
+
+    {hexaMode && hexaFilter === "octarina" ? <g className="hoc2-octarina-layer">
+      {octarinaEdges.map((edge) => { const a=octGeometry.get(edge.a), b=octGeometry.get(edge.b); if(!a||!b) return null; return <line key={`${edge.a}-${edge.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`hoc2-octarina-edge state-${edge.state ?? "connected"}`} />; })}
+      {[...octGeometry.values()].map(({node,x,y}) => <g key={node.id} transform={`translate(${x} ${y})`} className={`hoc2-octarina-node kind-${node.kind} owner-${node.owner ?? "neutral"} state-${node.state ?? "active"}`}><circle r={node.kind === "core" ? 19 : 14} className="hoc2-octarina-node-ring"/><text y="5" textAnchor="middle" className="hoc2-octarina-glyph">✦</text><text y="31" textAnchor="middle" className="hoc2-octarina-label">{node.kind}{node.charge ? ` · ${node.charge}` : ""}</text></g>)}
+      {octarinaFormation && octGeometry.get(octarinaFormation.coreId) ? (() => { const core = octGeometry.get(octarinaFormation.coreId)!; return <g transform={`translate(${core.x} ${core.y})`} className={`hoc2-formation-status${octarinaFormation.resonance ? " is-active" : ""}`}><circle r="38" className="hoc2-formation-ring"/><text y="-46" textAnchor="middle">HEXA {octarinaFormation.slots}/{octarinaFormation.maxSlots}</text><text y="52" textAnchor="middle">FLOW {octarinaFormation.flow}</text></g>; })() : null}
+    </g> : null}
+
     {hexaMode ? <g className={`hoc2-hexa-layer hoc2-hexa-${hexaFilter}`}>{geometry.map(({ hex, x, y }) => <g key={`hexa-${hex.q},${hex.r}`} transform={`translate(${x} ${y})`} className={`hoc2-hexa-cell owner-${hex.owner ?? "neutral"}`}>{hexaFilter === "domain" ? <polygon points={hexPoints(0, 0, size - 3)} className="hoc2-domain-fill" /> : null}{hexaFilter === "influence" ? <InfluenceMark hex={hex} /> : null}<polygon points={hexPoints(0, 0, size - 2)} className="hoc2-grid-outline" /><text y={hexaFilter === "influence" ? 34 : 5} textAnchor="middle" className="hoc2-coordinate">{hex.q},{hex.r}</text></g>)}</g> : null}
     <g className="hoc2-landmark-layer" filter="url(#hoc2-soft-shadow)">{geometry.map(({ hex, x, y }) => <Landmark key={`landmark-${hex.q},${hex.r}`} hex={hex} x={x} y={y} />)}</g>
   </svg>;
