@@ -1,3 +1,5 @@
+import { buildHoc2HealthSummary, type Hoc2HealthSummary } from "./hoc2Health";
+
 export type Hoc2TelemetryEventName =
   | "camera.command"
   | "camera.applied"
@@ -41,7 +43,10 @@ export type Hoc2TelemetryEvent = {
 
 const TELEMETRY_LIMIT = 300;
 
-type TelemetryWindow = typeof window & { __HOC2_TELEMETRY__?: Hoc2TelemetryEvent[] };
+type TelemetryWindow = typeof window & {
+  __HOC2_TELEMETRY__?: Hoc2TelemetryEvent[];
+  __HOC2_HEALTH__?: Hoc2HealthSummary;
+};
 
 export function emitHoc2Telemetry(payload: Omit<Hoc2TelemetryEvent, "at">) {
   const event: Hoc2TelemetryEvent = { at: Date.now(), ...payload };
@@ -50,5 +55,7 @@ export function emitHoc2Telemetry(payload: Omit<Hoc2TelemetryEvent, "at">) {
   buffer.push(event);
   if (buffer.length > TELEMETRY_LIMIT) buffer.splice(0, buffer.length - TELEMETRY_LIMIT);
   telemetryWindow.__HOC2_TELEMETRY__ = buffer;
+  telemetryWindow.__HOC2_HEALTH__ = buildHoc2HealthSummary(buffer);
   window.dispatchEvent(new CustomEvent("hoc2:telemetry", { detail: event }));
+  window.dispatchEvent(new CustomEvent("hoc2:health", { detail: telemetryWindow.__HOC2_HEALTH__ }));
 }
