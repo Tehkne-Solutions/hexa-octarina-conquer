@@ -25,14 +25,16 @@ try {
 
   // Camera: keyboard pan + zoom must alter the actual camera transform.
   const camera = page.locator(".hoc2-map-camera");
+  const viewport = page.locator(".hoc2-map-viewport");
   const transform0 = await camera.getAttribute("style");
-  await page.locator(".hoc2-map-viewport").focus();
+  const box0 = await viewport.boundingBox();
+  if (!box0) throw new Error("PLAYTEST01_MAP_VIEWPORT_MISSING");
+  await page.mouse.click(box0.x + box0.width / 2, box0.y + box0.height / 2);
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(120);
   const transform1 = await camera.getAttribute("style");
   assert(transform1 !== transform0, "PLAYTEST01_CAMERA_PAN_DID_NOT_CHANGE");
 
-  const viewport = page.locator(".hoc2-map-viewport");
   const box = await viewport.boundingBox();
   if (!box) throw new Error("PLAYTEST01_MAP_VIEWPORT_MISSING");
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
