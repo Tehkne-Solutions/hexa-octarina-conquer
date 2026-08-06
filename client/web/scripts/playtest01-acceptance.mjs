@@ -20,10 +20,14 @@ function assert(condition, code) {
   if (!condition) throw new Error(code);
 }
 
+async function telemetry() {
+  return page.evaluate(() => window.__HOC2_TELEMETRY__ ?? []);
+}
+
 try {
   await gotoCandidate();
 
-  // Camera: keyboard pan + zoom must alter the actual camera transform.
+  // Camera: a keyboard command must be both observed and applied immediately.
   const camera = page.locator(".hoc2-map-camera");
   const viewport = page.locator(".hoc2-map-viewport");
   const transform0 = await camera.getAttribute("style");
@@ -35,6 +39,11 @@ try {
   const transform1 = await camera.getAttribute("style");
   assert(transform1 !== transform0, "PLAYTEST01_CAMERA_PAN_DID_NOT_CHANGE");
 
+  const keyboardTelemetry = await telemetry();
+  assert(keyboardTelemetry.some((event) => event.event === "camera.command" && event.source === "keyboard" && event.input === "arrowright"), "PLAYTEST01_CAMERA_COMMAND_NOT_OBSERVED");
+  assert(keyboardTelemetry.some((event) => event.event === "camera.applied" && event.source === "keyboard" && event.input === "arrowright"), "PLAYTEST01_CAMERA_COMMAND_NOT_APPLIED");
+
+  // Wheel zoom must change transform and emit a zoom observation.
   const box = await viewport.boundingBox();
   if (!box) throw new Error("PLAYTEST01_MAP_VIEWPORT_MISSING");
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -42,7 +51,10 @@ try {
   await page.waitForTimeout(120);
   const transform2 = await camera.getAttribute("style");
   assert(transform2 !== transform1, "PLAYTEST01_CAMERA_ZOOM_DID_NOT_CHANGE");
-  console.log("PLAYTEST01_CAMERA=PASS");
+  const zoomTelemetry = await telemetry();
+  assert(zoomTelemetry.some((event) => event.event === "camera.command" && event.source === "wheel"), "PLAYTEST01_CAMERA_ZOOM_COMMAND_NOT_OBSERVED");
+  assert(zoomTelemetry.some((event) => event.event === "camera.zoom" && event.source === "wheel"), "PLAYTEST01_CAMERA_ZOOM_NOT_APPLIED");
+  console.log(`PLAYTEST01_CAMERA=PASS telemetry=${zoomTelemetry.length}`);
 
   // Filters: each tactical lens must replace the previous one and expose its own label.
   await page.getByRole("button", { name: "Modo Hexa" }).click();
@@ -95,7 +107,7 @@ try {
   assert((await captureBanner.count()) === 0, "PLAYTEST01_RETREAT_SYNTHESIZED_CAPTURE");
   console.log("PLAYTEST01_RETREAT=PASS");
 
-  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 filters=4 sequences=2 victory=1 retreat=1");
+  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=1 filters=4 sequences=2 victory=1 retreat=1");
 } finally {
   await browser.close();
 }
