@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Materialize PACK 99 full runtime
+      - name: Materialize and verify PACK 99 full runtime
         run: |
           set -euo pipefail
           runtime_name="hoc-pack99-web-full.zip"
@@ -78,46 +78,94 @@ jobs:
       - name: Build production HOC2 candidate
         run: npm run build
 
-      - name: Assemble portable package
+      - name: Assemble lightweight bootstrap package
         run: |
           set -euo pipefail
           rm -rf portable
           mkdir -p portable/HOC2-PLAYTEST-01
           cp -a dist/. portable/HOC2-PLAYTEST-01/
+          rm -rf portable/HOC2-PLAYTEST-01/assets/runtime
+
           cat > portable/HOC2-PLAYTEST-01/INICIAR-HOC2.cmd <<'CMD'
           @echo off
           cd /d "%~dp0"
-          where py >nul 2>nul && (start "" http://127.0.0.1:4173/hoc2.html & py -m http.server 4173 & exit /b)
-          where python >nul 2>nul && (start "" http://127.0.0.1:4173/hoc2.html & python -m http.server 4173 & exit /b)
-          echo Python 3 nao encontrado. Instale Python ou sirva esta pasta com qualquer servidor HTTP local.
-          pause
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0INICIAR-HOC2.ps1"
+          if errorlevel 1 pause
           CMD
+
           cat > portable/HOC2-PLAYTEST-01/INICIAR-HOC2.ps1 <<'PS1'
+          $ErrorActionPreference = 'Stop'
           Set-Location $PSScriptRoot
-          Start-Process "http://127.0.0.1:4173/hoc2.html"
+
+          $RuntimeDir = Join-Path $PSScriptRoot 'assets\runtime'
+          $InstallMarker = Join-Path $RuntimeDir 'runtime-install.json'
+          $ReleaseBase = 'https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2'
+          $RuntimeName = 'hoc-pack99-web-full.zip'
+          $ChecksumName = 'hoc-pack99-web-full.zip.sha256'
+
+          if (-not (Test-Path $InstallMarker)) {
+            Write-Host 'HOC2 PLAYTEST 01 - preparando PACK 99 na primeira execucao...'
+            $TempRoot = Join-Path $env:TEMP ('hoc2-playtest01-' + [guid]::NewGuid().ToString('N'))
+            New-Item -ItemType Directory -Force -Path $TempRoot | Out-Null
+            try {
+              $Archive = Join-Path $TempRoot $RuntimeName
+              $Checksum = Join-Path $TempRoot $ChecksumName
+              Invoke-WebRequest -UseBasicParsing "$ReleaseBase/$RuntimeName" -OutFile $Archive
+              Invoke-WebRequest -UseBasicParsing "$ReleaseBase/$ChecksumName" -OutFile $Checksum
+
+              $Expected = ((Get-Content $Checksum -Raw).Trim() -split '\s+')[0].ToLowerInvariant()
+              $Actual = (Get-FileHash -Algorithm SHA256 $Archive).Hash.ToLowerInvariant()
+              if ($Expected -ne $Actual) { throw "PACK99 checksum invalido: esperado=$Expected atual=$Actual" }
+
+              $Extract = Join-Path $TempRoot 'extract'
+              Expand-Archive -LiteralPath $Archive -DestinationPath $Extract -Force
+              $Marker = Get-ChildItem -Path $Extract -Recurse -File -Filter 'runtime-install.json' | Select-Object -First 1
+              if (-not $Marker) { throw 'PACK99 runtime-install.json nao encontrado no pacote.' }
+
+              if (Test-Path $RuntimeDir) { Remove-Item $RuntimeDir -Recurse -Force }
+              New-Item -ItemType Directory -Force -Path $RuntimeDir | Out-Null
+              Copy-Item -Path (Join-Path $Marker.Directory.FullName '*') -Destination $RuntimeDir -Recurse -Force
+              if (-not (Test-Path $InstallMarker)) { throw 'PACK99 nao foi materializado corretamente.' }
+              Write-Host 'PACK99_RUNTIME=PASS'
+            }
+            finally {
+              Remove-Item $TempRoot -Recurse -Force -ErrorAction SilentlyContinue
+            }
+          } else {
+            Write-Host 'PACK99_RUNTIME=READY'
+          }
+
+          $Url = 'http://127.0.0.1:4173/hoc2.html'
+          Start-Process $Url
           if (Get-Command py -ErrorAction SilentlyContinue) { py -m http.server 4173; exit }
           if (Get-Command python -ErrorAction SilentlyContinue) { python -m http.server 4173; exit }
-          Write-Host "Python 3 nao encontrado. Sirva esta pasta com qualquer servidor HTTP local."
+          throw 'Python 3 nao encontrado. Instale Python 3 para iniciar o servidor local do playtest.'
           PS1
+
           cat > portable/HOC2-PLAYTEST-01/LEIA-ME.txt <<'TXT'
           HOC2 PLAYTEST 01 — Tehkné Solutions
 
           1. Extraia o ZIP completo.
           2. Execute INICIAR-HOC2.cmd no Windows.
-          3. O navegador abrira http://127.0.0.1:4173/hoc2.html
-          4. Teste o fluxo Living Map -> Hexa -> Movimento -> Card Combat -> retorno ao mapa.
+          3. Na primeira execucao o launcher baixa e valida o PACK 99 oficial (~500 MB).
+          4. Depois o navegador abre http://127.0.0.1:4173/hoc2.html
+          5. Nas proximas execucoes o PACK 99 local e reutilizado.
+          6. Teste Living Map -> Hexa -> Movimento -> Card Combat -> retorno ao mapa.
 
-          Observacao: Brakk usa fallback tatico temporario; a arte definitiva esta registrada como divida de producao no Issue #319.
+          Requisito local: Python 3 para o pequeno servidor HTTP.
+          Brakk usa fallback tatico temporario; a arte definitiva esta no Issue #319.
           TXT
-          (cd portable && zip -qr ../HOC2-PLAYTEST-01-WEB.zip HOC2-PLAYTEST-01)
-          test -f HOC2-PLAYTEST-01-WEB.zip
-          unzip -l HOC2-PLAYTEST-01-WEB.zip | grep -q 'hoc2.html'
-          echo "HOC2_PLAYTEST01_PORTABLE=PASS"
 
-      - name: Upload portable HOC2 package
+          (cd portable && zip -qr ../HOC2-PLAYTEST-01-WEB-BOOTSTRAP.zip HOC2-PLAYTEST-01)
+          test -f HOC2-PLAYTEST-01-WEB-BOOTSTRAP.zip
+          unzip -l HOC2-PLAYTEST-01-WEB-BOOTSTRAP.zip | grep -q 'hoc2.html'
+          test "$(stat -c%s HOC2-PLAYTEST-01-WEB-BOOTSTRAP.zip)" -lt 100000000
+          echo "HOC2_PLAYTEST01_BOOTSTRAP=PASS"
+
+      - name: Upload lightweight HOC2 bootstrap package
         uses: actions/upload-artifact@v4
         with:
-          name: HOC2-PLAYTEST-01-WEB
-          path: client/web/HOC2-PLAYTEST-01-WEB.zip
+          name: HOC2-PLAYTEST-01-WEB-BOOTSTRAP
+          path: client/web/HOC2-PLAYTEST-01-WEB-BOOTSTRAP.zip
           if-no-files-found: error
           retention-days: 30
