@@ -30,6 +30,30 @@ async function assertCombatExit(outcome) {
   assert(events.some((event) => event.event === "combat.exit.applied" && event.outcome === outcome), `PLAYTEST01_COMBAT_EXIT_${outcome.toUpperCase()}_NOT_APPLIED`);
 }
 
+function firstIndex(events, predicate) {
+  return events.findIndex(predicate);
+}
+
+async function assertJourneyTimeline(outcome) {
+  const events = await telemetry();
+  const modeIndex = firstIndex(events, (event) => event.event === "hexa.mode" && event.input === "on");
+  const movementFilterIndex = firstIndex(events, (event) => event.event === "hexa.filter" && event.filter === "movement");
+  const contactIndex = firstIndex(events, (event) => event.event === "movement.contact" && event.attacker === "kael" && event.defender === "brakk");
+  const combatOpenIndex = firstIndex(events, (event) => event.event === "combat.open" && event.attacker === "kael" && event.defender === "brakk");
+  const exitRequestedIndex = firstIndex(events, (event) => event.event === "combat.exit.requested" && event.outcome === outcome);
+  const exitAppliedIndex = firstIndex(events, (event) => event.event === "combat.exit.applied" && event.outcome === outcome);
+  const snapshotIndex = firstIndex(events, (event) => event.event === "strategic.snapshot.rendered" && event.outcome === outcome);
+
+  assert(modeIndex >= 0, "PLAYTEST01_TIMELINE_HEXA_MODE_MISSING");
+  assert(movementFilterIndex > modeIndex, "PLAYTEST01_TIMELINE_MOVEMENT_FILTER_ORDER_INVALID");
+  assert(contactIndex > movementFilterIndex, "PLAYTEST01_TIMELINE_CONTACT_ORDER_INVALID");
+  assert(combatOpenIndex > contactIndex, "PLAYTEST01_TIMELINE_COMBAT_OPEN_ORDER_INVALID");
+  assert(exitRequestedIndex > combatOpenIndex, "PLAYTEST01_TIMELINE_EXIT_REQUEST_ORDER_INVALID");
+  assert(exitAppliedIndex > exitRequestedIndex, "PLAYTEST01_TIMELINE_EXIT_APPLIED_ORDER_INVALID");
+  assert(snapshotIndex > exitAppliedIndex, "PLAYTEST01_TIMELINE_SNAPSHOT_ORDER_INVALID");
+  return { events, modeIndex, movementFilterIndex, contactIndex, combatOpenIndex, exitRequestedIndex, exitAppliedIndex, snapshotIndex };
+}
+
 try {
   await gotoCandidate();
 
@@ -74,7 +98,11 @@ try {
     await page.getByRole("button", { name: button }).click();
     await page.getByText(label).waitFor();
   }
-  console.log("PLAYTEST01_FILTERS=PASS");
+  const filterTelemetry = await telemetry();
+  for (const filter of ["influence", "connections", "octarina", "movement"]) {
+    assert(filterTelemetry.some((event) => event.event === "hexa.filter" && event.filter === filter), `PLAYTEST01_FILTER_TELEMETRY_${filter.toUpperCase()}_MISSING`);
+  }
+  console.log("PLAYTEST01_FILTERS=PASS telemetry=4");
 
   // Sequence A: canonical combo.
   await page.getByRole("button", { name: "INICIAR CONFRONTO" }).click();
@@ -103,7 +131,8 @@ try {
   await page.getByText("BRakk recuou").waitFor();
   await page.getByText("Strategic Hexa View").waitFor();
   await assertCombatExit("victory");
-  console.log("PLAYTEST01_VICTORY_RETURN=PASS telemetry=observed");
+  const victoryTimeline = await assertJourneyTimeline("victory");
+  console.log(`PLAYTEST01_VICTORY_RETURN=PASS timeline=${victoryTimeline.snapshotIndex + 1}/${victoryTimeline.events.length}`);
 
   // Retreat path must preserve strategic state and not synthesize a capture.
   await gotoCandidate();
@@ -115,9 +144,10 @@ try {
   const captureBanner = page.getByText("HEX CAPTURADO");
   assert((await captureBanner.count()) === 0, "PLAYTEST01_RETREAT_SYNTHESIZED_CAPTURE");
   await assertCombatExit("retreat");
-  console.log("PLAYTEST01_RETREAT=PASS telemetry=observed");
+  const retreatTimeline = await assertJourneyTimeline("retreat");
+  console.log(`PLAYTEST01_RETREAT=PASS timeline=${retreatTimeline.snapshotIndex + 1}/${retreatTimeline.events.length}`);
 
-  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=2 filters=4 sequences=2 victory=1 retreat=1");
+  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=journey filters=4 sequences=2 victory=1 retreat=1");
 } finally {
   await browser.close();
 }

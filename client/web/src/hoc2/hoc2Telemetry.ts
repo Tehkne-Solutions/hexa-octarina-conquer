@@ -5,6 +5,7 @@ export type Hoc2TelemetryEventName =
   | "camera.reset"
   | "hexa.mode"
   | "hexa.filter"
+  | "movement.contact"
   | "combat.open"
   | "combat.exit.requested"
   | "combat.exit.applied"
@@ -20,6 +21,10 @@ export type Hoc2TelemetryEvent = {
   dx?: number;
   dy?: number;
   zoom?: number;
+  q?: number;
+  r?: number;
+  attacker?: string;
+  defender?: string;
 };
 
 const TELEMETRY_LIMIT = 300;
