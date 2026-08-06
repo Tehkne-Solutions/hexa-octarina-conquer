@@ -1,0 +1,12 @@
+HOC2 PLAYTEST 01 — CURRENT CANDIDATE
+
+Purpose: force a clean portable-package run for the current HOC2 main candidate after the previous GitHub Actions queue interruption.
+
+Human QA route: hoc2.html?playtest=1
+Normal player route: hoc2.html
+Acceptance Gate #9: PASS
+Human Report isolation: PASS
+Health Summary: PASS, issues=0
+Known non-blocking debt: Brakk definitive art tracked separately.
+
+Tehkné Solutions
