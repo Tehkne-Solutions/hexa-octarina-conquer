@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CardCombatScreen, type CombatExit } from "./CardCombatScreen";
 import { EconomyOverlay } from "./EconomyOverlay";
 import { HexaOverlay, type HexaFilter } from "./HexaOverlay";
 import { LivingMap, type ArmyView, type Hoc2Hex, type MovementTargetView, type OctarinaEdgeView, type OctarinaNodeView, type StrategicEdgeView, type StrategicNodeView } from "./LivingMap";
 import { useHoc2Camera } from "./MapCamera";
+import { emitHoc2Telemetry } from "./hoc2Telemetry";
 import "./hoc2.css";
 
 const BASE_HEXES: Hoc2Hex[] = [
@@ -57,6 +58,30 @@ export function Hoc2Game() {
     : hexaFilter === "construction" ? "CONSTRUÇÃO · Posto Avançado, Estrada e Condutor em contexto"
     : "DOMÍNIO · Aliança, Rubra e território neutro";
 
+  useEffect(() => {
+    if (!battleOutcome) return;
+    emitHoc2Telemetry({ event:"strategic.snapshot.rendered", source:"hoc2-game", outcome:battleOutcome, filter:hexaFilter });
+  }, [battleOutcome, hexaFilter]);
+
+  function toggleHexaMode() {
+    setHexaMode((current) => {
+      const next = !current;
+      emitHoc2Telemetry({ event:"hexa.mode", source:"ui", input:next?"on":"off", filter:hexaFilter });
+      return next;
+    });
+  }
+
+  function selectHexaFilter(filter: HexaFilter) {
+    setHexaFilter(filter);
+    emitHoc2Telemetry({ event:"hexa.filter", source:"ui", filter });
+  }
+
+  function startCombat() {
+    emitHoc2Telemetry({ event:"movement.contact", source:"movement", q:4, r:0, attacker:"kael", defender:"brakk" });
+    emitHoc2Telemetry({ event:"combat.open", source:"movement", q:4, r:0, attacker:"kael", defender:"brakk" });
+    setCombatOpen(true);
+  }
+
   function closeCombat(outcome: CombatExit) {
     setCombatOpen(false);
     setBattleOutcome(outcome);
@@ -69,9 +94,9 @@ export function Hoc2Game() {
     <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-J</span><strong>{hexaMode?"Strategic Hexa View":"Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
     <section className="hoc2-map-viewport" {...camera.handlers}>
       <div className="hoc2-map-camera" style={{transform:camera.transform}}><LivingMap hexes={hexes} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} octarinaNodes={OCTARINA_NODES} octarinaEdges={OCTARINA_EDGES} octarinaFormation={{coreId:"oct-core",slots:3,maxSlots:6,flow:9,resonance:true}} armies={armies} movementTargets={hexaFilter==="movement"?movementTargets:[]} /></div>
-      <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={()=>setHexaMode(v=>!v)} onFilter={setHexaFilter}/>
+      <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={toggleHexaMode} onFilter={selectHexaFilter}/>
       {hexaMode?<EconomyOverlay filter={hexaFilter}/>:null}
-      {hexaMode&&hexaFilter==="movement"&&!battleOutcome?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em><button type="button" onClick={()=>setCombatOpen(true)}>INICIAR CONFRONTO</button></aside>:null}
+      {hexaMode&&hexaFilter==="movement"&&!battleOutcome?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em><button type="button" onClick={startCombat}>INICIAR CONFRONTO</button></aside>:null}
       {battleOutcome==="victory"?<aside className="hoc2-cascade-panel" role="status"><strong>CONSEQUÊNCIA ESTRATÉGICA</strong><span>HEX CAPTURADO</span><span>BRakk recuou</span><span>CADEIA RUBRA RECALCULADA</span><span>SUPPLY RECALCULADO</span><span>OCTARINA RECALCULADA</span><small>O servidor HOC2 aplica esta cascata antes de devolver o snapshot ao mapa.</small></aside>:null}
       {battleOutcome==="retreat"?<aside className="hoc2-cascade-panel" role="status"><strong>RETIRADA</strong><span>Kael preservou sua posição anterior.</span><small>Nenhuma captura territorial foi aplicada.</small></aside>:null}
       <aside className="hoc2-camera-help" aria-label="Controles da câmera"><strong>{hexaMode?"Visão estratégica":"Câmera"}</strong><span>Roda: zoom</span><span>WASD / setas: navegar</span><span>Shift + arrastar ou botão do meio: pan</span><span>Bordas: edge scrolling</span><small>Zoom {camera.camera.zoom.toFixed(2)}×</small></aside>
