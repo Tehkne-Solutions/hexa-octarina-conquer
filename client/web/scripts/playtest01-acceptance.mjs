@@ -24,6 +24,12 @@ async function telemetry() {
   return page.evaluate(() => window.__HOC2_TELEMETRY__ ?? []);
 }
 
+async function assertCombatExit(outcome) {
+  const events = await telemetry();
+  assert(events.some((event) => event.event === "combat.exit.requested" && event.outcome === outcome), `PLAYTEST01_COMBAT_EXIT_${outcome.toUpperCase()}_NOT_REQUESTED`);
+  assert(events.some((event) => event.event === "combat.exit.applied" && event.outcome === outcome), `PLAYTEST01_COMBAT_EXIT_${outcome.toUpperCase()}_NOT_APPLIED`);
+}
+
 try {
   await gotoCandidate();
 
@@ -89,25 +95,29 @@ try {
   await page.getByText(/sequência foi resolvida pelo contrato autoritativo/).waitFor();
   console.log("PLAYTEST01_SEQUENCE_B=PASS");
 
-  // Victory path must change strategic world and return to the same map.
+  // Victory path must change strategic world and return to the map, preserving the active Hexa view.
   await page.getByRole("button", { name: "APLICAR RESULTADO AO MAPA" }).click();
+  await page.locator(".hoc2-map-viewport").waitFor();
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await page.getByText("HEX CAPTURADO").waitFor();
   await page.getByText("BRakk recuou").waitFor();
-  await page.getByText("Living Map Sandbox").waitFor();
-  console.log("PLAYTEST01_VICTORY_RETURN=PASS");
+  await page.getByText("Strategic Hexa View").waitFor();
+  await assertCombatExit("victory");
+  console.log("PLAYTEST01_VICTORY_RETURN=PASS telemetry=observed");
 
   // Retreat path must preserve strategic state and not synthesize a capture.
   await gotoCandidate();
   await enterCombat();
   await page.getByRole("button", { name: /RETIRADA/ }).click();
+  await page.locator(".hoc2-map-viewport").waitFor();
   await page.getByText("RETIRADA", { exact: true }).waitFor();
   await page.getByText("Kael preservou sua posição anterior.").waitFor();
   const captureBanner = page.getByText("HEX CAPTURADO");
   assert((await captureBanner.count()) === 0, "PLAYTEST01_RETREAT_SYNTHESIZED_CAPTURE");
-  console.log("PLAYTEST01_RETREAT=PASS");
+  await assertCombatExit("retreat");
+  console.log("PLAYTEST01_RETREAT=PASS telemetry=observed");
 
-  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=1 filters=4 sequences=2 victory=1 retreat=1");
+  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=2 filters=4 sequences=2 victory=1 retreat=1");
 } finally {
   await browser.close();
 }
