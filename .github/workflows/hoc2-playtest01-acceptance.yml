@@ -97,6 +97,9 @@ jobs:
       - name: Run automated PLAYTEST 01 acceptance
         run: node scripts/playtest01-acceptance.mjs
 
+      - name: Run HOC2 session health summary
+        run: node scripts/playtest01-health-summary.mjs
+
       - name: Stop preview
         if: always()
         run: |
