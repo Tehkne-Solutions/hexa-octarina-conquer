@@ -51,13 +51,32 @@ async function assertJourneyTimeline(outcome) {
   assert(exitRequestedIndex > combatOpenIndex, "PLAYTEST01_TIMELINE_EXIT_REQUEST_ORDER_INVALID");
   assert(exitAppliedIndex > exitRequestedIndex, "PLAYTEST01_TIMELINE_EXIT_APPLIED_ORDER_INVALID");
   assert(snapshotIndex > exitAppliedIndex, "PLAYTEST01_TIMELINE_SNAPSHOT_ORDER_INVALID");
-  return { events, modeIndex, movementFilterIndex, contactIndex, combatOpenIndex, exitRequestedIndex, exitAppliedIndex, snapshotIndex };
+  return { events, snapshotIndex };
+}
+
+async function assertCombatDecisionTimeline(cards, { combo, energy, priorityOrder }) {
+  const events = await telemetry();
+  const sameCards = (event) => Array.isArray(event.cards) && event.cards.join(",") === cards.join(",");
+  const selectionIndex = firstIndex(events, (event) => event.event === "combat.card.selection" && sameCards(event));
+  const energyIndex = firstIndex(events, (event) => event.event === "combat.energy" && sameCards(event) && event.energy === energy);
+  const comboIndex = firstIndex(events, (event) => event.event === "combat.combo" && sameCards(event) && event.combo === combo);
+  const commitIndex = firstIndex(events, (event) => event.event === "combat.commit" && sameCards(event) && event.energy === energy && event.combo === combo);
+  const resolveIndex = firstIndex(events, (event) => event.event === "combat.resolve" && sameCards(event));
+  const resultIndex = firstIndex(events, (event) => event.event === "combat.result" && sameCards(event));
+  const commitEvent = events[commitIndex];
+
+  assert(selectionIndex >= 0, "PLAYTEST01_COMBAT_SELECTION_TELEMETRY_MISSING");
+  assert(energyIndex >= selectionIndex, "PLAYTEST01_COMBAT_ENERGY_TELEMETRY_ORDER_INVALID");
+  assert(comboIndex >= selectionIndex, "PLAYTEST01_COMBAT_COMBO_TELEMETRY_ORDER_INVALID");
+  assert(commitIndex > comboIndex, "PLAYTEST01_COMBAT_COMMIT_TELEMETRY_ORDER_INVALID");
+  assert(resolveIndex >= commitIndex, "PLAYTEST01_COMBAT_RESOLVE_TELEMETRY_ORDER_INVALID");
+  assert(resultIndex > resolveIndex, "PLAYTEST01_COMBAT_RESULT_TELEMETRY_ORDER_INVALID");
+  assert(Array.isArray(commitEvent?.priorityOrder) && commitEvent.priorityOrder.join(",") === priorityOrder.join(","), "PLAYTEST01_COMBAT_PRIORITY_ORDER_INVALID");
 }
 
 try {
   await gotoCandidate();
 
-  // Camera: a keyboard command must be both observed and applied immediately.
   const camera = page.locator(".hoc2-map-camera");
   const viewport = page.locator(".hoc2-map-viewport");
   const transform0 = await camera.getAttribute("style");
@@ -73,7 +92,6 @@ try {
   assert(keyboardTelemetry.some((event) => event.event === "camera.command" && event.source === "keyboard" && event.input === "arrowright"), "PLAYTEST01_CAMERA_COMMAND_NOT_OBSERVED");
   assert(keyboardTelemetry.some((event) => event.event === "camera.applied" && event.source === "keyboard" && event.input === "arrowright"), "PLAYTEST01_CAMERA_COMMAND_NOT_APPLIED");
 
-  // Wheel zoom must change transform and emit a zoom observation.
   const box = await viewport.boundingBox();
   if (!box) throw new Error("PLAYTEST01_MAP_VIEWPORT_MISSING");
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -86,7 +104,6 @@ try {
   assert(zoomTelemetry.some((event) => event.event === "camera.zoom" && event.source === "wheel"), "PLAYTEST01_CAMERA_ZOOM_NOT_APPLIED");
   console.log(`PLAYTEST01_CAMERA=PASS telemetry=${zoomTelemetry.length}`);
 
-  // Filters: each tactical lens must replace the previous one and expose its own label.
   await page.getByRole("button", { name: "Modo Hexa" }).click();
   const filters = [
     ["Influência", /INFLUÊNCIA · pressão Aliança:Rubra/],
@@ -104,7 +121,6 @@ try {
   }
   console.log("PLAYTEST01_FILTERS=PASS telemetry=4");
 
-  // Sequence A: canonical combo.
   await page.getByRole("button", { name: "INICIAR CONFRONTO" }).click();
   await page.getByRole("button", { name: /Feint/ }).click();
   await page.getByRole("button", { name: /Precise Strike/ }).click();
@@ -112,18 +128,20 @@ try {
   await page.getByRole("button", { name: "CONFIRMAR" }).click();
   await page.getByText("COMBAT RESULT").waitFor({ timeout: 3000 });
   await page.getByText(/Feint abriu a guarda de Brakk/).waitFor();
-  console.log("PLAYTEST01_SEQUENCE_A=PASS");
+  await assertCombatDecisionTimeline(["feint","precise-strike"], { combo:true, energy:4, priorityOrder:["feint","precise-strike"] });
+  console.log("PLAYTEST01_SEQUENCE_A=PASS telemetry=decision");
 
-  // Sequence B: deliberately different non-combo line must resolve independently.
   await page.getByRole("button", { name: "PRÓXIMA RODADA" }).click();
+  const resetEvents = await telemetry();
+  assert(resetEvents.some((event) => event.event === "combat.round.reset" && event.energy === 7), "PLAYTEST01_COMBAT_ROUND_RESET_TELEMETRY_MISSING");
   await page.getByRole("button", { name: /Shield Wall/ }).click();
   await page.getByRole("button", { name: /Arrow Volley/ }).click();
   await page.getByRole("button", { name: "CONFIRMAR" }).click();
   await page.getByText("COMBAT RESULT").waitFor({ timeout: 3000 });
   await page.getByText(/sequência foi resolvida pelo contrato autoritativo/).waitFor();
-  console.log("PLAYTEST01_SEQUENCE_B=PASS");
+  await assertCombatDecisionTimeline(["shield-wall","arrow-volley"], { combo:false, energy:2, priorityOrder:["shield-wall","arrow-volley"] });
+  console.log("PLAYTEST01_SEQUENCE_B=PASS telemetry=decision");
 
-  // Victory path must change strategic world and return to the map, preserving the active Hexa view.
   await page.getByRole("button", { name: "APLICAR RESULTADO AO MAPA" }).click();
   await page.locator(".hoc2-map-viewport").waitFor();
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
@@ -134,7 +152,6 @@ try {
   const victoryTimeline = await assertJourneyTimeline("victory");
   console.log(`PLAYTEST01_VICTORY_RETURN=PASS timeline=${victoryTimeline.snapshotIndex + 1}/${victoryTimeline.events.length}`);
 
-  // Retreat path must preserve strategic state and not synthesize a capture.
   await gotoCandidate();
   await enterCombat();
   await page.getByRole("button", { name: /RETIRADA/ }).click();
@@ -147,7 +164,7 @@ try {
   const retreatTimeline = await assertJourneyTimeline("retreat");
   console.log(`PLAYTEST01_RETREAT=PASS timeline=${retreatTimeline.snapshotIndex + 1}/${retreatTimeline.events.length}`);
 
-  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=journey filters=4 sequences=2 victory=1 retreat=1");
+  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=full-journey filters=4 sequences=2 victory=1 retreat=1");
 } finally {
   await browser.close();
 }

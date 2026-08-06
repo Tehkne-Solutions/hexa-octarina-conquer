@@ -7,6 +7,13 @@ export type Hoc2TelemetryEventName =
   | "hexa.filter"
   | "movement.contact"
   | "combat.open"
+  | "combat.card.selection"
+  | "combat.energy"
+  | "combat.combo"
+  | "combat.commit"
+  | "combat.resolve"
+  | "combat.result"
+  | "combat.round.reset"
   | "combat.exit.requested"
   | "combat.exit.applied"
   | "strategic.snapshot.rendered";
@@ -25,6 +32,11 @@ export type Hoc2TelemetryEvent = {
   r?: number;
   attacker?: string;
   defender?: string;
+  cards?: string[];
+  energy?: number;
+  combo?: boolean;
+  priorityOrder?: string[];
+  phase?: string;
 };
 
 const TELEMETRY_LIMIT = 300;

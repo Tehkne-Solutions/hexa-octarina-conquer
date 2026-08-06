@@ -15,6 +15,13 @@ const HAND: CombatCard[] = [
   { id:"octarina-guard", name:"Octarina Guard", type:"octarina", cost:3, priority:10, text:"7 de escudo e estado GUARDED." },
 ];
 
+function selectionState(cards: string[]) {
+  const spent = cards.reduce((sum,id)=>sum+(HAND.find(c=>c.id===id)?.cost??0),0);
+  const combo = cards.indexOf("feint") !== -1 && cards.indexOf("precise-strike") > cards.indexOf("feint");
+  const priorityOrder = [...cards].sort((a,b)=>(HAND.find(c=>c.id===b)?.priority??0)-(HAND.find(c=>c.id===a)?.priority??0));
+  return { energy: 7 - spent, combo, priorityOrder };
+}
+
 export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [phase, setPhase] = useState<"select"|"resolve"|"result">("select");
@@ -32,12 +39,31 @@ export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) =
 
   function toggle(id: string) {
     if (phase !== "select") return;
-    setSelected((current) => current.includes(id) ? current.filter((item)=>item!==id) : current.length < 3 ? [...current,id] : current);
+    setSelected((current) => {
+      const next = current.includes(id) ? current.filter((item)=>item!==id) : current.length < 3 ? [...current,id] : current;
+      if (next === current) return current;
+      const state = selectionState(next);
+      emitHoc2Telemetry({ event:"combat.card.selection", source:"card-combat", input:id, cards:next, energy:state.energy, combo:state.combo, phase:"select" });
+      emitHoc2Telemetry({ event:"combat.energy", source:"card-combat", cards:next, energy:state.energy, phase:"select" });
+      emitHoc2Telemetry({ event:"combat.combo", source:"card-combat", cards:next, combo:state.combo, phase:"select" });
+      return next;
+    });
   }
   function commit() {
     if (!selected.length || energy < 0) return;
+    const state = selectionState(selected);
+    emitHoc2Telemetry({ event:"combat.commit", source:"card-combat", cards:selected, energy:state.energy, combo:state.combo, priorityOrder:state.priorityOrder, phase:"resolve" });
+    emitHoc2Telemetry({ event:"combat.resolve", source:"card-combat", cards:selected, energy:state.energy, combo:state.combo, priorityOrder:state.priorityOrder, phase:"resolve" });
     setPhase("resolve");
-    window.setTimeout(() => setPhase("result"), 650);
+    window.setTimeout(() => {
+      emitHoc2Telemetry({ event:"combat.result", source:"card-combat", cards:selected, energy:state.energy, combo:state.combo, priorityOrder:state.priorityOrder, phase:"result" });
+      setPhase("result");
+    }, 650);
+  }
+  function resetRound() {
+    emitHoc2Telemetry({ event:"combat.round.reset", source:"card-combat", cards:[], energy:startingEnergy, combo:false, phase:"select" });
+    setPhase("select");
+    setSelected([]);
   }
   function exitCombat(outcome: CombatExit) {
     emitHoc2Telemetry({ event:"combat.exit.requested", source:"card-combat", outcome });
@@ -63,6 +89,6 @@ export function CardCombatScreen({ onClose }: { onClose: (outcome: CombatExit) =
       <div className="hoc2-selected-sequence"><strong>SEQUÊNCIA</strong>{selected.length ? selected.map((id,index)=><span key={id}>{index+1}. {HAND.find(c=>c.id===id)?.name}</span>) : <span>Selecione de 1 a 3 cartas</span>}{combo?<b>COMBO · OPENING STRIKE</b>:null}</div>
       <div className="hoc2-card-hand">{HAND.map((card)=><button type="button" key={card.id} onClick={()=>toggle(card.id)} className={`hoc2-combat-card type-${card.type}${selected.includes(card.id)?" is-selected":""}`}><span>{card.type}</span><strong>{card.name}</strong><small>{card.text}</small><footer><b>{card.cost} EN</b><i>P{card.priority}</i></footer></button>)}</div>
       <footer className="hoc2-combat-actions"><div><span>ENERGIA</span><strong>{Math.max(0,energy)} / {startingEnergy}</strong><small>Seleção simultânea · máximo 3 cartas</small></div><button type="button" className="secondary" onClick={()=>exitCombat("retreat")}>RETIRADA <small>disponível · 1 liberdade</small></button><button type="button" className="primary" disabled={!selected.length||energy<0} onClick={commit}>CONFIRMAR</button></footer>
-    </> : phase === "resolve" ? <div className="hoc2-combat-resolution"><strong>RESOLVENDO AÇÕES</strong><span>Prioridade → defesa → controle → ataque</span></div> : <div className="hoc2-combat-result"><strong>COMBAT RESULT</strong><p>{combo ? "Feint abriu a guarda de Brakk e Precise Strike recebeu bônus de combo." : "A sequência foi resolvida pelo contrato autoritativo do HOC2."}</p><button type="button" onClick={()=>{setPhase("select");setSelected([])}}>PRÓXIMA RODADA</button><button type="button" className="primary" onClick={()=>exitCombat("victory")}>APLICAR RESULTADO AO MAPA</button></div>}
+    </> : phase === "resolve" ? <div className="hoc2-combat-resolution"><strong>RESOLVENDO AÇÕES</strong><span>Prioridade → defesa → controle → ataque</span></div> : <div className="hoc2-combat-result"><strong>COMBAT RESULT</strong><p>{combo ? "Feint abriu a guarda de Brakk e Precise Strike recebeu bônus de combo." : "A sequência foi resolvida pelo contrato autoritativo do HOC2."}</p><button type="button" onClick={resetRound}>PRÓXIMA RODADA</button><button type="button" className="primary" onClick={()=>exitCombat("victory")}>APLICAR RESULTADO AO MAPA</button></div>}
   </section>;
 }
