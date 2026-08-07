@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const productionUrl = (process.env.HEXA_PRODUCTION_URL || "https://hexa-octarina-conquer.onrender.com").replace(/\/$/, "");
@@ -49,11 +49,31 @@ async function verifyRuntimeFiles() {
   return { canonical: assets.length, materialized: assets.length, version: manifest.version };
 }
 
+async function captureBlockedEvidence(page, error) {
+  const reason = error instanceof Error ? error.message : String(error);
+  const metadata = {
+    capturedAt: new Date().toISOString(),
+    productionUrl,
+    pageUrl: page.url(),
+    title: await page.title().catch(() => "unknown"),
+    reason,
+  };
+
+  await mkdir(outputDir, { recursive: true });
+  await page.screenshot({ path: path.join(outputDir, "00-render-blocked.png"), fullPage: false }).catch(() => undefined);
+  await writeFile(
+    path.join(outputDir, "00-render-blocked.json"),
+    `${JSON.stringify(metadata, null, 2)}\n`,
+    "utf8",
+  );
+}
+
 async function verifyRenderedHoc2() {
   await mkdir(outputDir, { recursive: true });
   const browser = await chromium.launch({ headless: true });
+  let page;
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+    page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
     const failedAssets = [];
     page.on("response", (response) => {
       if (response.status() >= 400 && response.url().includes("/assets/runtime/")) {
@@ -131,6 +151,9 @@ async function verifyRenderedHoc2() {
       worldHeight: Math.round(worldBox.height),
       sameCamera: true,
     };
+  } catch (error) {
+    if (page) await captureBlockedEvidence(page, error).catch(() => undefined);
+    throw error;
   } finally {
     await browser.close();
   }
