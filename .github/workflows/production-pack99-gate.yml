@@ -37,11 +37,11 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: client/web/package-lock.json
+          cache-dependency-path: client/web/package.json
 
       - name: Install Web dependencies
         working-directory: client/web
-        run: npm ci --no-audit --no-fund
+        run: npm install --no-audit --no-fund
 
       - name: Install Chromium
         working-directory: client/web
