@@ -136,12 +136,29 @@ async function verifyRenderedHoc2() {
   }
 }
 
+// Keep the final production acceptance explicitly fail-closed. This named contract is
+// consumed by the historical VS74 release gate and now covers the promoted HOC2 surface.
+function productionBlocked(runtime, rendered) {
+  return runtime.canonical !== 1037
+    || runtime.materialized !== 1037
+    || rendered.cellCount !== 64
+    || rendered.tileCount !== 64
+    || rendered.hexaGridCount !== 64
+    || rendered.sameCamera !== true
+    || rendered.worldWidth < 700
+    || rendered.worldHeight < 450
+    || !rendered.title.includes("HOC — Hexa Octarina Conquer · Fronteira Verde");
+}
+
 let lastError;
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
     console.log(`PRODUCTION_GATE_ATTEMPT=${attempt}/${attempts} url=${productionUrl}`);
     const runtime = await verifyRuntimeFiles();
     const rendered = await verifyRenderedHoc2();
+    if (productionBlocked(runtime, rendered)) {
+      throw new Error(`production blocked after verification: runtime=${JSON.stringify(runtime)} rendered=${JSON.stringify(rendered)}`);
+    }
     console.log(`PRODUCTION_GATE=PASS canonical=${runtime.canonical} materialized=${runtime.materialized} pack=${runtime.version} world=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=${rendered.cellCount} hexa=${rendered.hexaGridCount} camera=shared identity=HOC`);
     process.exit(0);
   } catch (error) {
