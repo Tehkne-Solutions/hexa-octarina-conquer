@@ -39,7 +39,12 @@ RUN set -eux; \
     node -e 'const fs=require("node:fs"); const root="/web/public/assets/runtime"; const required=["runtime-install.json","pack-manifest.json","registry/assets-runtime.json"]; for(const file of required){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_FILE_MISSING:"+file)} const install=JSON.parse(fs.readFileSync(root+"/runtime-install.json","utf8")); const manifest=JSON.parse(fs.readFileSync(root+"/pack-manifest.json","utf8")); const registry=JSON.parse(fs.readFileSync(root+"/registry/assets-runtime.json","utf8")); const assets=Array.isArray(registry.assets)?registry.assets:[]; const unresolved=Array.isArray(registry.unresolved)?registry.unresolved:[]; const requiredMission=["packages/PACK_07_HERO_ROSTER/guardian/directions/HERO_GUARDIAN_01_IDLE_BASE_SW_01.png","packages/PACK_07_HERO_ROSTER/ranger/directions/HERO_RANGER_01_IDLE_BASE_NE_01.png","packages/PACK_08_BASIC_UNITS/recruit/directions/UNIT_RECRUIT_01_IDLE_BASE_NW_01.png","packages/PACK_09_CHAMPIONS_ADVANCED/berserker/directions/CHAMP_BERSERKER_01_IDLE_BASE_NW_01.png"]; if(install.packId!=="HOC_PACK_99_FINAL_RUNTIME"||install.profile!=="full"||install.assetCount!==1037||install.unresolvedReferences!==0||registry.packId!==install.packId||registry.profile!=="full"||registry.assetCount!==1037||assets.length!==1037||unresolved.length!==0||!manifest.version){throw new Error("PACK99_FULL_RUNTIME_INVALID")}; for(const file of requiredMission){if(!fs.existsSync(root+"/"+file)) throw new Error("PACK99_REQUIRED_MISSION_FILE_MISSING:"+file)} console.log(`PACK99_PRODUCTION_RUNTIME=full canonical=${assets.length} materialized=${assets.length} mission=${requiredMission.length}`);'; \
     rm -f "/tmp/${runtime_name}" "/tmp/${checksum_name}" /tmp/pack99-production-release.json
 
-RUN npm run build
+RUN npm run build \
+    && test -f /web/dist/hoc2.html \
+    && cp /web/dist/hoc2.html /web/dist/index.html \
+    && test -f /web/dist/assets/runtime/runtime-install.json \
+    && echo "HOC2_DOCKER_ROOT=PASS source=hoc2.html target=index.html" \
+    && echo "HOC2_DOCKER_PACK99=PASS"
 
 FROM node:24-bookworm-slim
 
