@@ -29,15 +29,28 @@ async function assertRuntimeAssetsHealthy(label) {
   }
 }
 
+async function assertAuthoredWorldVisible(label) {
+  const world = page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"]');
+  await world.waitFor({ state: "visible", timeout: 10000 });
+  const authored = page.locator(".hoc2-authored-world");
+  await authored.waitFor({ state: "visible", timeout: 10000 });
+  const box = await world.boundingBox();
+  if (!box || box.width < 700 || box.height < 450) {
+    throw new Error(`HOC2_AUTHORED_WORLD_TOO_SMALL:${label}:${JSON.stringify(box)}`);
+  }
+}
+
 async function capture(name) {
   await assertRuntimeAssetsHealthy(name);
+  await assertAuthoredWorldVisible(name);
   await page.screenshot({ path: path.join(outputDir, `${name}.png`), fullPage: false });
   console.log(`HOC2_CAPTURE=${name}`);
 }
 
 try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  await page.getByText("Living Map Sandbox").waitFor();
+  await page.getByText("Mapa Vivo · Explorar e Gerenciar").waitFor();
+  await assertAuthoredWorldVisible("initial");
   await capture("01-living-map");
 
   const viewport = page.locator(".hoc2-map-viewport");
@@ -71,22 +84,28 @@ try {
   await page.getByRole("region", { name: "Card Combat 2" }).waitFor();
   await page.waitForFunction(() => [...document.querySelectorAll(".hoc2-combatant.is-alliance .hoc2-portrait-image")].every((image) => image.complete && image.naturalWidth > 0));
   await page.locator('[data-brakk-fallback="true"]').waitFor();
-  await capture("08-card-combat-initial");
+  await assertRuntimeAssetsHealthy("08-card-combat-initial");
+  await page.screenshot({ path: path.join(outputDir, "08-card-combat-initial.png"), fullPage: false });
+  console.log("HOC2_CAPTURE=08-card-combat-initial");
 
   await page.getByRole("button", { name: /Feint/ }).click();
   await page.getByRole("button", { name: /Precise Strike/ }).click();
   await page.getByText("COMBO · OPENING STRIKE").waitFor();
-  await capture("09-card-combat-combo");
+  await assertRuntimeAssetsHealthy("09-card-combat-combo");
+  await page.screenshot({ path: path.join(outputDir, "09-card-combat-combo.png"), fullPage: false });
+  console.log("HOC2_CAPTURE=09-card-combat-combo");
 
   await page.getByRole("button", { name: "CONFIRMAR" }).click();
   await page.getByText("COMBAT RESULT").waitFor({ timeout: 3000 });
-  await capture("10-card-combat-result");
+  await assertRuntimeAssetsHealthy("10-card-combat-result");
+  await page.screenshot({ path: path.join(outputDir, "10-card-combat-result.png"), fullPage: false });
+  console.log("HOC2_CAPTURE=10-card-combat-result");
 
   await page.getByRole("button", { name: "APLICAR RESULTADO AO MAPA" }).click();
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await capture("11-return-map-consequence");
 
-  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy brakkFallback=explicit");
+  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy authoredWorld=MAP_FOREST_FRONTIER_8X8_01 brakkFallback=explicit");
 } finally {
   await browser.close();
 }
