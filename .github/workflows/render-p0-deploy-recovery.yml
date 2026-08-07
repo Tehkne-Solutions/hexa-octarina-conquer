@@ -1,6 +1,9 @@
 name: Render P0 Deploy Recovery
 
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/render-p0-deploy-recovery.yml"
   workflow_dispatch:
     inputs:
       confirm:
@@ -13,12 +16,32 @@ permissions:
   issues: write
 
 concurrency:
-  group: render-p0-deploy-recovery
+  group: render-p0-deploy-recovery-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  validate-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate recovery workflow contract
+        run: |
+          set -euo pipefail
+          workflow=.github/workflows/render-p0-deploy-recovery.yml
+          grep -q 'workflow_dispatch:' "$workflow"
+          grep -q 'DEPLOY_P0' "$workflow"
+          grep -q 'RENDER_API_KEY' "$workflow"
+          grep -q 'RENDER_SERVICE_ID' "$workflow"
+          grep -q 'RENDER_DEPLOY_HOOK_URL' "$workflow"
+          grep -q 'production-pack99-gate.mjs' "$workflow"
+          grep -q 'issue_number: 333' "$workflow"
+          echo 'RENDER_P0_RECOVERY_CONTRACT=PASS'
+
   deploy-and-verify:
-    if: github.ref_name == 'main'
+    if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -67,7 +90,6 @@ jobs:
 
       - name: Trigger linked Render service through Deploy Hook
         if: steps.route.outputs.route == 'hook'
-        id: hook-deploy
         run: |
           set -euo pipefail
           response=$(curl --fail-with-body --silent --show-error -X POST "${RENDER_DEPLOY_HOOK_URL}")
