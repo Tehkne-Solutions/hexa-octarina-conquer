@@ -2,6 +2,7 @@ import { runtimeAssetUrl } from "./runtime-assets";
 import "./strategic-board-canonical-units.css";
 
 export type StrategicAssetKey =
+  | "worldPreview"
   | "grass"
   | "forest"
   | "water"
@@ -33,6 +34,10 @@ interface CatalogEntry {
 }
 
 export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = {
+  // VR-02: authored PACK 05 map composition is the Living Map visual source.
+  // HOC2 axial state remains the strategic/gameplay authority rendered over it.
+  worldPreview: { id: "previews_MAP_FOREST_FRONTIER_8X8_01_png" },
+
   grass: { id: "TILE_GRASS_FLAT_CENTER_A_01" },
   forest: { id: "TILE_FOREST_FLAT_CENTER_A_01" },
   water: { id: "TILE_WATER_FLAT_CENTER_A_01" },
