@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - ".github/workflows/render-p0-deploy-recovery.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/render-p0-deploy-recovery.yml"
   workflow_dispatch:
     inputs:
       confirm:
@@ -32,6 +37,7 @@ jobs:
           set -euo pipefail
           workflow=.github/workflows/render-p0-deploy-recovery.yml
           grep -q 'workflow_dispatch:' "$workflow"
+          grep -q 'push:' "$workflow"
           grep -q 'DEPLOY_P0' "$workflow"
           grep -q 'RENDER_API_KEY' "$workflow"
           grep -q 'RENDER_SERVICE_ID' "$workflow"
@@ -41,7 +47,7 @@ jobs:
           echo 'RENDER_P0_RECOVERY_CONTRACT=PASS'
 
   deploy-and-verify:
-    if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
+    if: github.ref_name == 'main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'push')
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -50,6 +56,7 @@ jobs:
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
     steps:
       - name: Validate explicit production confirmation
+        if: github.event_name == 'workflow_dispatch'
         run: |
           set -euo pipefail
           if [ "${{ inputs.confirm }}" != "DEPLOY_P0" ]; then
@@ -181,6 +188,7 @@ jobs:
             const body = [
               `## P0 Render Deploy Recovery — ${verdict}`,
               '',
+              `- event: \`${context.eventName}\`;`,
               `- commit: \`${context.sha}\`;`,
               `- route: \`${route}\`;`,
               `- Render deploy id: \`${deployId}\`;`,
