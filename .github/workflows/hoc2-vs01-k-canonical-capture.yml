@@ -94,19 +94,25 @@ jobs:
           cat /tmp/hoc2-vs01-k-preview.log
           exit 1
 
+      - name: Capture PACK 99 strategic asset atlas
+        run: node scripts/capture-hoc2-asset-atlas.mjs
+
       - name: Capture 11 canonical states
         run: node scripts/capture-hoc2-vs01-k.mjs
 
       - name: Verify canonical matrix
         run: |
           test "$(find artifacts/hoc2-vs01-k -maxdepth 1 -name '*.png' | wc -l)" -eq 11
-          echo "HOC2_VS01_K_CAPTURE_GATE=PASS count=11"
+          test -f artifacts/hoc2-asset-atlas/pack99-strategic-assets.png
+          echo "HOC2_VS01_K_CAPTURE_GATE=PASS count=11 atlas=1"
 
       - name: Upload HOC2 canonical captures
         uses: actions/upload-artifact@v4
         with:
           name: hoc2-vs01-k-canonical-captures
-          path: client/web/artifacts/hoc2-vs01-k
+          path: |
+            client/web/artifacts/hoc2-vs01-k
+            client/web/artifacts/hoc2-asset-atlas
           if-no-files-found: error
           retention-days: 30
 
