@@ -12,12 +12,25 @@ type CameraTelemetry = {
   zoom?: number;
 };
 
-const MIN_ZOOM = 0.65;
-const MAX_ZOOM = 1.8;
+// P0 visual recovery guardrails. The map must remain legible and recoverable.
+const MIN_ZOOM = 0.82;
+const MAX_ZOOM = 1.45;
 const PAN_STEP = 28;
 const EDGE_SIZE = 34;
 const TELEMETRY_LIMIT = 200;
 const CAMERA_KEYS = new Set(["a", "d", "w", "s", "arrowleft", "arrowright", "arrowup", "arrowdown"]);
+
+function clampCamera(next: CameraState): CameraState {
+  const zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, next.zoom));
+  const zoomDelta = Math.max(0, zoom - 1);
+  const maxX = 190 + zoomDelta * 760;
+  const maxY = 130 + zoomDelta * 520;
+  return {
+    zoom,
+    x: Math.max(-maxX, Math.min(maxX, next.x)),
+    y: Math.max(-maxY, Math.min(maxY, next.y)),
+  };
+}
 
 function emitCameraTelemetry(payload: Omit<CameraTelemetry, "at">) {
   const event: CameraTelemetry = { at: Date.now(), ...payload };
@@ -55,26 +68,26 @@ export function useHoc2Camera() {
   const edgeRef = useRef({ x: 0, y: 0 });
 
   const update = useCallback((mutator: (current: CameraState) => CameraState) => {
-    setCamera((current) => mutator(current));
+    setCamera((current) => clampCamera(mutator(current)));
   }, []);
 
   const applyPan = useCallback((dx: number, dy: number, source: "keyboard" | "drag" | "edge", input?: string) => {
     if (!dx && !dy) return;
     update((current) => {
-      const next = { ...current, x: current.x + dx, y: current.y + dy };
-      emitCameraTelemetry({ event: "camera.applied", source, input, dx, dy, zoom: next.zoom });
+      const next = clampCamera({ ...current, x: current.x + dx, y: current.y + dy });
+      emitCameraTelemetry({ event: "camera.applied", source, input, dx: next.x-current.x, dy: next.y-current.y, zoom: next.zoom });
       return next;
     });
   }, [update]);
 
   const onWheel = useCallback((event: ReactWheelEvent) => {
     event.preventDefault();
-    const factor = event.deltaY > 0 ? 0.9 : 1.1;
+    const factor = event.deltaY > 0 ? 0.92 : 1.08;
     emitCameraTelemetry({ event: "camera.command", source: "wheel", input: event.deltaY > 0 ? "zoom-out" : "zoom-in" });
     update((current) => {
-      const zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, current.zoom * factor));
-      emitCameraTelemetry({ event: "camera.zoom", source: "wheel", zoom });
-      return { ...current, zoom };
+      const next = clampCamera({ ...current, zoom: current.zoom * factor });
+      emitCameraTelemetry({ event: "camera.zoom", source: "wheel", zoom: next.zoom });
+      return next;
     });
   }, [update]);
 
@@ -103,7 +116,14 @@ export function useHoc2Camera() {
     if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
   }, []);
 
+  const leaveViewport = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    edgeRef.current = { x: 0, y: 0 };
+    endDrag(event);
+  }, [endDrag]);
+
   const focusCenter = useCallback(() => {
+    edgeRef.current = { x: 0, y: 0 };
+    keysRef.current.clear();
     setCamera({ x: 0, y: 0, zoom: 1 });
     emitCameraTelemetry({ event: "camera.reset", source: "ui", zoom: 1 });
   }, []);
@@ -123,11 +143,17 @@ export function useHoc2Camera() {
       keysRef.current.add(key);
     };
     const up = (event: KeyboardEvent) => keysRef.current.delete(event.key.toLowerCase());
+    const blur = () => {
+      keysRef.current.clear();
+      edgeRef.current = { x: 0, y: 0 };
+    };
     window.addEventListener("keydown", down, { passive: false });
     window.addEventListener("keyup", up);
+    window.addEventListener("blur", blur);
     return () => {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
+      window.removeEventListener("blur", blur);
     };
   }, [applyPan]);
 
@@ -158,6 +184,6 @@ export function useHoc2Camera() {
     camera,
     transform,
     focusCenter,
-    handlers: { onWheel, onPointerDown, onPointerMove, onPointerUp: endDrag, onPointerCancel: endDrag, onPointerLeave: endDrag },
+    handlers: { onWheel, onPointerDown, onPointerMove, onPointerUp: endDrag, onPointerCancel: leaveViewport, onPointerLeave: leaveViewport },
   };
 }
