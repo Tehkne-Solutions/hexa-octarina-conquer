@@ -1,7 +1,19 @@
-name: Production PACK 99 Gate
+name: Production HOC2 + PACK 99 Gate
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "client/web/**"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/production-pack99-gate.yml"
+  pull_request:
+    paths:
+      - "client/web/scripts/production-pack99-gate.mjs"
+      - ".github/workflows/production-pack99-gate.yml"
   schedule:
     - cron: "17 * * * *"
 
@@ -9,7 +21,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-pack99-gate
+  group: production-hoc2-pack99-gate
   cancel-in-progress: true
 
 jobs:
@@ -35,10 +47,19 @@ jobs:
         working-directory: client/web
         run: npx playwright install --with-deps chromium
 
-      - name: Verify published runtime and rendered game
+      - name: Verify deployed HOC2, PACK 99 and shared Living Map/Hexa world
         working-directory: client/web
         env:
           HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
-          HEXA_PRODUCTION_ATTEMPTS: "8"
+          HEXA_PRODUCTION_ATTEMPTS: "24"
           HEXA_PRODUCTION_DELAY_MS: "15000"
         run: node scripts/production-pack99-gate.mjs
+
+      - name: Upload production visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc2-production-gate-captures
+          path: client/web/artifacts/hoc2-production-gate
+          if-no-files-found: warn
+          retention-days: 30
