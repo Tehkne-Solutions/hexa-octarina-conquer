@@ -1,5 +1,6 @@
 import { runtimeAssetUrl } from "./runtime-assets";
 import "./strategic-board-canonical-units.css";
+import "./hoc2/p0-visual-recovery.css";
 
 export type StrategicAssetKey =
   | "worldPreview"
