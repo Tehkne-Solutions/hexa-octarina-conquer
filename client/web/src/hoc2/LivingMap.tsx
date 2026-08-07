@@ -18,8 +18,22 @@ export type ArmyView = { id: string; q: number; r: number; faction: "alliance" |
 export type MovementTargetView = { q: number; r: number; cost: number; contact?: boolean; zoc?: boolean };
 
 const SQRT3 = Math.sqrt(3);
-function hexCenter(q: number, r: number, size: number) { return { x: size * SQRT3 * (q + r / 2), y: size * 1.5 * r }; }
-function hexPoints(cx: number, cy: number, size: number) { return Array.from({ length: 6 }, (_, i) => { const a=((60*i-30)*Math.PI)/180; return `${cx+size*Math.cos(a)},${cy+size*Math.sin(a)}`; }).join(" "); }
+
+// Visual-only affine projection: the authoritative axial q/r topology is untouched.
+// Rotating the standard axial basis by -30° produces a horizontal isometric diamond
+// compatible with the PACK 05 authored-world composition while preserving six neighbors.
+function hexCenter(q: number, r: number, size: number) {
+  return {
+    x: size * 1.5 * (q + r),
+    y: size * (SQRT3 / 2) * (r - q),
+  };
+}
+function hexPoints(cx: number, cy: number, size: number) {
+  return Array.from({ length: 6 }, (_, i) => {
+    const a=((60*i-60)*Math.PI)/180;
+    return `${cx+size*Math.cos(a)},${cy+size*Math.sin(a)}`;
+  }).join(" ");
+}
 function terrainFill(terrain: Hoc2Hex["terrain"]) {
   if (terrain === "forest") return "url(#hoc2-texture-forest)";
   if (terrain === "water") return "url(#hoc2-texture-water)";
@@ -56,11 +70,19 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
   const nodeGeometry=useMemo(()=>new Map(networkNodes.map((node)=>[node.id,{node,...hexCenter(node.q,node.r,size)}])),[networkNodes]);
   const octGeometry=useMemo(()=>new Map(octarinaNodes.map((node)=>[node.id,{node,...hexCenter(node.q,node.r,size)}])),[octarinaNodes]);
   const movementMap=useMemo(()=>new Map(movementTargets.map((target)=>[`${target.q},${target.r}`,target])),[movementTargets]);
-  const minX=Math.min(...geometry.map(i=>i.x))-100,maxX=Math.max(...geometry.map(i=>i.x))+100,minY=Math.min(...geometry.map(i=>i.y))-100,maxY=Math.max(...geometry.map(i=>i.y))+100;
+  const minX=Math.min(...geometry.map(i=>i.x))-88,maxX=Math.max(...geometry.map(i=>i.x))+88,minY=Math.min(...geometry.map(i=>i.y))-88,maxY=Math.max(...geometry.map(i=>i.y))+88;
   const worldWidth=maxX-minX,worldHeight=maxY-minY;
   const hasAuthoredWorld=Boolean(assets.worldPreview);
 
-  return <svg className={`hoc2-living-map${hexaMode?" is-hexa":""}${hasAuthoredWorld?" has-authored-world":""}`} data-hexa-filter={hexaFilter} data-world-source={hasAuthoredWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"} viewBox={`${minX} ${minY} ${worldWidth} ${worldHeight}`} role="img" aria-label={hexaMode?"Mapa estratégico em Modo Hexa sobre Fronteira Verde":"Mapa Vivo authored Fronteira Verde"}>
+  // The PACK 05 preview PNG contains transparent framing around its authored diamond.
+  // Scale it inside the same world viewport so the visible authored terrain fills the
+  // strategic projection instead of becoming a small island inside a black canvas.
+  const authoredScaleX=1.30;
+  const authoredScaleY=1.62;
+  const authoredX=minX-(worldWidth*(authoredScaleX-1))/2;
+  const authoredY=minY-(worldHeight*(authoredScaleY-1))/2;
+
+  return <svg className={`hoc2-living-map${hexaMode?" is-hexa":""}${hasAuthoredWorld?" has-authored-world":""}`} data-hexa-filter={hexaFilter} data-world-source={hasAuthoredWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"} data-projection="axial-isometric-diamond" viewBox={`${minX} ${minY} ${worldWidth} ${worldHeight}`} role="img" aria-label={hexaMode?"Mapa estratégico em Modo Hexa sobre Fronteira Verde":"Mapa Vivo authored Fronteira Verde"}>
     <defs>
       <linearGradient id="hoc2-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#526244"/><stop offset="1" stopColor="#293525"/></linearGradient>
       <filter id="hoc2-soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" floodOpacity="0.38"/></filter>
@@ -71,7 +93,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     </defs>
 
     <rect className="hoc2-world-fallback" x={minX} y={minY} width={worldWidth} height={worldHeight} fill="url(#hoc2-ground)"/>
-    {assets.worldPreview?<image href={assets.worldPreview} x={minX} y={minY} width={worldWidth} height={worldHeight} preserveAspectRatio="xMidYMid slice" className="hoc2-authored-world"/>:null}
+    {assets.worldPreview?<image href={assets.worldPreview} x={authoredX} y={authoredY} width={worldWidth*authoredScaleX} height={worldHeight*authoredScaleY} preserveAspectRatio="xMidYMid slice" className="hoc2-authored-world"/>:null}
 
     {!hasAuthoredWorld?<>
       <g className="hoc2-world-layer">{geometry.map(({hex,x,y})=><g key={`${hex.q},${hex.r}`} transform={`translate(${x} ${y})`}><polygon points={hexPoints(0,0,size-1.5)} className={`hoc2-terrain hoc2-terrain-${hex.terrain}`} style={{fill:terrainFill(hex.terrain)}}/><polygon points={hexPoints(0,0,size-5)} className="hoc2-terrain-inset"/></g>)}</g>
