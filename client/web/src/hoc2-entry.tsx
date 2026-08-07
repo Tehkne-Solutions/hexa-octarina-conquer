@@ -5,6 +5,7 @@ import { Hoc2Game } from "./hoc2/Hoc2Game";
 import { PlaytestReportPanel } from "./hoc2/PlaytestReportPanel";
 import "./hoc2/hoc2-network.css";
 import "./hoc2/hoc2-remediation.css";
+import "./hoc2/p0-visual-recovery.css";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("root element was not found");

@@ -14,7 +14,8 @@ async function health() {
 
 async function gotoCandidate() {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  await page.getByText("Living Map Sandbox").waitFor();
+  await page.getByText("Mapa Vivo · Explorar e Gerenciar").waitFor();
+  await page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"]').waitFor();
 }
 
 async function enterMovementCombat() {
@@ -25,7 +26,6 @@ async function enterMovementCombat() {
 }
 
 try {
-  // Full victory session: all domains should end PASS.
   await gotoCandidate();
   const viewport = page.locator(".hoc2-map-viewport");
   const box = await viewport.boundingBox();
@@ -53,7 +53,6 @@ try {
   assert(victory.issues.length === 0, `HEALTH_VICTORY_ISSUES:${victory.issues.join("|")}`);
   console.log(`HOC2_HEALTH_VICTORY=PASS domains=${Object.keys(victory.domains).length} events=${Object.values(victory.counts).reduce((a,b)=>a+b,0)}`);
 
-  // Retreat session: camera may remain pending if untouched, but no domain may fail.
   await gotoCandidate();
   await enterMovementCombat();
   await page.getByRole("button", { name: /RETIRADA/ }).click();
@@ -70,7 +69,7 @@ try {
   assert(retreat.issues.length === 0, `HEALTH_RETREAT_ISSUES:${retreat.issues.join("|")}`);
   console.log(`HOC2_HEALTH_RETREAT=PASS camera=${retreat.domains.camera} events=${Object.values(retreat.counts).reduce((a,b)=>a+b,0)}`);
 
-  console.log("HOC2_HEALTH_SUMMARY=PASS victory=pass retreat=pass issues=0");
+  console.log("HOC2_HEALTH_SUMMARY=PASS victory=pass retreat=pass issues=0 authoredWorld=MAP_FOREST_FRONTIER_8X8_01");
 } finally {
   await browser.close();
 }

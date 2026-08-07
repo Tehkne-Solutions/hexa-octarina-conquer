@@ -33,6 +33,9 @@ interface CatalogEntry {
 }
 
 export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = {
+  // VR-02: the Living Map is composed from canonical PACK 99 pieces.
+  // MAP_FOREST_FRONTIER_8X8_01 remains the authored visual identity/reference,
+  // while HOC2 axial state remains the gameplay authority.
   grass: { id: "TILE_GRASS_FLAT_CENTER_A_01" },
   forest: { id: "TILE_FOREST_FLAT_CENTER_A_01" },
   water: { id: "TILE_WATER_FLAT_CENTER_A_01" },
@@ -48,8 +51,6 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   edgeBuiltNeSw: { id: "EDGE_STONE_BUILT_NE_SW_01" },
   edgeBuiltNwSe: { id: "EDGE_STONE_BUILT_NW_SE_01" },
 
-  // Unit visuals are canonical runtime IDs. The runtime alias registry owns the
-  // physical path mapping so the gameplay slice never bypasses PACK 99 resolution.
   kael: { id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01" },
   lyra: { id: "HERO_RANGER_01_IDLE_BASE_NE_01" },
   varg: { id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01" },

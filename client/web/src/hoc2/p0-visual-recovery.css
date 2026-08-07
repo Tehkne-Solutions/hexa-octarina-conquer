@@ -1,0 +1,205 @@
+/* HOC2 P0 Visual Recovery — Tehkné Solutions */
+
+.hoc2-map-viewport{
+  background:
+    radial-gradient(ellipse at 50% 38%,#252b1e 0,#151912 56%,#0c0e0a 100%);
+}
+
+.hoc2-living-map.has-authored-world{
+  width:min(1420px,97vw);
+  height:min(880px,89vh);
+  filter:none;
+}
+
+.hoc2-world-fallback{
+  transition:opacity .2s ease;
+}
+
+.hoc2-living-map.has-authored-world .hoc2-world-fallback{
+  opacity:0;
+}
+
+.hoc2-authored-world{
+  opacity:1;
+  filter:saturate(1.07) contrast(1.03) brightness(1.01);
+  pointer-events:none;
+  transition:opacity .2s ease,filter .2s ease;
+}
+
+/* Slight controlled overlap removes the diamond seams without exposing Hexa geometry. */
+.hoc2-world-tile{
+  pointer-events:none;
+  transform-box:fill-box;
+  transform-origin:center;
+  transform:scale(1.065);
+}
+
+.hoc2-world-cell.terrain-water .hoc2-world-tile{
+  filter:saturate(1.08) brightness(.96);
+}
+
+.hoc2-world-cell.terrain-mountain .hoc2-world-tile{
+  filter:saturate(.88) brightness(.9);
+}
+
+.hoc2-world-rocks{
+  filter:drop-shadow(0 8px 6px rgba(0,0,0,.34));
+}
+
+.hoc2-world-road-layer .hoc2-road-shadow{
+  stroke:#241d12;
+  stroke-width:13;
+  opacity:.34;
+}
+
+.hoc2-world-road-layer .hoc2-road{
+  stroke:#ad8c58;
+  stroke-width:8;
+  opacity:.72;
+}
+
+.hoc2-living-map.is-hexa .hoc2-authored-world{
+  opacity:.66;
+  filter:saturate(.72) contrast(1.1) brightness(.72);
+}
+
+/* Living Map is world-first. Analytical geometry appears only in Hexa. */
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-terrain,
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-terrain-inset,
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-grid-outline,
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-coordinate{
+  display:none;
+}
+
+/* World art is presented as an object, not as a UI token, in Living Map. */
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark.has-world-art .hoc2-landmark-base{
+  opacity:0;
+}
+
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark.has-world-art .hoc2-landmark-art{
+  filter:drop-shadow(0 9px 7px rgba(0,0,0,.42));
+}
+
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark-label{
+  font-size:11px;
+  stroke-width:3;
+}
+
+.hoc2-camera-help{
+  display:none;
+}
+
+/* VR-04 — one cohesive medieval-fantasy HUD frame. */
+.hoc2-topbar{
+  position:relative;
+  z-index:8;
+  grid-template-columns:1fr auto 1fr;
+  grid-template-rows:auto auto;
+  row-gap:8px;
+  padding:10px 18px 0;
+  background:
+    linear-gradient(180deg,rgba(38,32,23,.99),rgba(20,19,15,.98));
+  border-bottom:1px solid #8b7444;
+  box-shadow:0 10px 28px rgba(0,0,0,.34);
+}
+
+.hoc2-brand strong,
+.hoc2-phase strong{
+  text-shadow:0 2px 10px rgba(0,0,0,.5);
+}
+
+.hoc2-top-actions{
+  justify-self:end;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.hoc2-top-actions>button{
+  border-color:#8f7748;
+  background:linear-gradient(180deg,#413825,#2b271d);
+}
+
+.hoc2-topbar .hoc2-hexa-controls{
+  position:static;
+  grid-column:1/-1;
+  width:calc(100% + 36px);
+  margin:0 -18px;
+  padding:6px 18px 8px;
+  transform:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  background:linear-gradient(180deg,rgba(22,21,17,.62),rgba(13,14,11,.92));
+  border-top:1px solid rgba(184,153,86,.28);
+  box-shadow:inset 0 1px rgba(255,241,194,.025);
+}
+
+.hoc2-topbar .hoc2-hexa-toggle{
+  padding:6px 13px;
+  min-width:126px;
+  border-color:#9f8350;
+  background:linear-gradient(180deg,#4a3c25,#2d281d);
+  box-shadow:0 5px 14px rgba(0,0,0,.25);
+}
+
+.hoc2-topbar .hoc2-hexa-toggle.is-active{
+  background:linear-gradient(180deg,#6a5632,#3b3223);
+  border-color:#d3b66c;
+}
+
+.hoc2-topbar .hoc2-hexa-filters{
+  margin:0;
+  padding:3px;
+  max-width:min(920px,94vw);
+  background:rgba(12,13,10,.66);
+  border-color:rgba(190,165,105,.34);
+  box-shadow:none;
+  backdrop-filter:blur(5px);
+}
+
+.hoc2-topbar .hoc2-hexa-filters button{
+  padding:5px 10px;
+}
+
+.hoc2-mode-note{
+  bottom:14px;
+  max-width:min(760px,70vw);
+  text-align:center;
+}
+
+/* Contextual panels belong to the same frame language and only appear when relevant. */
+.hoc2-economy-panel,
+.hoc2-army-panel,
+.hoc2-cascade-panel{
+  background:linear-gradient(180deg,rgba(39,34,25,.96),rgba(20,20,16,.97));
+  border-color:rgba(190,160,91,.7);
+  box-shadow:0 16px 38px rgba(0,0,0,.4),inset 0 1px rgba(255,240,194,.04);
+}
+
+/* Strategic overlays remain readable without erasing the authored world. */
+.hoc2-living-map.is-hexa .hoc2-grid-outline{
+  stroke:#f0dfab;
+  stroke-width:2.1;
+  opacity:.9;
+}
+
+.hoc2-living-map.is-hexa .hoc2-domain-fill{
+  opacity:.34;
+}
+
+.hoc2-living-map.is-hexa .hoc2-landmark-layer,
+.hoc2-living-map.is-hexa .hoc2-army-layer{
+  opacity:.96;
+}
+
+@media(max-width:900px){
+  .hoc2-topbar{grid-template-columns:1fr auto;}
+  .hoc2-top-actions{grid-column:2;grid-row:1;}
+  .hoc2-topbar .hoc2-hexa-controls{grid-row:2;}
+  .hoc2-living-map.has-authored-world{
+    width:1200px;
+    height:780px;
+  }
+}

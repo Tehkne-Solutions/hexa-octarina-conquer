@@ -6,7 +6,8 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 async function gotoCandidate() {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  await page.getByText("Living Map Sandbox").waitFor();
+  await page.getByText("Mapa Vivo · Explorar e Gerenciar").waitFor();
+  await page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"]').waitFor();
 }
 
 async function enterCombat() {
@@ -146,8 +147,8 @@ try {
   await page.locator(".hoc2-map-viewport").waitFor();
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await page.getByText("HEX CAPTURADO").waitFor();
-  await page.getByText("BRakk recuou").waitFor();
-  await page.getByText("Strategic Hexa View").waitFor();
+  await page.getByText("Brakk recuou").waitFor();
+  await page.getByText("Modo Hexa · Análise Territorial").waitFor();
   await assertCombatExit("victory");
   const victoryTimeline = await assertJourneyTimeline("victory");
   console.log(`PLAYTEST01_VICTORY_RETURN=PASS timeline=${victoryTimeline.snapshotIndex + 1}/${victoryTimeline.events.length}`);
@@ -164,7 +165,7 @@ try {
   const retreatTimeline = await assertJourneyTimeline("retreat");
   console.log(`PLAYTEST01_RETREAT=PASS timeline=${retreatTimeline.snapshotIndex + 1}/${retreatTimeline.events.length}`);
 
-  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=full-journey filters=4 sequences=2 victory=1 retreat=1");
+  console.log("HOC2_PLAYTEST01_ACCEPTANCE=PASS camera=1 telemetry=full-journey filters=4 sequences=2 victory=1 retreat=1 authoredWorld=MAP_FOREST_FRONTIER_8X8_01");
 } finally {
   await browser.close();
 }

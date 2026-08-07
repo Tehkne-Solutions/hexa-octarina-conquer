@@ -1,0 +1,81 @@
+{
+  "project": "HOC — Hexa Octarina Conquer",
+  "contract": "HOC2_VISUAL_CONTRACT",
+  "version": "1.0.0",
+  "status": "P0_BLOCKING",
+  "signature": "Tehkné Solutions",
+  "approvedReferences": {
+    "primary": "Painel Estratégico Hexa Octarina.png",
+    "mapSelection": "Map C clarity + Map B detail",
+    "combatSelection": "confrontational face-to-face card combat model B"
+  },
+  "worldArchitecture": {
+    "visualSource": "PACK 05 authored 2.5D map composition",
+    "vs01VisualMap": "MAP_FOREST_FRONTIER_8X8_01",
+    "strategicAuthority": "HOC2 axial Hex/Go/Dots/Octarina domain",
+    "rule": "PACK 05 supplies authored world presentation; HOC2 remains the gameplay topology and authority. The old PACK 05 diamond grid must never become gameplay authority again."
+  },
+  "livingMap": {
+    "mapDominatesViewport": true,
+    "gridHiddenByDefault": true,
+    "minimumVisualRegion": "8x8 authored PACK 05 map",
+    "requiredReadability": [
+      "continuous fantasy terrain",
+      "forests and open terrain",
+      "roads/routes as world features",
+      "landmarks/structures",
+      "resources/props",
+      "armies/characters",
+      "clear faction/world labels only when useful"
+    ]
+  },
+  "hexaMode": {
+    "sameWorld": true,
+    "sameCamera": true,
+    "gridVisible": true,
+    "singleActiveAnalyticalLayer": true,
+    "layers": [
+      "domain",
+      "influence-go",
+      "connections-dots",
+      "movement",
+      "construction",
+      "resources",
+      "octarina"
+    ]
+  },
+  "ui": {
+    "direction": "medieval fantasy strategy game HUD",
+    "mapFirst": true,
+    "contextualPanels": true,
+    "normalRuntimeDebugPanels": false,
+    "permanentInstructionBox": false,
+    "purpleTechDashboard": false,
+    "requiredHierarchy": [
+      "HOC identity and resources/status",
+      "Living Map / Hexa mode switch",
+      "contextual strategic actions",
+      "hero/army state when relevant",
+      "turn/objective information",
+      "combat as a dedicated confrontational scene"
+    ]
+  },
+  "camera": {
+    "initialFitToWorld": true,
+    "boundedPan": true,
+    "boundedZoom": true,
+    "worldCannotLeaveViewportCompletely": true,
+    "centerActionRestoresFit": true
+  },
+  "blockingFailures": [
+    "empty green field",
+    "map missing",
+    "map rendered as tiny postage stamp",
+    "oversized clipped map after navigation",
+    "legacy Dots/square board promoted as player-facing HOC2",
+    "flat 24-hex technical fixture used as final world presentation",
+    "PACK 99 assets absent from visible world",
+    "Living Map and Hexa mode representing different worlds",
+    "debug/dashboard UI replacing approved fantasy HUD"
+  ]
+}
