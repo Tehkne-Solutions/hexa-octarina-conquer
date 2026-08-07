@@ -25,9 +25,12 @@ if(/const BASE_HEXES:\s*Hoc2Hex\[\]\s*=\s*\[/.test(game)) throw new Error("HOC2_
 
 const livingMap=read("client/web/src/hoc2/LivingMap.tsx");
 requireText(livingMap,'data-world-source={hasAuthoredWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"}',"world-source-marker-missing");
+requireText(livingMap,'data-projection="axial-isometric-diamond"',"visual-projection-not-isometric-diamond");
 requireText(livingMap,'className="hoc2-authored-world"',"authored-world-layer-missing");
 requireText(livingMap,"{!hasAuthoredWorld?<>","technical-world-not-fallback-only");
 requireText(livingMap,"{assets.worldPreview?<image","authored-world-not-rendered-from-runtime");
+requireText(livingMap,"x: size * 1.5 * (q + r)","axial-isometric-x-projection-missing");
+requireText(livingMap,"y: size * (SQRT3 / 2) * (r - q)","axial-isometric-y-projection-missing");
 
 const camera=read("client/web/src/hoc2/MapCamera.tsx");
 requireText(camera,"const MIN_ZOOM = 0.82;","unsafe-min-zoom");
@@ -39,4 +42,9 @@ const recoveryCss=read("client/web/src/hoc2/p0-visual-recovery.css");
 requireMatch(recoveryCss,/\.hoc2-camera-help\s*\{\s*display:none;/,"permanent-camera-debug-card-visible");
 requireMatch(recoveryCss,/\.hoc2-authored-world/,"authored-world-style-missing");
 
-console.log("HOC2_VISUAL_CONTRACT=PASS map=MAP_FOREST_FRONTIER_8X8_01 strategic=8x8 camera=bounded authoredWorld=required");
+const entry=read("client/web/src/hoc2-entry.tsx");
+const remediationIndex=entry.indexOf('import "./hoc2/hoc2-remediation.css";');
+const recoveryIndex=entry.indexOf('import "./hoc2/p0-visual-recovery.css";');
+if(remediationIndex<0||recoveryIndex<0||recoveryIndex<remediationIndex) throw new Error("HOC2_VISUAL_CONTRACT_FAIL:recovery-css-not-last");
+
+console.log("HOC2_VISUAL_CONTRACT=PASS map=MAP_FOREST_FRONTIER_8X8_01 strategic=8x8 projection=isometric-diamond camera=bounded authoredWorld=required");
