@@ -8,6 +8,7 @@ const repoRoot=path.resolve(webRoot,"../..");
 
 function read(relative){return fs.readFileSync(path.resolve(repoRoot,relative),"utf8")}
 function requireMatch(value, pattern, marker){if(!pattern.test(value)) throw new Error(`HOC2_VISUAL_CONTRACT_FAIL:${marker}`)}
+function requireText(value, text, marker){if(!value.includes(text)) throw new Error(`HOC2_VISUAL_CONTRACT_FAIL:${marker}`)}
 
 const contract=JSON.parse(read("docs/hoc2/HOC2_VISUAL_CONTRACT_v1.json"));
 if(contract.status!=="P0_BLOCKING") throw new Error("HOC2_VISUAL_CONTRACT_FAIL:contract-not-blocking");
@@ -19,17 +20,18 @@ requireMatch(catalog,/worldPreview:\s*\{\s*id:\s*"previews_MAP_FOREST_FRONTIER_8
 const game=read("client/web/src/hoc2/Hoc2Game.tsx");
 requireMatch(game,/for \(let r=0;r<8;r\+=1\)/,"strategic-region-not-8x8");
 requireMatch(game,/for \(let q=0;q<8;q\+=1\)/,"strategic-region-not-8x8");
-requireMatch(game,/Mapa Vivo · Explorar e Gerenciar/,"approved-map-mode-label-missing");
+requireText(game,"Mapa Vivo · Explorar e Gerenciar","approved-map-mode-label-missing");
 if(/const BASE_HEXES:\s*Hoc2Hex\[\]\s*=\s*\[/.test(game)) throw new Error("HOC2_VISUAL_CONTRACT_FAIL:flat-hardcoded-base-hex-fixture-returned");
 
 const livingMap=read("client/web/src/hoc2/LivingMap.tsx");
-requireMatch(livingMap,/data-world-source=\{hasAuthoredWorld\?"MAP_FOREST_FRONTIER_8X8_01":"fallback"\}/,"world-source-marker-missing");
-requireMatch(livingMap,/className="hoc2-authored-world"/,"authored-world-layer-missing");
-requireMatch(livingMap,/!hasAuthoredWorld\?<></,"technical-world-not-fallback-only");
+requireText(livingMap,'data-world-source={hasAuthoredWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"}',"world-source-marker-missing");
+requireText(livingMap,'className="hoc2-authored-world"',"authored-world-layer-missing");
+requireText(livingMap,"{!hasAuthoredWorld?<>","technical-world-not-fallback-only");
+requireText(livingMap,"{assets.worldPreview?<image","authored-world-not-rendered-from-runtime");
 
 const camera=read("client/web/src/hoc2/MapCamera.tsx");
-requireMatch(camera,/const MIN_ZOOM = 0\.82;/,"unsafe-min-zoom");
-requireMatch(camera,/const MAX_ZOOM = 1\.45;/,"unsafe-max-zoom");
+requireText(camera,"const MIN_ZOOM = 0.82;","unsafe-min-zoom");
+requireText(camera,"const MAX_ZOOM = 1.45;","unsafe-max-zoom");
 requireMatch(camera,/edgeRef\.current = \{ x: 0, y: 0 \};\s*\n\s*endDrag\(event\)/,"edge-scroll-not-cleared-on-leave");
 requireMatch(camera,/function clampCamera\(/,"camera-clamp-missing");
 
