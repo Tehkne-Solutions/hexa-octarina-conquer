@@ -8,20 +8,54 @@ import { useHoc2Camera } from "./MapCamera";
 import { emitHoc2Telemetry } from "./hoc2Telemetry";
 import "./hoc2.css";
 
-const BASE_HEXES: Hoc2Hex[] = [
-  { q:0,r:0,terrain:"plain",owner:"alliance",landmark:"city",label:"Aldor",influence:{alliance:3},libertyCount:3 },
-  { q:1,r:0,terrain:"plain",owner:"alliance",influence:{alliance:3,rubra:1},libertyCount:2 },
-  { q:2,r:0,terrain:"road",owner:"neutral",landmark:"bridge",label:"Velmar",influence:{alliance:2,rubra:2},goStatus:"isolated",libertyCount:1 },
-  { q:3,r:0,terrain:"plain",owner:"neutral",landmark:"mine",label:"Mina",influence:{alliance:1,rubra:2} },
-  { q:4,r:0,terrain:"plain",owner:"rubra",influence:{alliance:1,rubra:3},libertyCount:2 },
-  { q:5,r:0,terrain:"mountain",owner:"rubra",landmark:"fortress",label:"Fortaleza",influence:{rubra:3},libertyCount:3 },
-  { q:0,r:1,terrain:"forest",owner:"alliance",influence:{alliance:3},libertyCount:3 }, { q:1,r:1,terrain:"forest",owner:"alliance",influence:{alliance:3,rubra:1},libertyCount:2 },
-  { q:2,r:1,terrain:"road",owner:"neutral",influence:{alliance:2,rubra:2} }, { q:3,r:1,terrain:"plain",owner:"neutral",landmark:"octarina",label:"Núcleo",influence:{alliance:1,rubra:1} },
-  { q:4,r:1,terrain:"plain",owner:"rubra",influence:{alliance:1,rubra:3},libertyCount:2 }, { q:5,r:1,terrain:"mountain",owner:"rubra",influence:{rubra:3},libertyCount:3 },
-  { q:-1,r:2,terrain:"forest",owner:"alliance",influence:{alliance:3},libertyCount:3 }, { q:0,r:2,terrain:"plain",owner:"alliance",influence:{alliance:3},libertyCount:2 },
-  { q:1,r:2,terrain:"plain",owner:"neutral",influence:{alliance:2,rubra:1} }, { q:2,r:2,terrain:"water",owner:"neutral",influence:{} }, { q:3,r:2,terrain:"plain",owner:"neutral",influence:{alliance:1,rubra:2} }, { q:4,r:2,terrain:"plain",owner:"rubra",influence:{rubra:3},libertyCount:2 },
-  { q:-1,r:3,terrain:"plain",owner:"alliance",influence:{alliance:2},libertyCount:2 }, { q:0,r:3,terrain:"plain",owner:"neutral",influence:{alliance:1} }, { q:1,r:3,terrain:"water",owner:"neutral",influence:{} }, { q:2,r:3,terrain:"water",owner:"neutral",influence:{} }, { q:3,r:3,terrain:"plain",owner:"rubra",influence:{rubra:2},libertyCount:1,goStatus:"isolated" }, { q:4,r:3,terrain:"mountain",owner:"rubra",influence:{rubra:3},libertyCount:2 },
-];
+const SPECIAL_HEXES = new Map<string, Partial<Hoc2Hex>>([
+  ["0,0",{ terrain:"plain",owner:"alliance",landmark:"city",label:"Aldor",influence:{alliance:3},libertyCount:3 }],
+  ["1,0",{ terrain:"plain",owner:"alliance",influence:{alliance:3,rubra:1},libertyCount:2 }],
+  ["2,0",{ terrain:"road",owner:"neutral",landmark:"bridge",label:"Velmar",influence:{alliance:2,rubra:2},goStatus:"isolated",libertyCount:1 }],
+  ["3,0",{ terrain:"plain",owner:"neutral",landmark:"mine",label:"Mina",influence:{alliance:1,rubra:2} }],
+  ["4,0",{ terrain:"plain",owner:"rubra",influence:{alliance:1,rubra:3},libertyCount:2 }],
+  ["5,0",{ terrain:"mountain",owner:"rubra",landmark:"fortress",label:"Fortaleza",influence:{rubra:3},libertyCount:3 }],
+  ["2,1",{ terrain:"road",owner:"neutral",influence:{alliance:2,rubra:2} }],
+  ["3,1",{ terrain:"plain",owner:"neutral",landmark:"octarina",label:"Núcleo",influence:{alliance:1,rubra:1} }],
+  ["4,1",{ terrain:"plain",owner:"rubra",influence:{alliance:1,rubra:3},libertyCount:2 }],
+  ["3,3",{ owner:"rubra",influence:{rubra:2},libertyCount:1,goStatus:"isolated" }],
+  ["4,3",{ terrain:"mountain",owner:"rubra",influence:{rubra:3},libertyCount:2 }],
+]);
+
+function strategicTerrain(q: number, r: number): Hoc2Hex["terrain"] {
+  if ((q===4||q===5) && (r===4||r===5)) return "mountain";
+  if (q<=5 && r<=6) return "forest";
+  return "plain";
+}
+
+function strategicOwner(q: number): Hoc2Hex["owner"] {
+  if (q<=1) return "alliance";
+  if (q>=5) return "rubra";
+  return "neutral";
+}
+
+function buildStrategicRegion(): Hoc2Hex[] {
+  const region: Hoc2Hex[] = [];
+  for (let r=0;r<8;r+=1) {
+    for (let q=0;q<8;q+=1) {
+      const owner=strategicOwner(q);
+      const base: Hoc2Hex = {
+        q,r,
+        terrain:strategicTerrain(q,r),
+        owner,
+        influence:owner==="alliance"?{alliance:q===1?2:3}:owner==="rubra"?{rubra:q===5?2:3}:{alliance:1,rubra:1},
+        libertyCount:owner==="neutral"?undefined:3,
+      };
+      region.push({ ...base, ...(SPECIAL_HEXES.get(`${q},${r}`)??{}) });
+    }
+  }
+  return region;
+}
+
+// 8×8 HOC2 strategic projection over the authored PACK 05 Fronteira Verde world.
+// PACK 05 is visual composition; this axial region remains gameplay authority.
+const BASE_HEXES: Hoc2Hex[] = buildStrategicRegion();
+
 const NETWORK_NODES: StrategicNodeView[] = [
   { id:"aldor",q:0,r:0,kind:"Cidade",owner:"alliance" }, { id:"bridge",q:2,r:0,kind:"Ponte",owner:"alliance" }, { id:"mine",q:3,r:0,kind:"Mina",owner:"alliance" }, { id:"core",q:3,r:1,kind:"Núcleo",owner:"neutral" }, { id:"fortress",q:5,r:0,kind:"Fortaleza",owner:"rubra" },
 ];
@@ -91,13 +125,13 @@ export function Hoc2Game() {
   if (combatOpen) return <CardCombatScreen onClose={closeCombat}/>;
 
   return <main className={`hoc2-shell${hexaMode?" is-hexa-mode":""}`}>
-    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>HOC2 VS01-J</span><strong>{hexaMode?"Strategic Hexa View":"Living Map Sandbox"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
+    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>Fronteira Verde · VS01</span><strong>{hexaMode?"Modo Hexa · Análise Territorial":"Mapa Vivo · Explorar e Gerenciar"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
     <section className="hoc2-map-viewport" {...camera.handlers}>
       <div className="hoc2-map-camera" style={{transform:camera.transform}}><LivingMap hexes={hexes} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} octarinaNodes={OCTARINA_NODES} octarinaEdges={OCTARINA_EDGES} octarinaFormation={{coreId:"oct-core",slots:3,maxSlots:6,flow:9,resonance:true}} armies={armies} movementTargets={hexaFilter==="movement"?movementTargets:[]} /></div>
       <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={toggleHexaMode} onFilter={selectHexaFilter}/>
       {hexaMode?<EconomyOverlay filter={hexaFilter}/>:null}
       {hexaMode&&hexaFilter==="movement"&&!battleOutcome?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em><button type="button" onClick={startCombat}>INICIAR CONFRONTO</button></aside>:null}
-      {battleOutcome==="victory"?<aside className="hoc2-cascade-panel" role="status"><strong>CONSEQUÊNCIA ESTRATÉGICA</strong><span>HEX CAPTURADO</span><span>BRakk recuou</span><span>CADEIA RUBRA RECALCULADA</span><span>SUPPLY RECALCULADO</span><span>OCTARINA RECALCULADA</span><small>O servidor HOC2 aplica esta cascata antes de devolver o snapshot ao mapa.</small></aside>:null}
+      {battleOutcome==="victory"?<aside className="hoc2-cascade-panel" role="status"><strong>CONSEQUÊNCIA ESTRATÉGICA</strong><span>HEX CAPTURADO</span><span>Brakk recuou</span><span>CADEIA RUBRA RECALCULADA</span><span>SUPPLY RECALCULADO</span><span>OCTARINA RECALCULADA</span><small>O servidor HOC2 aplica esta cascata antes de devolver o snapshot ao mapa.</small></aside>:null}
       {battleOutcome==="retreat"?<aside className="hoc2-cascade-panel" role="status"><strong>RETIRADA</strong><span>Kael preservou sua posição anterior.</span><small>Nenhuma captura territorial foi aplicada.</small></aside>:null}
       <aside className="hoc2-camera-help" aria-label="Controles da câmera"><strong>{hexaMode?"Visão estratégica":"Câmera"}</strong><span>Roda: zoom</span><span>WASD / setas: navegar</span><span>Shift + arrastar ou botão do meio: pan</span><span>Bordas: edge scrolling</span><small>Zoom {camera.camera.zoom.toFixed(2)}×</small></aside>
       {hexaMode?<div className="hoc2-mode-note" role="status">{hexaLabel}</div>:null}
