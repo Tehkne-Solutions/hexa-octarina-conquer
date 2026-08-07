@@ -1,0 +1,183 @@
+name: Render P0 Deploy Recovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type DEPLOY_P0 to deploy the current main commit"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: render-p0-deploy-recovery
+  cancel-in-progress: false
+
+jobs:
+  deploy-and-verify:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+      RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+    steps:
+      - name: Validate explicit production confirmation
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.confirm }}" != "DEPLOY_P0" ]; then
+            echo "RENDER_RECOVERY=BLOCKED reason=confirmation"
+            exit 1
+          fi
+
+      - name: Select Render deployment route
+        id: route
+        run: |
+          set -euo pipefail
+          if [ -n "${RENDER_API_KEY:-}" ] && [ -n "${RENDER_SERVICE_ID:-}" ]; then
+            echo "route=api" >> "$GITHUB_OUTPUT"
+            echo "RENDER_RECOVERY_ROUTE=api"
+          elif [ -n "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
+            echo "route=hook" >> "$GITHUB_OUTPUT"
+            echo "RENDER_RECOVERY_ROUTE=hook"
+          else
+            echo "route=none" >> "$GITHUB_OUTPUT"
+            echo "RENDER_RECOVERY=BLOCKED reason=missing-render-credentials"
+            exit 1
+          fi
+
+      - name: Trigger exact main commit through Render API
+        if: steps.route.outputs.route == 'api'
+        id: api-deploy
+        run: |
+          set -euo pipefail
+          response=$(curl --fail-with-body --silent --show-error \
+            -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
+            -H "Authorization: Bearer ${RENDER_API_KEY}" \
+            -H "Content-Type: application/json" \
+            --data "{\"clearCache\":\"do_not_clear\",\"commitId\":\"${GITHUB_SHA}\"}")
+          printf '%s\n' "$response" > render-deploy-response.json
+          deploy_id=$(printf '%s' "$response" | python -c 'import json,sys; print(json.load(sys.stdin).get("id", "unknown"))')
+          echo "deploy_id=$deploy_id" >> "$GITHUB_OUTPUT"
+          echo "RENDER_RECOVERY_TRIGGERED route=api commit=${GITHUB_SHA} deploy=${deploy_id}"
+
+      - name: Trigger linked Render service through Deploy Hook
+        if: steps.route.outputs.route == 'hook'
+        id: hook-deploy
+        run: |
+          set -euo pipefail
+          response=$(curl --fail-with-body --silent --show-error -X POST "${RENDER_DEPLOY_HOOK_URL}")
+          printf '%s\n' "$response" > render-deploy-response.json
+          echo "RENDER_RECOVERY_TRIGGERED route=hook commit=${GITHUB_SHA}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/web/package.json
+
+      - name: Install Web dependencies
+        working-directory: client/web
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        working-directory: client/web
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify recovered Render production
+        id: production-gate
+        working-directory: client/web
+        env:
+          HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
+          HEXA_PRODUCTION_ATTEMPTS: "32"
+          HEXA_PRODUCTION_DELAY_MS: "15000"
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/hoc2-render-recovery
+          set +e
+          node scripts/production-pack99-gate.mjs 2>&1 | tee artifacts/hoc2-render-recovery/production-gate.log
+          status=${PIPESTATUS[0]}
+          set -e
+
+          detail=$(grep -E 'PRODUCTION_GATE=(PASS|FAIL)|PRODUCTION_GATE_ATTEMPT_FAILED=' artifacts/hoc2-render-recovery/production-gate.log | tail -n 1 || true)
+          {
+            echo 'detail<<EOF'
+            echo "${detail:-unknown}"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+          exit "$status"
+
+      - name: Preserve recovery evidence
+        if: always()
+        run: |
+          mkdir -p client/web/artifacts/hoc2-render-recovery
+          if [ -f render-deploy-response.json ]; then
+            cp render-deploy-response.json client/web/artifacts/hoc2-render-recovery/render-deploy-response.json
+          fi
+          if [ -d client/web/artifacts/hoc2-production-gate ]; then
+            cp -a client/web/artifacts/hoc2-production-gate/. client/web/artifacts/hoc2-render-recovery/
+          fi
+
+      - name: Upload Render recovery evidence
+        id: evidence-upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc2-render-recovery
+          path: client/web/artifacts/hoc2-render-recovery
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Report recovery result to P0 issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          ROUTE: ${{ steps.route.outputs.route }}
+          GATE_OUTCOME: ${{ steps.production-gate.outcome }}
+          GATE_DETAIL: ${{ steps.production-gate.outputs.detail }}
+          EVIDENCE_OUTCOME: ${{ steps.evidence-upload.outcome }}
+          API_DEPLOY_ID: ${{ steps.api-deploy.outputs.deploy_id }}
+        with:
+          script: |
+            const route = process.env.ROUTE || 'unknown';
+            const gateOutcome = process.env.GATE_OUTCOME || 'unknown';
+            const gateDetail = (process.env.GATE_DETAIL || 'unknown').replace(/`/g, "'").slice(0, 800);
+            const evidenceOutcome = process.env.EVIDENCE_OUTCOME || 'unknown';
+            const deployId = process.env.API_DEPLOY_ID || 'n/a';
+            const pass = gateOutcome === 'success';
+            const verdict = pass ? 'PASS' : 'BLOCKED';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              `## P0 Render Deploy Recovery — ${verdict}`,
+              '',
+              `- commit: \`${context.sha}\`;`,
+              `- route: \`${route}\`;`,
+              `- Render deploy id: \`${deployId}\`;`,
+              `- production verification: \`${gateOutcome}\`;`,
+              `- evidence upload: \`${evidenceOutcome}\`;`,
+              `- gate detail: \`${gateDetail}\`;`,
+              '- artifact: `hoc2-render-recovery`;',
+              `- run: ${runUrl}.`,
+              '',
+              pass
+                ? 'O deploy remoto foi acionado e o endpoint canônico passou no contrato HOC2 + PACK 99. A revisão humana das capturas continua obrigatória antes de encerrar o #333 e liberar VS02.'
+                : 'A recuperação remota não produziu uma candidata aprovada. O #333 e o freeze de VS02 permanecem ativos; use o artifact para separar credencial/deploy de regressão visual.',
+              '',
+              '**Tehkné Solutions**',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 333,
+              body,
+            });
