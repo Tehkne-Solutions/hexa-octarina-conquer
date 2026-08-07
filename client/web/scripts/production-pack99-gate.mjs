@@ -61,21 +61,25 @@ async function verifyRenderedHoc2() {
       }
     });
 
-    await page.goto(productionUrl, { waitUntil: "networkidle", timeout: 120000 });
-    await page.getByText("Mapa Vivo · Explorar e Gerenciar").waitFor({ timeout: 30000 });
-
+    // Detect an old Render deployment immediately instead of waiting for HOC2 selectors
+    // that cannot exist in the legacy shell. Once the HOC2 identity is live, continue
+    // with the full visual/world contract below.
+    await page.goto(productionUrl, { waitUntil: "domcontentloaded", timeout: 120000 });
     const title = await page.title();
     if (!title.includes("HOC — Hexa Octarina Conquer · Fronteira Verde")) {
       throw new Error(`production identity invalid: ${title}`);
     }
-    if (title.includes("Sandbox") || (await page.getByText("Living Map Sandbox").count()) > 0) {
-      throw new Error("legacy sandbox identity leaked into production");
+    if (title.includes("Sandbox")) throw new Error("legacy sandbox identity leaked into production title");
+
+    await page.getByText("Mapa Vivo · Explorar e Gerenciar").waitFor({ timeout: 15000 });
+    if ((await page.getByText("Living Map Sandbox").count()) > 0) {
+      throw new Error("legacy sandbox identity leaked into production UI");
     }
 
     const world = page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"][data-world-renderer="PACK99_COMPOSED_TILES"]');
-    await world.waitFor({ state: "visible", timeout: 30000 });
+    await world.waitFor({ state: "visible", timeout: 15000 });
     const authoredWorld = page.locator('.hoc2-authored-world[data-world-grid="hidden"]');
-    await authoredWorld.waitFor({ state: "visible", timeout: 30000 });
+    await authoredWorld.waitFor({ state: "visible", timeout: 15000 });
 
     const cellCount = await page.locator(".hoc2-authored-world .hoc2-world-cell").count();
     const tileCount = await page.locator(".hoc2-authored-world .hoc2-world-tile").count();
