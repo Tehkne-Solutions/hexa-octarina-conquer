@@ -22,9 +22,6 @@ const SPECIAL_HEXES = new Map<string, Partial<Hoc2Hex>>([
   ["4,3",{ terrain:"mountain",owner:"rubra",influence:{rubra:3},libertyCount:2 }],
 ]);
 
-// Explicit 8×8 visual composition for Fronteira Verde.
-// P=plain, F=forest, W=water, M=mountain, R=road.
-// This controls presentation/terrain context only; HOC2 q/r remains authoritative.
 const FRONTIER_TERRAIN: ReadonlyArray<ReadonlyArray<Hoc2Hex["terrain"]>> = [
   ["plain","plain","road","plain","plain","mountain","mountain","forest"],
   ["forest","plain","road","plain","plain","mountain","forest","forest"],
@@ -64,8 +61,6 @@ function buildStrategicRegion(): Hoc2Hex[] {
   return region;
 }
 
-// 8×8 HOC2 strategic projection rendered with canonical PACK 99 2.5D pieces.
-// The old PACK 05 flattened preview is reference-only; HOC2 remains gameplay authority.
 const BASE_HEXES: Hoc2Hex[] = buildStrategicRegion();
 
 const NETWORK_NODES: StrategicNodeView[] = [
@@ -137,10 +132,14 @@ export function Hoc2Game() {
   if (combatOpen) return <CardCombatScreen onClose={closeCombat}/>;
 
   return <main className={`hoc2-shell${hexaMode?" is-hexa-mode":""}`}>
-    <header className="hoc2-topbar"><div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div><div className="hoc2-phase"><span>Fronteira Verde · VS01</span><strong>{hexaMode?"Modo Hexa · Análise Territorial":"Mapa Vivo · Explorar e Gerenciar"}</strong></div><button type="button" onClick={camera.focusCenter}>Centralizar</button></header>
+    <header className="hoc2-topbar">
+      <div className="hoc2-brand"><strong>HOC</strong><span>Hexa Octarina Conquer</span></div>
+      <div className="hoc2-phase"><span>Fronteira Verde · VS01</span><strong>{hexaMode?"Modo Hexa · Análise Territorial":"Mapa Vivo · Explorar e Gerenciar"}</strong></div>
+      <div className="hoc2-top-actions"><button type="button" onClick={camera.focusCenter}>Centralizar</button></div>
+      <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={toggleHexaMode} onFilter={selectHexaFilter}/>
+    </header>
     <section className="hoc2-map-viewport" {...camera.handlers}>
       <div className="hoc2-map-camera" style={{transform:camera.transform}}><LivingMap hexes={hexes} hexaMode={hexaMode} hexaFilter={hexaFilter} networkNodes={NETWORK_NODES} networkEdges={NETWORK_EDGES} octarinaNodes={OCTARINA_NODES} octarinaEdges={OCTARINA_EDGES} octarinaFormation={{coreId:"oct-core",slots:3,maxSlots:6,flow:9,resonance:true}} armies={armies} movementTargets={hexaFilter==="movement"?movementTargets:[]} /></div>
-      <HexaOverlay active={hexaMode} filter={hexaFilter} onToggle={toggleHexaMode} onFilter={selectHexaFilter}/>
       {hexaMode?<EconomyOverlay filter={hexaFilter}/>:null}
       {hexaMode&&hexaFilter==="movement"&&!battleOutcome?<aside className="hoc2-army-panel"><strong>Kael Vorthan</strong><span>MP 4/4 · SUPPLIED</span><small>Guardas · Arqueiros · Cavalaria</small><em>Brakk em ZoC: entrar no hex inimigo gera ENEMY_CONTACT.</em><button type="button" onClick={startCombat}>INICIAR CONFRONTO</button></aside>:null}
       {battleOutcome==="victory"?<aside className="hoc2-cascade-panel" role="status"><strong>CONSEQUÊNCIA ESTRATÉGICA</strong><span>HEX CAPTURADO</span><span>Brakk recuou</span><span>CADEIA RUBRA RECALCULADA</span><span>SUPPLY RECALCULADO</span><span>OCTARINA RECALCULADA</span><small>O servidor HOC2 aplica esta cascata antes de devolver o snapshot ao mapa.</small></aside>:null}
