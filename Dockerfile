@@ -12,6 +12,7 @@ WORKDIR /web
 COPY client/web/package*.json ./
 RUN npm install --no-audit --no-fund
 COPY client/web/ ./
+COPY docs/hoc2/HOC2_VISUAL_CONTRACT_v1.json ./docs/hoc2/HOC2_VISUAL_CONTRACT_v1.json
 COPY runtime/packs/PACK_99_RECOVERED/production-release.json /tmp/pack99-production-release.json
 
 RUN apt-get update \

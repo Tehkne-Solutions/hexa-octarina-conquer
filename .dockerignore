@@ -6,7 +6,9 @@
 **/__pycache__
 **/.godot
 client/godot
-docs
+docs/**
+!docs/hoc2/
+!docs/hoc2/HOC2_VISUAL_CONTRACT_v1.json
 tests
 conformance
 src

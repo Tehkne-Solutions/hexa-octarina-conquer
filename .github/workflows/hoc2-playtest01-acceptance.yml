@@ -33,7 +33,7 @@ jobs:
           set -euo pipefail
           runtime_name="hoc-pack99-web-full.zip"
           checksum_name="hoc-pack99-web-full.zip.sha256"
-          release_base="https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.2"
+          release_base="https://github.com/Tehkne-Solutions/hexa-octarina-conquer/releases/download/pack99-runtime-v1.0.3"
           curl --fail --location --silent --show-error --retry 3 "${release_base}/${runtime_name}" -o "/tmp/${runtime_name}"
           curl --fail --location --silent --show-error --retry 3 "${release_base}/${checksum_name}" -o "/tmp/${checksum_name}"
           (cd /tmp && sha256sum --check "${checksum_name}")
