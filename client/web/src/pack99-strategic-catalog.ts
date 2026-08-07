@@ -1,6 +1,5 @@
 import { runtimeAssetUrl } from "./runtime-assets";
 import "./strategic-board-canonical-units.css";
-import "./hoc2/p0-visual-recovery.css";
 
 export type StrategicAssetKey =
   | "worldPreview"
@@ -54,8 +53,6 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   edgeBuiltNeSw: { id: "EDGE_STONE_BUILT_NE_SW_01" },
   edgeBuiltNwSe: { id: "EDGE_STONE_BUILT_NW_SE_01" },
 
-  // Unit visuals are canonical runtime IDs. The runtime alias registry owns the
-  // physical path mapping so the gameplay slice never bypasses PACK 99 resolution.
   kael: { id: "HERO_GUARDIAN_01_IDLE_BASE_SW_01" },
   lyra: { id: "HERO_RANGER_01_IDLE_BASE_NE_01" },
   varg: { id: "UNIT_RECRUIT_01_IDLE_BASE_NW_01" },
