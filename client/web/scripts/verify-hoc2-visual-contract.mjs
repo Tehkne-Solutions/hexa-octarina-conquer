@@ -6,7 +6,22 @@ const here=path.dirname(fileURLToPath(import.meta.url));
 const webRoot=path.resolve(here,"..");
 const repoRoot=path.resolve(webRoot,"../..");
 
-function read(relative){return fs.readFileSync(path.resolve(repoRoot,relative),"utf8")}
+function sourceCandidates(relative){
+  const candidates=[
+    path.resolve(repoRoot,relative),
+    path.resolve(webRoot,relative),
+  ];
+  if(relative.startsWith("client/web/")){
+    candidates.push(path.resolve(webRoot,relative.slice("client/web/".length)));
+  }
+  return [...new Set(candidates)];
+}
+function read(relative){
+  const candidates=sourceCandidates(relative);
+  const source=candidates.find((candidate)=>fs.existsSync(candidate));
+  if(!source) throw new Error(`HOC2_VISUAL_CONTRACT_SOURCE_MISSING:${relative}:${candidates.join("|")}`);
+  return fs.readFileSync(source,"utf8");
+}
 function requireMatch(value, pattern, marker){if(!pattern.test(value)) throw new Error(`HOC2_VISUAL_CONTRACT_FAIL:${marker}`)}
 function requireText(value, text, marker){if(!value.includes(text)) throw new Error(`HOC2_VISUAL_CONTRACT_FAIL:${marker}`)}
 
@@ -53,4 +68,4 @@ const remediationIndex=entry.indexOf('import "./hoc2/hoc2-remediation.css";');
 const recoveryIndex=entry.indexOf('import "./hoc2/p0-visual-recovery.css";');
 if(remediationIndex<0||recoveryIndex<0||recoveryIndex<remediationIndex) throw new Error("HOC2_VISUAL_CONTRACT_FAIL:recovery-css-not-last");
 
-console.log("HOC2_VISUAL_CONTRACT=PASS map=MAP_FOREST_FRONTIER_8X8_01 strategic=8x8 renderer=PACK99_COMPOSED_TILES grid=hidden projection=isometric-diamond camera=bounded");
+console.log("HOC2_VISUAL_CONTRACT=PASS map=MAP_FOREST_FRONTIER_8X8_01 strategic=8x8 renderer=PACK99_COMPOSED_TILES grid=hidden projection=isometric-diamond camera=bounded sources=portable");
