@@ -1,12 +1,13 @@
 /* HOC2 P0 Visual Recovery — Tehkné Solutions */
 
 .hoc2-map-viewport{
-  background:#0f120d;
+  background:
+    radial-gradient(ellipse at 50% 38%,#252b1e 0,#151912 56%,#0c0e0a 100%);
 }
 
 .hoc2-living-map.has-authored-world{
-  width:min(1380px,96vw);
-  height:min(860px,88vh);
+  width:min(1420px,97vw);
+  height:min(880px,89vh);
   filter:none;
 }
 
@@ -20,16 +21,45 @@
 
 .hoc2-authored-world{
   opacity:1;
-  filter:saturate(1.05) contrast(1.04) brightness(.98);
+  filter:saturate(1.07) contrast(1.03) brightness(1.01);
+  pointer-events:none;
+  transition:opacity .2s ease,filter .2s ease;
+}
+
+.hoc2-world-tile{
   pointer-events:none;
 }
 
-.hoc2-living-map.is-hexa .hoc2-authored-world{
-  opacity:.72;
-  filter:saturate(.74) contrast(1.12) brightness(.72);
+.hoc2-world-cell.terrain-water .hoc2-world-tile{
+  filter:saturate(1.08) brightness(.96);
 }
 
-/* Living Map must read as world first. Analytical geometry only appears in Hexa. */
+.hoc2-world-cell.terrain-mountain .hoc2-world-tile{
+  filter:saturate(.88) brightness(.9);
+}
+
+.hoc2-world-rocks{
+  filter:drop-shadow(0 8px 6px rgba(0,0,0,.34));
+}
+
+.hoc2-world-road-layer .hoc2-road-shadow{
+  stroke:#241d12;
+  stroke-width:13;
+  opacity:.34;
+}
+
+.hoc2-world-road-layer .hoc2-road{
+  stroke:#ad8c58;
+  stroke-width:8;
+  opacity:.72;
+}
+
+.hoc2-living-map.is-hexa .hoc2-authored-world{
+  opacity:.66;
+  filter:saturate(.72) contrast(1.1) brightness(.72);
+}
+
+/* Living Map is world-first. Analytical geometry appears only in Hexa. */
 .hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-terrain,
 .hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-terrain-inset,
 .hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-grid-outline,
@@ -37,7 +67,21 @@
   display:none;
 }
 
-/* Remove the permanent prototype instruction card from normal play presentation. */
+/* World art is presented as an object, not as a UI token, in Living Map. */
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark.has-world-art .hoc2-landmark-base{
+  opacity:0;
+}
+
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark.has-world-art .hoc2-landmark-art{
+  filter:drop-shadow(0 9px 7px rgba(0,0,0,.42));
+}
+
+.hoc2-living-map.has-authored-world:not(.is-hexa) .hoc2-landmark-label{
+  font-size:11px;
+  stroke-width:3;
+}
+
+/* Remove the permanent prototype instruction card from normal presentation. */
 .hoc2-camera-help{
   display:none;
 }
@@ -68,15 +112,15 @@
   text-align:center;
 }
 
-/* Strategic overlays must remain readable without erasing the authored world. */
+/* Strategic overlays remain readable without erasing the authored world. */
 .hoc2-living-map.is-hexa .hoc2-grid-outline{
   stroke:#f0dfab;
-  stroke-width:2.2;
-  opacity:.88;
+  stroke-width:2.1;
+  opacity:.9;
 }
 
 .hoc2-living-map.is-hexa .hoc2-domain-fill{
-  opacity:.36;
+  opacity:.34;
 }
 
 .hoc2-living-map.is-hexa .hoc2-landmark-layer,
@@ -86,7 +130,7 @@
 
 @media(max-width:900px){
   .hoc2-living-map.has-authored-world{
-    width:1180px;
-    height:760px;
+    width:1200px;
+    height:780px;
   }
 }
