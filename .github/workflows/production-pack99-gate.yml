@@ -80,7 +80,22 @@ jobs:
           HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
           HEXA_PRODUCTION_ATTEMPTS: "24"
           HEXA_PRODUCTION_DELAY_MS: "15000"
-        run: node scripts/production-pack99-gate.mjs
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/hoc2-production-gate
+          set +e
+          node scripts/production-pack99-gate.mjs 2>&1 | tee artifacts/hoc2-production-gate/production-gate.log
+          status=${PIPESTATUS[0]}
+          set -e
+
+          detail=$(grep -E 'PRODUCTION_GATE=(PASS|FAIL)|PRODUCTION_GATE_ATTEMPT_FAILED=' artifacts/hoc2-production-gate/production-gate.log | tail -n 1 || true)
+          {
+            echo 'detail<<EOF'
+            echo "${detail:-unknown}"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+          exit "$status"
 
       - name: Upload production visual evidence
         id: evidence-upload
@@ -89,7 +104,7 @@ jobs:
         with:
           name: hoc2-production-gate-captures
           path: client/web/artifacts/hoc2-production-gate
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
 
       - name: Report production result to P0 issue
@@ -97,15 +112,17 @@ jobs:
         uses: actions/github-script@v7
         env:
           GATE_OUTCOME: ${{ steps.production-gate.outcome }}
+          GATE_DETAIL: ${{ steps.production-gate.outputs.detail }}
           EVIDENCE_OUTCOME: ${{ steps.evidence-upload.outcome }}
         with:
           script: |
             const gateOutcome = process.env.GATE_OUTCOME || 'unknown';
+            const gateDetail = (process.env.GATE_DETAIL || 'unknown').replace(/`/g, "'").slice(0, 800);
             const evidenceOutcome = process.env.EVIDENCE_OUTCOME || 'unknown';
             const pass = gateOutcome === 'success';
             const verdict = pass ? 'PASS' : 'BLOCKED';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const body = [
+            const lines = [
               `## P0 Production Gate — ${verdict}`,
               '',
               `- event: \`${context.eventName}\`;`,
@@ -113,18 +130,19 @@ jobs:
               `- production verification: \`${gateOutcome}\`;`,
               `- evidence upload: \`${evidenceOutcome}\`;`,
               '- artifact: `hoc2-production-gate-captures`;',
+              `- gate detail: \`${gateDetail}\`;`,
               `- run: ${runUrl}.`,
               '',
               pass
                 ? 'A automação confirmou o contrato remoto HOC2 + PACK 99 no Render. A revisão humana das capturas de produção continua obrigatória antes de encerrar o #333 ou liberar VS02.'
-                : 'A produção não satisfez o contrato remoto HOC2 + PACK 99. O #333 e o freeze de VS02 permanecem abertos até correção e nova evidência.',
+                : 'A produção não satisfez o contrato remoto HOC2 + PACK 99. O artifact contém o log do gate e, quando a página pôde ser aberta, a captura/metadata do estado bloqueado. O #333 e o freeze de VS02 permanecem abertos até correção e nova evidência.',
               '',
               '**Tehkné Solutions**',
-            ].join('\n');
+            ];
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: 333,
-              body,
+              body: lines.join('\n'),
             });
