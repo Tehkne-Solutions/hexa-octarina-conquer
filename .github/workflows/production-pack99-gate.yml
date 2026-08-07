@@ -51,6 +51,9 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,6 +74,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Verify deployed HOC2, PACK 99 and shared Living Map/Hexa world
+        id: production-gate
         working-directory: client/web
         env:
           HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
@@ -79,6 +83,7 @@ jobs:
         run: node scripts/production-pack99-gate.mjs
 
       - name: Upload production visual evidence
+        id: evidence-upload
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -86,3 +91,40 @@ jobs:
           path: client/web/artifacts/hoc2-production-gate
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Report production result to P0 issue
+        if: always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: actions/github-script@v7
+        env:
+          GATE_OUTCOME: ${{ steps.production-gate.outcome }}
+          EVIDENCE_OUTCOME: ${{ steps.evidence-upload.outcome }}
+        with:
+          script: |
+            const gateOutcome = process.env.GATE_OUTCOME || 'unknown';
+            const evidenceOutcome = process.env.EVIDENCE_OUTCOME || 'unknown';
+            const pass = gateOutcome === 'success';
+            const verdict = pass ? 'PASS' : 'BLOCKED';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              `## P0 Production Gate — ${verdict}`,
+              '',
+              `- event: \`${context.eventName}\`;`,
+              `- commit: \`${context.sha}\`;`,
+              `- production verification: \`${gateOutcome}\`;`,
+              `- evidence upload: \`${evidenceOutcome}\`;`,
+              '- artifact: `hoc2-production-gate-captures`;',
+              `- run: ${runUrl}.`,
+              '',
+              pass
+                ? 'A automação confirmou o contrato remoto HOC2 + PACK 99 no Render. A revisão humana das capturas de produção continua obrigatória antes de encerrar o #333 ou liberar VS02.'
+                : 'A produção não satisfez o contrato remoto HOC2 + PACK 99. O #333 e o freeze de VS02 permanecem abertos até correção e nova evidência.',
+              '',
+              '**Tehkné Solutions**',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 333,
+              body,
+            });
