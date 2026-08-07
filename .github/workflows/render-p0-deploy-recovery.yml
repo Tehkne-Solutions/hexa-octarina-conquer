@@ -42,6 +42,8 @@ jobs:
           grep -q 'RENDER_API_KEY' "$workflow"
           grep -q 'RENDER_SERVICE_ID' "$workflow"
           grep -q 'RENDER_DEPLOY_HOOK_URL' "$workflow"
+          grep -q 'missing-render-credentials' "$workflow"
+          grep -q 'recovery-blocker.json' "$workflow"
           grep -q 'production-pack99-gate.mjs' "$workflow"
           grep -q 'issue_number: 333' "$workflow"
           echo 'RENDER_P0_RECOVERY_CONTRACT=PASS'
@@ -55,29 +57,32 @@ jobs:
       RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
       RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
     steps:
-      - name: Validate explicit production confirmation
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          set -euo pipefail
-          if [ "${{ inputs.confirm }}" != "DEPLOY_P0" ]; then
-            echo "RENDER_RECOVERY=BLOCKED reason=confirmation"
-            exit 1
-          fi
-
       - name: Select Render deployment route
         id: route
+        shell: bash
         run: |
           set -euo pipefail
-          if [ -n "${RENDER_API_KEY:-}" ] && [ -n "${RENDER_SERVICE_ID:-}" ]; then
-            echo "route=api" >> "$GITHUB_OUTPUT"
-            echo "RENDER_RECOVERY_ROUTE=api"
+
+          route="none"
+          reason=""
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.confirm }}" != "DEPLOY_P0" ]; then
+            reason="confirmation"
+          elif [ -n "${RENDER_API_KEY:-}" ] && [ -n "${RENDER_SERVICE_ID:-}" ]; then
+            route="api"
           elif [ -n "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
-            echo "route=hook" >> "$GITHUB_OUTPUT"
-            echo "RENDER_RECOVERY_ROUTE=hook"
+            route="hook"
           else
-            echo "route=none" >> "$GITHUB_OUTPUT"
-            echo "RENDER_RECOVERY=BLOCKED reason=missing-render-credentials"
-            exit 1
+            reason="missing-render-credentials"
+          fi
+
+          echo "route=${route}" >> "$GITHUB_OUTPUT"
+          echo "reason=${reason}" >> "$GITHUB_OUTPUT"
+
+          if [ "$route" = "none" ]; then
+            echo "RENDER_RECOVERY=BLOCKED reason=${reason}"
+          else
+            echo "RENDER_RECOVERY_ROUTE=${route}"
           fi
 
       - name: Trigger exact main commit through Render API
@@ -97,6 +102,7 @@ jobs:
 
       - name: Trigger linked Render service through Deploy Hook
         if: steps.route.outputs.route == 'hook'
+        id: hook-deploy
         run: |
           set -euo pipefail
           response=$(curl --fail-with-body --silent --show-error -X POST "${RENDER_DEPLOY_HOOK_URL}")
@@ -104,9 +110,11 @@ jobs:
           echo "RENDER_RECOVERY_TRIGGERED route=hook commit=${GITHUB_SHA}"
 
       - name: Checkout
+        if: steps.route.outputs.route != 'none'
         uses: actions/checkout@v4
 
       - name: Setup Node
+        if: steps.route.outputs.route != 'none'
         uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -114,14 +122,17 @@ jobs:
           cache-dependency-path: client/web/package.json
 
       - name: Install Web dependencies
+        if: steps.route.outputs.route != 'none'
         working-directory: client/web
         run: npm install --no-audit --no-fund
 
       - name: Install Chromium
+        if: steps.route.outputs.route != 'none'
         working-directory: client/web
         run: npx playwright install --with-deps chromium
 
       - name: Verify recovered Render production
+        if: steps.route.outputs.route != 'none'
         id: production-gate
         working-directory: client/web
         env:
@@ -147,13 +158,48 @@ jobs:
 
       - name: Preserve recovery evidence
         if: always()
+        env:
+          ROUTE: ${{ steps.route.outputs.route }}
+          ROUTE_REASON: ${{ steps.route.outputs.reason }}
+          GATE_OUTCOME: ${{ steps.production-gate.outcome }}
+          GATE_DETAIL: ${{ steps.production-gate.outputs.detail }}
         run: |
-          mkdir -p client/web/artifacts/hoc2-render-recovery
-          if [ -f render-deploy-response.json ]; then
-            cp render-deploy-response.json client/web/artifacts/hoc2-render-recovery/render-deploy-response.json
+          set -euo pipefail
+          evidence_dir="client/web/artifacts/hoc2-render-recovery"
+          mkdir -p "$evidence_dir"
+
+          route="${ROUTE:-unknown}"
+          reason="${ROUTE_REASON:-}"
+          gate_outcome="${GATE_OUTCOME:-skipped}"
+          gate_detail="${GATE_DETAIL:-}"
+
+          if [ "$route" = "none" ]; then
+            cat > "$evidence_dir/recovery-blocker.json" <<EOF
+          {
+            "status": "BLOCKED",
+            "event": "${GITHUB_EVENT_NAME}",
+            "commit": "${GITHUB_SHA}",
+            "route": "${route}",
+            "reason": "${reason:-unknown}",
+            "productionVerification": "${gate_outcome}",
+            "message": "No Render deployment was attempted because no supported credential route was available."
+          }
+          EOF
+            printf 'RENDER_RECOVERY=BLOCKED reason=%s route=%s commit=%s\n' \
+              "${reason:-unknown}" "$route" "$GITHUB_SHA" \
+              > "$evidence_dir/recovery-blocker.txt"
           fi
+
+          if [ -f render-deploy-response.json ]; then
+            cp render-deploy-response.json "$evidence_dir/render-deploy-response.json"
+          fi
+
           if [ -d client/web/artifacts/hoc2-production-gate ]; then
-            cp -a client/web/artifacts/hoc2-production-gate/. client/web/artifacts/hoc2-render-recovery/
+            cp -a client/web/artifacts/hoc2-production-gate/. "$evidence_dir/"
+          fi
+
+          if [ -n "$gate_detail" ]; then
+            printf '%s\n' "$gate_detail" > "$evidence_dir/gate-detail.txt"
           fi
 
       - name: Upload Render recovery evidence
@@ -171,6 +217,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           ROUTE: ${{ steps.route.outputs.route }}
+          ROUTE_REASON: ${{ steps.route.outputs.reason }}
           GATE_OUTCOME: ${{ steps.production-gate.outcome }}
           GATE_DETAIL: ${{ steps.production-gate.outputs.detail }}
           EVIDENCE_OUTCOME: ${{ steps.evidence-upload.outcome }}
@@ -178,8 +225,12 @@ jobs:
         with:
           script: |
             const route = process.env.ROUTE || 'unknown';
-            const gateOutcome = process.env.GATE_OUTCOME || 'unknown';
-            const gateDetail = (process.env.GATE_DETAIL || 'unknown').replace(/`/g, "'").slice(0, 800);
+            const routeReason = process.env.ROUTE_REASON || '';
+            const gateOutcome = process.env.GATE_OUTCOME || 'skipped';
+            const rawDetail = process.env.GATE_DETAIL || '';
+            const gateDetail = (rawDetail || (route === 'none' ? `RENDER_RECOVERY=BLOCKED reason=${routeReason || 'unknown'}` : 'unknown'))
+              .replace(/`/g, "'")
+              .slice(0, 800);
             const evidenceOutcome = process.env.EVIDENCE_OUTCOME || 'unknown';
             const deployId = process.env.API_DEPLOY_ID || 'n/a';
             const pass = gateOutcome === 'success';
@@ -191,6 +242,7 @@ jobs:
               `- event: \`${context.eventName}\`;`,
               `- commit: \`${context.sha}\`;`,
               `- route: \`${route}\`;`,
+              `- route reason: \`${routeReason || 'n/a'}\`;`,
               `- Render deploy id: \`${deployId}\`;`,
               `- production verification: \`${gateOutcome}\`;`,
               `- evidence upload: \`${evidenceOutcome}\`;`,
@@ -200,7 +252,9 @@ jobs:
               '',
               pass
                 ? 'O deploy remoto foi acionado e o endpoint canônico passou no contrato HOC2 + PACK 99. A revisão humana das capturas continua obrigatória antes de encerrar o #333 e liberar VS02.'
-                : 'A recuperação remota não produziu uma candidata aprovada. O #333 e o freeze de VS02 permanecem ativos; use o artifact para separar credencial/deploy de regressão visual.',
+                : route === 'none'
+                  ? 'Nenhum deploy Render foi tentado porque o GitHub Actions não possui uma rota de credencial configurada. O artifact preserva esse blocker explicitamente; o #333 e o freeze de VS02 permanecem ativos.'
+                  : 'A recuperação remota não produziu uma candidata aprovada. O #333 e o freeze de VS02 permanecem ativos; use o artifact para separar deploy de regressão visual.',
               '',
               '**Tehkné Solutions**',
             ].join('\n');
@@ -211,3 +265,13 @@ jobs:
               issue_number: 333,
               body,
             });
+
+      - name: Fail closed when recovery is blocked
+        if: always() && (steps.route.outputs.route == 'none' || steps.production-gate.outcome != 'success')
+        env:
+          ROUTE: ${{ steps.route.outputs.route }}
+          ROUTE_REASON: ${{ steps.route.outputs.reason }}
+          GATE_OUTCOME: ${{ steps.production-gate.outcome }}
+        run: |
+          echo "RENDER_RECOVERY=BLOCKED route=${ROUTE:-unknown} reason=${ROUTE_REASON:-unknown} gate=${GATE_OUTCOME:-skipped}"
+          exit 1
