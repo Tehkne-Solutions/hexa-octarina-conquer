@@ -9,10 +9,12 @@ on:
       - "client/web/**"
       - "Dockerfile"
       - ".dockerignore"
+      - "render.yaml"
       - ".github/workflows/production-pack99-gate.yml"
   pull_request:
     paths:
       - "client/web/scripts/production-pack99-gate.mjs"
+      - "render.yaml"
       - ".github/workflows/production-pack99-gate.yml"
   schedule:
     - cron: "17 * * * *"
@@ -21,11 +23,32 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-hoc2-pack99-gate
+  group: production-hoc2-pack99-gate-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  validate-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate production gate JavaScript
+        run: node --check client/web/scripts/production-pack99-gate.mjs
+
+      - name: Validate Render source-of-truth contract
+        run: |
+          set -euo pipefail
+          grep -q 'repo: https://github.com/Tehkne-Solutions/hexa-octarina-conquer' render.yaml
+          grep -q 'branch: main' render.yaml
+          grep -q 'autoDeployTrigger: commit' render.yaml
+          grep -q 'dockerfilePath: ./Dockerfile' render.yaml
+          grep -q 'healthCheckPath: /health' render.yaml
+          echo 'HOC2_RENDER_BLUEPRINT_CONTRACT=PASS branch=main autoDeploy=commit runtime=docker'
+
   verify-production:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
