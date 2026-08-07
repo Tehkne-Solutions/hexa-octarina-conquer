@@ -22,10 +22,22 @@ const SPECIAL_HEXES = new Map<string, Partial<Hoc2Hex>>([
   ["4,3",{ terrain:"mountain",owner:"rubra",influence:{rubra:3},libertyCount:2 }],
 ]);
 
+// Explicit 8×8 visual composition for Fronteira Verde.
+// P=plain, F=forest, W=water, M=mountain, R=road.
+// This controls presentation/terrain context only; HOC2 q/r remains authoritative.
+const FRONTIER_TERRAIN: ReadonlyArray<ReadonlyArray<Hoc2Hex["terrain"]>> = [
+  ["plain","plain","road","plain","plain","mountain","mountain","forest"],
+  ["forest","plain","road","plain","plain","mountain","forest","forest"],
+  ["forest","forest","plain","plain","water","plain","forest","forest"],
+  ["forest","plain","plain","water","mountain","plain","plain","forest"],
+  ["plain","plain","water","water","mountain","mountain","plain","plain"],
+  ["plain","forest","plain","water","plain","mountain","forest","plain"],
+  ["forest","forest","plain","plain","plain","forest","mountain","mountain"],
+  ["forest","forest","forest","plain","plain","mountain","mountain","mountain"],
+];
+
 function strategicTerrain(q: number, r: number): Hoc2Hex["terrain"] {
-  if ((q===4||q===5) && (r===4||r===5)) return "mountain";
-  if (q<=5 && r<=6) return "forest";
-  return "plain";
+  return FRONTIER_TERRAIN[r]?.[q] ?? "plain";
 }
 
 function strategicOwner(q: number): Hoc2Hex["owner"] {
@@ -52,8 +64,8 @@ function buildStrategicRegion(): Hoc2Hex[] {
   return region;
 }
 
-// 8×8 HOC2 strategic projection over the authored PACK 05 Fronteira Verde world.
-// PACK 05 is visual composition; this axial region remains gameplay authority.
+// 8×8 HOC2 strategic projection rendered with canonical PACK 99 2.5D pieces.
+// The old PACK 05 flattened preview is reference-only; HOC2 remains gameplay authority.
 const BASE_HEXES: Hoc2Hex[] = buildStrategicRegion();
 
 const NETWORK_NODES: StrategicNodeView[] = [
