@@ -4,6 +4,9 @@ services:
     runtime: docker
     plan: free
     region: virginia
+    repo: https://github.com/Tehkne-Solutions/hexa-octarina-conquer
+    branch: main
+    autoDeployTrigger: commit
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
