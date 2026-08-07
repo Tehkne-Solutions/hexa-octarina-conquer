@@ -25,13 +25,21 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, de
 try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   const rows = await page.evaluate(async (items) => {
-    const [registryResponse, aliasResponse] = await Promise.all([
-      fetch("/assets/runtime/registry/assets-runtime.json", { cache: "no-cache" }),
-      fetch("/assets/runtime/registry/canonical-runtime-aliases.json", { cache: "no-cache" }),
-    ]);
+    const registryResponse = await fetch("/assets/runtime/registry/assets-runtime.json", { cache: "no-cache" });
     if (!registryResponse.ok) throw new Error("ASSET_ATLAS_REGISTRY_MISSING");
     const registry = await registryResponse.json();
-    const aliases = aliasResponse.ok ? (await aliasResponse.json()).aliases ?? {} : {};
+
+    let aliases = {};
+    try {
+      const aliasResponse = await fetch("/assets/runtime/registry/canonical-runtime-aliases.json", { cache: "no-cache" });
+      const contentType = aliasResponse.headers.get("content-type") ?? "";
+      if (aliasResponse.ok && contentType.includes("application/json")) {
+        aliases = (await aliasResponse.json()).aliases ?? {};
+      }
+    } catch {
+      aliases = {};
+    }
+
     const normalize=(value)=>String(value??"").replaceAll("\\","/").split("/").at(-1).replace(/\.[^.]+$/,"").toUpperCase();
     const index=new Map();
     for(const asset of registry.assets??[]){
