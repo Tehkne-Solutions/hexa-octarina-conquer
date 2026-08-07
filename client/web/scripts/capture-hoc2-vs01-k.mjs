@@ -30,10 +30,14 @@ async function assertRuntimeAssetsHealthy(label) {
 }
 
 async function assertAuthoredWorldVisible(label) {
-  const world = page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"]');
+  const world = page.locator('.hoc2-living-map[data-world-source="MAP_FOREST_FRONTIER_8X8_01"][data-world-renderer="PACK99_COMPOSED_TILES"]');
   await world.waitFor({ state: "visible", timeout: 10000 });
-  const authored = page.locator(".hoc2-authored-world");
+  const authored = page.locator('.hoc2-authored-world[data-world-grid="hidden"]');
   await authored.waitFor({ state: "visible", timeout: 10000 });
+  const cellCount = await page.locator(".hoc2-authored-world .hoc2-world-cell").count();
+  if (cellCount !== 64) throw new Error(`HOC2_AUTHORED_WORLD_CELL_COUNT:${label}:${cellCount}`);
+  const tileCount = await page.locator(".hoc2-authored-world .hoc2-world-tile").count();
+  if (tileCount !== 64) throw new Error(`HOC2_AUTHORED_WORLD_TILE_COUNT:${label}:${tileCount}`);
   const box = await world.boundingBox();
   if (!box || box.width < 700 || box.height < 450) {
     throw new Error(`HOC2_AUTHORED_WORLD_TOO_SMALL:${label}:${JSON.stringify(box)}`);
@@ -105,7 +109,7 @@ try {
   await page.getByText("CONSEQUÊNCIA ESTRATÉGICA").waitFor();
   await capture("11-return-map-consequence");
 
-  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy authoredWorld=MAP_FOREST_FRONTIER_8X8_01 brakkFallback=explicit");
+  console.log("HOC2_CANONICAL_CAPTURE=PASS count=11 runtimeAssets=healthy authoredWorld=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=64 grid=hidden brakkFallback=explicit");
 } finally {
   await browser.close();
 }
