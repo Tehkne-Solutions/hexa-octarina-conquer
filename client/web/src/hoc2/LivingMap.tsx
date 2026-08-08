@@ -99,7 +99,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
   hexes: Hoc2Hex[]; hexaMode?: boolean; hexaFilter?: HexaFilter; networkNodes?: StrategicNodeView[]; networkEdges?: StrategicEdgeView[]; octarinaNodes?: OctarinaNodeView[]; octarinaEdges?: OctarinaEdgeView[]; octarinaFormation?: OctarinaFormationView; armies?: ArmyView[]; movementTargets?: MovementTargetView[];
 }) {
   const size=58;
-  const tileCanvas=size*3.25;
+  const tileCanvas=size*3.45;
   const [assets,setAssets]=useState<Pack99StrategicCatalog>(()=>emptyPack99StrategicCatalog());
   useEffect(()=>{let active=true;void loadPack99StrategicCatalog().then((catalog)=>{if(active)setAssets(catalog)});return()=>{active=false}},[]);
   const geometry=useMemo(()=>hexes.map((hex)=>({hex,...hexCenter(hex.q,hex.r,size)})),[hexes]);
@@ -110,6 +110,11 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
   const minX=Math.min(...geometry.map(i=>i.x))-110,maxX=Math.max(...geometry.map(i=>i.x))+110,minY=Math.min(...geometry.map(i=>i.y))-125,maxY=Math.max(...geometry.map(i=>i.y))+125;
   const worldWidth=maxX-minX,worldHeight=maxY-minY;
   const hasComposedWorld=Boolean(assets.grass&&assets.forest&&assets.water);
+  const tileBlendStyle={
+    maskImage:"radial-gradient(ellipse at center, black 68%, transparent 100%)",
+    WebkitMaskImage:"radial-gradient(ellipse at center, black 68%, transparent 100%)",
+    filter:"saturate(.98) contrast(1.035)",
+  };
 
   return <svg className={`hoc2-living-map${hexaMode?" is-hexa":""}${hasComposedWorld?" has-authored-world":""}`} data-hexa-filter={hexaFilter} data-world-source={hasComposedWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"} data-world-renderer={hasComposedWorld?"PACK99_COMPOSED_TILES":"fallback"} data-projection="axial-isometric-diamond" viewBox={`${minX} ${minY} ${worldWidth} ${worldHeight}`} role="img" aria-label={hexaMode?"Mapa estratégico em Modo Hexa sobre Fronteira Verde":"Mapa Vivo 2,5D Fronteira Verde"} style={hexaMode?{filter:"saturate(.84) contrast(1.08) brightness(.91)"}:undefined}>
     <defs>
@@ -127,8 +132,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
       {depthGeometry.map(({hex,x,y})=>{
         const tile=terrainAsset(hex,assets);
         return <g key={`world-${hex.q},${hex.r}`} className={`hoc2-world-cell terrain-${hex.terrain}`} transform={`translate(${x} ${y})`}>
-          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" opacity=".12" className="hoc2-world-tile"/>:null}
-          <polygon points={hexPoints(0,0,size+1.8)} className="hoc2-world-surface" style={{fill:terrainFill(hex.terrain)}}/>
+          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" className="hoc2-world-tile" style={tileBlendStyle}/>:null}
           {hex.terrain==="mountain"&&assets.rocks?<image href={assets.rocks} x="-38" y="-58" width="76" height="76" preserveAspectRatio="xMidYMid meet" className="hoc2-world-prop hoc2-world-rocks"/>:null}
         </g>;
       })}
