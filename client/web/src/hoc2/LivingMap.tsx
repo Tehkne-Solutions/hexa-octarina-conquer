@@ -22,15 +22,15 @@ type AmbientScenery = { q: number; r: number; kind: AmbientKind; scale?: number;
 
 const SQRT3 = Math.sqrt(3);
 const AMBIENT_SCENERY: AmbientScenery[] = [
-  { q: 1, r: 6, kind: "watchtower", scale: .7, opacity: .72 },
-  { q: 3, r: 4, kind: "bridge", scale: .8, opacity: .82 },
-  { q: 4, r: 6, kind: "sanctuary", scale: .72, opacity: .7 },
-  { q: 5, r: 5, kind: "rocks", scale: .76, opacity: .78 },
-  { q: 7, r: 4, kind: "bastion", scale: .72, opacity: .7 },
+  { q: 1, r: 6, kind: "watchtower", scale: .78, opacity: .82 },
+  { q: 3, r: 4, kind: "bridge", scale: .9, opacity: .92 },
+  { q: 4, r: 6, kind: "sanctuary", scale: .78, opacity: .82 },
+  { q: 5, r: 5, kind: "rocks", scale: .82, opacity: .84 },
+  { q: 7, r: 4, kind: "bastion", scale: .78, opacity: .82 },
 ];
 const WORLD_ROUTES: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
-  [[0,0],[1,0],[2,0],[3,1],[4,1],[5,2],[6,2],[7,3]],
-  [[2,0],[2,1],[3,2],[3,3],[3,4],[4,5],[5,5],[6,5]],
+  [[0,0],[1,0],[2,0],[3,1],[3,2],[3,3],[3,4],[4,5],[5,5],[6,4],[7,4]],
+  [[2,0],[3,0],[4,0],[5,0]],
 ];
 
 // Visual-only affine projection. HOC2 q/r topology is unchanged; all world,
@@ -52,12 +52,6 @@ function terrainFill(terrain: Hoc2Hex["terrain"]) {
   if (terrain === "water") return "url(#hoc2-texture-water)";
   if (terrain === "mountain") return "url(#hoc2-texture-mountain)";
   return "url(#hoc2-texture-grass)";
-}
-function terrainBaseFill(terrain: Hoc2Hex["terrain"]) {
-  if (terrain === "forest") return "#405538";
-  if (terrain === "water") return "#435f66";
-  if (terrain === "mountain") return "#5b5a4e";
-  return "#65764d";
 }
 function terrainAsset(hex: Hoc2Hex, assets: Pack99StrategicCatalog) {
   if (hex.terrain === "water") return assets.water;
@@ -85,7 +79,7 @@ function routePath(route: ReadonlyArray<readonly [number, number]>, size: number
   return points.slice(1).reduce((d,p,index)=>{
     const previous=points[index];
     const mx=(previous.x+p.x)/2;
-    const my=(previous.y+p.y)/2-6;
+    const my=(previous.y+p.y)/2-4;
     return `${d} Q ${mx} ${my} ${p.x} ${p.y}`;
   },`M ${points[0].x} ${points[0].y}`);
 }
@@ -121,11 +115,10 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     <defs>
       <linearGradient id="hoc2-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#526244"/><stop offset="1" stopColor="#293525"/></linearGradient>
       <filter id="hoc2-soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" floodOpacity="0.38"/></filter>
-      <pattern id="hoc2-texture-grass" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#65764d"/>{assets.grass?<image href={assets.grass} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".96"/>:null}</pattern>
-      <pattern id="hoc2-texture-forest" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#405538"/>{assets.forest?<image href={assets.forest} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
-      <pattern id="hoc2-texture-water" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#435f66"/>{assets.water?<image href={assets.water} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
-      <pattern id="hoc2-texture-mountain" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#5b5a4e"/>{assets.rocks?<image href={assets.rocks} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".8"/>:null}</pattern>
-      {geometry.map(({hex})=><clipPath key={`clip-${hex.q}-${hex.r}`} id={`hoc2-world-clip-${hex.q}-${hex.r}`} clipPathUnits="userSpaceOnUse"><polygon points={hexPoints(0,0,size+1.5)}/></clipPath>)}
+      <pattern id="hoc2-texture-grass" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#65764d"/>{assets.grass?<image href={assets.grass} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
+      <pattern id="hoc2-texture-forest" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#405538"/>{assets.forest?<image href={assets.forest} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".99"/>:null}</pattern>
+      <pattern id="hoc2-texture-water" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#435f66"/>{assets.water?<image href={assets.water} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".99"/>:null}</pattern>
+      <pattern id="hoc2-texture-mountain" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#5b5a4e"/>{assets.rocks?<image href={assets.rocks} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".86"/>:null}</pattern>
     </defs>
 
     <rect className="hoc2-world-fallback" x={minX} y={minY} width={worldWidth} height={worldHeight} fill="url(#hoc2-ground)"/>
@@ -133,15 +126,14 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     {hasComposedWorld?<g className="hoc2-authored-world" data-world-grid="hidden">
       {depthGeometry.map(({hex,x,y})=>{
         const tile=terrainAsset(hex,assets);
-        const clipId=`hoc2-world-clip-${hex.q}-${hex.r}`;
         return <g key={`world-${hex.q},${hex.r}`} className={`hoc2-world-cell terrain-${hex.terrain}`} transform={`translate(${x} ${y})`}>
-          <polygon points={hexPoints(0,0,size+1)} fill={terrainBaseFill(hex.terrain)} className="hoc2-world-base"/>
-          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" clipPath={`url(#${clipId})`} className="hoc2-world-tile"/>:null}
+          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" opacity=".12" className="hoc2-world-tile"/>:null}
+          <polygon points={hexPoints(0,0,size+1.8)} className="hoc2-world-surface" style={{fill:terrainFill(hex.terrain)}}/>
           {hex.terrain==="mountain"&&assets.rocks?<image href={assets.rocks} x="-38" y="-58" width="76" height="76" preserveAspectRatio="xMidYMid meet" className="hoc2-world-prop hoc2-world-rocks"/>:null}
         </g>;
       })}
-      <g className="hoc2-world-road-layer" pointerEvents="none">{WORLD_ROUTES.map((route,index)=>{const d=routePath(route,size);return <g key={`world-route-${index}`}><path d={d} className="hoc2-road-shadow" fill="none" stroke="rgba(42,29,17,.72)" strokeWidth="20" strokeLinecap="round" strokeLinejoin="round" opacity=".68"/><path d={d} className="hoc2-road" fill="none" style={{strokeWidth:12,opacity:.88}} strokeLinecap="round" strokeLinejoin="round"/></g>})}</g>
-      <g className="hoc2-world-ambient-layer" pointerEvents="none">{AMBIENT_SCENERY.map((scenery)=>{const art=ambientAsset(scenery.kind,assets);if(!art)return null;const p=hexCenter(scenery.q,scenery.r,size);const scale=scenery.scale??.75;const width=82*scale,height=82*scale;return <image key={`ambient-${scenery.q}-${scenery.r}-${scenery.kind}`} href={art} x={p.x-width/2} y={p.y-height*.78} width={width} height={height} opacity={scenery.opacity??.72} preserveAspectRatio="xMidYMax meet" className={`hoc2-world-ambient hoc2-world-ambient-${scenery.kind}`}/>})}</g>
+      <g className="hoc2-world-road-layer" pointerEvents="none">{WORLD_ROUTES.map((route,index)=>{const d=routePath(route,size);return <g key={`world-route-${index}`}><path d={d} className="hoc2-road-shadow" fill="none" stroke="rgba(45,31,18,.68)" strokeWidth="13" strokeLinecap="round" strokeLinejoin="round" opacity=".7"/><path d={d} className="hoc2-road" fill="none" style={{strokeWidth:7,opacity:.82}} strokeLinecap="round" strokeLinejoin="round"/></g>})}</g>
+      <g className="hoc2-world-ambient-layer" pointerEvents="none">{AMBIENT_SCENERY.map((scenery)=>{const art=ambientAsset(scenery.kind,assets);if(!art)return null;const p=hexCenter(scenery.q,scenery.r,size);const scale=scenery.scale??.75;const width=82*scale,height=82*scale;return <image key={`ambient-${scenery.q}-${scenery.r}-${scenery.kind}`} href={art} x={p.x-width/2} y={p.y-height*.78} width={width} height={height} opacity={scenery.opacity??.78} preserveAspectRatio="xMidYMax meet" className={`hoc2-world-ambient hoc2-world-ambient-${scenery.kind}`}/>})}</g>
     </g>:<>
       <g className="hoc2-world-layer">{geometry.map(({hex,x,y})=><g key={`${hex.q},${hex.r}`} transform={`translate(${x} ${y})`}><polygon points={hexPoints(0,0,size-1.5)} className={`hoc2-terrain hoc2-terrain-${hex.terrain}`} style={{fill:terrainFill(hex.terrain)}}/><polygon points={hexPoints(0,0,size-5)} className="hoc2-terrain-inset"/></g>)}</g>
       <g className="hoc2-road-layer">{geometry.filter(i=>i.hex.terrain==="road").map(({hex,x,y})=><g key={`road-${hex.q},${hex.r}`}><path d={`M ${x-50} ${y+20} Q ${x} ${y-7} ${x+50} ${y-20}`} className="hoc2-road-shadow"/><path d={`M ${x-50} ${y+20} Q ${x} ${y-7} ${x+50} ${y-20}`} className="hoc2-road"/></g>)}</g>
