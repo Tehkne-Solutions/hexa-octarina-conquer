@@ -53,10 +53,16 @@ function terrainFill(terrain: Hoc2Hex["terrain"]) {
   if (terrain === "mountain") return "url(#hoc2-texture-mountain)";
   return "url(#hoc2-texture-grass)";
 }
+function pickTerrainVariant(hex: Hoc2Hex, variants: Array<string | null>) {
+  const available=variants.filter((variant): variant is string=>Boolean(variant));
+  if(!available.length) return null;
+  const index=Math.abs(hex.q*17+hex.r*31+(hex.q*hex.r)*7)%available.length;
+  return available[index];
+}
 function terrainAsset(hex: Hoc2Hex, assets: Pack99StrategicCatalog) {
-  if (hex.terrain === "water") return assets.water;
-  if (hex.terrain === "forest") return assets.forest;
-  return assets.grass;
+  if (hex.terrain === "water") return pickTerrainVariant(hex,[assets.water,assets.waterB,assets.waterC]);
+  if (hex.terrain === "forest") return pickTerrainVariant(hex,[assets.forest,assets.forestB,assets.forestC]);
+  return pickTerrainVariant(hex,[assets.grass,assets.grassB,assets.grassC]);
 }
 function landmarkAsset(hex: Hoc2Hex, assets: Pack99StrategicCatalog) {
   if (hex.landmark === "bridge") return assets.bridge;
@@ -99,7 +105,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
   hexes: Hoc2Hex[]; hexaMode?: boolean; hexaFilter?: HexaFilter; networkNodes?: StrategicNodeView[]; networkEdges?: StrategicEdgeView[]; octarinaNodes?: OctarinaNodeView[]; octarinaEdges?: OctarinaEdgeView[]; octarinaFormation?: OctarinaFormationView; armies?: ArmyView[]; movementTargets?: MovementTargetView[];
 }) {
   const size=58;
-  const tileCanvas=size*3.85;
+  const tileCanvas=size*3.45;
   const [assets,setAssets]=useState<Pack99StrategicCatalog>(()=>emptyPack99StrategicCatalog());
   useEffect(()=>{let active=true;void loadPack99StrategicCatalog().then((catalog)=>{if(active)setAssets(catalog)});return()=>{active=false}},[]);
   const geometry=useMemo(()=>hexes.map((hex)=>({hex,...hexCenter(hex.q,hex.r,size)})),[hexes]);
@@ -115,8 +121,6 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     <defs>
       <linearGradient id="hoc2-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#526244"/><stop offset="1" stopColor="#293525"/></linearGradient>
       <filter id="hoc2-soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" floodOpacity="0.38"/></filter>
-      <radialGradient id="hoc2-tile-feather-gradient" cx="50%" cy="50%" r="68%"><stop offset="0%" stopColor="white" stopOpacity="1"/><stop offset="62%" stopColor="white" stopOpacity="1"/><stop offset="84%" stopColor="white" stopOpacity=".62"/><stop offset="100%" stopColor="white" stopOpacity="0"/></radialGradient>
-      <mask id="hoc2-tile-feather-mask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1"><rect x="0" y="0" width="1" height="1" fill="url(#hoc2-tile-feather-gradient)"/></mask>
       <pattern id="hoc2-texture-grass" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#65764d"/>{assets.grass?<image href={assets.grass} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
       <pattern id="hoc2-texture-forest" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#405538"/>{assets.forest?<image href={assets.forest} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".99"/>:null}</pattern>
       <pattern id="hoc2-texture-water" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#435f66"/>{assets.water?<image href={assets.water} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".99"/>:null}</pattern>
@@ -126,11 +130,10 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     <rect className="hoc2-world-fallback" x={minX} y={minY} width={worldWidth} height={worldHeight} fill="url(#hoc2-ground)"/>
 
     {hasComposedWorld?<g className="hoc2-authored-world" data-world-grid="hidden">
-      {assets.grass?<image href={assets.grass} x={minX} y={minY} width={worldWidth} height={worldHeight} preserveAspectRatio="xMidYMid slice" opacity=".24" className="hoc2-world-underlay"/>:null}
       {depthGeometry.map(({hex,x,y})=>{
         const tile=terrainAsset(hex,assets);
         return <g key={`world-${hex.q},${hex.r}`} className={`hoc2-world-cell terrain-${hex.terrain}`} transform={`translate(${x} ${y})`}>
-          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" className="hoc2-world-tile" mask="url(#hoc2-tile-feather-mask)" style={{filter:"saturate(.98) contrast(1.035)"}}/>:null}
+          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" className="hoc2-world-tile" style={{filter:"saturate(.98) contrast(1.035)"}}/>:null}
           {hex.terrain==="mountain"&&assets.rocks?<image href={assets.rocks} x="-38" y="-58" width="76" height="76" preserveAspectRatio="xMidYMid meet" className="hoc2-world-prop hoc2-world-rocks"/>:null}
         </g>;
       })}
