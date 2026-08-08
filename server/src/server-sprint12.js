@@ -7,7 +7,10 @@ import {
 import { startServer as startSprint11Server } from "./server-sprint11.js";
 
 const RELEASE_VERSION = process.env.HEXA_RELEASE_VERSION ?? "0.12.0";
-const RELEASE_SHA = process.env.HEXA_RELEASE_SHA ?? "unknown";
+// Render exposes RENDER_GIT_COMMIT at runtime for every Git-backed deploy. Prefer
+// that source of truth so production verification can distinguish the currently
+// served image from an older but otherwise healthy HOC2 deployment.
+const RELEASE_SHA = process.env.RENDER_GIT_COMMIT ?? process.env.HEXA_RELEASE_SHA ?? "unknown";
 
 function json(response, status, payload) {
   response.writeHead(status, {
