@@ -49,6 +49,50 @@ async function verifyRuntimeFiles() {
   return { canonical: assets.length, materialized: assets.length, version: manifest.version };
 }
 
+async function waitForAuthoredWorldAssets(page) {
+  await page.waitForLoadState("networkidle", { timeout: 30000 }).catch(() => undefined);
+
+  const tileHrefs = await page.locator(".hoc2-authored-world .hoc2-world-tile").evaluateAll((nodes) =>
+    nodes
+      .map((node) => node.getAttribute("href") || node.getAttributeNS("http://www.w3.org/1999/xlink", "href"))
+      .filter(Boolean),
+  );
+  if (tileHrefs.length !== 64) {
+    throw new Error(`authored world tile hrefs incomplete: ${tileHrefs.length}/64`);
+  }
+
+  const worldHrefs = await page.locator(".hoc2-authored-world image").evaluateAll((nodes) =>
+    nodes
+      .map((node) => node.getAttribute("href") || node.getAttributeNS("http://www.w3.org/1999/xlink", "href"))
+      .filter(Boolean),
+  );
+  const uniqueHrefs = [...new Set(worldHrefs)];
+  if (uniqueHrefs.length === 0) throw new Error("authored world image hrefs missing");
+
+  const decoded = await page.evaluate(async (sources) => {
+    const load = (source) => new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve({ source, width: image.naturalWidth, height: image.naturalHeight });
+      image.onerror = () => reject(new Error(`WORLD_IMAGE_LOAD_FAILED:${source}`));
+      image.src = source;
+    });
+    return Promise.all(sources.map(load));
+  }, uniqueHrefs);
+
+  const broken = decoded.filter((image) => image.width <= 0 || image.height <= 0);
+  if (broken.length > 0) {
+    throw new Error(`authored world image decode failed: ${broken.map((image) => image.source).join(",")}`);
+  }
+
+  // SVG <image> elements are not represented by document.images. Force the same
+  // resources through HTML Image decoding above, then allow two paint frames so the
+  // authored SVG world is actually rasterized before evidence is captured.
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await page.waitForTimeout(250);
+
+  return { tileHrefCount: tileHrefs.length, sourceCount: uniqueHrefs.length };
+}
+
 async function captureBlockedEvidence(page, error) {
   const reason = error instanceof Error ? error.message : String(error);
   const metadata = {
@@ -107,6 +151,8 @@ async function verifyRenderedHoc2() {
       throw new Error(`composed world incomplete: cells=${cellCount} tiles=${tileCount}`);
     }
 
+    const worldAssets = await waitForAuthoredWorldAssets(page);
+
     const worldBox = await world.boundingBox();
     if (!worldBox || worldBox.width < 700 || worldBox.height < 450) {
       throw new Error(`living map too small or missing: ${JSON.stringify(worldBox)}`);
@@ -150,6 +196,8 @@ async function verifyRenderedHoc2() {
       worldWidth: Math.round(worldBox.width),
       worldHeight: Math.round(worldBox.height),
       sameCamera: true,
+      worldAssetsReady: true,
+      worldAssetSources: worldAssets.sourceCount,
     };
   } catch (error) {
     if (page) await captureBlockedEvidence(page, error).catch(() => undefined);
@@ -168,6 +216,7 @@ function productionBlocked(runtime, rendered) {
     || rendered.tileCount !== 64
     || rendered.hexaGridCount !== 64
     || rendered.sameCamera !== true
+    || rendered.worldAssetsReady !== true
     || rendered.worldWidth < 700
     || rendered.worldHeight < 450
     || !rendered.title.includes("HOC — Hexa Octarina Conquer · Fronteira Verde");
@@ -182,7 +231,7 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
     if (productionBlocked(runtime, rendered)) {
       throw new Error(`production blocked after verification: runtime=${JSON.stringify(runtime)} rendered=${JSON.stringify(rendered)}`);
     }
-    console.log(`PRODUCTION_GATE=PASS canonical=${runtime.canonical} materialized=${runtime.materialized} pack=${runtime.version} world=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=${rendered.cellCount} hexa=${rendered.hexaGridCount} camera=shared identity=HOC`);
+    console.log(`PRODUCTION_GATE=PASS canonical=${runtime.canonical} materialized=${runtime.materialized} pack=${runtime.version} world=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=${rendered.cellCount} hexa=${rendered.hexaGridCount} camera=shared assets=ready sources=${rendered.worldAssetSources} identity=HOC`);
     process.exit(0);
   } catch (error) {
     lastError = error;
