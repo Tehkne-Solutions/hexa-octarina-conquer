@@ -69,15 +69,37 @@ async function waitForAuthoredWorldAssets(page) {
   const uniqueHrefs = [...new Set(worldHrefs)];
   if (uniqueHrefs.length === 0) throw new Error("authored world image hrefs missing");
 
-  const decoded = await page.evaluate(async (sources) => {
+  const decoded = await page.evaluate(async ({ sources, timeoutMs }) => {
     const load = (source) => new Promise((resolve, reject) => {
       const image = new Image();
-      image.onload = () => resolve({ source, width: image.naturalWidth, height: image.naturalHeight });
-      image.onerror = () => reject(new Error(`WORLD_IMAGE_LOAD_FAILED:${source}`));
+      let settled = false;
+      const finish = (callback, value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        image.onload = null;
+        image.onerror = null;
+        callback(value);
+      };
+      const timer = setTimeout(
+        () => finish(reject, new Error(`WORLD_IMAGE_TIMEOUT:${source}:${timeoutMs}ms`)),
+        timeoutMs,
+      );
+
+      image.onerror = () => finish(reject, new Error(`WORLD_IMAGE_LOAD_FAILED:${source}`));
+      image.onload = async () => {
+        try {
+          await image.decode();
+          finish(resolve, { source, width: image.naturalWidth, height: image.naturalHeight });
+        } catch (error) {
+          const detail = error instanceof Error ? error.message : String(error);
+          finish(reject, new Error(`WORLD_IMAGE_DECODE_FAILED:${source}:${detail}`));
+        }
+      };
       image.src = source;
     });
     return Promise.all(sources.map(load));
-  }, uniqueHrefs);
+  }, { sources: uniqueHrefs, timeoutMs: 10000 });
 
   const broken = decoded.filter((image) => image.width <= 0 || image.height <= 0);
   if (broken.length > 0) {
