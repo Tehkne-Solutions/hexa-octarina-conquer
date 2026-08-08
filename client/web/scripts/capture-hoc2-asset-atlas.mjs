@@ -68,15 +68,23 @@ try {
         };
       })
       .filter((asset)=>/^TILE_(GRASS|FOREST|WATER)_/i.test(asset.id) || /^TILE_(GRASS|FOREST|WATER)_/i.test(String(asset.canonicalId??"")) || /\/TILE_(GRASS|FOREST|WATER)_/i.test(String(asset.file??asset.runtimeFile??"")))
-      .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+      .sort((a,b)=>String(a.runtimeFile??a.id).localeCompare(String(b.runtimeFile??b.id)));
 
     return { rows, terrainVariants, registryAssetCount:(registry.assets??[]).length };
   }, requested);
 
   const { rows, terrainVariants, registryAssetCount } = atlas;
+  const terrainTileVariants = terrainVariants
+    .filter((asset)=>String(asset.runtimeFile??"").includes("/tiles/"))
+    .map((asset)=>({
+      ...asset,
+      label:String(asset.runtimeFile).split("/").at(-1)?.replace(/\.png$/i,"")??asset.id,
+      url:`/assets/runtime/${asset.runtimeFile}`,
+    }));
+
   await writeFile(
     path.join(outputDir, "pack99-terrain-variants.json"),
-    `${JSON.stringify({ registryAssetCount, terrainVariantCount: terrainVariants.length, terrainVariants }, null, 2)}\n`,
+    `${JSON.stringify({ registryAssetCount, terrainVariantCount: terrainVariants.length, terrainTileVariantCount: terrainTileVariants.length, terrainVariants }, null, 2)}\n`,
     "utf8",
   );
 
@@ -93,10 +101,23 @@ try {
   </div></body></html>`, { waitUntil: "load" });
   await page.waitForFunction(() => [...document.images].every((image) => image.complete));
   await page.waitForTimeout(300);
-  const broken = await page.locator("img").evaluateAll((images) => images.filter((image) => image.naturalWidth === 0).map((image) => image.alt));
+  let broken = await page.locator("img").evaluateAll((images) => images.filter((image) => image.naturalWidth === 0).map((image) => image.alt));
   if (broken.length) throw new Error(`ASSET_ATLAS_BROKEN:${broken.join(",")}`);
   await page.screenshot({ path: path.join(outputDir, "pack99-strategic-assets.png"), fullPage: true });
-  console.log(`HOC2_PACK99_ASSET_ATLAS=PASS resolved=${rows.filter((row)=>row.url).length}/${rows.length} terrainVariants=${terrainVariants.length} registry=${registryAssetCount}`);
+
+  await page.setContent(`<!doctype html><html><head><style>
+    *{box-sizing:border-box}body{margin:0;background:#11130f;color:#efe5ca;font-family:Georgia,serif;padding:22px}
+    h1{margin:0 0 8px;color:#dfc37d;font-size:25px}p{margin:0 0 20px;color:#aaa28d;font:13px system-ui}
+    .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.card{background:#1d2119;border:1px solid #675d43;border-radius:8px;padding:9px;display:grid;gap:7px;min-height:205px}
+    strong{font:700 10px ui-monospace,monospace;color:#d9c494;overflow-wrap:anywhere}.asset{height:154px;display:grid;place-items:center;background:repeating-conic-gradient(#272b22 0 25%,#1b1e18 0 50%) 50%/20px 20px;border-radius:5px;overflow:hidden}.asset img{width:100%;height:100%;object-fit:contain}
+  </style></head><body><h1>HOC2 · PACK 99 Terrain Variant Atlas</h1><p>${terrainTileVariants.length} authored terrain tiles from the canonical 1,037-asset runtime · Tehkné Solutions</p><div class="grid">${terrainTileVariants.map(row=>`<section class="card"><strong>${row.label}</strong><div class="asset"><img src="${row.url}" alt="${row.label}"></div></section>`).join("")}</div></body></html>`, { waitUntil: "load" });
+  await page.waitForFunction(() => [...document.images].every((image) => image.complete));
+  await page.waitForTimeout(400);
+  broken = await page.locator("img").evaluateAll((images) => images.filter((image) => image.naturalWidth === 0).map((image) => image.alt));
+  if (broken.length) throw new Error(`TERRAIN_VARIANT_ATLAS_BROKEN:${broken.join(",")}`);
+  await page.screenshot({ path: path.join(outputDir, "pack99-terrain-variant-atlas.png"), fullPage: true });
+
+  console.log(`HOC2_PACK99_ASSET_ATLAS=PASS resolved=${rows.filter((row)=>row.url).length}/${rows.length} terrainVariants=${terrainVariants.length} terrainTiles=${terrainTileVariants.length} registry=${registryAssetCount}`);
 } finally {
   await browser.close();
 }
