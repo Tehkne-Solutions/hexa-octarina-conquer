@@ -4,11 +4,21 @@ on:
   pull_request:
     paths:
       - ".github/workflows/render-p0-deploy-recovery.yml"
+      - "Dockerfile"
+      - "render.yaml"
+      - "client/web/**"
+      - "server/**"
+      - "runtime/packs/PACK_99_RECOVERED/production-release.json"
   push:
     branches:
       - main
     paths:
       - ".github/workflows/render-p0-deploy-recovery.yml"
+      - "Dockerfile"
+      - "render.yaml"
+      - "client/web/**"
+      - "server/**"
+      - "runtime/packs/PACK_99_RECOVERED/production-release.json"
   workflow_dispatch:
     inputs:
       confirm:
@@ -38,6 +48,10 @@ jobs:
           workflow=.github/workflows/render-p0-deploy-recovery.yml
           grep -q 'workflow_dispatch:' "$workflow"
           grep -q 'push:' "$workflow"
+          grep -q 'Dockerfile' "$workflow"
+          grep -q 'render.yaml' "$workflow"
+          grep -q 'client/web/\*\*' "$workflow"
+          grep -q 'server/\*\*' "$workflow"
           grep -q 'DEPLOY_P0' "$workflow"
           grep -q 'RENDER_API_KEY' "$workflow"
           grep -q 'RENDER_SERVICE_ID' "$workflow"
