@@ -17,7 +17,21 @@ export type OctarinaFormationView = { coreId: string; slots: number; maxSlots: n
 export type ArmyView = { id: string; q: number; r: number; faction: "alliance" | "rubra"; commander: string; supply: "supplied" | "low" | "cut-off"; movement: number; units: string[] };
 export type MovementTargetView = { q: number; r: number; cost: number; contact?: boolean; zoc?: boolean };
 
+type AmbientKind = "watchtower" | "bastion" | "rocks" | "sanctuary" | "bridge";
+type AmbientScenery = { q: number; r: number; kind: AmbientKind; scale?: number; opacity?: number };
+
 const SQRT3 = Math.sqrt(3);
+const AMBIENT_SCENERY: AmbientScenery[] = [
+  { q: 1, r: 6, kind: "watchtower", scale: .7, opacity: .72 },
+  { q: 3, r: 4, kind: "bridge", scale: .8, opacity: .82 },
+  { q: 4, r: 6, kind: "sanctuary", scale: .72, opacity: .7 },
+  { q: 5, r: 5, kind: "rocks", scale: .76, opacity: .78 },
+  { q: 7, r: 4, kind: "bastion", scale: .72, opacity: .7 },
+];
+const WORLD_ROUTES: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
+  [[0,0],[1,0],[2,0],[3,1],[4,1],[5,2],[6,2],[7,3]],
+  [[2,0],[2,1],[3,2],[3,3],[3,4],[4,5],[5,5],[6,5]],
+];
 
 // Visual-only affine projection. HOC2 q/r topology is unchanged; all world,
 // analytical and gameplay layers share this exact transform.
@@ -39,6 +53,12 @@ function terrainFill(terrain: Hoc2Hex["terrain"]) {
   if (terrain === "mountain") return "url(#hoc2-texture-mountain)";
   return "url(#hoc2-texture-grass)";
 }
+function terrainBaseFill(terrain: Hoc2Hex["terrain"]) {
+  if (terrain === "forest") return "#405538";
+  if (terrain === "water") return "#435f66";
+  if (terrain === "mountain") return "#5b5a4e";
+  return "#65764d";
+}
 function terrainAsset(hex: Hoc2Hex, assets: Pack99StrategicCatalog) {
   if (hex.terrain === "water") return assets.water;
   if (hex.terrain === "forest") return assets.forest;
@@ -51,6 +71,23 @@ function landmarkAsset(hex: Hoc2Hex, assets: Pack99StrategicCatalog) {
   if (hex.landmark === "fortress") return assets.bastion;
   if (hex.landmark === "city") return assets.watchtower;
   return null;
+}
+function ambientAsset(kind: AmbientKind, assets: Pack99StrategicCatalog) {
+  if (kind === "bridge") return assets.bridge;
+  if (kind === "sanctuary") return assets.sanctuary;
+  if (kind === "rocks") return assets.rocks;
+  if (kind === "bastion") return assets.bastion;
+  return assets.watchtower;
+}
+function routePath(route: ReadonlyArray<readonly [number, number]>, size: number) {
+  const points=route.map(([q,r])=>hexCenter(q,r,size));
+  if(points.length<2) return "";
+  return points.slice(1).reduce((d,p,index)=>{
+    const previous=points[index];
+    const mx=(previous.x+p.x)/2;
+    const my=(previous.y+p.y)/2-6;
+    return `${d} Q ${mx} ${my} ${p.x} ${p.y}`;
+  },`M ${points[0].x} ${points[0].y}`);
 }
 function Landmark({ hex, x, y, assets }: { hex: Hoc2Hex; x: number; y: number; assets: Pack99StrategicCatalog }) {
   if (!hex.landmark) return null;
@@ -80,7 +117,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
   const worldWidth=maxX-minX,worldHeight=maxY-minY;
   const hasComposedWorld=Boolean(assets.grass&&assets.forest&&assets.water);
 
-  return <svg className={`hoc2-living-map${hexaMode?" is-hexa":""}${hasComposedWorld?" has-authored-world":""}`} data-hexa-filter={hexaFilter} data-world-source={hasComposedWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"} data-world-renderer={hasComposedWorld?"PACK99_COMPOSED_TILES":"fallback"} data-projection="axial-isometric-diamond" viewBox={`${minX} ${minY} ${worldWidth} ${worldHeight}`} role="img" aria-label={hexaMode?"Mapa estratégico em Modo Hexa sobre Fronteira Verde":"Mapa Vivo 2,5D Fronteira Verde"}>
+  return <svg className={`hoc2-living-map${hexaMode?" is-hexa":""}${hasComposedWorld?" has-authored-world":""}`} data-hexa-filter={hexaFilter} data-world-source={hasComposedWorld?"MAP_FOREST_FRONTIER_8X8_01":"fallback"} data-world-renderer={hasComposedWorld?"PACK99_COMPOSED_TILES":"fallback"} data-projection="axial-isometric-diamond" viewBox={`${minX} ${minY} ${worldWidth} ${worldHeight}`} role="img" aria-label={hexaMode?"Mapa estratégico em Modo Hexa sobre Fronteira Verde":"Mapa Vivo 2,5D Fronteira Verde"} style={hexaMode?{filter:"saturate(.84) contrast(1.08) brightness(.91)"}:undefined}>
     <defs>
       <linearGradient id="hoc2-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#526244"/><stop offset="1" stopColor="#293525"/></linearGradient>
       <filter id="hoc2-soft-shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" floodOpacity="0.38"/></filter>
@@ -88,6 +125,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
       <pattern id="hoc2-texture-forest" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#405538"/>{assets.forest?<image href={assets.forest} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
       <pattern id="hoc2-texture-water" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#435f66"/>{assets.water?<image href={assets.water} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".98"/>:null}</pattern>
       <pattern id="hoc2-texture-mountain" patternUnits="objectBoundingBox" width="1" height="1"><rect width="100%" height="100%" fill="#5b5a4e"/>{assets.rocks?<image href={assets.rocks} width="100%" height="100%" preserveAspectRatio="xMidYMid slice" opacity=".8"/>:null}</pattern>
+      {geometry.map(({hex})=><clipPath key={`clip-${hex.q}-${hex.r}`} id={`hoc2-world-clip-${hex.q}-${hex.r}`} clipPathUnits="userSpaceOnUse"><polygon points={hexPoints(0,0,size+1.5)}/></clipPath>)}
     </defs>
 
     <rect className="hoc2-world-fallback" x={minX} y={minY} width={worldWidth} height={worldHeight} fill="url(#hoc2-ground)"/>
@@ -95,12 +133,15 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
     {hasComposedWorld?<g className="hoc2-authored-world" data-world-grid="hidden">
       {depthGeometry.map(({hex,x,y})=>{
         const tile=terrainAsset(hex,assets);
+        const clipId=`hoc2-world-clip-${hex.q}-${hex.r}`;
         return <g key={`world-${hex.q},${hex.r}`} className={`hoc2-world-cell terrain-${hex.terrain}`} transform={`translate(${x} ${y})`}>
-          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" className="hoc2-world-tile"/>:null}
+          <polygon points={hexPoints(0,0,size+1)} fill={terrainBaseFill(hex.terrain)} className="hoc2-world-base"/>
+          {tile?<image href={tile} x={-tileCanvas/2} y={-tileCanvas/2} width={tileCanvas} height={tileCanvas} preserveAspectRatio="xMidYMid meet" clipPath={`url(#${clipId})`} className="hoc2-world-tile"/>:null}
           {hex.terrain==="mountain"&&assets.rocks?<image href={assets.rocks} x="-38" y="-58" width="76" height="76" preserveAspectRatio="xMidYMid meet" className="hoc2-world-prop hoc2-world-rocks"/>:null}
         </g>;
       })}
-      <g className="hoc2-world-road-layer">{geometry.filter(i=>i.hex.terrain==="road").map(({hex,x,y})=><g key={`world-road-${hex.q},${hex.r}`}><path d={`M ${x-55} ${y+24} Q ${x} ${y-4} ${x+55} ${y-24}`} className="hoc2-road-shadow"/><path d={`M ${x-55} ${y+24} Q ${x} ${y-4} ${x+55} ${y-24}`} className="hoc2-road"/></g>)}</g>
+      <g className="hoc2-world-road-layer" pointerEvents="none">{WORLD_ROUTES.map((route,index)=>{const d=routePath(route,size);return <g key={`world-route-${index}`}><path d={d} className="hoc2-road-shadow" fill="none" stroke="rgba(42,29,17,.72)" strokeWidth="20" strokeLinecap="round" strokeLinejoin="round" opacity=".68"/><path d={d} className="hoc2-road" fill="none" style={{strokeWidth:12,opacity:.88}} strokeLinecap="round" strokeLinejoin="round"/></g>})}</g>
+      <g className="hoc2-world-ambient-layer" pointerEvents="none">{AMBIENT_SCENERY.map((scenery)=>{const art=ambientAsset(scenery.kind,assets);if(!art)return null;const p=hexCenter(scenery.q,scenery.r,size);const scale=scenery.scale??.75;const width=82*scale,height=82*scale;return <image key={`ambient-${scenery.q}-${scenery.r}-${scenery.kind}`} href={art} x={p.x-width/2} y={p.y-height*.78} width={width} height={height} opacity={scenery.opacity??.72} preserveAspectRatio="xMidYMax meet" className={`hoc2-world-ambient hoc2-world-ambient-${scenery.kind}`}/>})}</g>
     </g>:<>
       <g className="hoc2-world-layer">{geometry.map(({hex,x,y})=><g key={`${hex.q},${hex.r}`} transform={`translate(${x} ${y})`}><polygon points={hexPoints(0,0,size-1.5)} className={`hoc2-terrain hoc2-terrain-${hex.terrain}`} style={{fill:terrainFill(hex.terrain)}}/><polygon points={hexPoints(0,0,size-5)} className="hoc2-terrain-inset"/></g>)}</g>
       <g className="hoc2-road-layer">{geometry.filter(i=>i.hex.terrain==="road").map(({hex,x,y})=><g key={`road-${hex.q},${hex.r}`}><path d={`M ${x-50} ${y+20} Q ${x} ${y-7} ${x+50} ${y-20}`} className="hoc2-road-shadow"/><path d={`M ${x-50} ${y+20} Q ${x} ${y-7} ${x+50} ${y-20}`} className="hoc2-road"/></g>)}</g>
@@ -108,7 +149,7 @@ export function LivingMap({ hexes, hexaMode=false, hexaFilter="domain", networkN
 
     {hexaMode&&hexaFilter==="connections"?<g className="hoc2-network-layer">{networkEdges.map((edge)=>{const a=nodeGeometry.get(edge.a),b=nodeGeometry.get(edge.b);if(!a||!b)return null;return <line key={`${edge.a}-${edge.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`hoc2-network-edge state-${edge.state??"connected"}`}/>})}{[...nodeGeometry.values()].map(({node,x,y})=><g key={node.id} transform={`translate(${x} ${y})`} className={`hoc2-network-node owner-${node.owner??"neutral"} state-${node.state??"active"}`}><circle r="13"/><text y="4" textAnchor="middle">●</text><text y="28" textAnchor="middle" className="hoc2-network-label">{node.kind}</text></g>)}</g>:null}
     {hexaMode&&hexaFilter==="octarina"?<g className="hoc2-octarina-layer">{octarinaEdges.map((edge)=>{const a=octGeometry.get(edge.a),b=octGeometry.get(edge.b);if(!a||!b)return null;return <line key={`${edge.a}-${edge.b}`} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={`hoc2-octarina-edge state-${edge.state??"connected"}`}/>})}{[...octGeometry.values()].map(({node,x,y})=><g key={node.id} transform={`translate(${x} ${y})`} className={`hoc2-octarina-node kind-${node.kind} owner-${node.owner??"neutral"} state-${node.state??"active"}`}><circle r={node.kind==="core"?19:14} className="hoc2-octarina-node-ring"/><text y="5" textAnchor="middle" className="hoc2-octarina-glyph">✦</text><text y="31" textAnchor="middle" className="hoc2-octarina-label">{node.kind}{node.charge?` · ${node.charge}`:""}</text></g>)}{octarinaFormation&&octGeometry.get(octarinaFormation.coreId)?(()=>{const core=octGeometry.get(octarinaFormation.coreId)!;return <g transform={`translate(${core.x} ${core.y})`} className={`hoc2-formation-status${octarinaFormation.resonance?" is-active":""}`}><circle r="38" className="hoc2-formation-ring"/><text y="-46" textAnchor="middle">HEXA {octarinaFormation.slots}/{octarinaFormation.maxSlots}</text><text y="52" textAnchor="middle">FLOW {octarinaFormation.flow}</text></g>})():null}</g>:null}
-    {hexaMode?<g className={`hoc2-hexa-layer hoc2-hexa-${hexaFilter}`}>{geometry.map(({hex,x,y})=>{const move=movementMap.get(`${hex.q},${hex.r}`);return <g key={`hexa-${hex.q},${hex.r}`} transform={`translate(${x} ${y})`} className={`hoc2-hexa-cell owner-${hex.owner??"neutral"}`}>{hexaFilter==="domain"?<polygon points={hexPoints(0,0,size-3)} className="hoc2-domain-fill"/>:null}{hexaFilter==="influence"?<InfluenceMark hex={hex}/>:null}{hexaFilter==="movement"&&move?<><polygon points={hexPoints(0,0,size-7)} className={`hoc2-movement-fill${move.contact?" is-contact":move.zoc?" is-zoc":""}`}/><text y="5" textAnchor="middle" className="hoc2-movement-cost">{move.contact?"COMBATE":`MP ${move.cost}`}</text></>:null}<polygon points={hexPoints(0,0,size-2)} className="hoc2-grid-outline"/><text y={hexaFilter==="influence"?34:hexaFilter==="movement"?28:5} textAnchor="middle" className="hoc2-coordinate">{hex.q},{hex.r}</text></g>})}</g>:null}
+    {hexaMode?<g className={`hoc2-hexa-layer hoc2-hexa-${hexaFilter}`}>{geometry.map(({hex,x,y})=>{const move=movementMap.get(`${hex.q},${hex.r}`);return <g key={`hexa-${hex.q},${hex.r}`} transform={`translate(${x} ${y})`} className={`hoc2-hexa-cell owner-${hex.owner??"neutral"}`}>{hexaFilter==="domain"?<polygon points={hexPoints(0,0,size-3)} className="hoc2-domain-fill" style={{opacity:.24}}/>:null}{hexaFilter==="influence"?<InfluenceMark hex={hex}/>:null}{hexaFilter==="movement"&&move?<><polygon points={hexPoints(0,0,size-7)} className={`hoc2-movement-fill${move.contact?" is-contact":move.zoc?" is-zoc":""}`}/><text y="5" textAnchor="middle" className="hoc2-movement-cost">{move.contact?"COMBATE":`MP ${move.cost}`}</text></>:null}<polygon points={hexPoints(0,0,size-2)} className="hoc2-grid-outline" style={{opacity:.5,strokeWidth:1.7}}/>{hexaFilter==="movement"?<text y="28" textAnchor="middle" className="hoc2-coordinate">{hex.q},{hex.r}</text>:null}</g>})}</g>:null}
     <g className="hoc2-landmark-layer" filter="url(#hoc2-soft-shadow)">{geometry.map(({hex,x,y})=><Landmark key={`landmark-${hex.q},${hex.r}`} hex={hex} x={x} y={y} assets={assets}/>)}</g>
     <g className="hoc2-army-layer" filter="url(#hoc2-soft-shadow)">{armies.map((army)=>{const p=hexCenter(army.q,army.r,size);const art=army.id==="kael"?assets.kael:assets.brakk;return <g key={army.id} transform={`translate(${p.x} ${p.y-18})`} className={`hoc2-army owner-${army.faction} supply-${army.supply}`}><circle r="24"/>{art?<image href={art} x="-25" y="-34" width="50" height="56" preserveAspectRatio="xMidYMax meet" className="hoc2-army-art"/>:<text y="5" textAnchor="middle" className="hoc2-army-glyph">⚔</text>}<text y="38" textAnchor="middle" className="hoc2-army-label">{army.commander}</text></g>})}</g>
   </svg>;
