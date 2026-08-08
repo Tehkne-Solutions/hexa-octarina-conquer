@@ -3,8 +3,14 @@ import "./strategic-board-canonical-units.css";
 
 export type StrategicAssetKey =
   | "grass"
+  | "grassB"
+  | "grassC"
   | "forest"
+  | "forestB"
+  | "forestC"
   | "water"
+  | "waterB"
+  | "waterC"
   | "pillar"
   | "pillarBlue"
   | "pillarRed"
@@ -37,8 +43,14 @@ export const PACK99_STRATEGIC_ASSETS: Record<StrategicAssetKey, CatalogEntry> = 
   // MAP_FOREST_FRONTIER_8X8_01 remains the authored visual identity/reference,
   // while HOC2 axial state remains the gameplay authority.
   grass: { id: "TILE_GRASS_FLAT_CENTER_A_01" },
+  grassB: { id: "TILE_GRASS_FLAT_CENTER_B_01" },
+  grassC: { id: "TILE_GRASS_FLAT_CENTER_C_01" },
   forest: { id: "TILE_FOREST_FLAT_CENTER_A_01" },
+  forestB: { id: "TILE_FOREST_FLAT_CENTER_B_01" },
+  forestC: { id: "TILE_FOREST_FLAT_CENTER_C_01" },
   water: { id: "TILE_WATER_FLAT_CENTER_A_01" },
+  waterB: { id: "TILE_WATER_FLAT_CENTER_B_01" },
+  waterC: { id: "TILE_WATER_FLAT_CENTER_C_01" },
 
   pillar: { id: "PILLAR_NEUTRAL_01" },
   pillarBlue: { id: "PILLAR_BLUE_01" },
