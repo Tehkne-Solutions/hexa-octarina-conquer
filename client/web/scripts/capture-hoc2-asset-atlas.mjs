@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const baseUrl = process.env.HOC2_CAPTURE_URL || "http://127.0.0.1:4173/hoc2.html";
@@ -24,7 +24,7 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, de
 
 try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  const rows = await page.evaluate(async (items) => {
+  const atlas = await page.evaluate(async (items) => {
     const registryResponse = await fetch("/assets/runtime/registry/assets-runtime.json", { cache: "no-cache" });
     if (!registryResponse.ok) throw new Error("ASSET_ATLAS_REGISTRY_MISSING");
     const registry = await registryResponse.json();
@@ -50,12 +50,35 @@ try {
         index.set(normalize(key),asset);
       }
     }
-    return items.map(([label,id])=>{
+    const rows=items.map(([label,id])=>{
       const asset=index.get(id)??index.get(id.toUpperCase())??index.get(normalize(id));
       const runtime=asset?._runtimeFile ?? aliases[id] ?? aliases[id.toUpperCase()] ?? aliases[normalize(id)] ?? null;
       return {label,id,url:runtime?`/assets/runtime/${runtime}`:null,category:asset?.category??"alias"};
     });
+
+    const terrainVariants=(registry.assets??[])
+      .map((asset)=>{
+        const id=String(asset.id??asset.canonicalId??normalize(asset.file??asset._runtimeFile??""));
+        return {
+          id,
+          canonicalId:asset.canonicalId??null,
+          category:asset.category??null,
+          file:asset.file??null,
+          runtimeFile:asset._runtimeFile??null,
+        };
+      })
+      .filter((asset)=>/^TILE_(GRASS|FOREST|WATER)_/i.test(asset.id) || /^TILE_(GRASS|FOREST|WATER)_/i.test(String(asset.canonicalId??"")) || /\/TILE_(GRASS|FOREST|WATER)_/i.test(String(asset.file??asset.runtimeFile??"")))
+      .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+
+    return { rows, terrainVariants, registryAssetCount:(registry.assets??[]).length };
   }, requested);
+
+  const { rows, terrainVariants, registryAssetCount } = atlas;
+  await writeFile(
+    path.join(outputDir, "pack99-terrain-variants.json"),
+    `${JSON.stringify({ registryAssetCount, terrainVariantCount: terrainVariants.length, terrainVariants }, null, 2)}\n`,
+    "utf8",
+  );
 
   await page.setContent(`<!doctype html><html><head><style>
     *{box-sizing:border-box}body{margin:0;background:#12130f;color:#f0e7cf;font-family:Georgia,serif;padding:24px}
@@ -73,7 +96,7 @@ try {
   const broken = await page.locator("img").evaluateAll((images) => images.filter((image) => image.naturalWidth === 0).map((image) => image.alt));
   if (broken.length) throw new Error(`ASSET_ATLAS_BROKEN:${broken.join(",")}`);
   await page.screenshot({ path: path.join(outputDir, "pack99-strategic-assets.png"), fullPage: true });
-  console.log(`HOC2_PACK99_ASSET_ATLAS=PASS resolved=${rows.filter((row)=>row.url).length}/${rows.length}`);
+  console.log(`HOC2_PACK99_ASSET_ATLAS=PASS resolved=${rows.filter((row)=>row.url).length}/${rows.length} terrainVariants=${terrainVariants.length} registry=${registryAssetCount}`);
 } finally {
   await browser.close();
 }
