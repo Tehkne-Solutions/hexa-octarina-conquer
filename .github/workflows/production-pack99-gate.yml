@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - "client/web/**"
+      - "server/src/server-sprint12.js"
       - "Dockerfile"
       - ".dockerignore"
       - "render.yaml"
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - "client/web/scripts/production-pack99-gate.mjs"
+      - "server/src/server-sprint12.js"
       - "render.yaml"
       - ".github/workflows/production-pack99-gate.yml"
   schedule:
@@ -45,7 +47,9 @@ jobs:
           grep -q 'autoDeployTrigger: commit' render.yaml
           grep -q 'dockerfilePath: ./Dockerfile' render.yaml
           grep -q 'healthCheckPath: /health' render.yaml
-          echo 'HOC2_RENDER_BLUEPRINT_CONTRACT=PASS branch=main autoDeploy=commit runtime=docker'
+          grep -q 'process.env.RENDER_GIT_COMMIT' server/src/server-sprint12.js
+          grep -q 'HEXA_EXPECTED_SHA' client/web/scripts/production-pack99-gate.mjs
+          echo 'HOC2_RENDER_BLUEPRINT_CONTRACT=PASS branch=main autoDeploy=commit runtime=docker freshness=sha'
 
   verify-production:
     if: github.event_name != 'pull_request'
@@ -78,6 +82,7 @@ jobs:
         working-directory: client/web
         env:
           HEXA_PRODUCTION_URL: https://hexa-octarina-conquer.onrender.com
+          HEXA_EXPECTED_SHA: ${{ github.sha }}
           HEXA_PRODUCTION_ATTEMPTS: "24"
           HEXA_PRODUCTION_DELAY_MS: "15000"
         run: |
@@ -126,7 +131,7 @@ jobs:
               `## P0 Production Gate — ${verdict}`,
               '',
               `- event: \`${context.eventName}\`;`,
-              `- commit: \`${context.sha}\`;`,
+              `- expected/deployed commit: \`${context.sha}\`;`,
               `- production verification: \`${gateOutcome}\`;`,
               `- evidence upload: \`${evidenceOutcome}\`;`,
               '- artifact: `hoc2-production-gate-captures`;',
@@ -134,8 +139,8 @@ jobs:
               `- run: ${runUrl}.`,
               '',
               pass
-                ? 'A automação confirmou o contrato remoto HOC2 + PACK 99 no Render. A revisão humana das capturas de produção continua obrigatória antes de encerrar o #333 ou liberar VS02.'
-                : 'A produção não satisfez o contrato remoto HOC2 + PACK 99. O artifact contém o log do gate e, quando a página pôde ser aberta, a captura/metadata do estado bloqueado. O #333 e o freeze de VS02 permanecem abertos até correção e nova evidência.',
+                ? 'A automação confirmou que o Render está servindo exatamente o commit esperado e que o contrato remoto HOC2 + PACK 99 + baseline visual está íntegro. A revisão humana das capturas de produção continua obrigatória antes de encerrar o #333 ou liberar VS02.'
+                : 'A produção não satisfez o contrato remoto HOC2 + PACK 99, a baseline visual ou a identidade do commit implantado. O artifact contém o log do gate e, quando a página pôde ser aberta, a captura/metadata do estado bloqueado. O #333 e o freeze de VS02 permanecem abertos até correção e nova evidência.',
               '',
               '**Tehkné Solutions**',
             ];

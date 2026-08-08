@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const productionUrl = (process.env.HEXA_PRODUCTION_URL || "https://hexa-octarina-conquer.onrender.com").replace(/\/$/, "");
+const expectedSha = String(process.env.HEXA_EXPECTED_SHA || "").trim();
 const attempts = Number(process.env.HEXA_PRODUCTION_ATTEMPTS || 24);
 const delayMs = Number(process.env.HEXA_PRODUCTION_DELAY_MS || 15000);
 const outputDir = path.resolve(process.env.HOC2_PRODUCTION_CAPTURE_DIR || "artifacts/hoc2-production-gate");
@@ -17,9 +18,33 @@ const REQUIRED_MISSION_FILES = [
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function fetchJson(resourcePath) {
-  const response = await fetch(`${productionUrl}${resourcePath}`, { redirect: "follow" });
+  const separator = resourcePath.includes("?") ? "&" : "?";
+  const response = await fetch(`${productionUrl}${resourcePath}${separator}gate=${Date.now()}`, {
+    redirect: "follow",
+    cache: "no-store",
+    headers: { "cache-control": "no-cache" },
+  });
   if (!response.ok) throw new Error(`${resourcePath} returned HTTP ${response.status}`);
   return response.json();
+}
+
+function shaMatches(expected, actual) {
+  if (!expected) return true;
+  if (!actual || actual === "unknown") return false;
+  if (expected.length < 7 || actual.length < 7) return false;
+  return expected === actual || expected.startsWith(actual) || actual.startsWith(expected);
+}
+
+async function verifyDeploymentFreshness() {
+  const release = await fetchJson("/release");
+  const deployedSha = String(release.sha || "").trim();
+  if (!shaMatches(expectedSha, deployedSha)) {
+    throw new Error(`production commit stale: expected=${expectedSha || "not-set"} deployed=${deployedSha || "missing"}`);
+  }
+  if (expectedSha && (!release.ok || deployedSha === "unknown")) {
+    throw new Error(`production release identity invalid: ${JSON.stringify(release)}`);
+  }
+  return { sha: deployedSha || "unknown", version: String(release.version || "unknown") };
 }
 
 async function verifyRuntimeFiles() {
@@ -42,7 +67,11 @@ async function verifyRuntimeFiles() {
   if (!manifest.version) throw new Error("pack-manifest version missing");
 
   for (const resourcePath of REQUIRED_MISSION_FILES) {
-    const response = await fetch(`${productionUrl}${resourcePath}`, { redirect: "follow" });
+    const response = await fetch(`${productionUrl}${resourcePath}?gate=${Date.now()}`, {
+      redirect: "follow",
+      cache: "no-store",
+      headers: { "cache-control": "no-cache" },
+    });
     if (!response.ok) throw new Error(`required mission asset ${resourcePath} returned HTTP ${response.status}`);
   }
 
@@ -59,6 +88,10 @@ async function waitForAuthoredWorldAssets(page) {
   );
   if (tileHrefs.length !== 64) {
     throw new Error(`authored world tile hrefs incomplete: ${tileHrefs.length}/64`);
+  }
+  const uniqueTileHrefs = [...new Set(tileHrefs)];
+  if (uniqueTileHrefs.length !== 9) {
+    throw new Error(`authored terrain variants stale or incomplete: ${uniqueTileHrefs.length}/9`);
   }
 
   const worldHrefs = await page.locator(".hoc2-authored-world image").evaluateAll((nodes) =>
@@ -112,7 +145,11 @@ async function waitForAuthoredWorldAssets(page) {
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.waitForTimeout(250);
 
-  return { tileHrefCount: tileHrefs.length, sourceCount: uniqueHrefs.length };
+  return {
+    tileHrefCount: tileHrefs.length,
+    tileVariantCount: uniqueTileHrefs.length,
+    sourceCount: uniqueHrefs.length,
+  };
 }
 
 async function captureBlockedEvidence(page, error) {
@@ -120,6 +157,7 @@ async function captureBlockedEvidence(page, error) {
   const metadata = {
     capturedAt: new Date().toISOString(),
     productionUrl,
+    expectedSha: expectedSha || null,
     pageUrl: page.url(),
     title: await page.title().catch(() => "unknown"),
     reason,
@@ -147,10 +185,10 @@ async function verifyRenderedHoc2() {
       }
     });
 
-    // Detect an old Render deployment immediately instead of waiting for HOC2 selectors
-    // that cannot exist in the legacy shell. Once the HOC2 identity is live, continue
-    // with the full visual/world contract below.
-    await page.goto(productionUrl, { waitUntil: "domcontentloaded", timeout: 120000 });
+    // Cache-bust the player shell so a stale CDN/browser response cannot masquerade
+    // as the current Render deployment after the release SHA has changed.
+    const gateUrl = `${productionUrl}/?gate=${encodeURIComponent(expectedSha || String(Date.now()))}`;
+    await page.goto(gateUrl, { waitUntil: "domcontentloaded", timeout: 120000 });
     const title = await page.title();
     if (!title.includes("HOC — Hexa Octarina Conquer · Fronteira Verde")) {
       throw new Error(`production identity invalid: ${title}`);
@@ -174,6 +212,10 @@ async function verifyRenderedHoc2() {
     }
 
     const worldAssets = await waitForAuthoredWorldAssets(page);
+    const routeCount = await page.locator(".hoc2-world-road-layer .hoc2-road").count();
+    const ambientCount = await page.locator(".hoc2-world-ambient-layer .hoc2-world-ambient").count();
+    if (routeCount !== 2) throw new Error(`continuous world routes stale or incomplete: ${routeCount}/2`);
+    if (ambientCount !== 5) throw new Error(`distributed world ambience stale or incomplete: ${ambientCount}/5`);
 
     const worldBox = await world.boundingBox();
     if (!worldBox || worldBox.width < 700 || worldBox.height < 450) {
@@ -201,7 +243,9 @@ async function verifyRenderedHoc2() {
     const mapViewBoxAfter = await sameWorld.getAttribute("viewBox");
     const cameraStyleAfter = await camera.getAttribute("style");
     const hexaGridCount = await page.locator(".hoc2-hexa-layer .hoc2-grid-outline").count();
+    const domainCoordinateCount = await page.locator(".hoc2-hexa-layer.hoc2-hexa-domain .hoc2-coordinate").count();
     if (hexaGridCount !== 64) throw new Error(`Hexa grid incomplete: ${hexaGridCount}`);
+    if (domainCoordinateCount !== 0) throw new Error(`Hexa Domain coordinate noise leaked: ${domainCoordinateCount}`);
     if (mapViewBoxBefore !== mapViewBoxAfter || cameraStyleBefore !== cameraStyleAfter) {
       throw new Error(`Living Map/Hexa world-camera continuity broken: viewBox=${mapViewBoxBefore}->${mapViewBoxAfter} camera=${cameraStyleBefore}->${cameraStyleAfter}`);
     }
@@ -214,6 +258,10 @@ async function verifyRenderedHoc2() {
       title,
       cellCount,
       tileCount,
+      tileVariantCount: worldAssets.tileVariantCount,
+      routeCount,
+      ambientCount,
+      domainCoordinateCount,
       hexaGridCount,
       worldWidth: Math.round(worldBox.width),
       worldHeight: Math.round(worldBox.height),
@@ -231,11 +279,16 @@ async function verifyRenderedHoc2() {
 
 // Keep the final production acceptance explicitly fail-closed. This named contract is
 // consumed by the historical VS74 release gate and now covers the promoted HOC2 surface.
-function productionBlocked(runtime, rendered) {
+function productionBlocked(runtime, rendered, deployment) {
   return runtime.canonical !== 1037
     || runtime.materialized !== 1037
+    || (expectedSha && !shaMatches(expectedSha, deployment.sha))
     || rendered.cellCount !== 64
     || rendered.tileCount !== 64
+    || rendered.tileVariantCount !== 9
+    || rendered.routeCount !== 2
+    || rendered.ambientCount !== 5
+    || rendered.domainCoordinateCount !== 0
     || rendered.hexaGridCount !== 64
     || rendered.sameCamera !== true
     || rendered.worldAssetsReady !== true
@@ -247,13 +300,14 @@ function productionBlocked(runtime, rendered) {
 let lastError;
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
-    console.log(`PRODUCTION_GATE_ATTEMPT=${attempt}/${attempts} url=${productionUrl}`);
+    console.log(`PRODUCTION_GATE_ATTEMPT=${attempt}/${attempts} url=${productionUrl} expected=${expectedSha || "not-set"}`);
+    const deployment = await verifyDeploymentFreshness();
     const runtime = await verifyRuntimeFiles();
     const rendered = await verifyRenderedHoc2();
-    if (productionBlocked(runtime, rendered)) {
-      throw new Error(`production blocked after verification: runtime=${JSON.stringify(runtime)} rendered=${JSON.stringify(rendered)}`);
+    if (productionBlocked(runtime, rendered, deployment)) {
+      throw new Error(`production blocked after verification: deployment=${JSON.stringify(deployment)} runtime=${JSON.stringify(runtime)} rendered=${JSON.stringify(rendered)}`);
     }
-    console.log(`PRODUCTION_GATE=PASS canonical=${runtime.canonical} materialized=${runtime.materialized} pack=${runtime.version} world=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=${rendered.cellCount} hexa=${rendered.hexaGridCount} camera=shared assets=ready sources=${rendered.worldAssetSources} identity=HOC`);
+    console.log(`PRODUCTION_GATE=PASS commit=${deployment.sha} canonical=${runtime.canonical} materialized=${runtime.materialized} pack=${runtime.version} world=MAP_FOREST_FRONTIER_8X8_01 renderer=PACK99_COMPOSED_TILES cells=${rendered.cellCount} variants=${rendered.tileVariantCount} routes=${rendered.routeCount} ambient=${rendered.ambientCount} hexa=${rendered.hexaGridCount} domainCoords=${rendered.domainCoordinateCount} camera=shared assets=ready sources=${rendered.worldAssetSources} identity=HOC`);
     process.exit(0);
   } catch (error) {
     lastError = error;
